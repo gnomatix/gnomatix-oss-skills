@@ -1,0 +1,27 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node (in case anyone adds tooling later)
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Python (this is a python-elimination repo; if any of these appear, something has gone very wrong)
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.python-version
+
+# Logs / scratch / backups
+*.log
+scratch/
+tmp/
+.bak/

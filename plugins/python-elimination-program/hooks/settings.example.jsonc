@@ -1,0 +1,29 @@
+// settings.example.jsonc
+//
+// Example Claude Code settings fragment that wires up the whacking-day-firewall
+// PreToolUse hook. Merge the `hooks` block below into either:
+//
+//   ~/.claude/settings.json                  (user-global; fires in every project)
+//   <project>/.claude/settings.local.json    (project-local; fires only here)
+//
+// Prerequisite: copy hooks/whacking-day-firewall.js to ~/.claude/hooks/, or
+// adjust the `command` path below to wherever you placed it.
+//
+// Requires: Node.js. No npm dependencies.
+
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ~/.claude/hooks/whacking-day-firewall.js",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

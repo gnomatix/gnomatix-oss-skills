@@ -1,0 +1,8 @@
+{
+  "name": "python-elimination-program",
+  "description": "Three coordinated Agent Skills plus a PreToolUse firewall hook that prevent AI agents from defaulting to Python. whacking-day forces justification + user approval; zartan auto-rejects if a non-Python alternative exists; jake-the-snake executes under strict OOP/docs/type-hint discipline. Optional Claude Code hook blocks Python at the harness level when no open authorization exists.",
+  "author": {
+    "name": "Brett Whitty",
+    "email": "brett@gnomatix.com"
+  }
+}

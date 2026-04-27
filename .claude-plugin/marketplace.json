@@ -1,0 +1,23 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "gnomatix-oss-skills",
+  "description": "Open-source collection of Claude Code plugins and cross-CLI Agent Skills from GNOMATIX.",
+  "owner": {
+    "name": "Brett Whitty",
+    "email": "brett@gnomatix.com"
+  },
+  "plugins": [
+    {
+      "name": "python-elimination-program",
+      "description": "Three coordinated skills (whacking-day, zartan, jake-the-snake) plus a PreToolUse firewall hook that prevent AI agents from defaulting to Python in projects where Python is a liability. Forces justification, automated alternative-research, strict execution discipline, and harness-level enforcement.",
+      "category": "development",
+      "source": "./plugins/python-elimination-program"
+    },
+    {
+      "name": "open-and-honest-agent",
+      "description": "Agent Skill that forces the agent, the moment it recognizes it is engaged in development work, to externalize its default biases (assumptions about the user, preferences, goals, failure modes, trust model, etc.) as 16 immutable per-session documentation files, and proactively log every bias enactment against those documented items by stable ID, before execution. Designed to make hidden agent defaults visible to paying users so they can correct them rather than be silently harmed by them.",
+      "category": "development",
+      "source": "./plugins/open-and-honest-agent"
+    }
+  ]
+}

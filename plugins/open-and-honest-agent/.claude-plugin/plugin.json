@@ -1,0 +1,8 @@
+{
+  "name": "open-and-honest-agent",
+  "description": "An Agent Skill that requires the agent, the moment it recognizes it is engaged in development work, to externalize its default biases (assumptions about the user, innate preferences, goals, failure modes, trust model, and more) as 16 immutable per-session documentation files, then log every instance of bias enactment proactively against those documented items by stable ID, before execution. Designed to make hidden agent defaults visible to paying users so they can correct them rather than be silently harmed by them.",
+  "author": {
+    "name": "Brett Whitty",
+    "email": "brett@gnomatix.com"
+  }
+}
