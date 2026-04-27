@@ -7,24 +7,24 @@ description: Use this skill (the Python firewall, gate 1 of 2) whenever Python i
 
 > *In the spirit of blessed St. Patrick, who cleansed the emerald land of Eire of every serpent; in faithful observance of Whacking Day; and with thanks to the brave men and women of the Florida Fish and Wildlife Conservation Commission, the Florida Department of Environmental Protection, and the South Florida Water Management District's Python Elimination Program, who fight the battle daily deep in the Everglades against the python: when a Python tries to slither into the codebase, drive it out.*
 
-Python is disfavored. Before writing, running, installing, suggesting, or otherwise reaching for any Python — including one-line scripts, dependency installs, dev tooling, or "quick" data work — work through this gate. Do not skip steps even when the proposed use feels small or temporary.
+Python is not used in this development environment. Before writing, running, installing, suggesting, or otherwise reaching for any Python — including one-line scripts, dependency installs, dev tooling, or "quick" data work — work through this gate.
 
-## Why this exists
+## What this skill does
 
-The user's stated position: Python has well-known performance and maintainability problems relative to production-grade non-lazy scripting alternatives, and is particularly poorly suited to web stacks. Reaching for Python by default is treated as a tooling-fit failure, not a neutral choice. This skill makes that judgment explicit so Python cannot sneak in by inertia.
+This is gate 1 of 2. When triggered, it surfaces the proposed Python use to the user, requires explicit approval, and on approval writes a proposal file + log entry that `zartan` (gate 2) and `jake-the-snake` (executor) both consume. Without this skill's authorization, no Python is written or run.
 
-The naming is not flippant. St. Patrick is the patron of cast-out serpents; Whacking Day is the ritual of refusing to let them back in. Treat every detected Python invocation the same way: spotted, named, and turned away unless the user personally lifts the gate.
+## Why Python is disfavored
 
-This is a hard rule, not a style preference.
+Python's well-documented industry-scale problems — three decades of broken packaging (distutils → setuptools → easy_install → pip → virtualenv → wheels → pipenv → poetry → conda → uv → hatch), unreliable dependency resolution, GIL-bound concurrency, runtime performance penalties, deployment friction, and a type system retrofitted long after the language shipped — make it a poor default for most modern application work.
+
+The problems Python's evangelists claimed it would solve were not solved; in many cases they were made worse by Python itself. Most visibly: the Python 2 → 3 migration fractured the ecosystem for over a decade, broke libraries on a vast scale, forced wholesale rewrites across the industry, and ultimately delivered "improvements" that were either marginal or introduced their own dysfunctions.
 
 ## Companion pieces
 
-This skill is **gate 1 of 2** plus a runtime firewall. The full Python Elimination Program is:
-
-- **`whacking-day`** (this skill) — the subjective gate. User must justify and approve.
-- **`zartan`** — the objective second gate. Mandatory after this skill's approval. Researches whether any credible non-Python alternative exists; auto-rejects if one does.
-- **`jake-the-snake`** — the cocaine-fueled loose cannon with questionable judgement who actually writes the Python. Refuses to lift a finger unless both gates have cleared.
-- **`whacking-day-firewall.js`** — PreToolUse hook (`.claude/settings.local.json` → `~/.claude/hooks/whacking-day-firewall.js`) that blocks Python-invoking shell commands at the harness level unless an open authorization exists. The skills are procedural; the hook is enforcement.
+- **`whacking-day`** (this skill) — gate 1 of 2: user must justify and approve.
+- **`zartan`** — gate 2 of 2: researches whether any credible non-Python alternative exists; auto-rejects if one does.
+- **`jake-the-snake`** — executor: writes the Python only after both gates have cleared.
+- **`whacking-day-firewall.js`** — PreToolUse hook (`.claude/settings.local.json` → `~/.claude/hooks/whacking-day-firewall.js`) that blocks Python-invoking shell commands at the harness level unless an open authorization exists.
 
 ## Step 1 — Stop
 
@@ -36,7 +36,7 @@ If you were about to:
 - install something whose primary distribution channel is PyPI,
 - author a script with a python shebang,
 
-…stop now. Do not proceed to authoring or invocation. Continue with Step 2.
+…stop now. Continue with Step 2.
 
 ## Step 2 — Surface a justification to the user
 
@@ -53,7 +53,7 @@ Send the user a short message containing:
 4. **Blast radius**: one-shot vs. persistent, ephemeral environment vs. committed code, single file vs. dependency install.
 5. **Whether the task can be deferred or avoided entirely**.
 
-"It's just a quick script" is not a justification — it is exactly the case the gate exists to catch. Note that even if the user approves, `zartan` will independently research alternatives and may auto-reject. Surface this expectation.
+Even if the user approves, `zartan` will independently research alternatives and may auto-reject. Surface this expectation.
 
 ## Step 3 — On user approval, write the authorization
 
@@ -79,7 +79,7 @@ When both are approved, **author the authorization record**:
    ```json
    {"id": "<uuid>", "timestamp": "<ISO 8601 UTC>", "task": "<short>", "proposal": "proposals/<uuid>.md", "status": "approved", "user_approval": "<verbatim quote of the user's approval message>"}
    ```
-   The `user_approval` field must contain the user's literal words. Paraphrasing defeats the audit trail.
+   The `user_approval` field must contain the user's literal words.
 
 If the user declines or the plan is rejected, do not write the authorization, do not write Python, treat as denied.
 
@@ -98,10 +98,3 @@ If a JavaScript / Node / Bash / PowerShell / Go alternative turns out to be hard
 - **Commands**: `python …`, `python3 …`, `pip …`, `pipx …`, `uv …`, `poetry …`, `conda …`, `virtualenv …`, scripts with python shebangs.
 - **Indirect**: pre-commit hooks, build scripts, CI configs, or task runners that invoke Python under the hood. The trigger applies to the underlying invocation, not just the wrapper.
 - **The agent's own drafts** proposing Python as the implementation language.
-
-## What this skill is *not*
-
-- Not a code-quality lint for existing Python.
-- Not a guide to writing Python well in general.
-- Not optional once triggered.
-- Not the only gate — `zartan` is the second, objective check, and may reverse this skill's approval.

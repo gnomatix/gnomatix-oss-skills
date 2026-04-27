@@ -1,13 +1,15 @@
 # gnomatix-oss-skills
 
+!["Kids, if somebody offers you VENVS… Just say NO."](assets/images/pep-banner.png "If you can't manage your dependencies, you shouldn't have them."")
+
 A collection of [Agent Skills](https://agentskills.io) and Claude Code plugins from GNOMATIX. This repo doubles as a Claude Code marketplace, so a single `/plugin marketplace add` covers every plugin housed here.
 
 ## Plugins
 
-| Plugin | Description |
-|---|---|
-| [`python-elimination-program`](plugins/python-elimination-program/) | Three coordinated skills + `PreToolUse` firewall hook that prevent AI agents from defaulting to Python in projects where Python is a liability. |
-| [`open-and-honest-agent`](plugins/open-and-honest-agent/) | Agent Skill that forces the agent to externalize its default biases (assumptions, preferences, goals, failure modes, trust model, etc.) as immutable per-session documentation, and log every bias enactment against those documented items proactively by stable ID. |
+| Plugin                                                                                          | Description                                                                                                                                                                                                                                                           |
+| ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`python-elimination-program`](plugins/python-elimination-program/) | Three coordinated skills + `PreToolUse` firewall hook that prevent AI agents from defaulting to Python in projects where Python is a liability.                                                                                                                       |
+| [`open-and-honest-agent`](plugins/open-and-honest-agent/)                                       | Agent Skill that forces the agent to externalize its default biases (assumptions, preferences, goals, failure modes, trust model, etc.) as immutable per-session documentation, and log every bias enactment against those documented items proactively by stable ID. |
 
 Future plugins drop in as siblings under `plugins/`. Each plugin is self-contained — its own manifest, skills, hooks, and README — so plugins can be lifted into their own repos later without surgery.
 
@@ -76,6 +78,9 @@ Hooks are not part of the cross-CLI standard, so the optional firewall hooks shi
 
 No file collisions with existing plugins; each plugin's `skills/` and `hooks/` are scoped to its own directory.
 
-## License
+## 📝 License
 
 Each plugin includes (or should include) its own `LICENSE` file. A repo-wide `LICENSE` may also live at the root if all plugins share licensing.
+
+![GNOMATIX "TEAM"](assets/images/gnomatix-killbots-activate-xs.png)
+![GNOMATIX LOGO](assets/images/gnomatix-new-xs.png "GNOMATIX")

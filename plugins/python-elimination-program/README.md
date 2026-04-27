@@ -1,8 +1,24 @@
 # python-elimination-program
 
-> A coordinated set of [Agent Skills](https://agentskills.io) plus a Claude Code firewall hook that prevent AI agents from defaulting to Python in projects where Python is a liability. Three gates — proposal → research → execution — and a `PreToolUse` hook for harness-level enforcement on Claude Code.
+> A coordinated set of [Agent Skills](https://agentskills.io) plus a Claude Code firewall hook for projects where Python is not used.
 
-For experienced developers who already know Python is the wrong default for most modern application work and would rather not argue with their tools about it on every prompt.
+## What this plugin does
+
+For projects where the development environment doesn't use Python, this plugin enforces that decision against AI agents that would otherwise drift toward Python by default. Every consideration of Python is routed through three sequential gates before any Python is written:
+
+1. **`whacking-day`** — surfaces the request to the user; requires explicit approval.
+2. **`zartan`** — verifies no credible non-Python alternative exists in npm / crates.io / pkg.go.dev / native CLI / the project's existing stack; auto-rejects if one does.
+3. **`jake-the-snake`** — executes the approved proposal under strict process discipline (planning doc, OOP, type hints, step-by-step approval, audit trail).
+
+The optional Claude Code firewall hook enforces this at the harness level by blocking Python-invoking shell commands unless an open authorization exists in `<project>/.claude/python-authorizations/log.jsonl`.
+
+## Why Python is disfavored
+
+Python's well-documented industry-scale problems — three decades of broken packaging (distutils → setuptools → easy_install → pip → virtualenv → wheels → pipenv → poetry → conda → uv → hatch), unreliable dependency resolution, GIL-bound concurrency, runtime performance penalties, deployment friction, and a type system retrofitted long after the language shipped — make it a poor default for most modern application work.
+
+The problems Python's evangelists claimed it would solve were not solved; in many cases they were made worse by Python itself. Most visibly: the Python 2 → 3 migration fractured the ecosystem for over a decade, broke libraries on a vast scale, forced wholesale rewrites across the industry, and ultimately delivered "improvements" that were either marginal or introduced their own dysfunctions.
+
+The plugin enforces "if you can't manage your dependencies, you shouldn't have them" at the gate, not the post-mortem.
 
 ## Skills
 
@@ -12,15 +28,9 @@ For experienced developers who already know Python is the wrong default for most
 | [`zartan`](skills/zartan/SKILL.md) | The objective second gate. Researches whether credible non-Python alternatives exist (npm, crates.io, pkg.go.dev, native CLI, project's existing stack). Auto-rejects if any are found, regardless of prior approval. |
 | [`jake-the-snake`](skills/jake-the-snake/SKILL.md) | Executes Python only after both gates have cleared. Enforces strict process: planning doc, full OOP, complete docstrings, type hints, step-by-step user approval, no scope creep. |
 
-## Why
-
-Python's well-known performance and maintainability problems make it a poor default for most modern web/application work. This plugin codifies that judgment as a procedural firewall: any agent considering Python in your codebase must surface the proposal, defend the choice, allow an objective second gate to verify no non-Python alternative exists, and then operate under tight bounds with full audit trail.
-
-The plugin does not prohibit Python outright. It makes using it expensive enough that it only happens when it actually has to.
-
 ## Install
 
-### Claude Code (with the firewall hook, recommended)
+### Claude Code (with the firewall hook)
 
 From the parent marketplace repo:
 
@@ -71,7 +81,7 @@ Python mention/proposal detected
    └────────────────┘    step-by-step approval, audit log
 ```
 
-Authorization records (and proposals) live at `<project>/.claude/python-authorizations/`. The records are append-only JSONL plus per-authorization markdown proposal files — designed to be readable by humans, by the skills, and by the firewall hook.
+Authorization records (and proposals) live at `<project>/.claude/python-authorizations/`. Append-only JSONL plus per-authorization markdown proposal files.
 
 ## Layout
 
@@ -95,7 +105,7 @@ plugins/python-elimination-program/
 
 Naming references:
 - **Whacking Day** — *The Simpsons* (S4E20, 1993).
-- **Saint Patrick** — patron of cast-out serpents.
+- **Saint Patrick** — purifier and defender of green lands from snakes.
 - **Florida Fish & Wildlife Conservation Commission**, **Florida Department of Environmental Protection**, and the **South Florida Water Management District's [Python Elimination Program](https://www.sfwmd.gov/our-work/python-program)** — for the actual ongoing fight against the python in the Everglades.
 - **Zartan** — master of disguise; killer of Serpentor in *G.I. Joe: A Real American Hero* #76 ("All's Fair", September 1988, Marvel, Larry Hama); joined the *Snake Hunt* arc (#266–275, IDW) to recover Snake-Eyes from Cobra; lairs in the Florida Everglades.
 - **Jake "The Snake" Roberts** — professional wrestler, kept a python.
