@@ -1,0 +1,8 @@
+{
+  "name": "did-you-rtfm",
+  "description": "An Agent Skill plus two Claude Code firewall hooks that interrupt the agent's pivot reflex on errors during user-authorized implementation work. The skill forces version verification, version-specific authoritative documentation review, assumption verification, sanity-checking against stale training-data, and minimal-repro construction before any user-facing 'blocker' claim or any unauthorized plan change. The Stop / SubagentStop hook scans assistant text after each turn for high-precision pivot-language phrases (pattern set tuned against ~62k lines of real transcripts) and blocks the stop with a structured RTFM reminder when matched. The PreToolUse hook denies Bash invocations containing bypass-flag shapes (--no-verify, --force, --skip-*, --allow-*, --ignore-*) or TTY-faking workarounds (script -qc, expect, echo|sudo -S). Plan changes are the user's decision (product owner, engineering lead, ultimate authority); the agent presents evidence and waits.",
+  "author": {
+    "name": "Brett Whitty",
+    "email": "brett@gnomatix.com"
+  }
+}

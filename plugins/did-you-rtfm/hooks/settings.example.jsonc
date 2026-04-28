@@ -1,0 +1,48 @@
+// Example settings.json snippet for manual install of did-you-rtfm hooks
+// (when not using the Claude Code marketplace plugin mechanism).
+//
+// Merge the "hooks" block below into either:
+//   ~/.claude/settings.json            — applies in every project
+//   <project>/.claude/settings.local.json   — applies only in that project
+//
+// Assumes you have copied did-you-rtfm-stop.js and did-you-rtfm-bypass.js into
+// ~/.claude/hooks/ (see ../README.md "Manual Claude Code install").
+
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ~/.claude/hooks/did-you-rtfm-stop.js",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ~/.claude/hooks/did-you-rtfm-stop.js",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ~/.claude/hooks/did-you-rtfm-bypass.js",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

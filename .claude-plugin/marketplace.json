@@ -18,6 +18,12 @@
       "description": "Agent Skill that forces the agent, the moment it recognizes it is engaged in development work, to externalize its default biases (assumptions about the user, preferences, goals, failure modes, trust model, etc.) as 16 immutable per-session documentation files, and proactively log every bias enactment against those documented items by stable ID, before execution. Designed to make hidden agent defaults visible to paying users so they can correct them rather than be silently harmed by them.",
       "category": "development",
       "source": "./plugins/open-and-honest-agent"
+    },
+    {
+      "name": "did-you-rtfm",
+      "description": "Agent Skill plus two Claude Code firewall hooks that interrupt the agent's pivot reflex on errors during user-authorized implementation work. The skill forces version-checking, RTFMing the version-specific authoritative docs, assumption verification, sanity-checking against stale training-data, and minimal-repro construction before any 'blocker' claim or unauthorized plan change. The Stop / SubagentStop hook scans assistant text for high-precision pivot-language phrases (pattern set tuned against ~62k lines of real transcripts; ~3.8x correlation between pivot-emission count and user-frustration-swear rate per session) and blocks the stop with a structured RTFM reminder when matched. The PreToolUse hook denies Bash invocations containing bypass-flag shapes (--no-verify, --force, --skip-*, --allow-*, --ignore-*) or TTY-faking workarounds (script -qc, expect, echo|sudo -S). Plan changes are the user's decision; the agent presents evidence and waits.",
+      "category": "development",
+      "source": "./plugins/did-you-rtfm"
     }
   ]
 }
