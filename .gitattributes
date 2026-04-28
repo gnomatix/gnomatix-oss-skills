@@ -1,0 +1,10 @@
+# git-crypt — encrypt sensitive in-development materials.
+#
+# Anything under `dev/` is treated as private and encrypted on stage; only the
+# project owner's GPG key (registered via `git-crypt add-gpg-user`) can decrypt.
+#
+# `dev/README.md` is exempted so the public repo can show a plaintext note
+# explaining why the directory is otherwise opaque.
+
+dev/** filter=git-crypt diff=git-crypt
+dev/README.md !filter !diff
