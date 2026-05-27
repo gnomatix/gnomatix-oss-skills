@@ -2,14 +2,37 @@
 
 !["Kids, if somebody offers you VENVS… Just say NO."](assets/images/pep-banner.png "If you can't manage your dependencies, you shouldn't have them.")
 
+<!-- BEGIN: gnomatix-promo-include -->
+<p>
+  <a href="https://www.buymeacoffee.com/gnomatix">
+    <img src="https://img.buymeacoffee.com/button-api/?text=Buy+me+a+coffee&emoji=&slug=gnomatix&button_colour=BD5FFF&font_colour=ffffff&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00" alt="Buy Me A Coffee — gnomatix">
+  </a>
+</p>
+
+<!-- For JS-rendering contexts (the BMC-supplied script tag, preserved as authored):
+<script type="text/javascript"
+  src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js"
+  data-name="bmc-button"
+  data-slug="gnomatix"
+  data-color="#BD5FFF"
+  data-emoji=""
+  data-font="Cookie"
+  data-text="Buy me a coffee"
+  data-outline-color="#000000"
+  data-font-color="#ffffff"
+  data-coffee-color="#FFDD00"></script>
+-->
+<!-- END: gnomatix-promo-include -->
+
 A collection of [Agent Skills](https://agentskills.io) and Claude Code plugins from GNOMATIX. This repo doubles as a Claude Code marketplace, so a single `/plugin marketplace add` covers every plugin housed here.
 
 ## Plugins
 
 | Plugin                                                                                          | Description                                                                                                                                                                                                                                                           |
 | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`python-elimination-program`](plugins/python-elimination-program/) | Three coordinated skills + `PreToolUse` firewall hook that prevent AI agents from defaulting to Python in projects where Python is a liability.                                                                                                                       |
+| [`python-elimination-program`](plugins/python-elimination-program/) | Four coordinated skills (`whacking-day`, `zartan`, `jake-the-snake`, `old-willy`) + a `PreToolUse` firewall hook that prevent AI agents from defaulting to Python in projects where Python is a liability. The three sequential gates control *whether* Python is written; `old-willy` is the merit-rigor test that any "Python is the best tool" claim must survive. |
 | [`open-and-honest-agent`](plugins/open-and-honest-agent/)                                       | Agent Skill that forces the agent to externalize its default biases (assumptions, preferences, goals, failure modes, trust model, etc.) as immutable per-session documentation, and log every bias enactment against those documented items proactively by stable ID. |
+| [`did-you-rtfm`](plugins/did-you-rtfm/)                                                         | **"Did You READ THE F%CKING MANUAL?!?"** — the senior engineer's automatic response when a junior reports back having quietly switched to a different framework because "the recommended one didn't work." It's the software-engineering middle-management equivalent of *"have you tried turning it off and on again?"* — the canonical first-line diagnostic question that screens out the overwhelming majority of "blocker" reports before anyone wastes real time on them. Turned into an enforceable Agent Skill, because AI agents are doing the *exact same thing the junior was doing*. Your AI agent is supposed to *engineer through* implementation errors. The default behavior, instead, is **pathological**. The moment something errors, returns the wrong output, or doesn't immediately match the agent's expectation, the agent reaches reflexively for a pivot: invents reasons the work can't be done as planned ("this library doesn't appear to support…", "this isn't really the right tool for…", "this seems to have been deprecated…"), declares an item infeasible without ever testing the claim, silently substitutes a different library or approach, scopes the agreed feature down to "a simpler version for now," wraps the failure in a `try/except` to make it disappear from view, inserts a fallback that hides the broken path, edits the failing assertion instead of the broken code, or just stops with "this won't work because…" — with the rest of the sentence invented from stale training data, a misremembered flag, or a hallucinated API. Each of these is then dressed up as competent, decisive helpfulness. The plan you authored and approved gets renegotiated unilaterally; the broken thing ships behind the cover-up; you find out later, if ever. `did-you-rtfm` refuses that reflex. The moment any of it starts, the agent has to stop, version-check every component actually in use, read the version-specific authoritative docs (manual, README, INSTALL, CHANGELOG, official reference, installed source — *not* forum posts or training-data recall), verify its input/output/environment assumptions by direct observation, sanity-check that no stale training-data is in play, and construct a minimal repro proving the problem is real — *before* any "blocker" claim and before any unauthorized plan change. Plan changes belong to you. The agent presents evidence and waits. **This is empirically grounded:** a scan of ~356 of the author's own AI-coding sessions across 4 CLIs and 9 model variants found that sessions where the agent uses pivot language carry **~3.8× the user-frustration-swear rate** of sessions where it doesn't — and the currently-shipping flagship (`claude-opus-4-7`) emits pivot language at **~4.5× the rate of its predecessor**. The skill is portable across any cross-CLI Agent Skills runtime. Two optional Claude Code hooks add harness-level enforcement: one catches pivot language as the turn ends and routes the agent back into the discipline; the other blocks the bypass flags and TTY-faking tricks agents reach for when cornered (`--force`, `--no-verify`, `--skip-*`, `script -qc`, `expect`, `echo \| sudo -S`, etc.). |
 
 Future plugins drop in as siblings under `plugins/`. Each plugin is self-contained — its own manifest, skills, hooks, and README — so plugins can be lifted into their own repos later without surgery.
 
@@ -58,17 +81,31 @@ Hooks are not part of the cross-CLI standard, so the optional firewall hooks shi
 ├── README.md
 ├── .gitignore
 └── plugins/                      # one self-contained subdir per plugin
-    └── python-elimination-program/
+    ├── python-elimination-program/
+    │   ├── .claude-plugin/
+    │   │   └── plugin.json
+    │   ├── README.md
+    │   ├── skills/                # cross-CLI Agent Skills
+    │   │   └── <skill-name>/SKILL.md
+    │   └── hooks/                 # Claude-Code-only
+    │       ├── hooks.json
+    │       ├── whacking-day-firewall.js
+    │       ├── settings.example.jsonc
+    │       └── README.md
+    ├── open-and-honest-agent/
+    │   ├── .claude-plugin/
+    │   │   └── plugin.json
+    │   ├── README.md
+    │   └── skills/
+    │       └── open-and-honest-agent/SKILL.md
+    └── did-you-rtfm/
         ├── .claude-plugin/
         │   └── plugin.json
         ├── README.md
-        ├── skills/                # cross-CLI Agent Skills
-        │   └── <skill-name>/SKILL.md
+        ├── skills/
+        │   └── did-you-rtfm/SKILL.md
         └── hooks/                 # Claude-Code-only
-            ├── hooks.json
-            ├── whacking-day-firewall.js
-            ├── settings.example.jsonc
-            └── README.md
+            └── ...
 ```
 
 ## Adding a new plugin
@@ -78,9 +115,25 @@ Hooks are not part of the cross-CLI standard, so the optional firewall hooks shi
 
 No file collisions with existing plugins; each plugin's `skills/` and `hooks/` are scoped to its own directory.
 
-## 📝 License
+<!-- BEGIN: gnomatix-license-include -->
+## License
 
-Each plugin includes (or should include) its own `LICENSE` file. A repo-wide `LICENSE` may also live at the root if all plugins share licensing.
+**Business Source License 1.1** (BUSL-1.1) — *source-available, not OSI open source*.
+
+The *Additional Use Grant* — the only free-use carve-out — covers:
+
+- **Individual scientists and researchers in the natural sciences, mathematics, engineering, and computer science**, for personal, academic, or non-commercial scientific research use. Social sciences and humanities are *not* covered.
+- **Researchers funded by the U.S. NIH (excluding NIAID), NSF, or USDA**, in the course of that funded research. NIAID-funded researchers, other government employees, and other government-funded researchers are *not* covered.
+- **Minors** (individuals under the age of 18, or the local age of majority where lower) — any non-commercial personal use.
+
+**All other use requires a commercial license.** This includes any commercial use; organizational, team, or production use; integration into a commercial product; internal use within a for-profit entity; government use outside the NIH-non-NIAID / NSF / USDA carve-out above; NIAID-funded research; social-science or humanities research use; and any adult individual use that is not personal/academic research in the covered disciplines.
+
+Contact [`sales@gnomatix.com`](mailto:sales@gnomatix.com) or reach out via [LinkedIn](https://www.linkedin.com/company/gnomatix) for commercial licensing. General product support: [`support@gnomatix.com`](mailto:support@gnomatix.com).
+
+On the *Change Date* defined in the LICENSE, this code converts automatically to the *Change License* (an OSI-approved open source license) at no further cost to anyone.
+
+See [`LICENSE`](LICENSE) for the full text, including the exact *Additional Use Grant* wording, the covered-disciplines definition, the agency-specific carve-outs and exclusions, the minor-use carve-out, the *Change Date*, and the *Change License* parameters.
+<!-- END: gnomatix-license-include -->
 
 ![GNOMATIX "TEAM"](assets/images/gnomatix-killbots-activate-xs.png)
 ![GNOMATIX LOGO](assets/images/gnomatix-new-xs.png "GNOMATIX")
