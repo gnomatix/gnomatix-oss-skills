@@ -25,3 +25,6 @@ venv/
 scratch/
 tmp/
 .bak/
+
+# Per-machine Claude Code overrides (not for public repo)
+.claude/settings.local.json
