@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// did-you-rtfm-bypass — PreToolUse hook on Bash / PowerShell
+// did-you-rtfm-user-reviewed-trigger-confirmation — PreToolUse hook on Bash / PowerShell
 //
-// Denies tool invocations that contain bypass-flag or signal-suppression shapes
+// Flags tool invocations that contain signal-suppression shapes for user-reviewed trigger confirmation
 // — patterns whose effect is to silence the signal a real failure produced
 // rather than to address its cause. Routes the agent back to the
 // `did-you-rtfm` skill discipline.
@@ -14,8 +14,8 @@
 // Hook contract: read JSON from stdin; write a JSON decision to stdout.
 // Returning `permissionDecision: "deny"` blocks the tool call.
 
-const BYPASS_PATTERNS = [
-  // ── Bypass flags whose role is to silence a check / verification / refusal ──
+const TRIGGER_PATTERNS = [
+  // ── Signal-suppression patterns whose role is to silence a check / verification / refusal ──
   { name: '--no-verify',
     re: /(?<![A-Za-z0-9_-])--no-verify\b/ },
   { name: '--force flag',
@@ -62,24 +62,11 @@ function deny(matchName, command) {
       hookEventName: 'PreToolUse',
       permissionDecision: 'deny',
       permissionDecisionReason:
-        `did-you-rtfm-bypass: command contains a bypass / signal-suppression shape ` +
-        `(${matchName}) that this hook treats as a workaround pending explicit ` +
-        `user authorization.\n\n` +
+        `RTFM trigger matched (${matchName}).\n\n` +
         `Command: ${cmdShown}\n\n` +
-        `Bypass flags exist for cases where the user has accepted the trade-off; ` +
-        `agent-side use without user authorization is a workaround per the ` +
-        `did-you-rtfm skill.\n\n` +
-        `Required: invoke the did-you-rtfm skill.\n` +
-        `  1. Why is the underlying check / validation / verification failing?\n` +
-        `  2. Is the failure caused by a phantom-blocker (stale training-data, ` +
-        `misremembered flag, version conflation, hallucinated parameter)?\n` +
-        `  3. Have you read the version-specific docs for the tool you're invoking ` +
-        `with the bypass flag?\n` +
-        `  4. For interactive-tool workarounds: is there a proper non-interactive ` +
-        `flag you missed (e.g., --batch, --yes, --non-interactive, --no-tty)?\n\n` +
-        `If, after the above, the bypass is genuinely the correct path: surface the ` +
-        `situation to the user with evidence. The user authorizes plan changes — ` +
-        `never the agent.`,
+        `Ask the user with the user-ask tool (AskUserQuestion): "RTFM Trigger is Valid? Yes / No".\n` +
+        `If No (false positive): note the match for future matcher improvement and CONTINUE the work — it is not a blocker and not a reason to stop.\n` +
+        `If Yes: you are operating on a false belief, bad tooling, or an error state you are silently ignoring. Identify it, surface it to the user, and work smarter — do not push the flagged command through.`,
     },
   }));
 }
@@ -96,7 +83,7 @@ function deny(matchName, command) {
   const command = payload.tool_input && payload.tool_input.command;
   if (!command || typeof command !== 'string') return pass();
 
-  for (const { name, re } of BYPASS_PATTERNS) {
+  for (const { name, re } of TRIGGER_PATTERNS) {
     if (re.test(command)) return deny(name, command);
   }
   pass();
