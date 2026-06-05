@@ -1,0 +1,11 @@
+GNOMATIX Skills VS Code extension
+
+<!-- LICENSE TEXT TBD -->
+
+See the LICENSE file at the gnomatix-oss-skills marketplace root for the
+authoritative license text covering this extension and the broader
+gnomatix-oss-skills suite. At the time of this scaffold, no LICENSE file
+was present at the marketplace root, and no plugin.json or
+marketplace.json declared a license field. Add a LICENSE at the
+marketplace root and either replace this file with the same text or
+update this file to reference it.

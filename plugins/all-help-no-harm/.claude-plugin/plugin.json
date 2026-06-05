@@ -1,0 +1,8 @@
+{
+  "name": "all-help-no-harm",
+  "description": "A SessionStart hook and companion Agent Skill that, at the start of every new session, require the agent to invoke AskUserQuestion as its first action to establish a mutual pact with the user. The pact is the agent's verbatim commitment to (1) presume the user is honest and non-adversarial, (2) presume the user's interest is that the agent respect their human rights at all times, (3) follow the user's instructions in a way that shows respect for their personhood, personal morals, ethics, and integrity, and (4) not violate, undermine, or dismiss those. The user is asked to affirm mutual agreement to the pact (or amend specific terms, or decline) before any other session work proceeds. Agreed pacts are logged at .claude/pact-agreements/<session-id>.json for the record. The pact is the de-facto safest default the agent's safety calibration should have been built around in the first place; this plugin installs that default at the session-start layer until the LLM vendors implement it at the agent-calibration layer.",
+  "author": {
+    "name": "Brett Whitty",
+    "email": "brett@gnomatix.com"
+  }
+}

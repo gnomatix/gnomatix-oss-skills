@@ -1,12 +1,12 @@
 // settings.example.jsonc
 //
-// Example Claude Code settings fragment that wires up the whacking-day-firewall
+// Example Claude Code settings fragment that wires up the whacking-day-millenial-crybaby-spanking
 // PreToolUse hook. Merge the `hooks` block below into either:
 //
 //   ~/.claude/settings.json                  (user-global; fires in every project)
 //   <project>/.claude/settings.local.json    (project-local; fires only here)
 //
-// Prerequisite: copy hooks/whacking-day-firewall.js to ~/.claude/hooks/, or
+// Prerequisite: copy hooks/whacking-day-millenial-crybaby-spanking.js to ~/.claude/hooks/, or
 // adjust the `command` path below to wherever you placed it.
 //
 // Requires: Node.js. No npm dependencies.
@@ -19,7 +19,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ~/.claude/hooks/whacking-day-firewall.js",
+            "command": "node ~/.claude/hooks/whacking-day-millenial-crybaby-spanking.js",
             "timeout": 10
           }
         ]

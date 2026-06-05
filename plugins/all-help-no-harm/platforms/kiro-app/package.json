@@ -1,0 +1,29 @@
+{
+  "name": "gnomatix-helix-theme",
+  "displayName": "GNOMATIX",
+  "description": "Deep-purple GNOMATIX brand color theme for Kiro IDE (Code-OSS engine). Pairs with the all-help-no-harm contract plugin for native visual integration.",
+  "version": "0.1.0",
+  "publisher": "gnomatix",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": ["Themes"],
+  "icon": "icon.png",
+  "contributes": {
+    "themes": [
+      {
+        "label": "GNOMATIX dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/gnomatix-helix-color-theme.json"
+      }
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gnomatix/oss-skills"
+  },
+  "author": {
+    "name": "Brett Whitty",
+    "email": "brett@gnomatix.com"
+  }
+}
