@@ -1,5 +1,5 @@
 {
-  "description": "did-you-rtfm hooks — Stop / SubagentStop pivot-language detector + PreToolUse Bash bypass-flag denier. Harness-level enforcement of the did-you-rtfm skill.",
+  "description": "did-you-rtfm hooks — Stop / SubagentStop pivot-language detector + PreToolUse Bash signal-suppression matcher. Harness-level enforcement of the did-you-rtfm skill.",
   "hooks": {
     "Stop": [
       {
@@ -29,7 +29,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/did-you-rtfm-bypass.js",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/did-you-rtfm-user-reviewed-trigger-confirmation.js",
             "timeout": 10
           }
         ]

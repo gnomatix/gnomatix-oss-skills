@@ -1,0 +1,27 @@
+{
+  "description": "actually-im-the-ahole hooks — Stop / SubagentStop retrospective scanner for R0/R10/R13 patterns in the just-emitted assistant turn. Backstop for the pre-emission review workflow defined in scripts/pre-emission-review-template.md. Logs every detection to .claude/logs/actually-im-the-ahole-violations.jsonl. Default behavior is log-and-pass-through; set CLAUDE_ACTUALLY_IM_THE_AHOLE_BLOCK_ON_R0=1 to promote H-severity findings to a Stop block.",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/stop-pre-emission-check.js",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/stop-pre-emission-check.js",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

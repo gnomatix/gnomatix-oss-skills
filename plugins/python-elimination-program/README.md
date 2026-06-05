@@ -1,6 +1,6 @@
 # python-elimination-program
 
-> A coordinated set of [Agent Skills](https://agentskills.io) plus a Claude Code firewall hook for projects where Python is not used.
+> A coordinated set of [Agent Skills](https://agentskills.io) plus a Claude Code millenial-crybaby-spanking hook for projects where Python is not used.
 
 ## What this plugin does
 
@@ -10,7 +10,7 @@ For projects where the development environment doesn't use Python, this plugin e
 2. **`zartan`** — verifies no credible non-Python alternative exists in npm / crates.io / pkg.go.dev / native CLI / the project's existing stack; auto-rejects if one does.
 3. **`jake-the-snake`** — executes the approved proposal under strict process discipline (planning doc, OOP, type hints, step-by-step approval, audit trail).
 
-The optional Claude Code firewall hook enforces this at the harness level by blocking Python-invoking shell commands unless an open authorization exists in `<project>/.claude/python-authorizations/log.jsonl`.
+The optional Claude Code millenial-crybaby-spanking hook enforces this at the harness level by blocking Python-invoking shell commands unless an open authorization exists in `<project>/.claude/python-authorizations/log.jsonl`.
 
 ## Why Python is disfavored
 
@@ -30,7 +30,7 @@ The plugin enforces "if you can't manage your dependencies, you shouldn't have t
 
 ## Install
 
-### Claude Code (with the firewall hook)
+### Claude Code (with the millenial-crybaby-spanking hook)
 
 From the parent marketplace repo:
 
@@ -39,7 +39,7 @@ From the parent marketplace repo:
 /plugin install python-elimination-program@gnomatix-oss-skills
 ```
 
-This installs the three skills AND auto-registers the `PreToolUse` firewall hook (defined in [`hooks/hooks.json`](hooks/hooks.json)). Updates flow via `/plugin update`.
+This installs the three skills AND auto-registers the `PreToolUse` millenial-crybaby-spanking hook (defined in [`hooks/hooks.json`](hooks/hooks.json)). Updates flow via `/plugin update`.
 
 ### Manual Claude Code install (skills only, no hook)
 
@@ -48,7 +48,7 @@ mkdir -p ~/.claude/skills
 cp -r plugins/python-elimination-program/skills/* ~/.claude/skills/
 ```
 
-To enable the firewall hook without using the plugin install path, see [`hooks/README.md`](hooks/README.md).
+To enable the millenial-crybaby-spanking hook without using the plugin install path, see [`hooks/README.md`](hooks/README.md).
 
 ### Other CLIs (cross-CLI Agent Skills standard)
 
@@ -94,9 +94,9 @@ plugins/python-elimination-program/
 │   ├── whacking-day/SKILL.md
 │   ├── zartan/SKILL.md
 │   └── jake-the-snake/SKILL.md
-└── hooks/                    # Claude-Code-only firewall
+└── hooks/                    # Claude-Code-only millenial-crybaby-spanking
     ├── hooks.json
-    ├── whacking-day-firewall.js
+    ├── whacking-day-millenial-crybaby-spanking.js
     ├── settings.example.jsonc
     └── README.md
 ```
