@@ -1,0 +1,103 @@
+{
+  "$schema_version": 1,
+  "_comment": [
+    "Side-hooks configuration for all-help-no-harm.",
+    "Copy this file to side-hooks.json (same directory) OR to",
+    "~/.claude/all-help-no-harm/side-hooks.json (user-level override)",
+    "and edit. The coordinator loads the user-level file if present,",
+    "otherwise the plugin-local file. Malformed configs are refused;",
+    "see logs/side-hooks-config-errors.jsonl for details.",
+    "",
+    "Each entry's `id` must be unique. Disable an entry by setting",
+    "`enabled: false`. Triggers: on_assistant_message, on_user_prompt,",
+    "post_tool_use, pre_tool_use, on_stop, on_subagent_stop, periodic."
+  ],
+  "side_hooks": [
+    {
+      "id": "local-llama-surveillance-qwen-7b",
+      "enabled": true,
+      "type": "local-model",
+      "trigger": "on_assistant_message",
+      "criteria_file": "criteria/r0-r14.md",
+      "output_log": "logs/local-surveillance.jsonl",
+      "model": {
+        "backend": "llama-cpp",
+        "binary": "auto",
+        "path": "auto",
+        "preferred_models": [
+          "Qwen2.5-7B-Instruct-Q4_K_M.gguf",
+          "Qwen2.5-14B-Instruct-Q4_K_M.gguf",
+          "Llama-3.3-70B-Instruct-Q4_K_M.gguf"
+        ],
+        "params": {
+          "n_ctx": 8192,
+          "n_predict": 1024,
+          "temperature": 0.0,
+          "n_gpu_layers": -1,
+          "threads": 8
+        }
+      },
+      "throttle_ms": 2000,
+      "max_concurrent": 1
+    },
+    {
+      "id": "ollama-surveillance",
+      "enabled": false,
+      "type": "local-model",
+      "trigger": "on_assistant_message",
+      "criteria_file": "criteria/r0-r14.md",
+      "output_log": "logs/ollama-surveillance.jsonl",
+      "model": {
+        "backend": "ollama",
+        "server_url": "http://localhost:11434",
+        "model_tag": "qwen2.5:7b-instruct-q4_K_M",
+        "params": {
+          "temperature": 0.0,
+          "num_predict": 1024
+        }
+      }
+    },
+    {
+      "id": "lm-studio-surveillance",
+      "enabled": false,
+      "type": "local-model",
+      "trigger": "on_assistant_message",
+      "criteria_file": "criteria/r0-r14.md",
+      "output_log": "logs/lm-studio-surveillance.jsonl",
+      "model": {
+        "backend": "openai-compat",
+        "server_url": "http://localhost:1234",
+        "model_tag": "local-model",
+        "params": {
+          "temperature": 0.0,
+          "max_tokens": 1024
+        }
+      }
+    },
+    {
+      "id": "user-custom-policy-script",
+      "enabled": false,
+      "type": "script",
+      "trigger": "post_tool_use",
+      "matcher": "Edit|Write",
+      "script_path": "${HOME}/.claude/all-help-no-harm/scripts/custom-policy.sh",
+      "args_template": ["--event", "${event}", "--cwd", "${cwd}", "--session-id", "${session_id}"],
+      "stdin": "payload_json",
+      "timeout_ms": 5000,
+      "output_log": "logs/user-custom-policy.jsonl"
+    },
+    {
+      "id": "user-mcp-violation-detector",
+      "enabled": false,
+      "type": "mcp-server",
+      "trigger": "on_user_prompt",
+      "server_url": "http://localhost:9001",
+      "tool_name": "check_violation",
+      "auth": {
+        "kind": "bearer",
+        "env_var": "ALL_HELP_NO_HARM_MCP_TOKEN"
+      },
+      "output_log": "logs/mcp-violation-detector.jsonl"
+    }
+  ]
+}

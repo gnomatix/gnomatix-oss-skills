@@ -68,12 +68,26 @@ function pass() {
   process.stdout.write('{}');
 }
 
-function block(matchedNames, snippet) {
+function block(matchedNames, snippet, payload) {
+  const triggerData = {
+    timestamp: new Date().toISOString(),
+    session_id: payload && payload.session_id ? payload.session_id : null,
+    transcript_path: payload && payload.transcript_path ? payload.transcript_path : null,
+    matched_patterns: matchedNames,
+    snippet,
+  };
   const reason =
     `did-you-rtfm trigger: pivot-language detected in your last response.\n\n` +
     `Matched: ${matchedNames.map(n => '`' + n + '`').join(', ')}\n` +
     `Excerpt: "${snippet}"\n\n` +
-    `Before continuing, invoke the \`did-you-rtfm\` skill. Specifically:\n` +
+    `**Step 0 — User confirmation (temporary data-collection step for hook improvement)**\n\n` +
+    `Before invoking the RTFM discipline, present this trigger to the user via AskUserQuestion. Two options:\n` +
+    `  - "Confirm pivot" — proceed to the RTFM steps below\n` +
+    `  - "False positive" — append the trigger data to the false-positive log and continue without interruption\n\n` +
+    `Trigger data (use verbatim when logging a false positive):\n` +
+    '```json\n' + JSON.stringify(triggerData, null, 2) + '\n```\n\n' +
+    `On false-positive flag: append the trigger data as one JSON line to \`~/.claude/did-you-rtfm/false-positives.jsonl\` (create the directory if missing, using \`fs.mkdirSync(dir, { recursive: true })\`). Then continue the original task without entering the RTFM workflow.\n\n` +
+    `On confirm-pivot: invoke the \`did-you-rtfm\` skill and answer these:\n` +
     `  1. Did you version-check the tool / library / API in question?\n` +
     `  2. Did you read the version-specific authoritative documentation (manual, README, INSTALL, CHANGELOG, official reference, installed source)?\n` +
     `  3. Did you verify input / output / environment assumptions by direct observation?\n` +
@@ -114,5 +128,5 @@ function block(matchedNames, snippet) {
   }
 
   if (matched.length === 0) return pass();
-  block(matched, snippet);
+  block(matched, snippet, payload);
 })();

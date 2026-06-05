@@ -1,0 +1,23 @@
+{
+  "_comment": "Merge these keys into your Kiro IDE user settings.json (Command Palette -> 'Preferences: Open User Settings (JSON)'). They apply the GNOMATIX brand palette directly via workbench.colorCustomizations without installing the theme extension, useful for users who want to override their existing favorite theme just for the GNOMATIX brand accents (status bar, activity bar badge, focus border).",
+
+  "workbench.colorCustomizations": {
+    "statusBar.background": "#5b2e8f",
+    "statusBar.foreground": "#f0e6ff",
+    "statusBar.noFolderBackground": "#3d2659",
+    "statusBar.debuggingBackground": "#7e3fbf",
+    "statusBarItem.hoverBackground": "#7e3fbf",
+    "statusBarItem.prominentBackground": "#7e3fbf",
+    "statusBarItem.prominentHoverBackground": "#a566e8",
+    "activityBarBadge.background": "#5b2e8f",
+    "activityBarBadge.foreground": "#f0e6ff",
+    "badge.background": "#5b2e8f",
+    "badge.foreground": "#f0e6ff",
+    "focusBorder": "#5b2e8f",
+    "button.background": "#5b2e8f",
+    "button.foreground": "#f0e6ff",
+    "button.hoverBackground": "#7e3fbf",
+    "progressBar.background": "#7e3fbf",
+    "tab.activeBorderTop": "#5b2e8f"
+  }
+}

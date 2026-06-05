@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--
+  GNOMATIX branding (do not break):
+    - GNOMATIX = γνῶσις (gnosis) + automatic = "automatic knowledge"
+    - Wordmark X is a DNA double helix
+    - Wordmark O carries Rosalind Franklin's Photo 51 (1952 B-DNA X-ray)
+-->
+<meta http-equiv="Content-Security-Policy"
+  content="default-src 'none'; img-src {{CSP_SOURCE}} https: data:; style-src {{CSP_SOURCE}} 'unsafe-inline'; script-src 'nonce-{{NONCE}}'; font-src {{CSP_SOURCE}};">
+<title>GNOMATIX Skills — Configuration</title>
+<style>{{INLINE_CSS}}</style>
+</head>
+<body>
+  <div class="layout">
+    <header class="brand-header">
+      <img class="wordmark" src="{{WORDMARK_URI}}"
+           alt="GNOMATIX — gnosis (γνῶσις) + automatic; X is a DNA double helix, O carries Photo 51">
+      <div class="brand-text">
+        <h1>GNOMATIX Skills</h1>
+        <p class="subtitle">Configuration panel — automatic knowledge for AI safety contracts</p>
+      </div>
+      <img class="helix-watermark" src="{{HELIX_URI}}" alt="" aria-hidden="true">
+    </header>
+
+    <div class="main">
+      <nav class="sidebar" role="tablist" aria-label="Configuration sections">
+        <button class="tab-button active" role="tab" data-tab="skills" aria-selected="true">
+          <span class="tab-icon" aria-hidden="true">&#10070;</span>
+          Skills
+        </button>
+        <button class="tab-button" role="tab" data-tab="hooks" aria-selected="false">
+          <span class="tab-icon" aria-hidden="true">&#9874;</span>
+          Hooks
+        </button>
+        <button class="tab-button" role="tab" data-tab="sidehooks" aria-selected="false">
+          <span class="tab-icon" aria-hidden="true">&#8635;</span>
+          Side-hooks
+        </button>
+        <button class="tab-button" role="tab" data-tab="vendors" aria-selected="false">
+          <span class="tab-icon" aria-hidden="true">&#128218;</span>
+          Vendor Docs
+        </button>
+        <button class="tab-button" role="tab" data-tab="models" aria-selected="false">
+          <span class="tab-icon" aria-hidden="true">&#129504;</span>
+          Local Models
+        </button>
+        <button class="tab-button" role="tab" data-tab="settings" aria-selected="false">
+          <span class="tab-icon" aria-hidden="true">&#9881;</span>
+          Settings
+        </button>
+        <button class="tab-button" role="tab" data-tab="about" aria-selected="false">
+          <span class="tab-icon" aria-hidden="true">&#9432;</span>
+          About
+        </button>
+      </nav>
+
+      <main class="content">
+        <!-- Toast / status -->
+        <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+        <!-- SKILLS TAB -->
+        <section class="tab-panel active" id="tab-skills" role="tabpanel">
+          <div class="panel-header">
+            <h2>Installed Skills</h2>
+            <button class="btn btn-secondary" id="refresh-skills">Refresh</button>
+          </div>
+          <p class="panel-help">
+            Per-skill enable/disable. Toggles are advisory at the UI layer; the runtime gate
+            is enforced by each skill's own contract. Click <em>SKILL.md</em> or
+            <em>contract.md</em> to open the source.
+          </p>
+          <div id="skills-list" class="card-list">
+            <p class="empty">Loading skills&hellip;</p>
+          </div>
+        </section>
+
+        <!-- HOOKS TAB -->
+        <section class="tab-panel" id="tab-hooks" role="tabpanel">
+          <div class="panel-header">
+            <h2>Plugin Hooks</h2>
+          </div>
+          <p class="panel-help">
+            Hooks registered by installed plugins (PreToolUse, PostCompact, SessionStart, Stop, etc.).
+            Disabling a hook writes a sidecar <code>gnomatix-overrides.json</code> next to the
+            plugin's <code>hooks.json</code>; the upstream file is not modified.
+          </p>
+          <div id="hooks-list" class="card-list">
+            <p class="empty">Loading hooks&hellip;</p>
+          </div>
+        </section>
+
+        <!-- SIDE-HOOKS TAB -->
+        <section class="tab-panel" id="tab-sidehooks" role="tabpanel">
+          <div class="panel-header">
+            <h2>Side-hooks</h2>
+            <button class="btn btn-primary" id="add-sidehook">+ Add side-hook</button>
+          </div>
+          <p class="panel-help">
+            Configured side-hooks (local-model surveillance, criteria-file checks, MCP servers).
+            Storage: <code id="sidehooks-path">&hellip;</code>.
+            Writes are atomic (temp file + rename).
+          </p>
+          <div id="sidehooks-list" class="card-list">
+            <p class="empty">Loading side-hooks&hellip;</p>
+          </div>
+
+          <!-- Add-sidehook form, hidden until activated -->
+          <div id="sidehook-form" class="form-card hidden" role="dialog" aria-labelledby="sidehook-form-title">
+            <h3 id="sidehook-form-title">New side-hook</h3>
+            <label>
+              ID
+              <input type="text" id="sh-id" placeholder="my-sidehook-id">
+            </label>
+            <label>
+              Type
+              <select id="sh-type">
+                <option value="local-model">local-model</option>
+                <option value="script">script</option>
+                <option value="mcp-server">mcp-server</option>
+              </select>
+            </label>
+            <label>
+              Trigger
+              <select id="sh-trigger">
+                <option value="PreToolUse">PreToolUse</option>
+                <option value="PostToolUse">PostToolUse</option>
+                <option value="SessionStart">SessionStart</option>
+                <option value="Stop">Stop</option>
+                <option value="UserPromptSubmit">UserPromptSubmit</option>
+              </select>
+            </label>
+            <label>
+              Model (path or name)
+              <input type="text" id="sh-model" placeholder="/path/to/model.gguf">
+            </label>
+            <label>
+              Criteria file
+              <input type="text" id="sh-criteria" placeholder="/path/to/criteria.md">
+            </label>
+            <label class="inline">
+              <span class="switch">
+                <input type="checkbox" id="sh-enabled" role="switch" checked>
+                <span class="slider" aria-hidden="true"></span>
+              </span>
+              Enabled
+            </label>
+            <div class="form-actions">
+              <button class="btn btn-secondary" id="sh-cancel">Cancel</button>
+              <button class="btn btn-primary" id="sh-save">Save</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- VENDOR DOCS TAB -->
+        <section class="tab-panel" id="tab-vendors" role="tabpanel">
+          <div class="panel-header">
+            <h2>Vendor Documentation</h2>
+            <button class="btn btn-primary" id="refresh-vendor-docs">Refresh now</button>
+          </div>
+          <p class="panel-help">
+            Bundled vendor documentation freshness. Drift detection compares bundled SHA-256
+            hashes against the live vendor source. Refresh runs
+            <code>plugins/all-help-no-harm/scripts/refresh-vendor-docs.js</code>.
+          </p>
+          <div id="vendors-list" class="card-list">
+            <p class="empty">Loading vendors&hellip;</p>
+          </div>
+        </section>
+
+        <!-- LOCAL MODELS TAB -->
+        <section class="tab-panel" id="tab-models" role="tabpanel">
+          <div class="panel-header">
+            <h2>Local Models</h2>
+          </div>
+          <p class="panel-help">
+            Cached output of <code>detect-local-models.js</code>: available backends, model
+            files, GPU/CPU/Vulkan availability, and recommended model for surveillance hooks.
+          </p>
+          <div id="models-list" class="card-list">
+            <p class="empty">Loading local-models report&hellip;</p>
+          </div>
+        </section>
+
+        <!-- SETTINGS TAB -->
+        <section class="tab-panel" id="tab-settings" role="tabpanel">
+          <div class="panel-header">
+            <h2>Extension Settings</h2>
+          </div>
+          <p class="panel-help">
+            These values are stored in your VS Code user <code>settings.json</code> under
+            the <code>gnomatix.*</code> namespace. Changes save immediately.
+          </p>
+          <div class="form-card">
+            <label>
+              Marketplace root
+              <input type="text" data-setting="gnomatix.marketplaceRoot" placeholder="(auto-detected)">
+            </label>
+            <label>
+              Side-hook config path
+              <input type="text" data-setting="gnomatix.sideHookConfigPath" placeholder="$HOME/.claude/side-hooks.json">
+            </label>
+            <label>
+              Local model path
+              <input type="text" data-setting="gnomatix.localModelPath" placeholder="/path/to/model.gguf">
+            </label>
+            <label>
+              Custom criteria file path
+              <input type="text" data-setting="gnomatix.customCriteriaFilePath" placeholder="/path/to/criteria.md">
+            </label>
+            <label>
+              Log directory
+              <input type="text" data-setting="gnomatix.logDirectory" placeholder="$WORKSPACE/.claude/logs">
+            </label>
+            <label>
+              Contract enforcement
+              <select data-setting="gnomatix.contract.enforcement">
+                <option value="off">off — no checks</option>
+                <option value="advisory">advisory — log only</option>
+                <option value="strict">strict — block on H-severity</option>
+              </select>
+            </label>
+            <label class="inline">
+              <span class="switch">
+                <input type="checkbox" data-setting="gnomatix.statusBar.enabled" role="switch">
+                <span class="slider" aria-hidden="true"></span>
+              </span>
+              Show status bar item
+            </label>
+          </div>
+        </section>
+
+        <!-- ABOUT TAB -->
+        <section class="tab-panel" id="tab-about" role="tabpanel">
+          <div class="about-hero">
+            <img class="wordmark" src="{{WORDMARK_URI}}" alt="GNOMATIX wordmark">
+            <p class="subtitle">
+              <strong>GNOMATIX</strong> = <em>γνῶσις</em> (gnosis) + <em>matic</em> (automatic)
+              &mdash; automatic knowledge.
+            </p>
+            <p>
+              The wordmark&rsquo;s stylized <strong>X</strong> is a DNA double helix.
+              The <strong>O</strong> carries Rosalind Franklin&rsquo;s
+              <a href="https://en.wikipedia.org/wiki/Photo_51" target="_blank" rel="noopener">Photo 51</a>
+              &mdash; the 1952 X-ray diffraction image that revealed B-DNA&rsquo;s double-helix structure.
+            </p>
+          </div>
+          <section class="about-section">
+            <h3>Connect</h3>
+            <p>
+              <a class="btn btn-primary" href="{{LINKEDIN_URL}}" target="_blank" rel="noopener">
+                GNOMATIX on LinkedIn
+              </a>
+              <a class="btn btn-secondary" href="https://www.buymeacoffee.com/{{BMAC_USERNAME}}" target="_blank" rel="noopener">
+                Buy us a coffee
+              </a>
+            </p>
+            <p class="muted">
+              {{LINKEDIN_URL}} and {{BMAC_USERNAME}} are template placeholders &mdash;
+              fill them in via the marketplace README&rsquo;s &ldquo;Configuration TODO&rdquo; section.
+            </p>
+          </section>
+          <section class="about-section">
+            <h3>Open source</h3>
+            <p>
+              The gnomatix-oss-skills marketplace ships under an OSS license &mdash;
+              see the License tab via <em>GNOMATIX: Show licensing</em>.
+              Hooks ship as pure Node ECMAScript with cross-platform paths; the only
+              accepted performance fallback is Go (per marketplace policy).
+            </p>
+            <img class="killbots" src="{{KILLBOTS_URI}}" alt="GNOMATIX secondary art">
+            <p class="muted">Our killbots minimize engagement.</p>
+          </section>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Inline templates for cards (not <template> elements to keep CSP simple) -->
+  <script nonce="{{NONCE}}">
+    (function () {
+      const vscode = acquireVsCodeApi();
+
+      // ----- helpers -----
+      function el(tag, props, children) {
+        const e = document.createElement(tag);
+        if (props) {
+          for (const k of Object.keys(props)) {
+            if (k === 'class') e.className = props[k];
+            else if (k === 'text') e.textContent = props[k];
+            else if (k === 'html') e.innerHTML = props[k];
+            else if (k === 'dataset') {
+              for (const dk of Object.keys(props.dataset)) e.dataset[dk] = props.dataset[dk];
+            } else if (k.startsWith('on')) {
+              e.addEventListener(k.slice(2).toLowerCase(), props[k]);
+            } else {
+              e.setAttribute(k, props[k]);
+            }
+          }
+        }
+        if (children) {
+          for (const c of children) {
+            if (c == null) continue;
+            e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
+          }
+        }
+        return e;
+      }
+
+      function makeSwitch(checked, onChange) {
+        const cb = el('input', { type: 'checkbox', role: 'switch' });
+        cb.checked = !!checked;
+        cb.addEventListener('change', () => onChange(cb.checked));
+        const slider = el('span', { class: 'slider', 'aria-hidden': 'true' });
+        return el('span', { class: 'switch' }, [cb, slider]);
+      }
+
+      function showToast(kind, message) {
+        const t = document.getElementById('toast');
+        if (!t) return;
+        t.textContent = message;
+        t.className = 'toast show ' + kind;
+        window.setTimeout(() => { t.className = 'toast'; }, 3200);
+      }
+
+      // ----- tab switching -----
+      const tabButtons = document.querySelectorAll('.tab-button');
+      const tabPanels = document.querySelectorAll('.tab-panel');
+      tabButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const tab = btn.dataset.tab;
+          tabButtons.forEach((b) => {
+            const active = b.dataset.tab === tab;
+            b.classList.toggle('active', active);
+            b.setAttribute('aria-selected', active ? 'true' : 'false');
+          });
+          tabPanels.forEach((p) => {
+            p.classList.toggle('active', p.id === 'tab-' + tab);
+          });
+        });
+      });
+
+      // ----- skills rendering -----
+      function renderSkills(skills) {
+        const root = document.getElementById('skills-list');
+        root.innerHTML = '';
+        if (!skills || skills.length === 0) {
+          root.appendChild(el('p', { class: 'empty', text: 'No skills found. Set the marketplace root in Settings.' }));
+          return;
+        }
+        for (const s of skills) {
+          const sw = makeSwitch(s.enabled, (val) => {
+            vscode.postMessage({
+              type: 'updateSetting',
+              key: 'gnomatix.skill.' + s.plugin + '.' + s.skill + '.enabled',
+              value: val
+            });
+          });
+          const meta = el('div', { class: 'card-meta' }, [
+            el('strong', { class: 'card-title', text: s.plugin + ' / ' + s.skill }),
+            s.description ? el('p', { class: 'card-desc', text: s.description }) : null,
+            el('div', { class: 'card-links' }, [
+              s.skillMdExists ? el('button', {
+                class: 'link',
+                onclick: () => vscode.postMessage({
+                  type: 'openSkillDoc',
+                  payload: { plugin: s.plugin, skill: s.skill, doc: 'SKILL.md' }
+                })
+              }, ['SKILL.md']) : null,
+              s.contractMdExists ? el('button', {
+                class: 'link',
+                onclick: () => vscode.postMessage({
+                  type: 'openSkillDoc',
+                  payload: { plugin: s.plugin, skill: s.skill, doc: 'contract.md' }
+                })
+              }, ['contract.md']) : null
+            ])
+          ]);
+          const card = el('div', { class: 'card' }, [meta, sw]);
+          root.appendChild(card);
+        }
+      }
+
+      // ----- plugin hooks rendering -----
+      function renderHooks(plugins) {
+        const root = document.getElementById('hooks-list');
+        root.innerHTML = '';
+        if (!plugins || plugins.length === 0) {
+          root.appendChild(el('p', { class: 'empty', text: 'No plugin hooks found.' }));
+          return;
+        }
+        for (const p of plugins) {
+          const group = el('div', { class: 'card-group' }, [
+            el('h3', { class: 'card-group-title', text: p.plugin })
+          ]);
+          if (!p.events || p.events.length === 0) {
+            group.appendChild(el('p', { class: 'muted', text: '(no hooks declared)' }));
+          } else {
+            for (const ev of p.events) {
+              const sw = makeSwitch(ev.enabled, (val) => {
+                vscode.postMessage({
+                  type: 'togglePluginHook',
+                  payload: { plugin: p.plugin, event: ev.event, enabled: val }
+                });
+              });
+              const card = el('div', { class: 'card' }, [
+                el('div', { class: 'card-meta' }, [
+                  el('strong', { class: 'card-title', text: ev.event }),
+                  el('p', { class: 'card-desc mono', text: ev.command || '(no command)' }),
+                  el('div', { class: 'card-links' }, [
+                    ev.sourceFile ? el('button', {
+                      class: 'link',
+                      onclick: () => vscode.postMessage({
+                        type: 'openHookSource',
+                        payload: { plugin: p.plugin, file: ev.sourceFile }
+                      })
+                    }, ['View source']) : null
+                  ])
+                ]),
+                sw
+              ]);
+              group.appendChild(card);
+            }
+          }
+          root.appendChild(group);
+        }
+      }
+
+      // ----- side-hooks rendering -----
+      function renderSideHooks(payload) {
+        document.getElementById('sidehooks-path').textContent = payload && payload.path ? payload.path : '(unset)';
+        const root = document.getElementById('sidehooks-list');
+        root.innerHTML = '';
+        const entries = (payload && payload.entries) || [];
+        if (entries.length === 0) {
+          root.appendChild(el('p', { class: 'empty', text: 'No side-hooks configured. Click "Add side-hook" to create one.' }));
+          return;
+        }
+        for (const sh of entries) {
+          const sw = makeSwitch(sh.enabled !== false, (val) => {
+            vscode.postMessage({
+              type: 'toggleSideHook',
+              payload: { id: sh.id, enabled: val }
+            });
+          });
+          const fields = el('div', { class: 'fields' }, [
+            el('div', { class: 'field' }, [
+              el('label', { text: 'Type' }),
+              el('code', { text: sh.type || '(unset)' })
+            ]),
+            el('div', { class: 'field' }, [
+              el('label', { text: 'Trigger' }),
+              el('code', { text: sh.trigger || '(unset)' })
+            ]),
+            el('div', { class: 'field' }, [
+              el('label', { text: 'Model' }),
+              el('code', { text: sh.model || '(unset)' })
+            ]),
+            el('div', { class: 'field' }, [
+              el('label', { text: 'Criteria' }),
+              el('code', { text: sh.criteria || '(unset)' })
+            ])
+          ]);
+          const card = el('div', { class: 'card sidehook-card' }, [
+            el('div', { class: 'card-meta' }, [
+              el('strong', { class: 'card-title', text: sh.id }),
+              fields
+            ]),
+            sw
+          ]);
+          root.appendChild(card);
+        }
+      }
+
+      // ----- side-hook add form -----
+      const addBtn = document.getElementById('add-sidehook');
+      const form = document.getElementById('sidehook-form');
+      const shCancel = document.getElementById('sh-cancel');
+      const shSave = document.getElementById('sh-save');
+      addBtn.addEventListener('click', () => form.classList.remove('hidden'));
+      shCancel.addEventListener('click', () => form.classList.add('hidden'));
+      shSave.addEventListener('click', () => {
+        const entry = {
+          id: document.getElementById('sh-id').value.trim(),
+          type: document.getElementById('sh-type').value,
+          trigger: document.getElementById('sh-trigger').value,
+          model: document.getElementById('sh-model').value.trim(),
+          criteria: document.getElementById('sh-criteria').value.trim(),
+          enabled: document.getElementById('sh-enabled').checked
+        };
+        if (!entry.id) {
+          showToast('error', 'Side-hook id is required.');
+          return;
+        }
+        vscode.postMessage({ type: 'addSideHook', payload: entry });
+        form.classList.add('hidden');
+      });
+
+      // ----- vendors rendering -----
+      function renderVendors(vendors) {
+        const root = document.getElementById('vendors-list');
+        root.innerHTML = '';
+        if (!vendors || vendors.length === 0) {
+          root.appendChild(el('p', { class: 'empty', text: 'No vendor doc bundles found.' }));
+          return;
+        }
+        for (const v of vendors) {
+          const drift = v.drift_detected
+            ? el('span', { class: 'badge badge-warn', text: 'drift detected' })
+            : el('span', { class: 'badge badge-ok', text: 'in sync' });
+          const card = el('div', { class: 'card' }, [
+            el('div', { class: 'card-meta' }, [
+              el('strong', { class: 'card-title', text: v.vendor }),
+              el('p', { class: 'card-desc', text: 'last fetched: ' + v.last_fetched + '  ·  docs: ' + v.doc_count }),
+              drift
+            ])
+          ]);
+          root.appendChild(card);
+        }
+      }
+      document.getElementById('refresh-vendor-docs').addEventListener('click', () => {
+        vscode.postMessage({ type: 'refreshVendorDocs' });
+      });
+
+      // ----- local-models rendering -----
+      function renderModels(report) {
+        const root = document.getElementById('models-list');
+        root.innerHTML = '';
+        if (!report) {
+          root.appendChild(el('p', { class: 'empty', text: 'No report.' }));
+          return;
+        }
+        if (report.parsed) {
+          const pre = el('pre', { class: 'json' });
+          pre.textContent = JSON.stringify(report.parsed, null, 2);
+          root.appendChild(el('p', { class: 'muted', text: 'cache: ' + report.reportFile }));
+          root.appendChild(pre);
+        } else {
+          const pre = el('pre', { class: 'mono' });
+          pre.textContent = report.raw || '(empty)';
+          root.appendChild(pre);
+        }
+      }
+
+      // ----- settings rendering -----
+      function renderSettings(settings) {
+        document.querySelectorAll('[data-setting]').forEach((input) => {
+          const key = input.dataset.setting;
+          const val = settings[key.replace('gnomatix.', '')];
+          if (input.type === 'checkbox') {
+            input.checked = !!val;
+          } else if (input.tagName === 'SELECT') {
+            input.value = (val == null ? '' : String(val));
+          } else {
+            input.value = (val == null ? '' : String(val));
+          }
+        });
+      }
+
+      document.querySelectorAll('[data-setting]').forEach((input) => {
+        const handler = () => {
+          let value;
+          if (input.type === 'checkbox') value = input.checked;
+          else value = input.value;
+          vscode.postMessage({
+            type: 'updateSetting',
+            key: input.dataset.setting,
+            value: value
+          });
+        };
+        input.addEventListener('change', handler);
+        if (input.type !== 'checkbox' && input.tagName !== 'SELECT') {
+          // debounce text inputs
+          let timer;
+          input.addEventListener('input', () => {
+            clearTimeout(timer);
+            timer = window.setTimeout(handler, 600);
+          });
+        }
+      });
+
+      document.getElementById('refresh-skills').addEventListener('click', () => {
+        vscode.postMessage({ type: 'requestState' });
+      });
+
+      // ----- message receive -----
+      window.addEventListener('message', (event) => {
+        const msg = event.data;
+        if (!msg || typeof msg !== 'object') return;
+        switch (msg.type) {
+          case 'state':
+            renderSkills(msg.skills);
+            renderHooks(msg.pluginHooks);
+            renderSideHooks(msg.sideHooks);
+            renderVendors(msg.vendors);
+            renderModels(msg.localModels);
+            renderSettings(msg.settings || {});
+            break;
+          case 'toast':
+            showToast(msg.kind || 'info', msg.message || '');
+            break;
+        }
+      });
+
+      // ready
+      vscode.postMessage({ type: 'ready' });
+    })();
+  </script>
+</body>
+</html>
