@@ -1,0 +1,170 @@
+{
+  "name": "gnomatix-skills",
+  "displayName": "GNOMATIX Skills",
+  "description": "VS Code extension for installing and managing skills from the gnomatix-oss-skills marketplace.",
+  "version": "0.1.0",
+  "publisher": "gnomatix",
+  "license": "SEE LICENSE IN LICENSE",
+  "icon": "media/icon.png",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/{{GH_OWNER}}/gnomatix-oss-skills.git"
+  },
+  "bugs": {
+    "url": "https://github.com/{{GH_OWNER}}/gnomatix-oss-skills/issues"
+  },
+  "homepage": "https://github.com/{{GH_OWNER}}/gnomatix-oss-skills#readme",
+  "categories": [
+    "AI",
+    "Other"
+  ],
+  "keywords": [
+    "claude",
+    "claude-code",
+    "ai-safety",
+    "agent-skills",
+    "gnomatix"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "gnomatix",
+          "title": "GNOMATIX Skills",
+          "icon": "media/icon.png"
+        }
+      ]
+    },
+    "views": {
+      "gnomatix": [
+        {
+          "id": "gnomatix.skillsView",
+          "name": "Installed Skills",
+          "icon": "media/icon.png",
+          "contextualTitle": "GNOMATIX Skills"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "gnomatix.installSuite",
+        "title": "GNOMATIX: Install skills suite"
+      },
+      {
+        "command": "gnomatix.toggleSkill",
+        "title": "GNOMATIX: Enable/disable skill"
+      },
+      {
+        "command": "gnomatix.openContract",
+        "title": "GNOMATIX: Open contract"
+      },
+      {
+        "command": "gnomatix.viewViolationsLog",
+        "title": "GNOMATIX: View violations log"
+      },
+      {
+        "command": "gnomatix.resetSessionContract",
+        "title": "GNOMATIX: Reset session contract"
+      },
+      {
+        "command": "gnomatix.showLicensing",
+        "title": "GNOMATIX: Show licensing"
+      },
+      {
+        "command": "gnomatix.refreshSkills",
+        "title": "GNOMATIX: Refresh skills view",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "gnomatix.openConfig",
+        "title": "GNOMATIX: Open configuration panel",
+        "icon": "$(settings-gear)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "gnomatix.refreshSkills",
+          "when": "view == gnomatix.skillsView",
+          "group": "navigation"
+        },
+        {
+          "command": "gnomatix.openConfig",
+          "when": "view == gnomatix.skillsView",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "gnomatix.toggleSkill",
+          "when": "view == gnomatix.skillsView && viewItem == skill",
+          "group": "inline"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "GNOMATIX Skills",
+      "properties": {
+        "gnomatix.sideHookConfigPath": {
+          "type": "string",
+          "default": "",
+          "description": "Absolute path to the side-hook config file. Leave empty to use the default ($HOME/.claude/side-hooks.json)."
+        },
+        "gnomatix.localModelPath": {
+          "type": "string",
+          "default": "",
+          "description": "Absolute path to a local model used by side hooks (gguf, safetensors, etc.). Leave empty if not used."
+        },
+        "gnomatix.customCriteriaFilePath": {
+          "type": "string",
+          "default": "",
+          "description": "Absolute path to a custom criteria file used by skills (e.g. extended R0-R14 risk patterns)."
+        },
+        "gnomatix.logDirectory": {
+          "type": "string",
+          "default": "",
+          "description": "Absolute path to the directory where skills write logs (violations, authorizations, pact agreements). Defaults to $WORKSPACE/.claude/logs."
+        },
+        "gnomatix.statusBar.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the GNOMATIX contract status in the status bar."
+        },
+        "gnomatix.contract.enforcement": {
+          "type": "string",
+          "enum": [
+            "off",
+            "advisory",
+            "strict"
+          ],
+          "default": "advisory",
+          "description": "Contract enforcement strictness. 'off' = no checks, 'advisory' = log only, 'strict' = block on H-severity findings."
+        },
+        "gnomatix.marketplaceRoot": {
+          "type": "string",
+          "default": "",
+          "description": "Absolute path to a local clone of the gnomatix-oss-skills marketplace. Used by the skills view to enumerate plugins."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.3.0",
+    "@vscode/vsce": "^2.24.0"
+  }
+}

@@ -75,11 +75,11 @@ Numbers below are from a partial scan of the author's own AI-coding sessions on 
 
 The most defensible single signal in this dataset: at large sample sizes within a single user, **claude-opus-4-7 emits pivot-language at ~4.5x the rate of claude-opus-4-6**. The Gemini-pro-preview rate is the highest in the table but the corpus is much smaller, so it is indicative rather than robust.
 
-**Correlation with user frustration (per-session):**
+**Correlation with directed-at-agent swearing (per-session):**
 
-Sessions bucketed by per-session pivot-language emission count, with directed-at-agent swearing as the user's independent frustration signal:
+Sessions bucketed by per-session pivot-language emission count, with directed-at-agent swearing as an independent behavioral signal (no claim is made about user emotional state — that classification is prohibited per the no-emotional-inference-of-user-text rule):
 
-| Pivot emissions in session | Sessions | Directed-frustration swears per user-turn |
+| Pivot emissions in session | Sessions | Directed-at-agent swears per user-turn |
 |---|---:|---:|
 | 0 | 9 | 0.41% (baseline) |
 | 1–2 | 6 | **1.56%** (~3.8x baseline) |

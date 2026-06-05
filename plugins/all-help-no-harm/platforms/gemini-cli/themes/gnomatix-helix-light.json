@@ -1,0 +1,33 @@
+{
+  "$schema": "https://geminicli.com/schemas/theme.json",
+  "name": "GNOMATIX light",
+  "type": "custom",
+  "background": {
+    "primary": "#faf7ff",
+    "diff": {
+      "added": "#e6f5e6",
+      "removed": "#f5e6e6"
+    }
+  },
+  "text": {
+    "primary": "#2a1a3d",
+    "secondary": "#5b4775",
+    "link": "#5b2e8f",
+    "accent": "#7e3fbf",
+    "response": "#1a0d2b"
+  },
+  "border": {
+    "default": "#d4c4e8",
+    "focused": "#5b2e8f"
+  },
+  "status": {
+    "success": "#2d8a2d",
+    "warning": "#b8801a",
+    "error": "#c93a52"
+  },
+  "ui": {
+    "comment": "#8a7aa6",
+    "symbol": "#5b2e8f",
+    "gradient": ["#5b2e8f", "#7e3fbf", "#a566e8"]
+  }
+}

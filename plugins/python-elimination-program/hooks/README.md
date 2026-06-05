@@ -1,10 +1,10 @@
-# Claude Code firewall hook
+# Claude Code millenial-crybaby-spanking hook
 
 Hooks are not part of the cross-CLI [Agent Skills](https://agentskills.io) standard. This directory contains the Claude-Code-specific harness-level enforcement layer.
 
 ## What it does
 
-`whacking-day-firewall.js` runs as a `PreToolUse` hook on every `Bash` and `PowerShell` tool call. If the command invokes Python (`python`, `python3`, `pip`, `pipx`, `uv`, `poetry`, `conda`, `*.py`, etc.) and the current project has no open authorization at `.claude/python-authorizations/log.jsonl` (status `approved` or `in-progress`), the hook denies the tool call with a message routing the agent back to the `whacking-day` skill.
+`whacking-day-millenial-crybaby-spanking.js` runs as a `PreToolUse` hook on every `Bash` and `PowerShell` tool call. If the command invokes Python (`python`, `python3`, `pip`, `pipx`, `uv`, `poetry`, `conda`, `*.py`, etc.) and the current project has no open authorization at `.claude/python-authorizations/log.jsonl` (status `approved` or `in-progress`), the hook denies the tool call with a message routing the agent back to the `whacking-day` skill.
 
 ## Activation
 
@@ -17,7 +17,7 @@ When the plugin is installed via Claude Code's marketplace mechanism, [`hooks.js
 1. Copy the script:
    ```sh
    mkdir -p ~/.claude/hooks
-   cp whacking-day-firewall.js ~/.claude/hooks/
+   cp whacking-day-millenial-crybaby-spanking.js ~/.claude/hooks/
    ```
 
 2. Open [`settings.example.jsonc`](settings.example.jsonc) and merge its `hooks` block into either:

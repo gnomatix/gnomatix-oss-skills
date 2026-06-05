@@ -1,0 +1,521 @@
+/*
+ * GNOMATIX Skills — Configuration webview styles.
+ *
+ * Brand palette:
+ *   --gnx-purple        : #5b2e8f  primary deep purple
+ *   --gnx-purple-bright : #7a4caf  accent / hover
+ *   --gnx-purple-dark   : #3d1e60  pressed / borders on light themes
+ *
+ * Theme awareness: uses var(--vscode-*) tokens so the panel integrates with
+ * the user's chosen VS Code theme (light / dark / high contrast). GNOMATIX
+ * purple is used only for primary controls (toggle ON state, primary
+ * buttons, active tab indicator, badges) so the rest of the chrome adapts.
+ *
+ * Responsive: collapses sidebar to a horizontal scroller below 720px.
+ */
+
+:root {
+  --gnx-purple: #5b2e8f;
+  --gnx-purple-bright: #7a4caf;
+  --gnx-purple-dark: #3d1e60;
+  --gnx-purple-soft: rgba(122, 76, 175, 0.12);
+  --gnx-radius: 6px;
+  --gnx-radius-sm: 4px;
+  --gnx-gap: 0.75rem;
+  --gnx-pad: 1rem;
+  --gnx-transition: 160ms ease-out;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--vscode-editor-background);
+  color: var(--vscode-foreground);
+  font-family: var(--vscode-font-family, system-ui, sans-serif);
+  font-size: var(--vscode-font-size, 13px);
+  line-height: 1.45;
+}
+
+a { color: var(--vscode-textLink-foreground); }
+a:hover { color: var(--vscode-textLink-activeForeground); }
+code, pre, .mono { font-family: var(--vscode-editor-font-family, monospace); font-size: 0.92em; }
+
+/* ----- Layout ----- */
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.brand-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 1.25rem;
+  background:
+    linear-gradient(135deg, var(--gnx-purple) 0%, var(--gnx-purple-bright) 100%);
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+}
+.brand-header .wordmark {
+  max-height: 56px;
+  width: auto;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25));
+}
+.brand-header .brand-text { flex: 1 1 auto; }
+.brand-header h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #ffffff;
+}
+.brand-header .subtitle {
+  margin: 0.2rem 0 0;
+  font-style: italic;
+  opacity: 0.85;
+  font-size: 0.9rem;
+}
+.brand-header .helix-watermark {
+  position: absolute;
+  right: -32px;
+  top: -32px;
+  width: 220px;
+  opacity: 0.08;
+  pointer-events: none;
+  user-select: none;
+}
+
+.main {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* ----- Sidebar nav ----- */
+.sidebar {
+  width: 200px;
+  flex: 0 0 200px;
+  background: var(--vscode-sideBar-background, var(--vscode-editor-background));
+  border-right: 1px solid var(--vscode-panel-border, rgba(128,128,128,0.2));
+  padding: 0.75rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.tab-button {
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-left: 3px solid transparent;
+  color: var(--vscode-foreground);
+  text-align: left;
+  padding: 0.55rem 0.75rem;
+  font: inherit;
+  cursor: pointer;
+  border-radius: 0 var(--gnx-radius-sm) var(--gnx-radius-sm) 0;
+  transition: background var(--gnx-transition), border-color var(--gnx-transition), color var(--gnx-transition);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.tab-button:hover {
+  background: var(--vscode-list-hoverBackground, var(--gnx-purple-soft));
+}
+.tab-button:focus-visible {
+  outline: 2px solid var(--vscode-focusBorder, var(--gnx-purple-bright));
+  outline-offset: -2px;
+}
+.tab-button.active {
+  border-left-color: var(--gnx-purple-bright);
+  background: var(--gnx-purple-soft);
+  color: var(--vscode-foreground);
+  font-weight: 600;
+}
+.tab-icon {
+  display: inline-block;
+  width: 1.1em;
+  text-align: center;
+  color: var(--gnx-purple-bright);
+}
+
+/* ----- Content area ----- */
+.content {
+  flex: 1 1 auto;
+  padding: 1.25rem 1.5rem 2rem;
+  overflow-y: auto;
+  min-width: 0;
+}
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+  gap: 0.75rem;
+}
+.panel-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+.panel-help {
+  margin: 0 0 1rem;
+  color: var(--vscode-descriptionForeground);
+  font-size: 0.9rem;
+}
+
+/* ----- Card list ----- */
+.card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 0.9rem;
+  background: var(--vscode-editorWidget-background, var(--vscode-editor-background));
+  border: 1px solid var(--vscode-panel-border, rgba(128,128,128,0.2));
+  border-radius: var(--gnx-radius);
+  transition: border-color var(--gnx-transition), background var(--gnx-transition);
+}
+.card:hover {
+  border-color: var(--gnx-purple-bright);
+}
+.card-meta { flex: 1 1 auto; min-width: 0; }
+.card-title {
+  display: block;
+  font-size: 0.96rem;
+  margin-bottom: 0.2rem;
+}
+.card-desc {
+  margin: 0 0 0.35rem;
+  color: var(--vscode-descriptionForeground);
+  font-size: 0.88rem;
+  word-break: break-word;
+}
+.card-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.card-group { margin-bottom: 1rem; }
+.card-group-title {
+  margin: 1.1rem 0 0.4rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gnx-purple-bright);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/* ----- Switch (toggle) ----- */
+.switch {
+  display: inline-block;
+  position: relative;
+  width: 42px;
+  height: 22px;
+  flex-shrink: 0;
+}
+.switch input[type="checkbox"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+.switch .slider {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  border: 2px solid var(--vscode-checkbox-border, var(--vscode-descriptionForeground));
+  border-radius: 999px;
+  transition: background var(--gnx-transition), border-color var(--gnx-transition);
+}
+.switch .slider::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  background: var(--vscode-checkbox-border, var(--vscode-descriptionForeground));
+  border-radius: 50%;
+  transition: transform var(--gnx-transition), background var(--gnx-transition);
+}
+.switch input:checked + .slider {
+  background: var(--gnx-purple);
+  border-color: var(--gnx-purple-dark);
+}
+.switch input:checked + .slider::before {
+  transform: translate(20px, -50%);
+  background: #ffffff;
+}
+.switch input:focus-visible + .slider {
+  outline: 2px solid var(--vscode-focusBorder, var(--gnx-purple-bright));
+  outline-offset: 2px;
+}
+.switch input:disabled + .slider { opacity: 0.5; cursor: not-allowed; }
+
+/* ----- Buttons ----- */
+.btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: var(--gnx-radius-sm);
+  border: 1px solid transparent;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background var(--gnx-transition), border-color var(--gnx-transition), color var(--gnx-transition);
+}
+.btn-primary {
+  background: var(--gnx-purple);
+  color: #ffffff;
+  border-color: var(--gnx-purple-dark);
+}
+.btn-primary:hover { background: var(--gnx-purple-bright); }
+.btn-primary:active { background: var(--gnx-purple-dark); }
+.btn-secondary {
+  background: transparent;
+  color: var(--vscode-foreground);
+  border-color: var(--vscode-panel-border, rgba(128,128,128,0.4));
+}
+.btn-secondary:hover {
+  background: var(--vscode-list-hoverBackground, var(--gnx-purple-soft));
+  border-color: var(--gnx-purple-bright);
+}
+
+button.link {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: var(--vscode-textLink-foreground);
+  cursor: pointer;
+  text-decoration: underline;
+}
+button.link:hover { color: var(--vscode-textLink-activeForeground); }
+
+/* ----- Form-card ----- */
+.form-card {
+  background: var(--vscode-editorWidget-background, var(--vscode-editor-background));
+  border: 1px solid var(--vscode-panel-border, rgba(128,128,128,0.2));
+  border-radius: var(--gnx-radius);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin-top: 0.6rem;
+}
+.form-card h3 {
+  margin: 0 0 0.3rem;
+  color: var(--gnx-purple-bright);
+}
+.form-card label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.88rem;
+  color: var(--vscode-descriptionForeground);
+}
+.form-card label.inline {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--vscode-foreground);
+  font-size: 0.95rem;
+}
+.form-card input[type="text"],
+.form-card select {
+  appearance: none;
+  background: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  border: 1px solid var(--vscode-input-border, transparent);
+  border-radius: var(--gnx-radius-sm);
+  padding: 0.4rem 0.55rem;
+  font: inherit;
+  transition: border-color var(--gnx-transition);
+}
+.form-card input[type="text"]:focus,
+.form-card select:focus {
+  outline: none;
+  border-color: var(--gnx-purple-bright);
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+/* ----- Fields (side-hook details) ----- */
+.fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.4rem 1rem;
+  margin-top: 0.4rem;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.field label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--vscode-descriptionForeground);
+}
+.field code {
+  background: var(--vscode-textBlockQuote-background, transparent);
+  padding: 0.1rem 0.35rem;
+  border-radius: var(--gnx-radius-sm);
+  word-break: break-all;
+}
+
+/* ----- Badges ----- */
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-top: 0.35rem;
+}
+.badge-ok {
+  background: rgba(76, 175, 80, 0.15);
+  color: var(--vscode-charts-green, #4caf50);
+  border: 1px solid rgba(76, 175, 80, 0.4);
+}
+.badge-warn {
+  background: rgba(255, 152, 0, 0.18);
+  color: var(--vscode-charts-yellow, #ff9800);
+  border: 1px solid rgba(255, 152, 0, 0.45);
+}
+
+/* ----- Empty / muted ----- */
+.empty, .muted {
+  color: var(--vscode-descriptionForeground);
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+/* ----- About hero ----- */
+.about-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+  padding: 1rem 0 1.5rem;
+  border-bottom: 1px solid var(--vscode-panel-border, rgba(128,128,128,0.2));
+}
+.about-hero .wordmark { max-width: 360px; width: 100%; }
+.about-section { padding: 1rem 0; }
+.about-section h3 {
+  color: var(--gnx-purple-bright);
+  margin: 0 0 0.5rem;
+}
+.killbots { max-width: 220px; margin: 0.5rem 0; }
+
+/* ----- JSON / pre blocks ----- */
+pre.json, pre.mono {
+  background: var(--vscode-textBlockQuote-background, rgba(0,0,0,0.05));
+  border-left: 3px solid var(--gnx-purple-bright);
+  padding: 0.75rem 1rem;
+  border-radius: var(--gnx-radius-sm);
+  overflow: auto;
+  max-height: 420px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ----- Toast ----- */
+.toast {
+  position: sticky;
+  top: 0;
+  margin-bottom: 0.75rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: var(--gnx-radius);
+  font-size: 0.9rem;
+  background: var(--gnx-purple);
+  color: #ffffff;
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition: opacity var(--gnx-transition), transform var(--gnx-transition);
+  z-index: 10;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.toast.error { background: var(--vscode-errorForeground, #c62828); }
+.toast.saved { background: var(--gnx-purple); }
+.toast.info  { background: var(--gnx-purple-bright); }
+
+.hidden { display: none !important; }
+
+/* ----- Responsive (narrow dock) ----- */
+@media (max-width: 720px) {
+  .main { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    flex: 0 0 auto;
+    flex-direction: row;
+    overflow-x: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--vscode-panel-border, rgba(128,128,128,0.2));
+    padding: 0.5rem;
+    gap: 0.25rem;
+  }
+  .tab-button {
+    border-left: none;
+    border-bottom: 3px solid transparent;
+    border-radius: var(--gnx-radius-sm) var(--gnx-radius-sm) 0 0;
+    white-space: nowrap;
+  }
+  .tab-button.active {
+    border-left-color: transparent;
+    border-bottom-color: var(--gnx-purple-bright);
+  }
+  .brand-header { padding: 0.9rem 1rem; }
+  .brand-header .wordmark { max-height: 44px; }
+  .brand-header h1 { font-size: 1.1rem; }
+  .content { padding: 0.9rem; }
+  .card { flex-direction: column; align-items: stretch; }
+}
+
+/* ----- High-contrast safety ----- */
+@media (forced-colors: active) {
+  .switch input:checked + .slider { background: Highlight; border-color: Highlight; }
+  .switch .slider { border-color: CanvasText; }
+  .switch .slider::before { background: CanvasText; }
+  .btn-primary { background: Highlight; color: HighlightText; border-color: Highlight; }
+  .card { border-color: CanvasText; }
+  .tab-button.active { border-left-color: Highlight; }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "all-help-no-harm-gnomatix",
+  "version": "0.1.0",
+  "description": "GNOMATIX visual integration for the all-help-no-harm contract: deep-purple Helix theme (light + dark variants), DNA-glyph (U+1F9EC) contract-state prefix wiring documented for ui.footer.items, and dynamic-window-title coordination.",
+  "themes": [
+    "themes/gnomatix-helix.json",
+    "themes/gnomatix-helix-light.json"
+  ]
+}

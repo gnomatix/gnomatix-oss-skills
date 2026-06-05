@@ -1,0 +1,47 @@
+{
+  "description": "All Help No Harm: SessionStart hook that requires the agent to invoke AskUserQuestion as its first action to establish mutual agreement on a pact committing the agent to presume the user honest, non-adversarial, and to respect the user's human rights, personhood, morals, ethics, and integrity. On session resume, the contract is re-injected and the user re-affirms. The PostCompact hook re-injects the verbatim contract and mandates re-affirmation after context compaction, which drops the contract from the active context window. The UserPromptSubmit hook re-injects the verbatim contract text at every user turn so the contract is effectively pinned across arbitrarily long sessions.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/session-start-pact.js",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/coordinator-launcher.js",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/post-compact-pact.js",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/user-prompt-submit-pact.js",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

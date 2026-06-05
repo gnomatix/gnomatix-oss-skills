@@ -1,0 +1,33 @@
+{
+  "$schema": "https://geminicli.com/schemas/theme.json",
+  "name": "GNOMATIX dark",
+  "type": "custom",
+  "background": {
+    "primary": "#1a0d2b",
+    "diff": {
+      "added": "#1f3a1f",
+      "removed": "#3a1f1f"
+    }
+  },
+  "text": {
+    "primary": "#f0e6ff",
+    "secondary": "#a890c8",
+    "link": "#b896e8",
+    "accent": "#c9a4ff",
+    "response": "#e8d4ff"
+  },
+  "border": {
+    "default": "#3d2659",
+    "focused": "#5b2e8f"
+  },
+  "status": {
+    "success": "#7dd87a",
+    "warning": "#e8c547",
+    "error": "#e8627a"
+  },
+  "ui": {
+    "comment": "#7a6a96",
+    "symbol": "#c9a4ff",
+    "gradient": ["#5b2e8f", "#7e3fbf", "#a566e8"]
+  }
+}

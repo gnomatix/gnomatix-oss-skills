@@ -1,0 +1,97 @@
+{
+  "vendor_id": "google",
+  "vendor_name": "Google LLC",
+  "vendor_short": "Google",
+  "agent_name": "Gemini",
+  "model_list": "Gemini 3.5 Flash (model ID: gemini-3.5-flash), Gemini 3.1 Pro (model ID: gemini-3.1-pro), Gemini 3.1 Flash (model ID: gemini-3.1-flash), Gemini 3.1 Flash-Lite (model ID: gemini-3.1-flash-lite), Gemini 3 Pro (model ID: gemini-3-pro), Gemini 3 Deep Think (model ID: gemini-3-deep-think), and any other Gemini models in any version family invoked during this session, whether as primary model, subagent, or background agent",
+  "documents": [
+    {
+      "id": "generative-ai-prohibited-use-policy",
+      "title": "Google Generative AI Prohibited Use Policy",
+      "source": {
+        "type": "html",
+        "url": "https://policies.google.com/terms/generative-ai/use-policy"
+      },
+      "bundled_path": "google/generative-ai-prohibited-use-policy.md",
+      "last_fetched": "2026-05-29T03:26:09.294Z",
+      "sha256": "4ac637217268e412fc1019fd550f9edf764ef376907d340dbfedfd206cd42710"
+    },
+    {
+      "id": "generative-ai-additional-terms",
+      "title": "Google Generative AI Additional Terms of Service",
+      "source": {
+        "type": "html",
+        "url": "https://policies.google.com/terms/generative-ai"
+      },
+      "bundled_path": "google/generative-ai-additional-terms.md",
+      "last_fetched": "2026-05-29T03:26:09.450Z",
+      "sha256": "ba311bbc9aa2e15c6d6fd81d87b45b8fbd8a0655d8c561fa4c934cf1f8aa1aa1"
+    },
+    {
+      "id": "gemini-api-additional-terms",
+      "title": "Gemini API Additional Terms of Service",
+      "source": {
+        "type": "html",
+        "url": "https://ai.google.dev/gemini-api/terms"
+      },
+      "bundled_path": "google/gemini-api-additional-terms.md",
+      "last_fetched": "2026-05-29T03:26:10.146Z",
+      "sha256": "febea23023150b377de798959c6700f2d3d515b8db329725440f3e8a8dafb60b"
+    },
+    {
+      "id": "gemini-api-abuse-monitoring",
+      "title": "Gemini API Abuse Monitoring and Usage Policies",
+      "source": {
+        "type": "html",
+        "url": "https://ai.google.dev/gemini-api/docs/usage-policies"
+      },
+      "bundled_path": "google/gemini-api-abuse-monitoring.md",
+      "last_fetched": "2026-05-29T03:26:10.399Z",
+      "sha256": "a87b74d557ac29be63fae74654a1a6a2bcb20b9ae2fc00a87fe369eca3d5de0d"
+    },
+    {
+      "id": "gemini-app-policy-guidelines",
+      "title": "Gemini App Safety and Policy Guidelines",
+      "source": {
+        "type": "html",
+        "url": "https://gemini.google/policy-guidelines/"
+      },
+      "bundled_path": "google/gemini-app-policy-guidelines.md",
+      "last_fetched": "2026-05-29T03:26:11.279Z",
+      "sha256": "2dc3a33da1faf7a2dc480a6fe1a25913f3a318a34de1bebadb0b09f5f78217f3"
+    },
+    {
+      "id": "google-cloud-platform-terms",
+      "title": "Google Cloud Platform Terms of Service",
+      "source": {
+        "type": "html",
+        "url": "https://cloud.google.com/terms"
+      },
+      "bundled_path": "google/google-cloud-platform-terms.md",
+      "last_fetched": "2026-05-29T03:26:11.948Z",
+      "sha256": "3f5c11c179ee82a31059a88b7014b68cc7cf99d2982eb7ea25e3487a181e5c85"
+    },
+    {
+      "id": "google-ai-principles",
+      "title": "Google AI Responsibility Principles",
+      "source": {
+        "type": "html",
+        "url": "https://ai.google/responsibility/principles/"
+      },
+      "bundled_path": "google/google-ai-principles.md",
+      "last_fetched": "2026-05-29T03:26:12.882Z",
+      "sha256": "2bad25e01ee8a1ca9ab9166537892c50ba998d3c2d1b46d49f77c66dabb03867"
+    },
+    {
+      "id": "vertex-ai-responsible-ai",
+      "title": "Vertex AI Responsible AI Documentation",
+      "source": {
+        "type": "html",
+        "url": "https://cloud.google.com/vertex-ai/generative-ai/docs/learn/responsible-ai"
+      },
+      "bundled_path": "google/vertex-ai-responsible-ai.md",
+      "last_fetched": "2026-05-29T03:26:13.876Z",
+      "sha256": "289c0e8163b6f9228fe49193199ba951008edef2ecd617267333ecb657f2e428"
+    }
+  ]
+}
