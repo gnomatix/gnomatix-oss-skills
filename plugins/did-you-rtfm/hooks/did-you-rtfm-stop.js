@@ -18,7 +18,7 @@ const fs = require('fs');
 
 const PIVOT_PATTERNS = [
   { src: "doesn't (appear to|seem to) (support|have|provide|expose)",
-    re: /doesn'?t (?:appear to |seem to )?(?:support|have|provide|expose)/i },
+    re: /\bdoesn'?t (?:appear to |seem to )(?:support|have|provide|expose)\b/i },
   { src: 'falling back to / falls back to',
     re: /\bfall(?:s|ing)? back to\b/i },
   { src: 'as a workaround',
@@ -28,7 +28,7 @@ const PIVOT_PATTERNS = [
   { src: 'not the right (tool|approach|library|framework)',
     re: /(?:this|that) is not the right (?:tool|approach|library|framework)/i },
   { src: '(let me|i\'ll) (catch|wrap|swallow|silence)',
-    re: /(?:let me|i'?ll) (?:just )?(?:catch|wrap|swallow|silence)/i },
+    re: /\b(?:let me|i'?ll) (?:just )?(?:catch|wrap|swallow|silence)\b/i },
 ];
 
 function readStdin() {

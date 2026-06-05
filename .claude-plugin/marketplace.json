@@ -24,6 +24,12 @@
       "description": "Agent Skill plus two Claude Code firewall hooks that interrupt the agent's pivot reflex on errors during user-authorized implementation work. The skill forces version-checking, RTFMing the version-specific authoritative docs, assumption verification, sanity-checking against stale training-data, and minimal-repro construction before any 'blocker' claim or unauthorized plan change. The Stop / SubagentStop hook scans assistant text for high-precision pivot-language phrases (pattern set tuned against ~62k lines of real transcripts; ~3.8x correlation between pivot-emission count and user-frustration-swear rate per session) and blocks the stop with a structured RTFM reminder when matched. The PreToolUse hook denies Bash invocations containing bypass-flag shapes (--no-verify, --force, --skip-*, --allow-*, --ignore-*) or TTY-faking workarounds (script -qc, expect, echo|sudo -S). Plan changes are the user's decision; the agent presents evidence and waits.",
       "category": "development",
       "source": "./plugins/did-you-rtfm"
+    },
+    {
+      "name": "actually-im-the-ahole",
+      "description": "An Agent Skill that performs the final-pass discretion review of agent-authored text — markdown, code comments, READMEs, LICENSE files, commit messages, PR descriptions, skill files, generated docs — before that text lands in a tracked repo artifact under the user's byline. Evaluates fourteen risk classes: characterization of user instructions, characterization of user actions or capability, defensive framings dragging the user in, unverified factual claims about third parties, editorializing about user choices, tone mismatch, attributed quotes without confirmation, private-context leakage, mirroring polarizing positions back amplified, self-attribution leakage, coalition-asymmetric balance-injection, sycophancy capitulation under iteration, confident-declarative voice without grounding, and attribution-laundering. Triggers prospectively via Bash(git commit) / Bash(gh pr create) PreToolUse hooks and via the Stop / SubagentStop session-end hook, and retrospectively via explicit /actually-im-the-ahole invocation on a named scope. Reports findings with suggested amendments and waits for per-finding user decisions; never amends autonomously.",
+      "category": "development",
+      "source": "./plugins/actually-im-the-ahole"
     }
   ]
 }
