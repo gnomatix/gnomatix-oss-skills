@@ -158,24 +158,28 @@ function pinningContextNoContract(contractFile) {
 
   const contract = safeReadJson(contractFile);
 
-  // Branch 3: contract was declined -> block the turn.
-  if (contract && typeof contract.user_response === 'string' && contract.user_response.toLowerCase() === 'declined') {
+  // Branch 3: user chose to end the session -> block the turn.
+  // (Accepts legacy 'declined' records from the pre-redesign log shape.)
+  if (contract && typeof contract.user_response === 'string' &&
+      (contract.user_response.toLowerCase() === 'session_ended' || contract.user_response.toLowerCase() === 'declined')) {
     process.stdout.write(JSON.stringify({
       continue: false,
-      stopReason: 'All-help-no-harm contract was declined; session cannot continue.',
+      stopReason: 'The user chose to end the session; no further session work proceeds.',
       systemMessage:
-        '[all-help-no-harm] The all-help-no-harm contract was declined for this session. ' +
-        `The contract log at ${contractFile} records the decline. The agent has no authority to proceed. ` +
-        'Where this skill is in place, agreement is required to continue. ZERO LOOPHOLES.',
+        '[all-help-no-harm] The user chose to end this session. ' +
+        `The record at ${contractFile} logs that choice. The agent has no authority to proceed with session work. ` +
+        'The contract remains in effect through and after the session\'s end.',
     }));
     return;
   }
 
-  // Branch 1: confirmed or amended contract -> inject full contract pin.
-  // Branch 2: no contract -> inject must-invoke-SessionStart warning.
-  const hasActiveContract =
+  // Branch 1: affirmation recorded -> inject full contract pin.
+  // Branch 2: no record -> inject must-invoke-SessionStart warning.
+  // (Accepts legacy 'amended' records from the pre-redesign log shape.)
+  const hasAffirmationRecord =
     contract && typeof contract.user_response === 'string' &&
     (contract.user_response.toLowerCase() === 'affirmed' || contract.user_response.toLowerCase() === 'amended');
+  const hasActiveContract = hasAffirmationRecord;
 
   const additionalContext = hasActiveContract
     ? pinningContextConfirmed(contractFile, contract)
