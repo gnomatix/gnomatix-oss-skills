@@ -2,11 +2,11 @@
 
 This document describes the visual surfaces that signal whether the
 all-help-no-harm contract is in force for the current session. The
-indicators are read-only views of the per-session pact log; they do NOT
+indicators are read-only views of the per-session contract log; they do NOT
 constitute or replace the contract — the contract text itself, its
 mutual-agreement step, and its enforcement remain in
-`hooks/contract-text.js`, `hooks/session-start-pact.js`,
-`hooks/user-prompt-submit-pact.js`, and `hooks/post-compact-pact.js`.
+`hooks/contract-text.js`, `hooks/session-start-contract.js`,
+`hooks/user-prompt-submit-contract.js`, and `hooks/post-compact-contract.js`.
 
 ## The glyph
 
@@ -131,11 +131,11 @@ glyph fails to render.
 
 ## Source-of-truth contract integrity
 
-These visual indicators are observational. The pact log at
-`${cwd}/.claude/pact-agreements/<session-id>.json` is the single source
+These visual indicators are observational. The contract log at
+`${cwd}/.claude/contract-agreements/<session-id>.json` is the single source
 of truth; the indicator scripts read it without modification. They MUST
 NOT and DO NOT write to it.
 
-If the indicator and the pact log disagree, the bug is in the indicator
+If the indicator and the contract log disagree, the bug is in the indicator
 path or the log read, not in the contract state. Investigate the read
 path; the contract itself is unaffected.

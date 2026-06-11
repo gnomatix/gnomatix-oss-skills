@@ -68,14 +68,14 @@ marketplace does NOT ship one because:
    for.
 3. The user can adopt one of the existing community tools if they want
    that surface; the marketplace's contribution is exposing the
-   per-session pact-log state at `${cwd}/.claude/pact-agreements/...`
+   per-session contract-log state at `${cwd}/.claude/contract-agreements/...`
    in a documented JSON shape that any external tool can read.
 
 ## Recommended user action
 
 Use `platforms/claude-code/` integration inside the Code tab. If a tray /
 menubar surface is desired, install one of the community tools and point
-it at the pact-log directory as an additional data source.
+it at the contract-log directory as an additional data source.
 
 ## Sources
 
