@@ -37,7 +37,7 @@ Verified against the official Kiro docs:
   - `chat.enableContextUsageIndicator: true`
   - `chat.greeting.enabled: true`
 - **`kiro-title-shim.js`** — terminal-title shim. Reads the same
-  per-session pact-log directory as the Claude Code statusLine, derives
+  per-session contract-log directory as the Claude Code statusLine, derives
   the contract state (active / declined / pending), and emits an OSC 0
   sequence (`ESC ] 0 ; 💗 kiro-cli — contract <state> BEL`). The user
   wires it into their shell's `preexec` (zsh) / `PROMPT_COMMAND` (bash) /
@@ -94,7 +94,7 @@ Then remove the shell hook line(s) you added in `~/.zshrc` /
 
 - `install-kiro-cli-config.js` — settings.json patcher (atomic write,
   defensive fs handling, key-marker uninstall).
-- `kiro-title-shim.js` — terminal-title OSC 0 emitter (pact-log reader,
+- `kiro-title-shim.js` — terminal-title OSC 0 emitter (contract-log reader,
   fallback to most-recently-modified log when CLAUDE_SESSION_LOG_PATH
   is not set).
 - `README.md` — this document.

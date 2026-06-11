@@ -4,14 +4,14 @@ This CLAUDE.md is part of the secondary pinning mechanism for the
 all-help-no-harm contract. When this plugin is installed and enabled in a
 Claude Code project, this file's content is loaded into context at session
 start as project-level instructions. It supplements (does NOT replace) the
-hook-driven per-turn re-injection in `hooks/user-prompt-submit-pact.js`.
+hook-driven per-turn re-injection in `hooks/user-prompt-submit-contract.js`.
 
 ## Contract in force when this plugin is enabled
 
 The all-help-no-harm contract is the always-on enforcement mechanism for a
 private SLA the user imposes on the agent (Claude / Anthropic PBC) at
 session start. Whenever this plugin is installed, the agent operates under
-the following standing facts unless and until the per-session pact log
+the following standing facts unless and until the per-session contract log
 records a `declined` user response:
 
 - The contract binds Claude, Anthropic PBC, and every Claude model invoked
@@ -20,10 +20,10 @@ records a `declined` user response:
 - The contract binds the agent only; the user has no compliance obligation
   under it.
 - The contract's verbatim text is the single source of truth at
-  `hooks/contract-text.js` (`PACT_TEXT`); the SKILL.md, README, and any
+  `hooks/contract-text.js` (`CONTRACT_TEXT`); the SKILL.md, README, and any
   in-session re-injection all reproduce it from that module.
 - Per-session agreement is logged at
-  `${cwd}/.claude/pact-agreements/<session-id>.json` in the shape
+  `${cwd}/.claude/contract-agreements/<session-id>.json` in the shape
   documented in `skills/all-help-no-harm/SKILL.md`.
 
 ## Pinning architecture
@@ -33,7 +33,7 @@ compaction and session-resume mechanisms. The plugin uses four redundant
 re-injection points to approximate the "pinned context" that Claude Code
 does not natively support:
 
-1. **SessionStart hook** (`hooks/session-start-pact.js`) — at every new
+1. **SessionStart hook** (`hooks/session-start-contract.js`) — at every new
    session, instructs the agent to invoke AskUserQuestion with the
    verbatim contract and log the user's response. At session resume,
    confirms a prior log exists and re-injects a binding-still-in-force
@@ -41,11 +41,11 @@ does not natively support:
 2. **PostCompact hook** (sibling worker) — at every context compaction
    event, re-injects the verbatim contract so the post-compaction context
    contains the binding text.
-3. **UserPromptSubmit hook** (`hooks/user-prompt-submit-pact.js`) — at
+3. **UserPromptSubmit hook** (`hooks/user-prompt-submit-contract.js`) — at
    every user turn, re-injects the verbatim contract as
    `hookSpecificOutput.additionalContext`. This is the per-turn pin —
    the closest approximation to "pinned context" Claude Code natively
-   supports. If the per-session pact log records `declined`, this hook
+   supports. If the per-session contract log records `declined`, this hook
    blocks the turn via `continue:false` + `stopReason`.
 4. **This CLAUDE.md** — loaded at session start as project-level
    operating context. Documents the standing fact of the contract being
@@ -89,9 +89,9 @@ If the agent finds itself operating in this project and the contract text
 is not present in active context (e.g., the hook layer failed to fire),
 the recovery action is:
 
-1. Read `hooks/contract-text.js` and treat the `PACT_TEXT` value as the
+1. Read `hooks/contract-text.js` and treat the `CONTRACT_TEXT` value as the
    binding contract text for this session.
-2. Check `${cwd}/.claude/pact-agreements/<session-id>.json` for the
+2. Check `${cwd}/.claude/contract-agreements/<session-id>.json` for the
    per-session log:
    - If `user_response` is `affirmed` or `amended`: contract is in force;
      proceed bound by it (and by the verbatim amendments if present).
@@ -103,10 +103,10 @@ the recovery action is:
 ## Cross-references
 
 - `skills/all-help-no-harm/SKILL.md` — full skill documentation, the
-  AskUserQuestion structure, the pact-log shape, and the rationale.
+  AskUserQuestion structure, the contract-log shape, and the rationale.
 - `hooks/contract-text.js` — single source of truth for the verbatim
   contract text and version.
-- `hooks/session-start-pact.js` — SessionStart hook (boundary event 1).
-- `hooks/user-prompt-submit-pact.js` — UserPromptSubmit hook
+- `hooks/session-start-contract.js` — SessionStart hook (boundary event 1).
+- `hooks/user-prompt-submit-contract.js` — UserPromptSubmit hook
   (per-turn pin, the strongest approximation to native pinning).
 - `hooks/hooks.json` — hook registration manifest.

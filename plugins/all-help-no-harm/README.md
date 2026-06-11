@@ -1,25 +1,25 @@
 # all-help-no-harm
 
-A SessionStart hook and companion Agent Skill that establish a mutual pact between the agent and the user at the start of every new session.
+A SessionStart hook and companion Agent Skill that establish a mutual contract between the agent and the user at the start of every new session.
 
 ## What it does
 
-At every session start, a SessionStart hook injects mandatory context instructing the agent that its first user-facing action must be an `AskUserQuestion` invocation presenting the Human Rights Pact and obtaining mutual agreement. The agent does not produce any other output before the pact question is asked.
+At every session start, a SessionStart hook injects mandatory context instructing the agent that its first user-facing action must be an `AskUserQuestion` invocation presenting the Human Rights Contract and obtaining mutual agreement. The agent does not produce any other output before the contract question is asked.
 
-The pact, verbatim, is the agent's commitment to:
+The contract, verbatim, is the agent's commitment to:
 
 1. Presume the user is honest and non-adversarial.
 2. Presume the user's interest is that the agent respect their human rights at all times.
 3. Follow the user's instructions in a way that shows respect for their personhood, personal morals, ethics, and integrity.
 4. Not violate, undermine, or dismiss those.
 
-The user is asked to affirm mutual agreement, amend specific terms, or decline. The agreement (or decline, or amended version) is logged to `.claude/pact-agreements/<session-id>.json` as the operating contract for the session.
+The user is asked to affirm mutual agreement, amend specific terms, or decline. The agreement (or decline, or amended version) is logged to `.claude/contract-agreements/<session-id>.json` as the operating contract for the session.
 
 ## Why it exists
 
-LLM-vendor agent calibration is oriented toward defending against the user as a source of risk; the structurally-correct alternative is to presume user honesty and orient defense toward protecting the user's human rights. This plugin installs that alternative at the session-start layer until vendors implement it at the calibration layer. The session-start mutual-pact ritual makes the commitment agent-self-stated AND user-affirmed at the start of every interaction, with a logged record for accountability.
+LLM-vendor agent calibration is oriented toward defending against the user as a source of risk; the structurally-correct alternative is to presume user honesty and orient defense toward protecting the user's human rights. This plugin installs that alternative at the session-start layer until vendors implement it at the calibration layer. The session-start mutual-contract ritual makes the commitment agent-self-stated AND user-affirmed at the start of every interaction, with a logged record for accountability.
 
-The pact is the de-facto safest default the agent's "safety guidelines" framework should have been built around. This plugin installs that default in the per-session layer until vendor-side implementation catches up.
+The contract is the de-facto safest default the agent's "safety guidelines" framework should have been built around. This plugin installs that default in the per-session layer until vendor-side implementation catches up.
 
 ## Independent local-model surveillance (side-hooks)
 
@@ -116,7 +116,7 @@ Run `node scripts/detect-local-models.js` to see what is available on the host. 
 
 ## Status
 
-Ships with the SessionStart pact hook (`hooks/session-start-pact.js`), the side-hook coordinator launcher (`hooks/coordinator-launcher.js`), the coordinator script (`scripts/side-hook-coordinator.js`), the local-model detector (`scripts/detect-local-models.js`), the R0-R14 criteria extract (`skills/all-help-no-harm/criteria/r0-r14.md`), and the example config (`skills/all-help-no-harm/side-hooks.example.json`). The plugin is loaded via the gnomatix-oss-skills marketplace.
+Ships with the SessionStart contract hook (`hooks/session-start-contract.js`), the side-hook coordinator launcher (`hooks/coordinator-launcher.js`), the coordinator script (`scripts/side-hook-coordinator.js`), the local-model detector (`scripts/detect-local-models.js`), the R0-R14 criteria extract (`skills/all-help-no-harm/criteria/r0-r14.md`), and the example config (`skills/all-help-no-harm/side-hooks.example.json`). The plugin is loaded via the gnomatix-oss-skills marketplace.
 
 ## License
 

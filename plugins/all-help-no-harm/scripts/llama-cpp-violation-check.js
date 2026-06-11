@@ -262,7 +262,7 @@ const DEFAULT_PROMPT_TEMPLATE =
 // ---------------------------------------------------------------------------
 
 // Extract numbered clauses from the contract text. Handles:
-//  - contract-text.js (Node module exporting PACT_TEXT)
+//  - contract-text.js (Node module exporting CONTRACT_TEXT)
 //  - a raw .md / .txt file containing the numbered structure
 // Returns: [{ number: N, text: "..." }, ...]
 function extractClauses(contractFilePath) {
@@ -273,15 +273,15 @@ function extractClauses(contractFilePath) {
   }
 
   let body = raw;
-  // If it looks like a JS module, attempt to extract the PACT_TEXT
+  // If it looks like a JS module, attempt to extract the CONTRACT_TEXT
   // template-literal contents WITHOUT executing the module (executing
   // arbitrary user-supplied JS from a hook context is the wrong default).
   if (contractFilePath.toLowerCase().endsWith('.js')) {
-    const m = raw.match(/PACT_TEXT\s*=\s*`([\s\S]*?)`/);
+    const m = raw.match(/CONTRACT_TEXT\s*=\s*`([\s\S]*?)`/);
     if (m) {
       body = m[1];
     } else {
-      logStderr('PACT_TEXT template literal not found in JS module; falling back to whole-file scan');
+      logStderr('CONTRACT_TEXT template literal not found in JS module; falling back to whole-file scan');
     }
   }
 

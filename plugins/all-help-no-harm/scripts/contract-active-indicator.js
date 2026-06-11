@@ -4,7 +4,7 @@
 // the moment a session starts under this plugin. The user is the only
 // non-participant; the user's two options at session start are to accept
 // (affirm/amend → session continues) or end the session (decline → session
-// is blocked by user-prompt-submit-pact.js and these indicators don't run).
+// is blocked by user-prompt-submit-contract.js and these indicators don't run).
 //
 // There is no operational state where the model is in a session under this
 // plugin and the contract is not binding the model. The indicator therefore

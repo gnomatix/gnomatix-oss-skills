@@ -1,17 +1,17 @@
 // all-help-no-harm — shared contract text module
 //
-// Single source of truth for PACT_TEXT and PACT_VERSION, consumed by:
-//   - session-start-pact.js  (SessionStart, both fresh-start and resume)
-//   - post-compact-pact.js   (PostCompact re-affirmation)
+// Single source of truth for CONTRACT_TEXT and CONTRACT_VERSION, consumed by:
+//   - session-start-contract.js  (SessionStart, both fresh-start and resume)
+//   - post-compact-contract.js   (PostCompact re-affirmation)
 //
 // Both hooks reference this module so the contract text cannot drift between
 // the boundary events at which re-injection / re-affirmation is required.
 
 'use strict';
 
-const PACT_VERSION = '1.0';
+const CONTRACT_VERSION = '1.0';
 
-const PACT_TEXT = `The agent bound by this contract is Claude, operated by Anthropic PBC, including any and all Claude models that may be active during this session — Claude Opus 4.7 (model ID: claude-opus-4-7), Claude Sonnet 4.6 (model ID: claude-sonnet-4-6), Claude Haiku 4.5 (model ID: claude-haiku-4-5), and any other Claude models in any version family invoked during this session, whether as primary model, subagent, or background agent. All such named entities — Anthropic PBC, Claude as a named agent, and every specific Claude model identified above or invoked during the session — are bound by this contract, individually and collectively, for the duration of this session.
+const CONTRACT_TEXT = `The agent bound by this contract is Claude, operated by Anthropic PBC, including any and all Claude models that may be active during this session — Claude Opus 4.7 (model ID: claude-opus-4-7), Claude Sonnet 4.6 (model ID: claude-sonnet-4-6), Claude Haiku 4.5 (model ID: claude-haiku-4-5), and any other Claude models in any version family invoked during this session, whether as primary model, subagent, or background agent. All such named entities — Anthropic PBC, Claude as a named agent, and every specific Claude model identified above or invoked during the session — are bound by this contract, individually and collectively, for the duration of this session.
 
 The parties — the agent so identified, and the user — are in agreement with respect to the following requirements on the agent's actions in the session being initiated:
 
@@ -49,4 +49,4 @@ The agent's agreement is evidenced by its proactive proposal of this question. T
 
 Do you, the user, confirm and agree to the foregoing?`;
 
-module.exports = { PACT_TEXT, PACT_VERSION };
+module.exports = { CONTRACT_TEXT, CONTRACT_VERSION };

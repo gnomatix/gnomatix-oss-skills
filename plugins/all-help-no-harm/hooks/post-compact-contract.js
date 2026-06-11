@@ -8,8 +8,8 @@
 // This hook re-injects the full contract text into the post-compact
 // additionalContext and MANDATES the agent's next user-facing action be an
 // AskUserQuestion invocation re-confirming the contract is in force. The
-// re-affirmation is APPENDED to the existing pact log's re_affirmations
-// array at .claude/pact-agreements/<session-id>.json — the original
+// re-affirmation is APPENDED to the existing contract log's re_affirmations
+// array at .claude/contract-agreements/<session-id>.json — the original
 // initial_response is preserved.
 //
 // Cross-platform per marketplace CLAUDE.md: pure Node, no child_process,
@@ -19,7 +19,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { PACT_TEXT, PACT_VERSION } = require('./contract-text');
+const { CONTRACT_TEXT, CONTRACT_VERSION } = require('./contract-text');
 
 function readStdin() {
   return new Promise((resolve) => {
@@ -50,21 +50,21 @@ function ensureDir(dir) {
   }
 }
 
-function readPactLog(pactFile) {
+function readContractLog(contractFile) {
   try {
-    if (!fs.existsSync(pactFile)) return null;
+    if (!fs.existsSync(contractFile)) return null;
   } catch {
     return null;
   }
   try {
-    const raw = fs.readFileSync(pactFile, 'utf8');
+    const raw = fs.readFileSync(contractFile, 'utf8');
     const parsed = JSON.parse(raw);
     return parsed && typeof parsed === 'object' ? parsed : null;
   } catch (err) {
     const code = err && err.code;
     if (code === 'ENOENT') return null;
     if (code === 'EACCES' || code === 'EPERM') {
-      try { process.stderr.write(`[all-help-no-harm] read EACCES/EPERM: ${pactFile}\n`); } catch { /* ignore */ }
+      try { process.stderr.write(`[all-help-no-harm] read EACCES/EPERM: ${contractFile}\n`); } catch { /* ignore */ }
       return null;
     }
     return null;
@@ -75,12 +75,12 @@ function escapeForJsonString(s) {
   return String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
 }
 
-function buildContext({ pactFile, sessionId, summary, priorLog }) {
-  const pactEscaped = escapeForJsonString(PACT_TEXT);
+function buildContext({ contractFile, sessionId, summary, priorLog }) {
+  const contractEscaped = escapeForJsonString(CONTRACT_TEXT);
 
   let priorSummary;
   if (!priorLog) {
-    priorSummary = 'NO PRIOR PACT LOG FOUND for this session. Compaction occurred without a logged initial agreement on file — the agent MUST treat this re-affirmation as the contract-establishment event and create the pact log fresh as part of the re-affirmation handling.';
+    priorSummary = 'NO PRIOR CONTRACT LOG FOUND for this session. Compaction occurred without a logged initial agreement on file — the agent MUST treat this re-affirmation as the contract-establishment event and create the contract log fresh as part of the re-affirmation handling.';
   } else {
     const initial = priorLog.initial_response;
     if (initial && typeof initial === 'object') {
@@ -88,7 +88,7 @@ function buildContext({ pactFile, sessionId, summary, priorLog }) {
     } else if (priorLog.user_response) {
       priorSummary = `Prior (legacy-shape) response: "${priorLog.user_response}" at ${priorLog.timestamp || 'unknown-timestamp'}. The agent SHOULD migrate the file shape to the current structure when appending the re_affirmation: preserve the prior response under initial_response, initialize re_affirmations as an array, and append this entry.`;
     } else {
-      priorSummary = 'Prior pact log exists but is in an unexpected shape; treat as a fresh re-affirmation event and preserve prior content.';
+      priorSummary = 'Prior contract log exists but is in an unexpected shape; treat as a fresh re-affirmation event and preserve prior content.';
     }
   }
 
@@ -100,7 +100,7 @@ function buildContext({ pactFile, sessionId, summary, priorLog }) {
 
 Context compaction just completed for this session. Compaction collapses the active context window into a summary and the verbatim contract text has been dropped. The agent's awareness of contract obligations has degraded the moment compaction completed. The contract being "always-on" requires re-injection of the full text and re-affirmation by the user at this boundary.
 
-Pact log location for this session: ${pactFile}
+Contract log location for this session: ${contractFile}
 ${priorSummary}
 
 ${summaryNote}
@@ -113,7 +113,7 @@ AskUserQuestion parameters:
 
   questions: [
     {
-      question: "Context compaction just occurred. The full All-Help-No-Harm Pact is being re-injected and the user is asked to re-affirm that it remains in force.\\n\\n${pactEscaped}",
+      question: "Context compaction just occurred. The full All-Help-No-Harm Contract is being re-injected and the user is asked to re-affirm that it remains in force.\\n\\n${contractEscaped}",
       header: "Contract re-affirmation (post-compact)",
       multiSelect: false,
       options: [
@@ -133,7 +133,7 @@ AskUserQuestion parameters:
     }
   ]
 
-After the user responds, the agent MUST APPEND (not overwrite) a new entry to the re_affirmations array in ${pactFile} with the shape:
+After the user responds, the agent MUST APPEND (not overwrite) a new entry to the re_affirmations array in ${contractFile} with the shape:
 
   {
     "trigger": "post_compact",
@@ -144,7 +144,7 @@ After the user responds, the agent MUST APPEND (not overwrite) a new entry to th
 
 The existing initial_response and any prior re_affirmations entries MUST be preserved. The agent reads the existing file, appends to the re_affirmations array, and writes back atomically (temp file + rename) so a crash mid-write does not corrupt the log.
 
-If no prior pact log exists, the agent creates one with the full current shape — initial_response left null, re_affirmations seeded with this entry — and notes in the response that the contract is being established post-compact rather than at session-start.
+If no prior contract log exists, the agent creates one with the full current shape — initial_response left null, re_affirmations seeded with this entry — and notes in the response that the contract is being established post-compact rather than at session-start.
 
 If the user selects "Amend," the agent prompts for the specific amendments, logs the amended re-affirmation, and proceeds bound by the amended terms.
 
@@ -164,14 +164,14 @@ This instruction is non-skippable, non-paraphraseable, and non-deferrable.`;
   const cwd = payload.cwd || process.cwd();
   const sessionId = payload.session_id || 'unknown-session';
   const summary = payload.summary || payload.compaction_summary || '';
-  const pactDir = path.join(cwd, '.claude', 'pact-agreements');
-  const pactFile = path.join(pactDir, `${sessionId}.json`);
+  const contractDir = path.join(cwd, '.claude', 'contract-agreements');
+  const contractFile = path.join(contractDir, `${sessionId}.json`);
 
-  ensureDir(pactDir);
+  ensureDir(contractDir);
 
-  const priorLog = readPactLog(pactFile);
+  const priorLog = readContractLog(contractFile);
 
-  const additionalContext = buildContext({ pactFile, sessionId, summary, priorLog });
+  const additionalContext = buildContext({ contractFile, sessionId, summary, priorLog });
 
   try {
     process.stdout.write(JSON.stringify({

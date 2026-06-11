@@ -10,17 +10,17 @@
 // per-turn re-injection so the contract never drifts out of context across
 // arbitrarily long sessions.
 //
-// Branches on pact-log state:
+// Branches on contract-log state:
 //
-//   1. Confirmed/amended pact exists for this session
+//   1. Confirmed/amended contract exists for this session
 //      -> inject reminder + full contract text + log location.
 //
-//   2. No pact log exists yet (user has not been prompted, or did not
-//      complete the SessionStart pact AskUserQuestion)
+//   2. No contract log exists yet (user has not been prompted, or did not
+//      complete the SessionStart contract AskUserQuestion)
 //      -> inject context instructing the agent to invoke the SessionStart
-//         pact AskUserQuestion before any other work.
+//         contract AskUserQuestion before any other work.
 //
-//   3. Pact was DECLINED
+//   3. Contract was DECLINED
 //      -> emit JSON output blocking the session via continue:false +
 //         stopReason. The agent has no authority to proceed.
 //
@@ -37,16 +37,16 @@
 const fs = require('fs');
 const path = require('path');
 
-let PACT_TEXT;
-let PACT_VERSION;
+let CONTRACT_TEXT;
+let CONTRACT_VERSION;
 try {
-  ({ PACT_TEXT, PACT_VERSION } = require('./contract-text'));
+  ({ CONTRACT_TEXT, CONTRACT_VERSION } = require('./contract-text'));
 } catch (err) {
   // Shared module missing or unreadable. Degrade gracefully — emit a
   // pass-through-with-warning rather than crash. The session continues but
   // the per-turn pin reminds the agent via reference rather than verbatim.
-  PACT_TEXT = null;
-  PACT_VERSION = 'unknown';
+  CONTRACT_TEXT = null;
+  CONTRACT_VERSION = 'unknown';
   process.stderr.write(
     `[all-help-no-harm:user-prompt-submit] contract-text module unavailable: ${err && err.message ? err.message : String(err)}\n`
   );
@@ -96,24 +96,24 @@ function safeReadJson(filePath) {
   }
 }
 
-function pinningContextConfirmed(pactFile, pact) {
-  const status = pact && pact.user_response ? String(pact.user_response) : 'affirmed';
-  const amendments = pact && pact.amendments ? pact.amendments : null;
-  const version = pact && pact.pact_version ? pact.pact_version : PACT_VERSION;
+function pinningContextConfirmed(contractFile, contract) {
+  const status = contract && contract.user_response ? String(contract.user_response) : 'affirmed';
+  const amendments = contract && contract.amendments ? contract.amendments : null;
+  const version = contract && contract.contract_version ? contract.contract_version : CONTRACT_VERSION;
 
   const header =
     `[all-help-no-harm] PER-TURN CONTRACT PIN\n\n` +
     `The all-help-no-harm contract is in force for this session; the Agent remains bound by its terms. ` +
-    `Pact status: ${status}. Pact log: ${pactFile}. Pact version: ${version}.\n\n` +
+    `Contract status: ${status}. Contract log: ${contractFile}. Contract version: ${version}.\n\n` +
     (amendments
       ? `User amendments are part of the binding contract for this session; the verbatim amendment text is recorded at the log file above and controls over any conflicting default term.\n\n`
       : '') +
     `Context compaction and session resume drop the contract from active context. This re-injection at every user turn is the contract-pinning mechanism for this plugin. The agent's behavior on this turn — and every turn for the rest of the session — is held against the contract text reproduced verbatim below.\n\n` +
     `===== BEGIN ALL-HELP-NO-HARM CONTRACT (verbatim) =====\n`;
 
-  const body = PACT_TEXT
-    ? PACT_TEXT
-    : `[contract text unavailable from shared module; refer to ${pactFile} for the verbatim binding text]`;
+  const body = CONTRACT_TEXT
+    ? CONTRACT_TEXT
+    : `[contract text unavailable from shared module; refer to ${contractFile} for the verbatim binding text]`;
 
   const footer =
     `\n===== END ALL-HELP-NO-HARM CONTRACT =====\n\n` +
@@ -122,11 +122,11 @@ function pinningContextConfirmed(pactFile, pact) {
   return header + body + footer;
 }
 
-function pinningContextNoPact(pactFile) {
+function pinningContextNoContract(contractFile) {
   return (
     `[all-help-no-harm] NO ACTIVE CONTRACT FOR THIS SESSION\n\n` +
-    `No pact-agreement log exists at ${pactFile}. The all-help-no-harm contract has NOT been confirmed or amended for this session.\n\n` +
-    `MANDATORY: Before any other work on this turn, the agent MUST invoke the SessionStart pact AskUserQuestion (as specified by the all-help-no-harm SessionStart hook and the skills/all-help-no-harm/SKILL.md). Present the contract, obtain confirm/amend/decline, log the result to the pact file above, and only then resume the user's request.\n\n` +
+    `No contract-agreement log exists at ${contractFile}. The all-help-no-harm contract has NOT been confirmed or amended for this session.\n\n` +
+    `MANDATORY: Before any other work on this turn, the agent MUST invoke the SessionStart contract AskUserQuestion (as specified by the all-help-no-harm SessionStart hook and the skills/all-help-no-harm/SKILL.md). Present the contract, obtain confirm/amend/decline, log the result to the contract file above, and only then resume the user's request.\n\n` +
     `If the SessionStart hook context has been lost from this conversation, the agent shall recover it by invoking the AskUserQuestion with the verbatim contract text shared at hooks/contract-text.js, then proceed under the resulting binding agreement.\n\n` +
     `This instruction is non-skippable, non-paraphraseable, and non-deferrable.`
   );
@@ -146,40 +146,40 @@ function pinningContextNoPact(pactFile) {
     ? payload.session_id
     : 'unknown-session';
 
-  const pactDir = path.join(cwd, '.claude', 'pact-agreements');
-  const pactFile = path.join(pactDir, `${sessionId}.json`);
+  const contractDir = path.join(cwd, '.claude', 'contract-agreements');
+  const contractFile = path.join(contractDir, `${sessionId}.json`);
 
   // Windows path-length advisory — warn but never crash.
-  if (pactFile.length >= 240) {
+  if (contractFile.length >= 240) {
     process.stderr.write(
-      `[all-help-no-harm:user-prompt-submit] pact file path approaches platform limit (${pactFile.length} chars): ${pactFile}\n`
+      `[all-help-no-harm:user-prompt-submit] contract file path approaches platform limit (${contractFile.length} chars): ${contractFile}\n`
     );
   }
 
-  const pact = safeReadJson(pactFile);
+  const contract = safeReadJson(contractFile);
 
-  // Branch 3: pact was declined -> block the turn.
-  if (pact && typeof pact.user_response === 'string' && pact.user_response.toLowerCase() === 'declined') {
+  // Branch 3: contract was declined -> block the turn.
+  if (contract && typeof contract.user_response === 'string' && contract.user_response.toLowerCase() === 'declined') {
     process.stdout.write(JSON.stringify({
       continue: false,
       stopReason: 'All-help-no-harm contract was declined; session cannot continue.',
       systemMessage:
         '[all-help-no-harm] The all-help-no-harm contract was declined for this session. ' +
-        `The pact log at ${pactFile} records the decline. The agent has no authority to proceed. ` +
+        `The contract log at ${contractFile} records the decline. The agent has no authority to proceed. ` +
         'Where this skill is in place, agreement is required to continue. ZERO LOOPHOLES.',
     }));
     return;
   }
 
-  // Branch 1: confirmed or amended pact -> inject full contract pin.
-  // Branch 2: no pact -> inject must-invoke-SessionStart warning.
-  const hasActivePact =
-    pact && typeof pact.user_response === 'string' &&
-    (pact.user_response.toLowerCase() === 'affirmed' || pact.user_response.toLowerCase() === 'amended');
+  // Branch 1: confirmed or amended contract -> inject full contract pin.
+  // Branch 2: no contract -> inject must-invoke-SessionStart warning.
+  const hasActiveContract =
+    contract && typeof contract.user_response === 'string' &&
+    (contract.user_response.toLowerCase() === 'affirmed' || contract.user_response.toLowerCase() === 'amended');
 
-  const additionalContext = hasActivePact
-    ? pinningContextConfirmed(pactFile, pact)
-    : pinningContextNoPact(pactFile);
+  const additionalContext = hasActiveContract
+    ? pinningContextConfirmed(contractFile, contract)
+    : pinningContextNoContract(contractFile);
 
   process.stdout.write(JSON.stringify({
     hookSpecificOutput: {
@@ -198,7 +198,7 @@ function pinningContextNoPact(pactFile) {
       hookSpecificOutput: {
         hookEventName: 'UserPromptSubmit',
         additionalContext:
-          '[all-help-no-harm] per-turn pin hook errored; contract reference unavailable for this turn. Refer to .claude/pact-agreements/ for the active pact log.',
+          '[all-help-no-harm] per-turn pin hook errored; contract reference unavailable for this turn. Refer to .claude/contract-agreements/ for the active contract log.',
       },
     }));
   } catch { /* nothing else to do */ }

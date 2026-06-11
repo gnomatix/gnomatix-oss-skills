@@ -13,8 +13,8 @@
 // to set the terminal title before each `kiro-cli chat` invocation.
 //
 // The script intentionally has no dependency on Kiro CLI's own runtime; it
-// reads the same per-session pact log the Claude Code statusLine reads
-// (${cwd}/.claude/pact-agreements/<id>.json or env override).
+// reads the same per-session contract log the Claude Code statusLine reads
+// (${cwd}/.claude/contract-agreements/<id>.json or env override).
 //
 // Cross-platform per marketplace CLAUDE.md: pure Node, no child_process,
 // no hardcoded Unix paths, every fs call wrapped in try/catch.
@@ -45,10 +45,10 @@ function resolveLogPath(args) {
   const envPath = process.env.CLAUDE_SESSION_LOG_PATH;
   if (envPath && typeof envPath === 'string' && envPath.length > 0) return envPath;
   // No session id available outside Claude Code's statusLine payload, so
-  // fall back to the most-recently-modified pact log in the project's
-  // .claude/pact-agreements/ directory.
+  // fall back to the most-recently-modified contract log in the project's
+  // .claude/contract-agreements/ directory.
   try {
-    const dir = path.join(process.cwd(), '.claude', 'pact-agreements');
+    const dir = path.join(process.cwd(), '.claude', 'contract-agreements');
     if (!fs.existsSync(dir)) return null;
     const entries = fs.readdirSync(dir, { withFileTypes: true })
       .filter((d) => d.isFile() && d.name.endsWith('.json'))

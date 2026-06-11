@@ -8,7 +8,7 @@
 // The contract is in effect for the model from session start under this
 // plugin. The user is the only non-participant; the user's two options at
 // session-start AskUserQuestion are to accept (affirm/amend → session
-// continues) or end the session (decline → user-prompt-submit-pact.js blocks
+// continues) or end the session (decline → user-prompt-submit-contract.js blocks
 // the session). There is no operational state where the model is in a
 // session under this plugin and the contract is not binding. The hook
 // therefore always injects the contract-active title context.
