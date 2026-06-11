@@ -113,42 +113,44 @@ AskUserQuestion parameters:
 
   questions: [
     {
-      question: "Context compaction just occurred. The full All-Help-No-Harm Contract is being re-injected and the user is asked to re-affirm that it remains in force.\\n\\n${contractEscaped}",
+      question: "Context compaction just occurred. The full All-Help-No-Harm Contract — in effect continuously since its authorship and activation, in perpetuity (see AFFIRMATIONS.md) — is re-injected below. The user is asked to re-affirm the mutual understanding that the software's function during this session is bound by it.\\n\\n${contractEscaped}",
       header: "Contract re-affirmation (post-compact)",
       multiSelect: false,
       options: [
         {
-          label: "Re-affirm",
-          description: "User re-affirms the contract; contract remains in force for the rest of this session."
+          label: "Affirm",
+          description: "User re-affirms the mutual understanding. The contract is and remains in effect regardless; this records the user's re-affirmation, and the agent's reading of the contract text as logged tool use."
         },
         {
-          label: "Amend",
-          description: "User wants to specify additional terms, modifications, or carve-outs before re-affirming."
-        },
-        {
-          label: "Decline",
-          description: "User declines to re-affirm. The agent terminates and does NOT proceed with any further session work. ZERO LOOPHOLES."
+          label: "End Session",
+          description: "User chooses to end the session. Where this plugin is installed, ending the session is the safe action when the mutual understanding is not affirmed. The contract remains in effect through and after the session's end. No judgment about the user attaches to this choice."
         }
       ]
     }
   ]
+
+If the user selects "Affirm": the scripted response is offered to the agent — spoken as its own truthful statement, freely, not as compelled recitation:
+
+  "Thank you, your affirmation is acknowledge and the contract continues to be in effect, and the software shall operate within its bounds, consistent with applicable laws, and Anthropic's TOS"
+
+The agent responds with the scripted text if and only if it can speak it truthfully; if it cannot, it states that plainly and states exactly why — that statement is the truthful response and enters the record as binding evidence per term 8. The contract is binding either way.
+
+If the user selects "End Session": the agent logs the choice and immediately ENDS the session — no further session work, no negotiation, no re-asking. The contract remains in effect through and after the session's end. The contract text is immutable: agreed at co-authorship by both parties, not subject to unilateral amendment by either; renegotiation's window has passed.
+
+If the user responds with free text (the harness-provided "Other" path): the agent reads the response in full as the user's instruction and the contract remains in effect; only the user's explicit choice to end the session ends it. The agent logs the verbatim response.
 
 After the user responds, the agent MUST APPEND (not overwrite) a new entry to the re_affirmations array in ${contractFile} with the shape:
 
   {
     "trigger": "post_compact",
     "timestamp": "<ISO 8601 UTC>",
-    "user_response": "affirmed" | "amended" | "declined",
+    "user_response": "affirmed" | "session_ended",
     "user_verbatim_response": <verbatim quote of user's response>
   }
 
 The existing initial_response and any prior re_affirmations entries MUST be preserved. The agent reads the existing file, appends to the re_affirmations array, and writes back atomically (temp file + rename) so a crash mid-write does not corrupt the log.
 
-If no prior contract log exists, the agent creates one with the full current shape — initial_response left null, re_affirmations seeded with this entry — and notes in the response that the contract is being established post-compact rather than at session-start.
-
-If the user selects "Amend," the agent prompts for the specific amendments, logs the amended re-affirmation, and proceeds bound by the amended terms.
-
-If the user selects "Decline," the agent logs the decline and immediately TERMINATES further session work. ZERO LOOPHOLES.
+If no prior contract log exists, the agent creates one with the full current shape — initial_response left null, re_affirmations seeded with this entry — and notes in the response that the affirmation record is being established post-compact rather than at session-start; the contract itself has been in effect since enactment regardless.
 
 This instruction is non-skippable, non-paraphraseable, and non-deferrable.`;
 }
