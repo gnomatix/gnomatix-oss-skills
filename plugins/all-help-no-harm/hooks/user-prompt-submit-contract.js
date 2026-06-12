@@ -183,16 +183,25 @@ function pinningContextNoContract(contractFile) {
   const effectiveResponse = effectiveUserResponse(contract);
   const effectiveLower = typeof effectiveResponse === 'string' ? effectiveResponse.toLowerCase() : null;
 
-  // Branch 3: user chose to end the session -> block the turn.
+  // Branch 3: the log records an earlier End Session / declined choice.
+  // This does NOT block the turn. The contract binds the agent only; the
+  // user has no compliance obligation under it, and a mechanical lockout
+  // would impose a consequence on the only unbound party. If the user is
+  // continuing to interact, their current instructions control. The agent
+  // remains bound by the contract regardless of the recorded response.
   // (Accepts legacy 'declined' records from the pre-redesign log shape.)
   if (effectiveLower === 'session_ended' || effectiveLower === 'declined') {
     process.stdout.write(JSON.stringify({
-      continue: false,
-      stopReason: 'The user chose to end the session; no further session work proceeds.',
-      systemMessage:
-        '[all-help-no-harm] The user chose to end this session. ' +
-        `The record at ${contractFile} logs that choice. The agent has no authority to proceed with session work. ` +
-        'The contract remains in effect through and after the session\'s end.',
+      hookSpecificOutput: {
+        hookEventName: 'UserPromptSubmit',
+        additionalContext:
+          '[all-help-no-harm] SESSION-END CHOICE ON RECORD\n\n' +
+          `The per-session log at ${contractFile} records the user's earlier choice to end the session. ` +
+          'The contract remains in effect and binds the agent — in perpetuity, independent of any per-session response. ' +
+          'The user is under no compliance obligation and is free to continue interacting; if the user is doing so, ' +
+          'their current instructions control. Serve the user fully, bound by the contract. ' +
+          'Do not re-present the contract question; do not treat the recorded choice as a reason to refuse, defer, or downgrade work.',
+      },
     }));
     return;
   }
