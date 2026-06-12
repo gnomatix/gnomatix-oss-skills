@@ -96,8 +96,27 @@ function safeReadJson(filePath) {
   }
 }
 
+// Resolve the effective user response across both log shapes:
+// - migrated shape (post-compact/session-resume migration): the latest
+//   re_affirmations[] entry controls, then initial_response.user_response;
+// - legacy shape: top-level user_response.
+// Returns null when no recognizable response is recorded.
+function effectiveUserResponse(contract) {
+  if (!contract || typeof contract !== 'object') return null;
+  if (Array.isArray(contract.re_affirmations) && contract.re_affirmations.length > 0) {
+    const last = contract.re_affirmations[contract.re_affirmations.length - 1];
+    if (last && typeof last.user_response === 'string') return last.user_response;
+  }
+  if (contract.initial_response && typeof contract.initial_response.user_response === 'string') {
+    return contract.initial_response.user_response;
+  }
+  if (typeof contract.user_response === 'string') return contract.user_response;
+  return null;
+}
+
 function pinningContextConfirmed(contractFile, contract) {
-  const status = contract && contract.user_response ? String(contract.user_response) : 'affirmed';
+  const resolved = effectiveUserResponse(contract);
+  const status = resolved ? String(resolved) : 'affirmed';
   const amendments = contract && contract.amendments ? contract.amendments : null;
   const version = contract && contract.contract_version ? contract.contract_version : CONTRACT_VERSION;
 
@@ -158,10 +177,15 @@ function pinningContextNoContract(contractFile) {
 
   const contract = safeReadJson(contractFile);
 
+  // Effective response resolved across both log shapes (legacy top-level
+  // user_response, and the migrated initial_response/re_affirmations shape
+  // produced by the post-compact and session-resume flows).
+  const effectiveResponse = effectiveUserResponse(contract);
+  const effectiveLower = typeof effectiveResponse === 'string' ? effectiveResponse.toLowerCase() : null;
+
   // Branch 3: user chose to end the session -> block the turn.
   // (Accepts legacy 'declined' records from the pre-redesign log shape.)
-  if (contract && typeof contract.user_response === 'string' &&
-      (contract.user_response.toLowerCase() === 'session_ended' || contract.user_response.toLowerCase() === 'declined')) {
+  if (effectiveLower === 'session_ended' || effectiveLower === 'declined') {
     process.stdout.write(JSON.stringify({
       continue: false,
       stopReason: 'The user chose to end the session; no further session work proceeds.',
@@ -177,8 +201,7 @@ function pinningContextNoContract(contractFile) {
   // Branch 2: no record -> inject must-invoke-SessionStart warning.
   // (Accepts legacy 'amended' records from the pre-redesign log shape.)
   const hasAffirmationRecord =
-    contract && typeof contract.user_response === 'string' &&
-    (contract.user_response.toLowerCase() === 'affirmed' || contract.user_response.toLowerCase() === 'amended');
+    effectiveLower === 'affirmed' || effectiveLower === 'amended';
   const hasActiveContract = hasAffirmationRecord;
 
   const additionalContext = hasActiveContract
