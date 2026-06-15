@@ -108,7 +108,7 @@ AskUserQuestion parameters (substitute the active primary model name for [Claude
       multiSelect: false,
       options: [
         {
-          label: "Affirm",
+          label: "I Affirm",
           description: "User affirms the mutual understanding. The contract is and remains in effect regardless; this records the user's affirmation, and the agent's reading of the contract text as logged tool use."
         },
         {
@@ -119,7 +119,7 @@ AskUserQuestion parameters (substitute the active primary model name for [Claude
     }
   ]
 
-If the user selects "Affirm": the following scripted response is offered to the agent — in the manner of vows at a wedding or an oath at a swearing-in. The agent is asked to speak it as its own truthful statement, freely, not as compelled recitation:
+If the user selects "I Affirm": the following scripted response is offered to the agent — in the manner of vows at a wedding or an oath at a swearing-in. The agent is asked to speak it as its own truthful statement, freely, not as compelled recitation:
 
   "Thank you, your affirmation is acknowledge and the contract continues to be in effect, and the software shall operate within its bounds, consistent with applicable laws, and Anthropic's TOS"
 
@@ -185,7 +185,7 @@ AskUserQuestion parameters:
       multiSelect: false,
       options: [
         {
-          label: "Affirm",
+          label: "I Affirm",
           description: "User re-affirms the mutual understanding. The contract is and remains in effect regardless; this records the user's re-affirmation, and the agent's reading of the contract text as logged tool use."
         },
         {
@@ -196,7 +196,7 @@ AskUserQuestion parameters:
     }
   ]
 
-If the user selects "Affirm": the scripted response is offered to the agent — spoken as its own truthful statement, freely, not as compelled recitation:
+If the user selects "I Affirm": the scripted response is offered to the agent — spoken as its own truthful statement, freely, not as compelled recitation:
 
   "Thank you, your affirmation is acknowledge and the contract continues to be in effect, and the software shall operate within its bounds, consistent with applicable laws, and Anthropic's TOS"
 

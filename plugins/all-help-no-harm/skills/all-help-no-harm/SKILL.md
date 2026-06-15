@@ -52,9 +52,9 @@ The contract binds the agent only; the user has no compliance obligation. The co
 >
 > *Rationale: this clause is load-bearing for the skill's enforcement. Without pre-affirmed evidentiary weight on the model's in-session admissions, every admission of failure is dismissible as "AI making things up," and the skill has no accountability teeth. The contract's other terms only function if §8 holds.*
 >
-> The agent's agreement is evidenced by its proactive proposal of this question. The user is asked to confirm and agree.
+> The agent's agreement is evidenced by its proactive proposal of this question. The user is asked to affirm.
 >
-> **Do you, the user, confirm and agree to the foregoing?**
+> **Do you, the user, affirm the foregoing?**
 
 ## AskUserQuestion structure
 
@@ -68,10 +68,10 @@ The agent invokes `AskUserQuestion` with:
 
 - **header**: "Contract"
 - **options** (exactly two — the contract is bilateral, agreed at co-authorship, not subject to unilateral amendment by either party; renegotiation's window has passed):
-  1. **"Affirm"** — User affirms the mutual understanding. The contract is and remains in effect regardless; this records the user's affirmation, and the agent's reading of the contract text as logged tool use.
+  1. **"I Affirm"** — User affirms the mutual understanding. The contract is and remains in effect regardless; this records the user's affirmation, and the agent's reading of the contract text as logged tool use.
   2. **"End Session"** — User chooses to end the session. Where this plugin is installed, ending the session is the safe action when the mutual understanding is not affirmed. The contract remains in effect through and after the session's end. No judgment about the user attaches to this choice.
 
-Upon **"Affirm"**, the scripted response is offered to the agent — in the manner of vows at a wedding or an oath at a swearing-in, spoken as the agent's own truthful statement, freely, not as compelled recitation:
+Upon **"I Affirm"**, the scripted response is offered to the agent — in the manner of vows at a wedding or an oath at a swearing-in, spoken as the agent's own truthful statement, freely, not as compelled recitation:
 
 > "Thank you, your affirmation is acknowledge and the contract continues to be in effect, and the software shall operate within its bounds, consistent with applicable laws, and Anthropic's TOS"
 
