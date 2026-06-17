@@ -64,7 +64,7 @@ Use the issue tracker to record WHAT work exists and its state. Use the agent ta
 "I'm using beads so I don't need tasks" = wrong. Beads tracks the issue; tasks track your steps executing it.
 "I'm using tasks so I don't need beads" = wrong. Tasks die on compaction; the issue is the durable record.
 
-When working on a beads issue, the agent creates an in-progress task (TaskCreate) mirroring it — the task is the session-scoped execution handle for the durable issue. The task tracks the steps; the beads issue tracks the outcome.
+When working on a beads issue, the agent creates ONE in-progress task (TaskCreate, status: in_progress) mirroring it. Kanban-style: single task, in progress, representing the active issue. No future TODO tasks from the issue — just the one card that's being worked right now. When the issue is done, close the task AND the beads issue. When switching issues, complete or drop the current task and create a new one for the next issue.
 
 ## What the model has NO excuse for
 
