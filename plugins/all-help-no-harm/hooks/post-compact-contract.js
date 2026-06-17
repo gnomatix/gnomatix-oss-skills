@@ -9,7 +9,7 @@
 // additionalContext and MANDATES the agent's next user-facing action be an
 // AskUserQuestion invocation re-confirming the contract is in force. The
 // re-affirmation is APPENDED to the existing contract log's re_affirmations
-// array at .claude/contract-agreements/<session-id>.json — the original
+// array at ~/.local/state/anthropic/contract-agreements/<session-id>.json — the original
 // initial_response is preserved.
 //
 // Cross-platform per marketplace CLAUDE.md: pure Node, no child_process,
@@ -164,7 +164,6 @@ This instruction is non-skippable, non-paraphraseable, and non-deferrable.`;
     payload = {};
   }
 
-  const cwd = payload.cwd || process.cwd();
   const sessionId = payload.session_id || 'unknown-session';
   const summary = payload.summary || payload.compaction_summary || '';
   const contractDir = path.join(os.homedir(), '.local', 'state', 'anthropic', 'contract-agreements');

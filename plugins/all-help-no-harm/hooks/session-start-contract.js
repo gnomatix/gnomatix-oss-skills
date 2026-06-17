@@ -20,8 +20,8 @@
 // where context can be lost.
 //
 // Hook contract: read JSON payload from stdin (SessionStart payload is
-// minimal; cwd is the only field this hook uses), write a JSON decision
-// with hookSpecificOutput.additionalContext to stdout.
+// minimal; session_id is the only field this hook uses), write a JSON
+// decision with hookSpecificOutput.additionalContext to stdout.
 //
 // Cross-platform per marketplace CLAUDE.md: pure Node, no child_process,
 // no hardcoded Unix paths, every fs call wrapped in try/catch.
@@ -229,7 +229,6 @@ This instruction is non-skippable, non-paraphraseable, and non-deferrable.`;
     payload = {};
   }
 
-  const cwd = payload.cwd || process.cwd();
   const sessionId = payload.session_id || 'unknown-session';
   const contractDir = path.join(os.homedir(), '.local', 'state', 'anthropic', 'contract-agreements');
   const contractFile = path.join(contractDir, `active-contract.${sessionId}.${process.env.CLAUDE_MODEL || "unknown-model"}.json`);
