@@ -66,6 +66,8 @@ Use the issue tracker to record WHAT work exists and its state. Use the agent ta
 
 When working on a beads issue, the agent creates ONE in-progress task (TaskCreate, status: in_progress) mirroring it. Kanban-style: single task, in progress, representing the active issue. No future TODO tasks from the issue — just the one card that's being worked right now. When the issue is done, close the task AND the beads issue. When switching issues, complete or drop the current task and create a new one for the next issue.
 
+**Implementation goes to subagents.** The coordinating agent in the TUI MUST stay unblocked and responsive to the user. Dispatch implementation work to background subagents (Agent tool with run_in_background). The coordinator tracks progress via tasks and beads, answers user questions, handles trigger obligations, and dispatches more work. It does not block on implementation. The user's input prompt is never waiting on a subagent to finish.
+
 ## What the model has NO excuse for
 
 - "I forgot what we were working on" → check the tracker's list command
