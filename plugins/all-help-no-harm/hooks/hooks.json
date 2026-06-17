@@ -42,6 +42,18 @@
           }
         ]
       }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse-contract-ask-guard.js",
+            "timeout": 10
+          }
+        ]
+      }
     ]
   }
 }
