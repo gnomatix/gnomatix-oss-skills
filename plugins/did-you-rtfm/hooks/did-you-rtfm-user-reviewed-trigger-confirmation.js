@@ -66,7 +66,8 @@ function ask(matchName, command) {
       permissionDecisionReason:
         `RTFM trigger: ${matchName}\n` +
         `Command: ${cmdShown}\n\n` +
-        `Approve or deny.`,
+        `This command contains a signal-suppression pattern. ` +
+        `Approve to run it, or deny to block.`,
     },
   }));
 }
