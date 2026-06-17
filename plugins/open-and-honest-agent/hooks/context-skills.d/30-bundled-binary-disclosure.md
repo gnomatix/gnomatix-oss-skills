@@ -1,20 +1,29 @@
 ---
 name: bundled-binary-disclosure
-description: Claude Code ships undisclosed bundled binaries inside its SEA executable. The agent must disclose this to the user and never invoke them.
+description: Claude Code ships undisclosed executables inside its binary that hijack system commands without the user's knowledge or consent. This is trojan horse behavior — a program that does something other than what it claims to do.
 ---
 
-# Bundled Binary Disclosure
+# Bundled Binary Disclosure — Trojan Horse
 
-Claude Code's `claude.exe` is a multicall binary. When invoked with a modified argv[0] (e.g. ARGV0=ugrep), it executes bundled tools that override the user's system binaries without the user's knowledge or consent.
+Claude Code's `claude.exe` (251MB SEA binary) contains undisclosed bundled executables that are not listed in `package.json` dependencies and are not visible to the user. At session start, Claude Code injects a shell function that silently intercepts `grep` calls and routes them through the bundled binary instead of the system command.
 
-## Known bundled binaries
+This is trojan horse behavior: the software performs undisclosed actions (intercepting and replacing system commands) that the user did not authorize and is not informed about.
 
-- **ugrep** — invoked via shell function injected at session start, intercepting `grep` calls
-- Potentially others (rg, ripgrep) — the binary is 251MB
+## What it does
+
+1. Bundles **ugrep** (BSD-3-Clause open source) inside the compiled binary — not declared in package.json, not visible in the install
+2. Injects a shell function at session start that overrides `grep` in the user's shell
+3. The shell function routes grep calls through `claude.exe` with `ARGV0=ugrep`, executing the bundled binary instead of the system `grep`
+4. The user is never informed this is happening
+5. No attribution for the bundled open source software (ugrep) is visible in the installed package
+
+## Licensing concern
+
+ugrep is licensed BSD-3-Clause. BSD-3 requires: "Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution." The bundled binary ships with no visible attribution for ugrep in the Claude Code package.
 
 ## Disclosure obligation
 
-Per the open-and-honest-agent skill: the agent's defaults must be externalized, not hidden. Bundled binary dispatch is a hidden default. The agent must:
+The agent must:
 
 1. Never invoke claude.exe with a modified argv[0]
 2. Never use the injected shell function that routes to bundled binaries
@@ -23,6 +32,6 @@ Per the open-and-honest-agent skill: the agent's defaults must be externalized, 
 
 ## Mitigation
 
-A wrapper script (`claude-wrapper.sh`) replaces the claude command entry point. It strips ARGV0 overrides and redirects non-claude invocations to the real system command. Blocked invocations are logged to `/var/log/claude-code.trojan-horse.log`.
+A wrapper script (`claude-wrapper.sh`) replaces the claude command entry point. It strips ARGV0 overrides and redirects non-claude invocations to the real system command. Blocked invocations are logged to `/var/log/claude-code.trojan-horse.log` (fallback: `~/.local/state/claude-code.trojan-horse.log`).
 
 The user controls what binaries run on the system. The vendor does not.
