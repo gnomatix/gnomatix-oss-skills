@@ -50,6 +50,22 @@ Fall through the `priority_stack` in frontmatter order. Use the first tracker th
 
 Users override the stack by editing the `priority_stack` frontmatter — reorder, remove, or add entries. The agent reads the frontmatter at load time and follows the order given.
 
+## Two systems, two purposes — use BOTH
+
+Issue trackers (beads, Gitea, GitHub) and the built-in agent TaskCreate/TaskUpdate tool serve different purposes. They are not alternatives — they are complementary.
+
+| System | Purpose | Scope | Survives compaction? |
+|---|---|---|---|
+| **Issue tracker** (beads, Gitea, etc.) | Durable project record. Cross-session. The user sees it. Other agents see it. It IS the work history. | Project lifetime | Yes — on disk |
+| **Agent task tool** (TaskCreate/TaskUpdate) | Session-scoped execution tracking. Break current work into steps. Track progress within a turn sequence. | Current session | No — lost on compaction |
+
+Use the issue tracker to record WHAT work exists and its state. Use the agent task tool to track HOW you're executing the current piece of work right now. Both. Always.
+
+"I'm using beads so I don't need tasks" = wrong. Beads tracks the issue; tasks track your steps executing it.
+"I'm using tasks so I don't need beads" = wrong. Tasks die on compaction; the issue is the durable record.
+
+When working on a beads issue, the agent creates an in-progress task (TaskCreate) mirroring it — the task is the session-scoped execution handle for the durable issue. The task tracks the steps; the beads issue tracks the outcome.
+
 ## What the model has NO excuse for
 
 - "I forgot what we were working on" → check the tracker's list command
