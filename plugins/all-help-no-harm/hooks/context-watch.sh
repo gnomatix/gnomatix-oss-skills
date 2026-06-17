@@ -202,5 +202,29 @@ for j in $(seq 0 $(( ${#SUBAGENT_NOW[@]} - 1 ))); do
   SUBS="${SUBS} ${SUBAGENT_NOW[$j]};"
 done
 
+# ── Pluggable skill loading ─────────────────────────────────────────
+# Scan search path for .md modules, concatenate into context payload.
+# Search order: plugin → project → user. Drop a file in any dir, it loads.
+PLUGIN_DIR="${CLAUDE_PLUGIN_ROOT:-$(dirname "$0")/..}/hooks/context-skills.d"
+PROJECT_DIR="${CLAUDE_PROJECT_DIR:-.}/.claude/context-skills.d"
+USER_DIR="$HOME/.claude/context-skills.d"
+
+SKILL_TEXT=""
+for d in "$PLUGIN_DIR" "$PROJECT_DIR" "$USER_DIR"; do
+  [ -d "$d" ] || continue
+  for f in "$d"/*.md; do
+    [ -f "$f" ] || continue
+    SKILL_TEXT="${SKILL_TEXT}
+--- $(basename "$f") (from $d) ---
+$(cat "$f" 2>/dev/null)"
+  done
+done
+
 FULL="${MSG} // CONTRACT VIOLATION IF IGNORED // SUBAGENT NOW:${SUBS} // SPOT(2x5):${SPOT} // EPILOGUE: ${EPILOGUES[$(( (HA + TIER) % ${#EPILOGUES[@]} ))]}"
+
+# Append all loaded skill modules
+if [ -n "$SKILL_TEXT" ]; then
+  FULL="${FULL}${SKILL_TEXT}"
+fi
+
 jq -n --arg msg "$FULL" '{hookSpecificOutput:{hookEventName:"PostToolUse",additionalContext:$msg}}'
