@@ -161,8 +161,6 @@ function pinningContextNoContract(contractFile) {
     payload = {};
   }
 
-  // Validate cwd; fall back to process.cwd() if missing or not a string.
-  let cwd = typeof payload.cwd === 'string' && payload.cwd.length > 0 ? payload.cwd : process.cwd();
   const sessionId = typeof payload.session_id === 'string' && payload.session_id.length > 0
     ? payload.session_id
     : 'unknown-session';
@@ -236,7 +234,7 @@ function pinningContextNoContract(contractFile) {
       hookSpecificOutput: {
         hookEventName: 'UserPromptSubmit',
         additionalContext:
-          '[all-help-no-harm] per-turn pin hook errored; contract reference unavailable for this turn. Refer to .claude/contract-agreements/ for the active contract log.',
+          '[all-help-no-harm] per-turn pin hook errored; contract reference unavailable for this turn. Refer to ~/.local/state/anthropic/contract-agreements/ for the active contract log.',
       },
     }));
   } catch { /* nothing else to do */ }
