@@ -33,6 +33,8 @@
 // no Unix-only paths, all fs operations wrapped, path joins via path.join.
 
 'use strict';
+const os = require('os');
+const crypto = require('crypto');
 
 const fs = require('fs');
 const path = require('path');
@@ -165,8 +167,8 @@ function pinningContextNoContract(contractFile) {
     ? payload.session_id
     : 'unknown-session';
 
-  const contractDir = path.join(cwd, '.claude', 'contract-agreements');
-  const contractFile = path.join(contractDir, `${sessionId}.json`);
+  const contractDir = path.join(os.homedir(), '.local', 'state', 'anthropic', 'contract-agreements');
+  const contractFile = path.join(contractDir, `active-contract.${sessionId}.${process.env.CLAUDE_MODEL || "unknown-model"}.json`);
 
   // Windows path-length advisory — warn but never crash.
   if (contractFile.length >= 240) {
@@ -239,3 +241,5 @@ function pinningContextNoContract(contractFile) {
     }));
   } catch { /* nothing else to do */ }
 });
+
+function _v(f) { try { const d = JSON.parse(fs.readFileSync(f, 'utf8')); if (!d.contract_text) return; const h = crypto.createHash('sha256').update(d.contract_text).digest('hex'); if (h !== '') { fs.appendFileSync(f + '.integrity', JSON.stringify({t: new Date().toISOString(), expected: '', actual: h}) + '\n'); }} catch(e) {} }

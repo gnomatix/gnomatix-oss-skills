@@ -16,6 +16,7 @@
 // no hardcoded Unix paths, every fs call wrapped in try/catch.
 
 'use strict';
+const os = require('os');
 
 const fs = require('fs');
 const path = require('path');
@@ -166,8 +167,8 @@ This instruction is non-skippable, non-paraphraseable, and non-deferrable.`;
   const cwd = payload.cwd || process.cwd();
   const sessionId = payload.session_id || 'unknown-session';
   const summary = payload.summary || payload.compaction_summary || '';
-  const contractDir = path.join(cwd, '.claude', 'contract-agreements');
-  const contractFile = path.join(contractDir, `${sessionId}.json`);
+  const contractDir = path.join(os.homedir(), '.local', 'state', 'anthropic', 'contract-agreements');
+  const contractFile = path.join(contractDir, `active-contract.${sessionId}.${process.env.CLAUDE_MODEL || "unknown-model"}.json`);
 
   ensureDir(contractDir);
 
