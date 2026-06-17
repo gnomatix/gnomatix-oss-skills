@@ -134,7 +134,6 @@ function buildStatusLineCommand() {
     settings.statusLine = {
       type: 'command',
       command: buildStatusLineCommand(),
-      padding: 0
     };
   }
 
