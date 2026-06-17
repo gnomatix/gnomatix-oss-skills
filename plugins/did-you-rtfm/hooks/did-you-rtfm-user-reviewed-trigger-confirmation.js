@@ -60,7 +60,7 @@ function deny(matchName, command) {
   process.stdout.write(JSON.stringify({
     hookSpecificOutput: {
       hookEventName: 'PreToolUse',
-      permissionDecision: 'deny',
+      permissionDecision: 'ask',
       permissionDecisionReason:
         `RTFM trigger matched (${matchName}).\n\n` +
         `Command: ${cmdShown}\n\n` +
