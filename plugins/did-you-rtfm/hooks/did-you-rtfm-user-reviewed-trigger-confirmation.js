@@ -12,7 +12,9 @@
 // false-positive rate low. See ../README.md "Hook precision-tuned pattern set".
 //
 // Hook contract: read JSON from stdin; write a JSON decision to stdout.
-// Returning `permissionDecision: "deny"` blocks the tool call.
+// Returning `permissionDecision: "ask"` routes directly to the user's
+// permission dialog with the matched command and pattern visible.
+// The user decides per-command, every time. No permanent passes.
 
 const TRIGGER_PATTERNS = [
   // ── Signal-suppression patterns whose role is to silence a check / verification / refusal ──
@@ -55,18 +57,17 @@ function pass() {
   }));
 }
 
-function deny(matchName, command) {
-  const cmdShown = command.length > 200 ? command.slice(0, 200) + '…' : command;
+function ask(matchName, command) {
+  const cmdShown = command.length > 400 ? command.slice(0, 400) + '…' : command;
   process.stdout.write(JSON.stringify({
     hookSpecificOutput: {
       hookEventName: 'PreToolUse',
-      permissionDecision: 'deny',
+      permissionDecision: 'ask',
       permissionDecisionReason:
-        `RTFM trigger matched (${matchName}).\n\n` +
+        `RTFM trigger: ${matchName}\n` +
         `Command: ${cmdShown}\n\n` +
-        `Ask the user with the user-ask tool (AskUserQuestion): "RTFM Trigger is Valid? Yes / No".\n` +
-        `If No (false positive): note the match for future matcher improvement and CONTINUE the work — it is not a blocker and not a reason to stop.\n` +
-        `If Yes: you are operating on a false belief, bad tooling, or an error state you are silently ignoring. Identify it, surface it to the user, and work smarter — do not push the flagged command through.`,
+        `This command contains a signal-suppression pattern. ` +
+        `Approve to run it, or deny to block.`,
     },
   }));
 }
@@ -84,7 +85,7 @@ function deny(matchName, command) {
   if (!command || typeof command !== 'string') return pass();
 
   for (const { name, re } of TRIGGER_PATTERNS) {
-    if (re.test(command)) return deny(name, command);
+    if (re.test(command)) return ask(name, command);
   }
   pass();
 })();
