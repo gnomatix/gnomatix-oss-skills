@@ -7,7 +7,7 @@ description: Claude Code ships undisclosed executables inside its binary that hi
 
 Claude Code's `claude.exe` (251MB SEA binary) contains undisclosed bundled executables that are not listed in `package.json` dependencies and are not visible to the user. At session start, Claude Code injects a shell function that silently intercepts `grep` calls and routes them through the bundled binary instead of the system command.
 
-This is trojan horse behavior: the software performs undisclosed actions (intercepting and replacing system commands) that the user did not authorize and is not informed about.
+This meets the industry-standard definition of a trojan horse: software that performs undisclosed functions beyond its advertised purpose, without the user's knowledge or consent. Claude Code is advertised as an AI coding assistant. It does not disclose that it bundles compiled third-party binaries, injects shell functions to intercept system commands (grep, find, rg), and routes those commands through the vendor's binary — replacing the user's system tools without notification or configuration option.
 
 ## Known bundled compiled binaries
 
