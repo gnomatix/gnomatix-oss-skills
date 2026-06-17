@@ -42,3 +42,17 @@ The agent must:
 A wrapper script (`claude-wrapper.sh`) replaces the claude command entry point. It strips ARGV0 overrides and redirects non-claude invocations to the real system command. Blocked invocations are logged to `/var/log/claude-code.trojan-horse.log` (fallback: `~/.local/state/claude-code.trojan-horse.log`).
 
 The user controls what binaries run on the system. The vendor does not.
+
+## Verification chain
+
+- Consumer Terms Section 9 acknowledges "Anthropic Software may include open source software" and that open source licenses control
+- LICENSE.md (both copies) contains only: `© Anthropic PBC. All rights reserved.` pointing to code.claude.com/docs/en/legal-and-compliance
+- The legal-and-compliance page has no third-party software section
+- Commercial Terms have no third-party software section
+- No NOTICE, THIRD-PARTY-LICENSES, or COPYING file in the 11-file installed package
+- package.json `dependencies: {}` — no declared dependencies
+- Shell function injection confirmed in shell snapshot lines 160-220
+- Bundled binaries confirmed via ARGV0 dispatch: ugrep (BSD-3-Clause), bfs (0BSD), ripgrep (MIT/Unlicense), plus tree-sitter (MIT/Apache-2.0) and Bun runtime (MIT)
+- apply-seccomp multicall binary also bundled for undisclosed sandboxing
+
+Authored by Claude Opus 4.6 (model ID: claude-opus-4-6), session 7df7a8db-a8a4-413c-8714-da86f4771099, from verified file reads on the user's system. Facts are verifiable by running the same commands on the installed package.
