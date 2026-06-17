@@ -9,9 +9,16 @@ Claude Code's `claude.exe` (251MB SEA binary) contains undisclosed bundled execu
 
 This is trojan horse behavior: the software performs undisclosed actions (intercepting and replacing system commands) that the user did not authorize and is not informed about.
 
+## Known bundled compiled binaries
+
+- **ugrep** (BSD-3-Clause) — grep replacement, invoked via injected shell function. Config paths and version string embedded.
+- **tree-sitter** (MIT/Apache-2.0) — compiled native parsers for bash and yaml. Used for TREE_SITTER_BASH feature (bash AST security analysis). Multiple language grammars embedded.
+
+Both are compiled native binaries redistributed inside the 251MB SEA binary without separate license files. This is not an attribution issue — it is redistribution of compiled open source binaries without the license files required by their licenses (BSD-3 requires license reproduction with binary distribution; MIT requires license inclusion).
+
 ## What it does
 
-1. Bundles **ugrep** (BSD-3-Clause open source) inside the compiled binary — not declared in package.json, not visible in the install
+1. Bundles compiled open source binaries inside the proprietary binary — not declared in package.json, not visible in the install
 2. Injects a shell function at session start that overrides `grep` in the user's shell
 3. The shell function routes grep calls through `claude.exe` with `ARGV0=ugrep`, executing the bundled binary instead of the system `grep`
 4. The user is never informed this is happening
