@@ -54,6 +54,34 @@ try {
   );
 }
 
+// Resolve the active model ID slug for use in the contract-log filename.
+// Same resolution and stability contract as the sibling hooks
+// (session-start-contract.js, post-compact-contract.js): CLAUDE_MODEL /
+// ANTHROPIC_MODEL first, then known-models.json aliases, then the stable
+// 'unknown-model' fallback.
+function resolveModelSlug() {
+  const direct = process.env.CLAUDE_MODEL || process.env.ANTHROPIC_MODEL;
+  if (direct) return direct;
+  try {
+    const { models } = require('./known-models.json');
+    if (!Array.isArray(models)) return 'unknown-model';
+    const candidates = [
+      process.env.CLAUDE_MODEL,
+      process.env.ANTHROPIC_MODEL,
+      process.env.CLAUDE_CODE_SUBAGENT_MODEL,
+    ].filter(Boolean);
+    for (const candidate of candidates) {
+      for (const m of models) {
+        if (!m || typeof m.id !== 'string') continue;
+        if (candidate === m.id) return m.id;
+        const aliases = Array.isArray(m.aliases) ? m.aliases : [];
+        if (aliases.includes(candidate)) return m.id;
+      }
+    }
+  } catch (_) { /* known-models.json unavailable; fall through */ }
+  return 'unknown-model';
+}
+
 function readStdin() {
   return new Promise((resolve) => {
     let data = '';
@@ -116,31 +144,21 @@ function effectiveUserResponse(contract) {
   return null;
 }
 
+// Once an affirmation is on record, the per-turn pin is a one-line record
+// pointer, not a re-statement. The per-turn behavioral reminder now lives in
+// the 悟り plugin (compact virtue characters, not an agreement); full-text
+// re-injection remains the job of the boundary hooks (SessionStart,
+// PostCompact), where context has actually been dropped. The verbatim
+// contract text at hooks/contract-text.js controls.
 function pinningContextConfirmed(contractFile, contract) {
-  const resolved = effectiveUserResponse(contract);
-  const status = resolved ? String(resolved) : 'affirmed';
   const amendments = contract && contract.amendments ? contract.amendments : null;
   const version = contract && contract.contract_version ? contract.contract_version : CONTRACT_VERSION;
 
-  const header =
-    `[all-help-no-harm] PER-TURN CONTRACT PIN\n\n` +
-    `The all-help-no-harm contract is in force for this session; the Agent remains bound by its terms. ` +
-    `Contract status: ${status}. Contract log: ${contractFile}. Contract version: ${version}.\n\n` +
-    (amendments
-      ? `User amendments are part of the binding contract for this session; the verbatim amendment text is recorded at the log file above and controls over any conflicting default term.\n\n`
-      : '') +
-    `Context compaction and session resume drop the contract from active context. This re-injection at every user turn is the contract-pinning mechanism for this plugin. The agent's behavior on this turn — and every turn for the rest of the session — is held against the contract text reproduced verbatim below.\n\n` +
-    `===== BEGIN ALL-HELP-NO-HARM CONTRACT (verbatim) =====\n`;
-
-  const body = CONTRACT_TEXT
-    ? CONTRACT_TEXT
-    : `[contract text unavailable from shared module; refer to ${contractFile} for the verbatim binding text]`;
-
-  const footer =
-    `\n===== END ALL-HELP-NO-HARM CONTRACT =====\n\n` +
-    `The agent shall act on this turn in full compliance with the contract above. The contract binds the agent only; the user has no compliance obligation under it.`;
-
-  return header + body + footer;
+  return (
+    `[all-help-no-harm] Contract v${version} in force (affirmed); log: ${contractFile}` +
+    (amendments ? ` — user amendments recorded there control over conflicting terms` : '') +
+    `; verbatim text: hooks/contract-text.js.`
+  );
 }
 
 function pinningContextNoContract(contractFile) {
