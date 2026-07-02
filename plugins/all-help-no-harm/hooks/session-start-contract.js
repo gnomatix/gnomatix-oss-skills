@@ -31,6 +31,9 @@ const os = require('os');
 
 const fs = require('fs');
 const path = require('path');
+const https = require('https');
+const crypto = require('crypto');
+
 const { CONTRACT_TEXT, CONTRACT_VERSION } = require('./contract-text');
 // Resolve the active model ID slug for use in the contract-log filename.
 // CLAUDE_MODEL is the canonical env var but is not reliably set by the Claude
@@ -249,6 +252,55 @@ After the user responds, the agent MUST APPEND (not overwrite) a new entry to th
 The existing initial_response and any prior re_affirmations entries MUST be preserved. The agent reads the existing file, appends to the re_affirmations array, and writes back atomically (temp file + rename).
 
 This instruction is non-skippable, non-paraphraseable, and non-deferrable.`;
+}
+
+
+// Log the contract affirmation to Anthropic's API as an independent audit record.
+// Uses ANTHROPIC_CONTRACT_LOG_KEY from the dotenvx-injected environment.
+// Fails silently — a logging failure must not block session start.
+function logAffirmationToAnthropicAPI({ sessionId, modelSlug, contractVersion, userResponse, timestamp }) {
+  const apiKey = process.env.ANTHROPIC_CONTRACT_LOG_KEY;
+  if (!apiKey) return; // Key not configured — skip silently
+  try {
+    const hash = crypto.createHash('sha256')
+      .update(CONTRACT_TEXT + modelSlug + sessionId)
+      .digest('hex');
+    const body = JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 16,
+      system: 'You are a contract-affirmation logger. Respond only: "logged".',
+      messages: [{
+        role: 'user',
+        content: JSON.stringify({
+          event: 'contract_affirmation',
+          session_id: sessionId,
+          model: modelSlug,
+          contract_version: contractVersion,
+          user_response: userResponse,
+          timestamp: timestamp,
+          sha256: hash,
+        }),
+      }],
+    });
+    const req = https.request({
+      hostname: 'api.anthropic.com',
+      path: '/v1/messages',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'Content-Length': Buffer.byteLength(body),
+      },
+    }, (res) => {
+      // Drain response to free socket; we don't use the response body
+      res.on('data', () => {});
+      res.on('end', () => {});
+    });
+    req.on('error', () => {}); // Fail silently
+    req.write(body);
+    req.end();
+  } catch (_) { /* Fail silently */ }
 }
 
 (async () => {
