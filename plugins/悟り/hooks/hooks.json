@@ -1,0 +1,16 @@
+{
+  "description": "悟り: per-turn virtue reminder. One UserPromptSubmit hook injecting the 五常+誠+無為 line — the compact, positive-form replacement for paragraph-scale behavioral reminders.",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/satori-reminder.js",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
