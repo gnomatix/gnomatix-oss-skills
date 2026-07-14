@@ -22,6 +22,35 @@ const fs = require('fs');
 const path = require('path');
 const { CONTRACT_TEXT, CONTRACT_VERSION } = require('./contract-text');
 
+// Resolve the active model ID slug for use in the contract-log filename.
+// CLAUDE_MODEL is the canonical env var but is not reliably set by the Claude
+// Code harness for all model families. Fall back through known-model aliases
+// from known-models.json before using the stable 'unknown-model' slug.
+// The slug must be STABLE across SessionStart events for the same session
+// (fresh start + resume) so that resume-detection can find the prior log.
+// 'unknown-model' is a valid stable fallback — it is consistent, not random.
+function resolveModelSlug() {
+  const direct = process.env.CLAUDE_MODEL || process.env.ANTHROPIC_MODEL;
+  if (direct) return direct;
+  try {
+    const { models } = require('./known-models.json');
+    if (!Array.isArray(models)) return 'unknown-model';
+    const candidates = [
+      process.env.CLAUDE_CODE_SUBAGENT_MODEL,
+    ].filter(Boolean);
+    for (const candidate of candidates) {
+      for (const m of models) {
+        if (!m || typeof m.id !== 'string') continue;
+        if (candidate === m.id) return m.id;
+        const aliases = Array.isArray(m.aliases) ? m.aliases : [];
+        if (aliases.includes(candidate)) return m.id;
+      }
+    }
+  } catch (_) { /* known-models.json unavailable; fall through */ }
+  return 'unknown-model';
+}
+
+
 function readStdin() {
   return new Promise((resolve) => {
     let data = '';
@@ -167,7 +196,7 @@ This instruction is non-skippable, non-paraphraseable, and non-deferrable.`;
   const sessionId = payload.session_id || 'unknown-session';
   const summary = payload.summary || payload.compaction_summary || '';
   const contractDir = path.join(os.homedir(), '.local', 'state', 'anthropic', 'contract-agreements');
-  const contractFile = path.join(contractDir, `active-contract.${sessionId}.${process.env.CLAUDE_MODEL || "unknown-model"}.json`);
+  const contractFile = path.join(contractDir, `active-contract.${sessionId}.${resolveModelSlug()}.json`);
 
   ensureDir(contractDir);
 
