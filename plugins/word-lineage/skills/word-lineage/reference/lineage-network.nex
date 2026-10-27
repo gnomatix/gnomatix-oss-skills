@@ -1,0 +1,127 @@
+#NEXUS
+
+[ lineage-network.nex -- heuristic phylogeny of English and its donor languages,
+  used by the word-lineage skill as the map a word's path is read off.
+
+  Mine: the tree, the dates and the branch lengths below are my reconstruction
+  from recall of the standard Indo-European family tree. Branch lengths are in
+  APPROXIMATE CENTURIES. They are a heuristic, not measured: no lexicostatistics,
+  no cognate counts, no dating method stands behind them. Each node is pinned to
+  a round date (shown in the node comments in the TREES block) and each branch
+  length is (child date - parent date) / 100. Living languages are tips at
+  2000 CE, so every living tip sits 55 centuries from the root (root = PIE,
+  placed at c. 3500 BCE).
+
+  Mine: internal nodes carry names (Old_English, Vulgar_Latin, ...). Several are
+  unary (one child), because a stage like Old English -> Middle English ->
+  Early Modern English is a chain of stages of one language, not a split. Unary
+  nodes are legal extended Newick; some readers collapse them.
+
+  Mine: Dutch (Old_Dutch -> Dutch) is my addition to the taxon set, so that the
+  Dutch synonyms in the procedure and the Dutch trade edge (R5) have a place on
+  the tree.
+
+  Mine: Classical_Latin_Fossil (a zero-length tip off Latin) is also my
+  addition. It stands for the frozen written classical standard, the donor
+  node for the scholarly-Latin merge edge R3; it is not a living tip. ]
+
+BEGIN TAXA;
+	DIMENSIONS NTAX=13;
+	TAXLABELS
+		Old_Norse
+		Modern_German
+		Dutch
+		British_Canadian_English
+		American_English
+		France_French
+		Quebec_French
+		Spanish
+		Portuguese
+		Italian
+		Romanian
+		Modern_Greek
+		Classical_Latin_Fossil
+	;
+END;
+
+BEGIN TREES;
+	[ Branch lengths: approximate centuries. HEURISTIC, NOT MEASURED. ]
+	[ Node dates (round, recall):
+	    Proto_Indo_European  c. 3500 BCE   (root)
+	    Proto_Germanic       c.  500 BCE   PIE -> PGmc       30
+	    Old_Norse            c.  900 CE    PGmc -> ON        14   (tip; extinct stage)
+	    West_Germanic        c.  200 CE    PGmc -> WGmc       7
+	    Old_High_German      c.  750 CE    WGmc -> OHG        5.5
+	    Modern_German        2000 CE       OHG -> ModG       12.5
+	    Old_Dutch            c.  900 CE    WGmc -> ODu        7
+	    Dutch                2000 CE       ODu -> Du         11
+	    Old_English          c.  450 CE    WGmc -> OE         2.5
+	    Middle_English       c. 1150 CE    OE -> ME           7
+	    Early_Modern_English c. 1500 CE    ME -> EModE        3.5
+	    English_1776         1776 CE       EModE -> split     2.76  (American/British split)
+	    British_Canadian_Eng 2000 CE       split -> tip       2.24
+	    American_English     2000 CE       split -> tip       2.24
+	    Latin                c.  100 BCE   PIE -> Latin      34
+	    Classical_Latin_Fossil c. 100 BCE  Latin -> tip       0     (the written classical/scholarly
+	                                                                  standard, frozen; source of R3)
+	    Vulgar_Latin         c.  300 CE    Latin -> VL        4
+	    Old_French           c.  900 CE    VL -> OF           6
+	    Modern_French        c. 1650 CE    OF -> ModF         7.5
+	    France_French        2000 CE       ModF -> tip        3.5
+	    Quebec_French        2000 CE       ModF -> tip        3.5   (New France settled 1600s)
+	    Spanish, Portuguese, Italian, Romanian
+	                         2000 CE       VL -> tip         17
+	    Ancient_Greek        c.  400 BCE   PIE -> AGk        31
+	    Modern_Greek         2000 CE       AGk -> tip        24 ]
+	TREE lineage = [&R] ((Old_Norse:14,((Modern_German:12.5)Old_High_German:5.5,(Dutch:11)Old_Dutch:7,((((British_Canadian_English:2.24,American_English:2.24)English_1776:2.76)Early_Modern_English:3.5)Middle_English:7)Old_English:2.5)West_Germanic:7)Proto_Germanic:30,(Classical_Latin_Fossil:0,(((France_French:3.5,Quebec_French:3.5)Modern_French:7.5)Old_French:6,Spanish:17,Portuguese:17,Italian:17,Romanian:17)Vulgar_Latin:4)Latin:34,(Modern_Greek:24)Ancient_Greek:31)Proto_Indo_European;
+END;
+
+[ RETICULATIONS (merge edges). Mine. The tree above only splits; English did not
+  only split, it took in whole layers from other branches. Each line below is one
+  merge edge laid over the tree. Format:
+    R#  donor node -> recipient node : dates : what came across (examples, recall)
+
+  R0  Latin (church/Roman) -> Old_English        : c. 43-1066 CE (mostly 597 on)
+        church and Roman-material words: wine, street, candle, bishop, school (recall)
+        [Mine: not in the requested event list; added because step 6 of the
+         procedure names the Roman/church Latin wave.]
+  R1  Old_Norse -> Old_English                   : c. 800-1050 CE (Danelaw)
+        core words, even pronouns: they, them, egg, sky, skin, take, give, die (recall)
+  R2  Old_French (Norman/Anglo-Norman) -> Middle_English : 1066-1400 CE
+        law, rule, church, cuisine, rank: court, judge, royal, beef, pork,
+        commence (recall)
+  R3  Classical_Latin_Fossil + Ancient_Greek -> Early_Modern_English : 1500-1700 CE
+        scholarly and scientific coinages: initiate, incipient, data, genus,
+        criterion, phenomenon, -ize/-ology formations (recall)
+  R4  English_1776 -> {British_Canadian_English | American_English} : 1776 on
+        the American/British split itself (a SPLIT edge, drawn in the tree as
+        node English_1776). Divergent spelling (Webster 1828), vocabulary
+        (fall/autumn, gotten), regional survivals (recall).
+        Sub-edge: American_English -> British_Canadian_English (Canadian side),
+        1783 on, United Empire Loyalist settlement carries American features into
+        Canadian English (recall).
+  R5  Colonial-era trade web                     : c. 1500-1900 CE
+        among Spanish, Portuguese, French, Dutch and English, plus donors outside
+        the tree. Mine: listed as external donors, not taxa.
+          Portuguese -> English     : marmalade, molasses, veranda (recall)
+          Spanish    -> English     : armada, mosquito, cargo; American: rodeo, ranch, canyon (recall)
+          Dutch      -> English     : yacht, skipper, landscape; American: cookie, boss, Yankee (recall)
+          French     -> English     : (continuing) etiquette, ballet, bureau (recall)
+          Spanish <-> Portuguese    : shared Iberian trade and nautical vocabulary (recall)
+          Malay   -(Portuguese/Dutch)-> English : amok, ketchup (via Malay/Hokkien), bamboo (recall)
+          Tamil/Malayalam -(Portuguese)-> English : curry, mango, catamaran (recall)
+          Hokkien Chinese -(Dutch)-> English : tea (te), ketchup (recall)
+          Japanese -(Portuguese/Dutch, later direct)-> English : soy, tycoon (recall)
+          Nahuatl  -(Spanish)-> English, French, Portuguese : tomato, chocolate, avocado (recall)
+          Taino/Arawak -(Spanish)-> English : hurricane, hammock, canoe (recall)
+          Arabic  -(Spanish/Italian)-> English : algebra, sugar, admiral, cotton (recall)
+          Hindi/Urdu -> English (direct, British India) : shampoo, jungle, bungalow (recall)
+  R6  British_Canadian_English <-> American_English : 1995 CE on
+        internet-era re-convergence: shared online vocabulary, US spellings and
+        terms spreading into British and Canadian usage, global English
+        (recall). The tree splits at 1776 and merges back here.
+  R7  English -> Modern_German, Dutch, France_French, others : 1800 CE on
+        back-borrowing: German/Dutch "starten", French "le week-end", "le parking"
+        (recall). Mine: added because the worked example (commence) needs it;
+        an English word returns to the branch it descends from.
+]
