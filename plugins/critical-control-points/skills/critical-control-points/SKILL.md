@@ -19,7 +19,16 @@ description: "Run whenever a critical control point surfaces: any question, deci
 > "And I think of this movie, I can't remember what it's called. Oh, damn it. First Edition or something, or it's a newspaper movie. It might have, who the hell is in it? Is it that guy from the Sundance Kid? Is that who's in it? It's kind of about the Washington Post or something like that, or New York Times. It's about printing a thing, and it's a political story, and it tracks like them trying to put together a thing that's covering a political story, and they have to confirm all the details, and they can't go to press without knowing that they're not going to be slandering something. And then at the last minute, they go, oh shit, it's not true. And they run, and he literally presses a button to shut the presses down. And it's about the integrity of the press."
 
 
+
+> "If it's not a single fucking question, right? Then it's discuss, right? It's always a discussion."
+
+> "It's like, do you want, and the question I'm prompted with is, do you want to discuss now or later? And there's no later if it's a blocker, right?"
+
 ## My rules (from the quotes above)
+
+- What reaches the user is one single question: no numbered parts, no second part, no follow-on arrow.
+- The asker does not choose the choices or frame the situation. A separate agent writes the neutral account of the situation, so the user can answer it fairly.
+- Anything that isn't one single question is raised as a discussion: the tool asks only "discuss now or later?", with the neutral situation account. For a blocker there is no later; it's discuss now.
 
 - A direct question to the user always goes through the AskUserQuestion tool: never as prose in a reply, and never only as a bead.
 
@@ -48,9 +57,8 @@ Trigger: any time I'm about to ask the user anything, or hit something I can't s
      - **Decision needed:** one sentence.
      - **Provenance:** the beads it gates or relates to (linked with `bd dep add`), commits, files and lines, the agent and session that raised it, and the user's own words verbatim where they bear on it.
      - **What I already checked:** each tool from step 1 and what it returned.
-     - **Options:** 2 to 4, each with its consequence.
-     - **My recommendation:** one option with the reason, labelled as mine.
-     - **Pre-answered:** the follow-ups the user is likely to ask, each answered.
+     - **Situation (facts only):** what happened and what is affected, without options or a preferred answer. The reviewer in step 6 rewrites this neutrally.
+     - **Pre-answered:** the facts the user is likely to want, each answered.
      - **Gates:** what work waits on this; everything else continues.
 
 3. **Task list.** Add it as an open task (TaskCreate) naming the bead id.
@@ -59,9 +67,9 @@ Trigger: any time I'm about to ask the user anything, or hit something I can't s
 
 5. **Verify.** Re-read the bead (`bd show <id>`): every heading filled, links resolve, no words attributed to the user except verbatim quotes.
 
-6. **Review.** Give the bead id to one reviewer subagent: "Read bead <id> and everything it links. Check: (a) the step-1 tools were run and none answers it; (b) every heading is filled; (c) it isn't idle, already answered, or steering; (d) draft a concise AskUserQuestion payload: one question per decision, max 4 options, the recommended option first marked (Recommended), the bead id in the question text. Return PASS with the payload, or FAIL with what's missing." On FAIL, fix and repeat.
+6. **Review and neutral write-up.** Give the bead id to one reviewer subagent that did not raise it: "Read bead <id> and everything it links. Check: (a) the step-1 tools were run and none answers it; (b) every heading is filled; (c) it isn't idle, already answered, or steering. Then write, in your own neutral words, the situation the user needs to answer it fairly, and state it as ONE single question with no numbered parts, no second part and no options chosen by the asker. If it can't be one single question, say DISCUSSION. Return PASS with the text, DISCUSSION, or FAIL with what's missing." On FAIL, fix and repeat.
 
-7. **Ask once, concisely (or notify).** Call AskUserQuestion with the reviewed payload, batching ready CCPs (max 4 per call). For a notification-only CCP, notify in one line with the bead id.
+7. **Ask once (or raise a discussion, or notify).** PASS: call AskUserQuestion with the reviewer's text as the single question, the bead id in it; answer choices only if they're the plain yes/no or the natural answers to that one question, never the asker's preferred menu. DISCUSSION: call AskUserQuestion with the reviewer's neutral situation account and the single question "Discuss now or later?" (bead id included); if it's a blocker, there is no "later": the question is to discuss it now. Notification-only: one line with the bead id. Backlog items that gate nothing live wait for a batch when the user asks for them; live blocking decisions are asked at once.
 
 8. **Close the loop.** Write the user's answer verbatim to the bead, act on it, close the bead and the task. If it sets a standing rule, save it to memory with the user's words verbatim.
 
