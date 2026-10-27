@@ -9,6 +9,16 @@ description: Use this skill (the objective second gate, after whacking-day) when
 
 zartan is the objective second gate. `whacking-day` decides whether the user is *willing* to permit Python; zartan decides whether Python is *necessary*. Both must clear before `jake-the-snake` writes a line.
 
+## What this is for
+
+This skill is a tool for the agent. It exists to help the agent do better engineering work, not to stop it working. The agent runs it on its own initiative, start to finish, and reports the conclusion; it is never reported as a blocker or handed back as "waiting for approval".
+
+Every run is also a contribution to a shared tool registry and knowledge base: each evaluation records the alternatives searched, the best-in-class candidates with citations, the verdict and the honest reason, in `.claude/python-authorizations/log.jsonl`. Doing the evaluation is how the agent and the user learn about tools they would otherwise not know, instead of falling back on a habitual default.
+
+The order of the tree: `old-willy` (merit test, also run at the outset of any tool or language choice), `whacking-day` (scope: is this adopting Python as a project language?), `zartan` (credible non-Python alternatives), and only if Python survives all of that, a single question to the user; then `jake-the-snake` executes. The rigor below is unchanged; this section says what it is for.
+
+This skill's part: research alternatives honestly and record what was found. A rejection here is a result, not a refusal: the work goes ahead with the alternative it found.
+
 ## Step 1 — Read the proposal and enumerate targets
 
 Open the proposal file referenced by the open `approved` log entry: `.claude/python-authorizations/proposals/<id>.md`. From its **Specific tools / libraries proposed** section, extract every Python tool, library, framework, or invocation the work depends on. Each is a separate research target.
