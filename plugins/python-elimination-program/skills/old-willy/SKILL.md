@@ -27,6 +27,7 @@ Activate when any of the following occur:
 - A `zartan` clearance is being requested with reasoning that leans on Python's merit rather than on absence of alternatives.
 - The agent's own unsolicited reasoning has produced a "Python is best" justification for proposed work.
 - The agent is asked to enumerate cases where Python is the best tool.
+- **Any tool or language selection, at the outset.** Whenever the agent is choosing a tool, library, language or method for a task (not only Python), run the merit test before committing: name the best-in-class candidate with a citation and score the choice against it. This is the default habit for tool evaluation, not a special-case gate.
 
 If uncertain whether the trigger applies, the trigger has fired. Default to activation.
 
