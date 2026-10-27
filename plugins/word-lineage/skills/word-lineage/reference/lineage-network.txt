@@ -1,0 +1,73 @@
+lineage-network.txt -- ASCII rendering of lineage-network.nex (same tree, same
+R# edge numbers). Mine. Branch lengths = approximate centuries, a heuristic,
+not measured. Dates are round, from recall.
+
+TREE (splits).  [date] = node date; :n = branch length in centuries
+
+Proto-Indo-European [c.3500 BCE]
+|
++--:30-- Proto-Germanic [c.500 BCE]
+|        |
+|        +--:14-- Old Norse [c.900 CE] ~~~~~~~~~~~~~~~~~~~~~~ R1 ~~> Old English
+|        |
+|        +--:7--- West Germanic [c.200 CE]
+|                 |
+|                 +--:5.5-- Old High German [c.750] --:12.5-- Modern German
+|                 |
+|                 +--:7---- Old Dutch [c.900] ------:11---- Dutch
+|                 |
+|                 +--:2.5-- Old English [c.450]  <~~ R0 Latin, R1 Norse
+|                           |
+|                           :7
+|                           Middle English [c.1150]  <~~ R2 Norman French
+|                           |
+|                           :3.5
+|                           Early Modern English [c.1500] <~~ R3 Latin+Greek
+|                           |                             <~~ R5 colonial trade
+|                           :2.76
+|                           English_1776 [1776]  == R4 split ==
+|                           |
+|                           +--:2.24-- British/Canadian English [2000]
+|                           |              ^
+|                           |              R6 re-convergence 1995 on (<~~>)
+|                           |              v
+|                           +--:2.24-- American English [2000]
+|
++--:34-- Latin [c.100 BCE] ~~~~~~~~~~~~~~~~~~~ R0 (Roman/church) ~~> Old English
+|        |
+|        +--:0--- Classical Latin (frozen written standard) ~~~~ R3 ~~> EModE
+|        |
+|        +--:4--- Vulgar Latin [c.300 CE]
+|                 |
+|                 +--:6---- Old French [c.900] ~~~~~~~~~ R2 ~~> Middle English
+|                 |         |
+|                 |         :7.5
+|                 |         Modern French [c.1650]
+|                 |         |
+|                 |         +--:3.5-- France French [2000]
+|                 |         +--:3.5-- Quebec French [2000]
+|                 |
+|                 +--:17--- Spanish [2000]     \
+|                 +--:17--- Portuguese [2000]   } R5 colonial trade web
+|                 +--:17--- Italian [2000]
+|                 +--:17--- Romanian [2000]
+|
++--:31-- Ancient Greek [c.400 BCE] ~~~~~~~~~~~~~~ R3 ~~> Early Modern English
+         |
+         +--:24-- Modern Greek [2000]
+
+RETICULATIONS (merges laid over the tree; full lists in the .nex file)
+
+R0  Latin (Roman/church) -> Old English         c.43-1066 (mostly 597 on)
+R1  Old Norse -> Old English                    c.800-1050  (Danelaw)
+R2  Old French (Norman) -> Middle English       1066-1400
+R3  Classical Latin + Ancient Greek -> EModE    1500-1700  (scholarly)
+R4  English splits: British/Canadian | American 1776 on
+      + American -> Canadian English (Loyalists) 1783 on
+R5  Colonial trade web, Spanish/Portuguese/French/Dutch/English, 1500-1900
+      plus donors outside the tree, mostly via Portuguese/Dutch/Spanish:
+      Malay, Tamil, Hokkien Chinese, Japanese, Nahuatl, Taino, Arabic, Hindi
+R6  British/Canadian <~~> American English      1995 on  (internet era)
+R7  English -> German, Dutch, French            1800 on  (back-loans:
+      starten, le week-end)
+
