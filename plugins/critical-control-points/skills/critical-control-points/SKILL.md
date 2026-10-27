@@ -33,7 +33,11 @@ Relayed by cc-srv-lxd on 2026-10-27 as the author's words to it, verbatim (cc-sr
 
 > "It's like, do you want, and the question I'm prompted with is, do you want to discuss now or later? And there's no later if it's a blocker, right?"
 
+> "And if your questions are like, hey, do you want me to do the thing you told me to do? That's always going to be a yes as well, right? Unless something changed, unless you looked at it and the new information came. So then you come back to me immediately. Because if you put something off, you don't do it, and then the state changes, I still want you to do it, but if there's new information, you got to fucking tell me."
+
 ## My rules (from the quotes above)
+
+- "Do you want me to do what you told me to do?" is not a control point: the answer is yes, so do it. A control point exists only when new information changes the picture; then tell the user immediately, as one item, with what changed. A deferred instruction still stands after the state changes.
 
 - What reaches the user is one single question: no numbered parts, no second part, no follow-on arrow.
 - The asker does not choose the choices or frame the situation. A separate agent writes the neutral account of the situation, so the user can answer it fairly.
