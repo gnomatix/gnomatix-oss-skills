@@ -1,0 +1,8 @@
+{
+  "name": "word-lineage",
+  "description": "An Agent Skill that traces an English word's lineage phylogenetically. Invoked as /word-lineage <word or words>, it decides which layer the word came from (native Germanic, Norse, Latin, French, other) from the evidence: similarity to the source-language word, verb conjugation and morphology, the synonym set, and core versus borrowed vocabulary. It reads the word's literal meaning off the tree and places it on a bundled NEXUS network of English and its donor languages (approximate-century branch lengths, numbered merge edges for borrowing waves), with a cross-language synonym map grouped by shared root. A word-choice mode (/word-lineage meaning: <phrase>) lists candidate synonyms with their literal senses and picks the one whose literal meaning matches. One plain answer per word; corrections are folded back into the skill as dated refinements.",
+  "author": {
+    "name": "Brett Whitty",
+    "email": "brett@gnomatix.com"
+  }
+}
