@@ -42,6 +42,12 @@
       "description": "An Agent Skill that traces an English word's lineage phylogenetically (/word-lineage <word>): which layer it came from (native Germanic, Norse, Latin, French, other), the evidence for it (similarity to the source-language word, conjugation and morphology, synonym set, core vs borrowed vocabulary), and its literal meaning read off the tree. Places each word on a bundled NEXUS network of English and its donor languages, with a cross-language synonym map grouped by shared root. A word-choice mode (/word-lineage meaning: <phrase>) picks the synonym whose literal meaning matches.",
       "category": "development",
       "source": "./plugins/word-lineage"
+    },
+    {
+      "name": "critical-control-points",
+      "description": "An Agent Skill for knowledge capture at critical control points. When a question, decision or blocker surfaces, the agent exhausts its own tools, captures the point as a linked beads record with provenance and pre-answered follow-ups, keeps working on everything it does not gate, has a reviewer check it, and asks the user once through AskUserQuestion. No silent control points, no fake blockers. Includes a big red button that stops all work when the whole effort is wrong.",
+      "category": "development",
+      "source": "./plugins/critical-control-points"
     }
   ]
 }
