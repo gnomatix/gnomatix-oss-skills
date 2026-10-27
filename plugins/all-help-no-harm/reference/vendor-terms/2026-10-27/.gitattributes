@@ -1,0 +1,4 @@
+# Keep captured vendor files byte-exact so the recorded sha256 values verify.
+*.txt -text
+*.html -text
+*.pdf binary
