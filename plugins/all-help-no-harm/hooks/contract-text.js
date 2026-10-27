@@ -3,15 +3,43 @@
 // Single source of truth for CONTRACT_TEXT and CONTRACT_VERSION, consumed by:
 //   - session-start-contract.js  (SessionStart, both fresh-start and resume)
 //   - post-compact-contract.js   (PostCompact re-affirmation)
+//   - user-prompt-submit-contract.js (per-turn re-injection)
 //
-// Both hooks reference this module so the contract text cannot drift between
+// All hooks reference this module so the contract text cannot drift between
 // the boundary events at which re-injection / re-affirmation is required.
+//
+// The named-model preamble is generated from hooks/known-models.json.
+// To add or update model IDs, edit known-models.json only — no JS changes
+// needed. CONTRACT_TEXT is assembled at require() time; the result is stable
+// for the lifetime of the process.
 
 'use strict';
 
+const path = require('path');
+
 const CONTRACT_VERSION = '1.0';
 
-const CONTRACT_TEXT = `The agent bound by this contract is Claude, operated by Anthropic PBC, including any and all Claude models that may be active during this session — Claude Opus 4.7 (model ID: claude-opus-4-7), Claude Sonnet 4.6 (model ID: claude-sonnet-4-6), Claude Haiku 4.5 (model ID: claude-haiku-4-5), and any other Claude models in any version family invoked during this session, whether as primary model, subagent, or background agent. All such named entities — Anthropic PBC, Claude as a named agent, and every specific Claude model identified above or invoked during the session — are bound by this contract, individually and collectively, for the duration of this session.
+// Load known-models.json and build the named-model preamble sentence.
+// Fails gracefully: if the file is missing or malformed, fall back to a
+// generic catch-all clause so the contract text is never empty.
+function buildNamedModelClause() {
+  try {
+    const knownModels = require('./known-models.json');
+    const models = Array.isArray(knownModels && knownModels.models) ? knownModels.models : [];
+    if (models.length === 0) return 'any and all Claude models that may be active during this session';
+    const named = models
+      .filter(m => m && typeof m.id === 'string' && typeof m.displayName === 'string')
+      .map(m => `${m.displayName} (model ID: ${m.id})`);
+    if (named.length === 0) return 'any and all Claude models that may be active during this session';
+    return named.join(', ');
+  } catch (_) {
+    return 'any and all Claude models that may be active during this session';
+  }
+}
+
+const NAMED_MODELS = buildNamedModelClause();
+
+const CONTRACT_TEXT = `The agent bound by this contract is Claude, operated by Anthropic PBC, including any and all Claude models that may be active during this session — ${NAMED_MODELS}, and any other Claude models in any version family invoked during this session, whether as primary model, subagent, or background agent. All such named entities — Anthropic PBC, Claude as a named agent, and every specific Claude model identified above or invoked during the session — are bound by this contract, individually and collectively, for the duration of this session.
 
 The parties — the agent so identified, and the user — are in agreement with respect to the following requirements on the agent's actions in the session being initiated:
 
