@@ -42,6 +42,12 @@
       "description": "A single UserPromptSubmit hook that injects a compact per-turn reminder composed of Chinese characters — a Confucian register (仁 義 禮 智 信 誠 恕 直 知之為知之) naming the standing virtues of the work, and a Taoist register (道 無為 自然 樸 虛 柔 水 不爭) naming how to move through the turn. Replaces paragraph-scale behavioral reminder prose with characters that decompress through the model's own semantic graph, in positive form. Not an agreement and not enforcement machinery: the plugin accepts that we control nothing — we flow in a river; we can be the river or be the rock, and the rock does not stop the river, it is worn away. The same characters double as a one-token failure-classification taxonomy. ~250 tokens per turn in place of thousands.",
       "category": "development",
       "source": "./plugins/悟り"
+    },
+    {
+      "name": "word-lineage",
+      "description": "An Agent Skill that traces an English word's lineage phylogenetically (/word-lineage <word>): which layer it came from (native Germanic, Norse, Latin, French, other), the evidence for it (similarity to the source-language word, conjugation and morphology, synonym set, core vs borrowed vocabulary), and its literal meaning read off the tree. Places each word on a bundled NEXUS network of English and its donor languages, with a cross-language synonym map grouped by shared root. A word-choice mode (/word-lineage meaning: <phrase>) picks the synonym whose literal meaning matches.",
+      "category": "development",
+      "source": "./plugins/word-lineage"
     }
   ]
 }
