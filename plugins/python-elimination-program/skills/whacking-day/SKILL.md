@@ -1,11 +1,21 @@
 ---
 name: whacking-day
-description: Use this skill (gate 1 of 2) when the agent is about to ADOPT Python as a project's development language — adding `.py` source files, authoring `requirements.txt` / `pyproject.toml` / `setup.py`, choosing a Python library or framework as the implementation for a project feature, or suggesting a Python-based architecture. NOT triggered by using mainstream Python-implemented CLI tools (`hf`, `aws`, `ansible`, `yt-dlp`, `gdown`, `pre-commit`, etc.) as tools, nor by installing them at user scope (`pip install --user`, `pipx install`) — those are tool-use decisions where the implementation language is incidental. The skill's default position: Python should not be adopted as a project language. The agent runs the tree itself (zartan alternatives, then old-willy merit) and asks the user only if Python survives both; `jake-the-snake` then executes.
+description: "Use this skill whenever Python comes up as the possible language for project code (new .py files, requirements/pyproject, a Python library chosen for a feature). The agent runs it itself as a decision tree: scope check, zartan (alternatives), old-willy (merit); the user is asked only if Python survives both, then jake-the-snake executes. Using a Python-implemented CLI tool as a tool, or installing one at user scope (pipx, pip --user), is out of scope. Each run adds to the tool registry and knowledge base."
 ---
 
 # Whacking Day — gate 1 of 2 on Python adoption
 
 > *In the spirit of blessed St. Patrick, who cleansed the emerald land of Eire of every serpent; in faithful observance of Whacking Day; and with thanks to the brave men and women of the Florida Fish and Wildlife Conservation Commission, the Florida Department of Environmental Protection, and the South Florida Water Management District's Python Elimination Program, who fight the battle daily deep in the Everglades against the python: when a Python tries to slither into the codebase as a project-language choice, drive it out.*
+
+## What this is for
+
+This skill is a tool for the agent. It exists to help the agent do better engineering work, not to stop it working. The agent runs it on its own initiative, start to finish, and reports the conclusion; it is never reported as a blocker or handed back as "waiting for approval".
+
+Every run is also a contribution to a shared tool registry and knowledge base: each evaluation records the alternatives searched, the best-in-class candidates with citations, the verdict and the honest reason, in `.claude/python-authorizations/log.jsonl`. Doing the evaluation is how the agent and the user learn about tools they would otherwise not know, instead of falling back on a habitual default.
+
+The order of the tree: `old-willy` (merit test, also run at the outset of any tool or language choice), `whacking-day` (scope: is this adopting Python as a project language?), `zartan` (credible non-Python alternatives), and only if Python survives all of that, a single question to the user; then `jake-the-snake` executes. The rigor below is unchanged; this section says what it is for.
+
+This skill's part: decide whether the request is in scope (project-Python adoption) and, if it is, run the tree. Tool use of a Python-implemented CLI is out of scope and proceeds without any of this.
 
 ## Scope — what this skill actually gates
 

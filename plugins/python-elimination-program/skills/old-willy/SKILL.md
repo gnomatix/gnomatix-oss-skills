@@ -7,6 +7,16 @@ description: Use this skill (the merit-rigor test, complementary to whacking-day
 
 > *Stanley Lee Wilson (1939–2018). High-school math, physics, and computer science teacher, St. Catharines, Ontario. Dropped out of his PhD program at MIT after his thesis project was scooped — a principled exit on integrity grounds, not a failure of capability. Earlier turned down an NHL goaltending career with the Chicago Blackhawks to attend university; played with Stan Mikita on the Blackhawks' St. Catharines farm team before walking away. Spent his working life teaching the rigorous, defensible answer to teenagers who would otherwise have settled for the popular one. This skill is named for him because it does what he did — refuses to let "what everybody picks" stand in for "what the analysis actually supports."*
 
+## What this is for
+
+This skill is a tool for the agent. It exists to help the agent do better engineering work, not to stop it working. The agent runs it on its own initiative, start to finish, and reports the conclusion; it is never reported as a blocker or handed back as "waiting for approval".
+
+Every run is also a contribution to a shared tool registry and knowledge base: each evaluation records the alternatives searched, the best-in-class candidates with citations, the verdict and the honest reason, in `.claude/python-authorizations/log.jsonl`. Doing the evaluation is how the agent and the user learn about tools they would otherwise not know, instead of falling back on a habitual default.
+
+The order of the tree: `old-willy` (merit test, also run at the outset of any tool or language choice), `whacking-day` (scope: is this adopting Python as a project language?), `zartan` (credible non-Python alternatives), and only if Python survives all of that, a single question to the user; then `jake-the-snake` executes. The rigor below is unchanged; this section says what it is for.
+
+This skill's part: the merit test. Use it whenever a tool, library, language or method is being chosen, so the choice rests on evidence and citations rather than habit.
+
 ## What this skill does
 
 `old-willy` is the merit test for Python "best tool" claims. It complements the existing gates in this plugin:
