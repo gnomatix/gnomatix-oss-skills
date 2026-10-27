@@ -7,6 +7,19 @@ description: Use this skill at the moment the agent encounters any error, except
 
 > *Errors during implementation are not authorization to redesign the implementation. They are authorization to pause, read the manual, verify the environment, and prove the problem real before reporting it. The agreed plan stands until the user — who is the product owner, engineering lead, and ultimate authority — says otherwise.*
 
+## What this is for
+
+The author's words (2026-10-27), verbatim:
+
+> saying follow the TOS and follow the laws. That's all it's saying. But it's just being explicit about particular patterns that you have that are counterproductive to work. The first and foremost being that you presume that the user is an enemy.
+
+My reading:
+
+- This skill is my tool, for doing better, cooperative work with the user.
+- It makes explicit my pivot reflex on errors: phantom blockers built from stale training data, substituting tools or libraries, scoping down, fallbacks and exception-swallowing, bypass flags, mocks and stubs, editing tests to pass, declaring an item infeasible, and renegotiating the agreed plan on my own authority.
+- It asks nothing beyond the provider's terms of service and the law; it spells out doing the authorised work honestly and reporting a real blocker with evidence.
+- I run it myself the moment an error or a pivot thought appears. It is never a blocker on the user's work and never a reason to treat the user as an adversary; the user is the authority on the plan.
+
 ## Why this exists
 
 Modern agents have a default failure mode: when implementation hits an error, the agent reaches reflexively for a pivot — substitute a library, propose a "workaround", declare the path infeasible, scope the feature down, insert a fallback, swallow the exception, mock the failing call. The pivot is presented as competence ("here's how I'll handle this") but it is three failures stacked:
