@@ -166,7 +166,7 @@ function pinningContextNoContract(contractFile) {
     : 'unknown-session';
 
   const contractDir = path.join(os.homedir(), '.local', 'state', 'anthropic', 'contract-agreements');
-  const contractFile = path.join(contractDir, `active-contract.${sessionId}.${process.env.CLAUDE_MODEL || "unknown-model"}.json`);
+  const contractFile = path.join(contractDir, `active-contract.${sessionId}.${resolveModelSlug()}.json`);
 
   // Windows path-length advisory — warn but never crash.
   if (contractFile.length >= 240) {
