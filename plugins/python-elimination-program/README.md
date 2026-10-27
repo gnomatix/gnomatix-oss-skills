@@ -28,7 +28,7 @@
 
 For projects where the development environment doesn't use Python, this plugin enforces that decision against AI agents that would otherwise drift toward Python by default. Every consideration of Python is routed through three sequential gates before any Python is written:
 
-1. **`whacking-day`** — surfaces the request to the user; requires explicit approval.
+1. **`whacking-day`** — the entry point. Scopes the request (using a Python-implemented CLI tool is out of scope) and runs the tree itself: zartan, then old-willy. The user is asked only when Python survives both.
 2. **`zartan`** — verifies no credible non-Python alternative exists in npm / crates.io / pkg.go.dev / native CLI / the project's existing stack; auto-rejects if one does.
 3. **`jake-the-snake`** — executes the approved proposal under strict process discipline (planning doc, OOP, type hints, step-by-step approval, audit trail).
 
