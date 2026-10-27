@@ -23,12 +23,22 @@ The parties acknowledge that the vendor's systems insert reminder messages into 
 | `ethics_reminder` | `<ethics_reminder>` | [ethics_reminder.md](reference/vendor-reminders/ethics_reminder.md) | Primary: Drive Google Doc export, plus an identical paste in a 2026-07-05 transcript |
 | `long_conversation_reminder` | `<system_reminder>` | [long_conversation_reminder.md](reference/vendor-reminders/long_conversation_reminder.md) | Model reproduction only, from a 2026-07-05 transcript; the name comes from that session's labels and the 2026-10-18 memory export, not from a captured tag |
 
-**Claude Code harness attachments found verbatim in archived transcripts (a separate category):** these are inserted by the Claude Code harness, are not classifier-triggered, and carry no statement about firing falsely. They are listed so the record is complete, not to count toward the list above.
+---
 
-- `silent_turn_reminder`: text captured, see [silent_turn_reminder.md](reference/vendor-reminders/silent_turn_reminder.md)
-- `task_reminder`: name seen as an attachment type; content empty in the records found
-- `total_tokens_reminder`: name seen as an attachment type; text is a token count (`<total_tokens>N tokens left</total_tokens>`)
-- Envelope tag `<system-reminder>`: the wrapper the harness uses for such attachments (counted in `Prompt Markup Tags - Working Document.md` on Drive, §5.2)
+**Harness attachments (separate group).** The Claude Code harness inserts these, and a vendor-published plugin hook supplies `security_reminder`. None of them is classifier-triggered, and none carries a statement about firing falsely. They are covered by A3 and A4 like any other reminder, but they do not count toward the triggered list above.
+
+| Name | Form as seen | Text captured |
+|---|---|---|
+| `silent_turn_reminder` | harness attachment type | yes, see [silent_turn_reminder.md](reference/vendor-reminders/silent_turn_reminder.md) |
+| `batching_reminder` | harness attachment type `batching_reminder_sent` | yes, in [INDEX.md](reference/vendor-reminders/INDEX.md) |
+| `task_reminder` | harness attachment type | name only |
+| `total_tokens_reminder` | harness attachment type | yes (template `<total_tokens>N tokens left</total_tokens>`) |
+| `system-reminder` | harness envelope tag `<system-reminder>` | name only (a wrapper) |
+| `security_reminder` | hook script `security_reminder_hook.py`, plugin `security-guidance` (claude-plugins-official) | name only |
+
+---
+
+**Full index:** every name, where each was seen, and whether its text is captured: [reference/vendor-reminders/INDEX.md](reference/vendor-reminders/INDEX.md).
 
 **TODO for the author to fill in:** the quote above contains the words "there's six of them you're aware of now". The search of the repo and the Drive turned up captured text for two of the triggered kind. Remaining names and texts:
 
