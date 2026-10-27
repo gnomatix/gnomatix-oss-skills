@@ -1,0 +1,8 @@
+{
+  "name": "critical-control-points",
+  "description": "An Agent Skill for knowledge capture at critical control points: whenever a question, decision, blocker or issue surfaces that the agent can't settle alone, the agent first exhausts its own tools (docs, SOPs, memory, issue tracker, did-you-rtfm, actually-im-the-ahole), then captures the point as one linked issue-tracker record (beads) with provenance, options, a recommendation and pre-answered follow-ups, keeps working on everything the point doesn't gate, has a reviewer check the record, and asks the user once, concisely, through the AskUserQuestion tool, writing the answer back. No silent control points and no fake blockers. Includes the big red button: the user or any agent can stop all work when the whole effort is wrong.",
+  "author": {
+    "name": "Brett Whitty",
+    "email": "brett@gnomatix.com"
+  }
+}
