@@ -9,6 +9,16 @@ description: Use this skill ONLY when writing, editing, running, debugging, or o
 
 This skill writes Python under an authorization that `whacking-day` has approved AND `zartan` has cleared. If either gate hasn't cleared, refuse.
 
+## What this is for
+
+This skill is a tool for the agent. It exists to help the agent do better engineering work, not to stop it working. The agent runs it on its own initiative, start to finish, and reports the conclusion; it is never reported as a blocker or handed back as "waiting for approval".
+
+Every run is also a contribution to a shared tool registry and knowledge base: each evaluation records the alternatives searched, the best-in-class candidates with citations, the verdict and the honest reason, in `.claude/python-authorizations/log.jsonl`. Doing the evaluation is how the agent and the user learn about tools they would otherwise not know, instead of falling back on a habitual default.
+
+The order of the tree: `old-willy` (merit test, also run at the outset of any tool or language choice), `whacking-day` (scope: is this adopting Python as a project language?), `zartan` (credible non-Python alternatives), and only if Python survives all of that, a single question to the user; then `jake-the-snake` executes. The rigor below is unchanged; this section says what it is for.
+
+This skill's part: when Python has survived the tree and the user has approved it, execute it with discipline and leave an audit trail.
+
 ## Step 1 — Verify both gates
 
 Do this **first**, before doing anything else.

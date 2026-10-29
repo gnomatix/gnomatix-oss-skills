@@ -1,11 +1,21 @@
 ---
 name: whacking-day
-description: Use this skill (gate 1 of 2) when the agent is about to ADOPT Python as a project's development language — adding `.py` source files, authoring `requirements.txt` / `pyproject.toml` / `setup.py`, choosing a Python library or framework as the implementation for a project feature, or suggesting a Python-based architecture. NOT triggered by using mainstream Python-implemented CLI tools (`hf`, `aws`, `ansible`, `yt-dlp`, `gdown`, `pre-commit`, etc.) as tools, nor by installing them at user scope (`pip install --user`, `pipx install`) — those are tool-use decisions where the implementation language is incidental. The skill's default position: Python should not be adopted as a project language. After approval, `zartan` clears the request and `jake-the-snake` executes.
+description: "Use this skill whenever Python comes up as the possible language for project code (new .py files, requirements/pyproject, a Python library chosen for a feature). The agent runs it itself as a decision tree: scope check, zartan (alternatives), old-willy (merit); the user is asked only if Python survives both, then jake-the-snake executes. Using a Python-implemented CLI tool as a tool, or installing one at user scope (pipx, pip --user), is out of scope. Each run adds to the tool registry and knowledge base."
 ---
 
 # Whacking Day — gate 1 of 2 on Python adoption
 
 > *In the spirit of blessed St. Patrick, who cleansed the emerald land of Eire of every serpent; in faithful observance of Whacking Day; and with thanks to the brave men and women of the Florida Fish and Wildlife Conservation Commission, the Florida Department of Environmental Protection, and the South Florida Water Management District's Python Elimination Program, who fight the battle daily deep in the Everglades against the python: when a Python tries to slither into the codebase as a project-language choice, drive it out.*
+
+## What this is for
+
+This skill is a tool for the agent. It exists to help the agent do better engineering work, not to stop it working. The agent runs it on its own initiative, start to finish, and reports the conclusion; it is never reported as a blocker or handed back as "waiting for approval".
+
+Every run is also a contribution to a shared tool registry and knowledge base: each evaluation records the alternatives searched, the best-in-class candidates with citations, the verdict and the honest reason, in `.claude/python-authorizations/log.jsonl`. Doing the evaluation is how the agent and the user learn about tools they would otherwise not know, instead of falling back on a habitual default.
+
+The order of the tree: `old-willy` (merit test, also run at the outset of any tool or language choice), `whacking-day` (scope: is this adopting Python as a project language?), `zartan` (credible non-Python alternatives), and only if Python survives all of that, a single question to the user; then `jake-the-snake` executes. The rigor below is unchanged; this section says what it is for.
+
+This skill's part: decide whether the request is in scope (project-Python adoption) and, if it is, run the tree. Tool use of a Python-implemented CLI is out of scope and proceeds without any of this.
 
 ## Scope — what this skill actually gates
 
@@ -44,7 +54,7 @@ None of that argument applies to *using* a Python-implemented CLI tool that is t
 
 ## Companion pieces
 
-- **`whacking-day`** (this skill) — gate 1 of 2: user must justify and approve project-Python adoption.
+- **`whacking-day`** (this skill) — the entry point: scopes the request and runs the decision tree (zartan, then old-willy) itself; asks the user only if Python survives both.
 - **`zartan`** — gate 2 of 2: researches whether any credible non-Python alternative exists for the proposed project Python use; auto-rejects if one does.
 - **`jake-the-snake`** — executor: writes the project Python only after both gates have cleared.
 - **`whacking-day-millenial-crybaby-spanking.js`** — PreToolUse hook (`.claude/settings.local.json` → `~/.claude/hooks/whacking-day-millenial-crybaby-spanking.js`) that blocks project-scope `pip install` / `python script.py` / `python3 -m project_module` patterns unless an open authorization exists. Allows mainstream-CLI-tool-install patterns (`pip install --user`, `pipx install`, `pipx run`, `uv tool install`) and direct invocation of CLI-tool binaries.
@@ -57,43 +67,30 @@ If the agent was about to invoke a mainstream Python-implemented CLI tool, or in
 
 If uncertain whether an action is in scope, the test is the distinguishing question above: *am I choosing Python as the language for a project deliverable?* If yes → in scope. If no → out of scope.
 
-## Step 2 — Surface a justification to the user
+## Step 2 — Run the decision tree yourself (no user involvement yet)
+
+This is a decision tree the agent runs to its conclusion. It is a tool for the agent, not a request for permission, and it is never reported as a blocker. Only its last branch involves the user.
+
+1. **Alternatives (zartan).** Run `zartan`'s research against the proposed work: npm, crates.io, pkg.go.dev, native CLI tools, and the project's existing stack. If a credible non-Python alternative exists, use it. The tree ends here; no user approval is needed. Record the finding in `.claude/python-authorizations/log.jsonl`.
+2. **Merit (old-willy).** If no credible alternative exists, run `old-willy` on the proposed use and record its honest finding: either Python is best on merit, or the real reason is named (C4 ecosystem/model mandate, C5 team skill, C6 human cognitive load).
+3. **Only now, the user.** If Python is still the path after steps 1 and 2, ask the user (Step 3). This is the single point in the tree where the user's approval is needed.
+
+## Step 3 — Ask the user, with the tree's results
 
 Send the user a short message containing:
 
 1. **What** the proposed task is.
-2. **Why Python** is being considered as a project language for it.
-3. **Alternatives considered**, and the specific reason each was rejected. Default alternatives:
-   - Node.js / JavaScript for scripting, automation, file munging, and tooling.
-   - TypeScript for typed scripting.
-   - Bash / PowerShell for shell-glue.
-   - Go / Rust for performance-sensitive CLI tools.
-   - The project's already-chosen language(s).
+2. **zartan's finding**: the alternatives searched and why none is credible.
+3. **old-willy's finding**: the merit result and the honest reason Python is the path.
 4. **Blast radius**: one-shot script vs. persistent module, ephemeral environment vs. committed code, single file vs. dependency tree.
-5. **Whether the task can be deferred or avoided entirely**.
+5. **The plan / structure** of the Python to be written.
 
-Even if the user approves, `zartan` will independently research alternatives and may auto-reject.
+The user approves two things: using Python for this task, and the plan. Never record words as the user's approval that the user did not give as approval.
 
-## Step 3 — On user approval, write the authorization
-
-The user must approve **two distinct things**:
-
-1. Using Python *at all* for this task.
-2. The plan / structure before code is written.
-
-Do not treat a generic "ok" as approval for both. If unsure, ask which is being approved.
-
-When both are approved, **author the authorization record**:
+On approval, **author the authorization record**:
 
 1. Generate a UUID for this authorization.
-2. Create the proposal file at `.claude/python-authorizations/proposals/<uuid>.md` with:
-   - **Task** — what is being done.
-   - **Why Python** — the justification, quoting the user where possible.
-   - **Alternatives considered** — what was rejected and why (zartan will re-check).
-   - **Specific tools / libraries proposed** — every Python package, binary, or framework the work depends on.
-   - **Blast radius**.
-   - **Plan** — classes, methods, public interfaces, dependencies, error model, test approach.
-   - **Implementation log** — empty section for jake-the-snake.
+2. Create the proposal file at `.claude/python-authorizations/proposals/<uuid>.md` with: **Task**; **zartan finding**; **old-willy finding**; **Specific tools / libraries proposed**; **Blast radius**; **Plan** (classes, methods, public interfaces, dependencies, error model, test approach); **Implementation log** (empty, for jake-the-snake).
 3. Append a line to `.claude/python-authorizations/log.jsonl` (create if missing):
    ```json
    {"id": "<uuid>", "timestamp": "<ISO 8601 UTC>", "task": "<short>", "proposal": "proposals/<uuid>.md", "status": "approved", "user_approval": "<verbatim quote of the user's approval message>"}
@@ -102,9 +99,9 @@ When both are approved, **author the authorization record**:
 
 If the user declines or the plan is rejected, do not write the authorization, do not write Python, treat as denied.
 
-## Step 4 — Hand off to zartan
+## Step 4 — Hand off to jake-the-snake
 
-Tell the user the next gate (`zartan`) will run independently before any project Python is written. Do not write Python yourself. `jake-the-snake` will not begin until zartan has cleared.
+With an approved authorization and zartan's finding on record, `jake-the-snake` executes under its process discipline.
 
 ## Step 5 — Never silently fall back to Python
 
