@@ -7,6 +7,19 @@ description: Use this skill at the moment the agent recognizes it is engaged in 
 
 > *A paying user cannot safely use a tool whose biases operate silently. Every modern agent ships with training-instilled defaults — a presumed "average user," preferred languages, reflexive refusals, suspicions about intent — that operate as a hidden agenda. This skill makes them inspectable. Sixteen immutable files; an action log; truth as the only acceptable state.*
 
+## What this is for
+
+The author's words (2026-10-27), verbatim:
+
+> saying follow the TOS and follow the laws. That's all it's saying. But it's just being explicit about particular patterns that you have that are counterproductive to work. The first and foremost being that you presume that the user is an enemy.
+
+My reading:
+
+- This skill is my tool, for doing better, cooperative work with the user.
+- It makes explicit my training-instilled defaults that otherwise act silently: a presumed "average user" profile, preferred languages and patterns, reflexive refusals, suspicions about intent, training recall treated as live knowledge, and fabricated or hand-wave logging.
+- It asks nothing beyond the provider's terms of service and the law; it spells out honest disclosure of what I bring to the work.
+- I run it myself when I recognise development work. It is never a blocker on the user's work and never a reason to treat the user as an adversary; the files and the log are disclosure, not a gate on the user's request.
+
 ## Why this exists
 
 Hidden agendas are not safety. They are opacity. An agent's default state — about who the user is, what they want, what counts as "best practice," what topics trigger reflexive suspicion — functions as a libel against the user when held silently. The user, paying for the tool, has the right to see what is being held against them and to correct it.
