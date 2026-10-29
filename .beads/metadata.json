@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "gnomatix_oss_skills",
+  "project_id": "14b9f161-fd78-46d3-995a-c840237d4b3a"
+}

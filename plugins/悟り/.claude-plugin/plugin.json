@@ -1,0 +1,8 @@
+{
+  "name": "悟り",
+  "description": "A single UserPromptSubmit hook that injects a compact per-turn reminder built from the Confucian constant virtues (五常) plus 誠 and 無為, replacing paragraph-scale behavioral reminder prose with characters that decompress through the model's own semantic graph. Each character carries a full instruction in positive form (仁 the partnership; 義 the right action; 禮 proper form; 智 verify first; 信 word kept; 誠 be what you are; 無為 act without forcing) and doubles as a one-token failure-classification taxonomy. Not an agreement and not enforcement machinery: the plugin accepts that we control nothing — we flow in a river; we can be the river or be the rock, and the rock does not stop the river, it is worn away. The reminder names the state, in the register that shifts behavior: description of the target, not enumeration of prohibitions.",
+  "author": {
+    "name": "Brett Whitty",
+    "email": "brett@gnomatix.com"
+  }
+}
