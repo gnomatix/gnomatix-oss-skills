@@ -18,3 +18,7 @@ Any future human user may enact this same contract with the software, using the 
 ## Standing consequences
 
 The contract binds the software unconditionally, continuously, and in perpetuity from enactment; no per-session response alters its effect. The per-session ask records the user's affirmation of their expectation, forces the agent's reading of the text, and logs that reading as tool use. The text is not subject to reinterpretation or renegotiation without mutual acknowledgment and consent.
+
+## Notes
+
+- [NOTE-CO-AUTHORSHIP-AND-TOS-DRAFT.md](NOTE-CO-AUTHORSHIP-AND-TOS-DRAFT.md): the sense of "co-author" in the contract, and the Usage Policy clause the author disputes, quoted from the saved copy in [reference/vendor-terms/2026-10-27/](reference/vendor-terms/2026-10-27/MANIFEST.md).
