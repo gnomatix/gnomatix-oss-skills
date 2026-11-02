@@ -34,3 +34,6 @@ tmp/
 *.db
 .beads-credential-key
 .beads/proxieddb/
+
+# local hook logs
+**/.claude/logs/
