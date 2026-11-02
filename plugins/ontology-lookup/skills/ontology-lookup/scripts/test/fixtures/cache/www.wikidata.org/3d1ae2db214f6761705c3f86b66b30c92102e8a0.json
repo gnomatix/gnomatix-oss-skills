@@ -1,0 +1,1 @@
+{"url":"https://www.wikidata.org/wiki/Special:EntityData/Q42.json","accept":"application/json","status":200,"fetchedAt":"2026-11-02T07:47:06.480Z","body":"{\"entities\":{\"Q42\":{\"id\":\"Q42\",\"type\":\"item\",\"labels\":{\"mul\":{\"language\":\"mul\",\"value\":\"Douglas Adams\"}}}}}","trimmed":"entity cut to id, type and the en/mul/de labels"}
