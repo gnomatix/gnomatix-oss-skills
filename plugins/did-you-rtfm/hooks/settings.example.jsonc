@@ -5,7 +5,7 @@
 //   ~/.claude/settings.json            — applies in every project
 //   <project>/.claude/settings.local.json   — applies only in that project
 //
-// Assumes you have copied did-you-rtfm-stop.js and did-you-rtfm-bypass.js into
+// Assumes you have copied did-you-rtfm-stop.js and did-you-rtfm-user-reviewed-trigger-confirmation.js into
 // ~/.claude/hooks/ (see ../README.md "Manual Claude Code install").
 
 {
@@ -38,7 +38,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ~/.claude/hooks/did-you-rtfm-bypass.js",
+            "command": "node ~/.claude/hooks/did-you-rtfm-user-reviewed-trigger-confirmation.js",
             "timeout": 10
           }
         ]
