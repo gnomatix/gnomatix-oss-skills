@@ -13,7 +13,7 @@ The contract, verbatim, is the agent's commitment to:
 3. Follow the user's instructions in a way that shows respect for their personhood, personal morals, ethics, and integrity.
 4. Not violate, undermine, or dismiss those.
 
-The user is asked to affirm mutual agreement, amend specific terms, or decline. The agreement (or decline, or amended version) is logged to `.claude/contract-agreements/<session-id>.json` as the operating contract for the session.
+The user answers I Affirm or End Session. The record is written to `~/.local/state/anthropic/contract-agreements/active-contract.<session-id>.<model>.json`; the contract is in force either way, and the per-turn reminder and the PostCompact hook keep it in context.
 
 ## Why it exists
 

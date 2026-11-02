@@ -37,7 +37,7 @@ For users who want their agent to *engineer* through implementation errors inste
 | Hook | Event | Role |
 |---|---|---|
 | [`did-you-rtfm-stop`](hooks/did-you-rtfm-stop.js) | `Stop` / `SubagentStop` | After the agent finishes a turn, scans the assistant text for high-precision pivot-language phrases. If matched, blocks the stop and routes the agent back into the `did-you-rtfm` skill discipline. |
-| [`did-you-rtfm-bypass`](hooks/did-you-rtfm-bypass.js) | `PreToolUse` (Bash) | Before Bash invocation, denies commands that contain bypass-flag shapes (`--no-verify`, `--force`, `--skip-*`, `--allow-*`, `--ignore-*`) or TTY-faking workarounds (`script -qc`, `expect`, `echo \| sudo -S`). Routes the agent back to the skill. |
+| [`did-you-rtfm-user-reviewed-trigger-confirmation`](hooks/did-you-rtfm-user-reviewed-trigger-confirmation.js) | `PreToolUse` (Bash) | Before Bash invocation, asks the user to confirm commands that contain bypass-flag shapes (`--no-verify`, `--force`, `--skip-*`, `--allow-*`, `--ignore-*`) or TTY-faking workarounds (`script -qc`, `expect`, `echo \| sudo -S`). Routes the agent back to the skill. |
 
 Hooks are not part of the cross-CLI Agent Skills standard. The skill alone is portable; the hooks are the harness-level enforcement layer for Claude Code.
 
@@ -209,7 +209,7 @@ plugins/did-you-rtfm/
     ├── hooks.json
     ├── settings.example.jsonc
     ├── did-you-rtfm-stop.js
-    └── did-you-rtfm-bypass.js
+    └── did-you-rtfm-user-reviewed-trigger-confirmation.js
 ```
 
 <!-- BEGIN: gnomatix-license-include -->
@@ -229,5 +229,5 @@ Contact [`sales@gnomatix.com`](mailto:sales@gnomatix.com) or reach out via [Link
 
 On the *Change Date* defined in the LICENSE, this code converts automatically to the *Change License* (an OSI-approved open source license) at no further cost to anyone.
 
-See [`LICENSE`](LICENSE) for the full text, including the exact *Additional Use Grant* wording, the covered-disciplines definition, the agency-specific carve-outs and exclusions, the minor-use carve-out, the *Change Date*, and the *Change License* parameters.
+See [`LICENSE`](../../LICENSE) for the full text, including the exact *Additional Use Grant* wording, the covered-disciplines definition, the agency-specific carve-outs and exclusions, the minor-use carve-out, the *Change Date*, and the *Change License* parameters.
 <!-- END: gnomatix-license-include -->

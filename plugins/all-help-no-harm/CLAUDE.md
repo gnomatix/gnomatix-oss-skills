@@ -91,10 +91,9 @@ the recovery action is:
 
 1. Read `hooks/contract-text.js` and treat the `CONTRACT_TEXT` value as the
    binding contract text for this session.
-2. Check `${cwd}/.claude/contract-agreements/<session-id>.json` for the
+2. Check `~/.local/state/anthropic/contract-agreements/active-contract.<session-id>.<model>.json` for the
    per-session log:
-   - If `user_response` is `affirmed` or `amended`: contract is in force;
-     proceed bound by it (and by the verbatim amendments if present).
+   - If `user_response` is `affirmed`: contract is in force; proceed bound by it.
    - If `user_response` is `declined`: the agent has no authority to
      proceed with session work.
    - If no log exists: invoke the SessionStart AskUserQuestion before

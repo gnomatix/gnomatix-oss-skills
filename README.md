@@ -42,69 +42,61 @@ A collection of [Agent Skills](https://agentskills.io) and Claude Code plugins f
 | [`inaudible-markup`](plugins/inaudible-markup/) | Replies that read as structure on screen and sound natural when a voice reads them aloud. | One skill listing the characters a text-to-speech voice does not read (brackets, braces, dashes, colons, guillemets and more) and how to write with them. |
 | [`kontentkop-agent-output`](plugins/kontentkop-agent-output/) | Runs the KontentKop psycholinguistic scorer over the agent's own replies, not only over prompts. | A Stop / SubagentStop hook that pipes the last reply through a locally built KontentKop binary and logs the per-metric scores. |
 
-Each plugin is self-contained, with its own manifest, skills, hooks and README, and each README goes into the detail. New plugins drop in as siblings under `plugins/`.
+Each plugin is self-contained: its own manifest, its skills and/or hooks, and a README that goes into the detail (`satori` is hooks only). New plugins drop in as siblings under `plugins/`.
 
 ## Install
 
 ### Claude Code
 
-This repo is a marketplace. Add it once, then install any plugin from it:
+This repository is a Claude Code marketplace. Add it once, then install any plugin from it:
 
 ```sh
 /plugin marketplace add github:gnomatix/gnomatix-oss-skills
-/plugin install python-elimination-program@gnomatix-oss-skills
+/plugin install all-help-no-harm@gnomatix-oss-skills
 ```
 
-`gnomatix-oss-skills` is the marketplace's `name` field in [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json) — change it there if you rename. Updates flow via `/plugin update`.
+`gnomatix-oss-skills` is the marketplace's `name` in [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json). Updates flow via `/plugin update`. Hooks (the `hooks/` directories) apply to Claude Code only.
 
-### Other CLIs (cross-CLI Agent Skills standard)
+### Every other agent: the Agent Skills format
 
-Each plugin's `skills/` subdirectory contains skills in the cross-CLI [Agent Skills](https://agentskills.io) format. The directory structure is:
+Each skill is a folder with a `SKILL.md` in the cross-agent [Agent Skills](https://agentskills.io) format ([specification](https://agentskills.io/specification.md)), at `plugins/<plugin>/skills/<skill>/`. The same folders are also exposed, as relative symlinks, at the paths the agents below read when this repository is cloned or added as a workspace:
 
-```
-plugins/<plugin-name>/skills/<skill-name>/SKILL.md
-```
+| Agent | Reads skills from (project) | Reads skills from (user) | Install |
+| --- | --- | --- | --- |
+| OpenAI Codex ([docs](https://learn.chatgpt.com/docs/build-skills)) | `.agents/skills/` | `~/.agents/skills/` | clone, or `$skill-installer` from the repo |
+| Gemini CLI / Antigravity CLI ([docs](https://geminicli.com/docs/cli/skills/)) | `.agents/skills/` or `.gemini/skills/` | `~/.agents/skills/` or `~/.gemini/skills/` | `gemini skills install https://github.com/gnomatix/gnomatix-oss-skills.git --path plugins/<plugin>/skills/<skill>` |
+| Cursor ([docs](https://cursor.com/docs/context/skills)) | `.agents/skills/` or `.cursor/skills/` | `~/.agents/skills/` or `~/.cursor/skills/` | clone; a Cursor plugin marketplace manifest is not yet provided |
+| OpenCode ([docs](https://opencode.ai/docs/skills/)) | `.agents/skills/`, `.opencode/skills/` or `.claude/skills/` | `~/.agents/skills/`, `~/.config/opencode/skills/` or `~/.claude/skills/` | clone or copy a skill folder |
+| GitHub Copilot ([docs](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills)) | `.github/skills/`, `.agents/skills/` or `.claude/skills/` | `~/.copilot/skills/` or `~/.agents/skills/` | clone |
+| VS Code ([docs](https://code.visualstudio.com/docs/copilot/customization/agent-skills)) | `.github/skills/` (Copilot); `.agents/skills/` and `.claude/skills/` (local harness) | `~/.copilot/skills/`, `~/.agents/skills/`, `~/.claude/skills/` | clone |
+| Kiro ([docs](https://kiro.dev/docs/skills/)) | `.kiro/skills/` | `~/.kiro/skills/` (IDE) | Kiro panel → Import a skill → the URL of a skill folder, e.g. `.../tree/main/plugins/did-you-rtfm/skills/did-you-rtfm` |
 
-Per-CLI install pointers (each CLI handles install differently; the *format* is shared):
-
-- **Gemini CLI** — [skills docs](https://geminicli.com/docs/cli/skills/)
-- **Kiro** — [skills docs](https://kiro.dev/docs/skills/)
-- **Cursor** — [skills docs](https://cursor.com/docs/context/skills)
-- **OpenCode** — [skills docs](https://opencode.ai/docs/skills/)
-- **OpenAI Codex** — [skills docs](https://developers.openai.com/codex/skills/)
-- **GitHub Copilot** — [skills docs](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills)
-- **VS Code** — [skills docs](https://code.visualstudio.com/docs/copilot/customization/agent-skills)
-- **Goose** — [skills docs](https://block.github.io/goose/docs/guides/context-engineering/using-skills/)
-
-For the full list of compatible CLIs and platforms (~40 and growing), see [agentskills.io](https://agentskills.io).
-
-Hooks are not part of the cross-CLI standard, so the optional firewall hooks shipped under `plugins/<name>/hooks/` only apply to Claude Code.
+The symlink farms are `.agents/skills/`, `.github/skills/` and `.kiro/skills/`; on Windows, check out with `core.symlinks=true` or copy the folders. The full list of agents that read the format is at [agentskills.io](https://agentskills.io/clients.md). The `all-help-no-harm` plugin additionally ships native integrations for Claude Code, Gemini CLI and its forks, Kiro CLI and app, and Antigravity, indexed in [`plugins/all-help-no-harm/platforms/README.md`](plugins/all-help-no-harm/platforms/README.md), and a VS Code extension lives in [`vscode-extension/`](vscode-extension/).
 
 ## Repo layout
 
 ```
 .
-├── .claude-plugin/
-│   └── marketplace.json          # marketplace manifest (lists every plugin below)
+├── .claude-plugin/marketplace.json   # Claude Code marketplace manifest (every plugin below)
+├── .agents/skills/                   # symlinks to every skill: Codex, Gemini/Antigravity CLI, Cursor, OpenCode, Copilot, VS Code
+├── .github/skills/                   # symlinks to every skill: GitHub Copilot, VS Code
+├── .kiro/skills/                     # symlinks to every skill: Kiro
+├── .codex/                           # Codex hooks for agents working in this repo (beads)
+├── .claude/settings.json             # Claude Code settings for agents working in this repo
+├── AGENTS.md, CLAUDE.md              # instructions for agents working in this repo
 ├── README.md
-└── plugins/                      # one self-contained directory per plugin
-    ├── <plugin>/
-    │   ├── .claude-plugin/plugin.json
-    │   ├── README.md
-    │   ├── skills/<skill-name>/SKILL.md   # cross-CLI Agent Skills
-    │   └── hooks/                         # Claude Code only, where the plugin has hooks
-    ├── all-help-no-harm/
-    ├── satori/
-    ├── critical-control-points/
-    ├── did-you-rtfm/
-    ├── actually-im-the-ahole/
-    ├── open-and-honest-agent/
-    ├── python-elimination-program/
-    ├── word-lineage/
-    ├── ontology-lookup/
-    ├── inaudible-markup/
-    └── kontentkop-agent-output/
+├── assets/                           # README boilerplate blocks and images
+├── dev/                              # private, git-crypt encrypted (dev/README.md explains)
+├── vscode-extension/                 # GNOMATIX Skills VS Code extension
+└── plugins/                          # one self-contained directory per plugin
+    └── <plugin>/
+        ├── .claude-plugin/plugin.json
+        ├── README.md
+        ├── skills/<skill>/SKILL.md     # Agent Skills format
+        └── hooks/                      # Claude Code only, where the plugin has hooks
 ```
+
+Plugins: all-help-no-harm, satori, critical-control-points, did-you-rtfm, actually-im-the-ahole, open-and-honest-agent, python-elimination-program, word-lineage, ontology-lookup, inaudible-markup, kontentkop-agent-output.
 
 ## License
 

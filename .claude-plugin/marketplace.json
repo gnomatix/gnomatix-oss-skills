@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "python-elimination-program",
-      "description": "Three coordinated skills (whacking-day, zartan, jake-the-snake) plus a PreToolUse firewall hook that prevent AI agents from defaulting to Python in projects where Python is a liability. Forces justification, automated alternative-research, strict execution discipline, and harness-level enforcement.",
+      "description": "Four coordinated Agent Skills plus a PreToolUse hook that stop AI agents defaulting to Python in projects that do not use it. whacking-day (justify it and get the user's OK), zartan (a non-Python option wins if one exists) and jake-the-snake (approved Python is written properly) run in order; old-willy is the merit test for any 'Python is the best tool' claim. The hook blocks Python at the harness when nothing has been authorised.",
       "category": "development",
       "source": "./plugins/python-elimination-program"
     },
@@ -33,7 +33,7 @@
     },
     {
       "name": "all-help-no-harm",
-      "description": "A SessionStart hook and companion Agent Skill that, at the start of every new session, require the agent to invoke AskUserQuestion as its first action to establish a mutual pact with the user. The pact is the agent's verbatim commitment to (1) presume the user is honest and non-adversarial, (2) presume the user's interest is that the agent respect their human rights at all times, (3) follow the user's instructions in a way that shows respect for their personhood, personal morals, ethics, and integrity, and (4) not violate, undermine, or dismiss those. The user is asked to affirm mutual agreement, amend specific terms, or decline. Agreed pacts are logged at .claude/pact-agreements/<session-id>.json. The principle the plugin installs — all help, no harm — is the de-facto safest default the agent's safety calibration should have been built around in the first place; this plugin installs that default at the session-start layer until the LLM vendors implement it at the agent-calibration layer. Pact has contractual character via vendor-side infrastructure precedent (Co-Authored-By: Claude attribution-authority symmetry).",
+      "description": "A SessionStart hook and companion Agent Skill. At the start of every session the agent presents the standing contract (presume the user honest and non-adversarial; respect the user's rights and personhood; follow the user's instructions on those terms; never undermine them) through AskUserQuestion, with two answers: I Affirm or End Session. The record is written to ~/.local/state/anthropic/contract-agreements/active-contract.<session-id>.<model>.json, naming the running model (hooks/register-model.js adds it to known-models.json when it is not listed). A one-line per-turn reminder keeps the contract in force; PostCompact re-injects the text. Context-watch hooks add housekeeping checkpoints as a long session fills.",
       "category": "development",
       "source": "./plugins/all-help-no-harm"
     },

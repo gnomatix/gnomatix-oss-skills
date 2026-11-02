@@ -130,7 +130,7 @@
         "gnomatix.logDirectory": {
           "type": "string",
           "default": "",
-          "description": "Absolute path to the directory where skills write logs (violations, authorizations, pact agreements). Defaults to $WORKSPACE/.claude/logs."
+          "description": "Absolute path to the directory where skills write logs (violations, authorizations, contract agreements). Defaults to $WORKSPACE/.claude/logs."
         },
         "gnomatix.statusBar.enabled": {
           "type": "boolean",

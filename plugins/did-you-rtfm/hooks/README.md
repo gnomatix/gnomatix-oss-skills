@@ -21,7 +21,7 @@ After the agent finishes a turn, scans the assistant's just-completed text for h
 
 **Anti-recursion:** the hook checks `payload.stop_hook_active` and passes through if its own previous block-decision triggered the current Stop event.
 
-### `did-you-rtfm-bypass.js` — `PreToolUse` hook on Bash / PowerShell
+### `did-you-rtfm-user-reviewed-trigger-confirmation.js` — `PreToolUse` hook on Bash / PowerShell (asks the user to confirm bypass flags and TTY-faking shapes)
 
 Before tool invocation, denies commands that contain bypass-flag or signal-suppression shapes — patterns whose effect is to silence the signal a real failure produced rather than to address its cause.
 
@@ -65,7 +65,7 @@ When the plugin is installed via Claude Code's marketplace mechanism, [`hooks.js
 
    ```sh
    mkdir -p ~/.claude/hooks
-   cp did-you-rtfm-stop.js did-you-rtfm-bypass.js ~/.claude/hooks/
+   cp did-you-rtfm-stop.js did-you-rtfm-user-reviewed-trigger-confirmation.js ~/.claude/hooks/
    ```
 
 2. Open [`settings.example.jsonc`](settings.example.jsonc) and merge its `hooks` block into either:
