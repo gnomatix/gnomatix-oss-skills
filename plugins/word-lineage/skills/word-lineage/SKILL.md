@@ -5,20 +5,25 @@ description: "Invoke on /word-lineage <word or words>. Traces an English word's 
 
 # word-lineage — reading a word off its family tree
 
+## The method
 
-> "No, not just French. Any fucking thing. Any fucking, because we know the history of England. We know that there was waves where it was controlled by French. That's how the words got in there. And they evolve. And so there's Roman Latin words. So we know it was dominated by Rome. So there's Latin words. But people only learn the words that are new, right? This is what you're doing. And you're saying the shit, but you're not acknowledging what I'm saying. The more core the words, like people aren't going to learn a new word for air or water, right?"
+English is a layered language: a native Germanic core with Norse, Latin, French and later
+borrowings laid over it in known historical waves (Roman Britain, the Danelaw, the Norman
+conquest, the scholarly Latin and Greek of the early modern period). A word's layer can be read
+off evidence rather than looked up: its similarity to the same word in French, German, the other
+Romance and Germanic languages (the information-theoretic view: how much a word in one language
+tells you about its counterpart in another), its morphology (how it conjugates or forms its
+plural), whether it belongs to the everyday core or to a ruling-class, legal, ceremonial or
+scholarly register, and how it has drifted in meaning. Knowing the layer gives the word's
+literal meaning, and the literal meaning settles what the word actually says, without a
+thesaurus.
 
-> "Because of the conjugation of the verbs and things like this. So if you go, oh, the verb's conjugated like this, oh, then it's a word from French. Oh, then it's a word from German. People go, English is hard, but it's not. You just have to know what the origins of the words are. And usually the synonyms, like the synonyms are there and they're literal. So if you break down into literal synonym, it's one or the German. So the synonyms, that's how you know. Like, so sometimes the Germans use a different word because their language evolved, right? So English captures an old German word, but then the Germans have a new word, right? So actually, a German goes, oh, it's quaint or whatever. It sounds weird when you say it because you're using the old one. And this happens in between the United States in different parts, different states have different meanings. So all of what I'm describing is one rule for how you deconstruct language, and you know why. By looking at synonyms, breaking them down into literals, and understanding where they came from. It's a phylogenetic approach to language that allows you to understand the meaning of words systematically. And to not debate about them."
+Synonyms are compared the same way, across the Romance and Germanic languages at once: for a
+set of near-synonyms, each word's literal meaning is read off its lineage, and the one whose
+literal meaning matches the intended meaning is the right word. The skill is refined by use:
+when an answer is wrong, the correction goes into the procedure below as a dated refinement.
 
-> "write a skill for that. Write me up a skill for it. And when I invoke it, then you give me an answer. And if the answer is wrong, then we refine the skill."
-
-> "And part of the skills, what I'm saying is the synonyms, right? Literal synonyms, and then across languages. So Spanish, all of the Latin languages, right? We're bringing in Romance, Spanish, German, anything that comes from Latin. And we look at in each of those, the synonyms. And when we mapped, because usually the same one, like in colonial times, the same word, because they're trading, right? Portuguese, Spain. And then new words come in from Asia, right? Because it's all from colonial times. And then the cultures get cut off, right? At post-colonial, right? So all of, if you map it to the timeline, like, so you got to put the timeline of English, and then you got to go the division of American English, French, and then reunification during internet times, right? So it's like a tree that merges back in. So when you look at that evolutionary tree, build a little, make a nexus plot or whatever, pull up the history of the splitting and put it on a tree and put a fake distance metric on it. And then we'll use that tree as the heuristic. And then use the synonyms, okay? I really want to do this. I want to see this exercise and see if you can do it."
-
-> "because this will without a this will allow us without a thesaurus, without a dictionary or whatever, it will allow us to essentially settle on the definition of a word, the working definition of a word, because it's literal. It's literal. Like, we the synonym confusion is because we're being non-specific."
-
-> "It applies to all because I worked in Maryland. So I'm just saying, like, there's different people arrive at different meanings, but I go for the real meaning. That's the point, is I go for the real meaning, right? Which is the literal meaning. Literal meaning. Because words have literal meanings. So it's like, why use a wrong word and interpret it as other meaning when there is a word that literally means that, right? Use the literal meaning."
-
-## My procedure (refined with the author when an answer is wrong)
+## The procedure (refined when an answer is wrong)
 
 There are two modes.
 
@@ -61,9 +66,9 @@ Candidates: <one line per candidate: word = literal sense, from <source>>
 Pick: <the word whose literal meaning matches, and the one-line reason>
 ```
 
-When a dictionary or reference was checked, cite it. When the answer comes from recall, say so in one word ("recall"). The author's corrections to an answer go into this skill as a refinement. Each refinement is dated, his words are quoted verbatim, and my change is listed under "My refinement".
+When a dictionary or reference was checked, cite it. When the answer comes from recall, say so in one word ("recall"). Corrections to an answer go into this skill as refinements. Each refinement is dated and lists what changed and why.
 
-## My worked example: commence (synonym set begin, start)
+## Worked example: commence (synonym set begin, start)
 
 Mine. No dictionary was checked; every etymological fact is from recall and marked "(recall)".
 

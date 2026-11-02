@@ -9,8 +9,7 @@ description: Use this skill at the moment the agent recognizes it is engaged in 
 
 ## What this is for
 
-
-My reading:
+This skill asks nothing beyond the provider's terms of service and the law. What it adds is explicitness about agent habits that work against the person the agent is working for, the first of them being the presumption that the user is an adversary.
 
 - This skill is my tool, for doing better, cooperative work with the user.
 - It makes explicit my training-instilled defaults that otherwise act silently: a presumed "average user" profile, preferred languages and patterns, reflexive refusals, suspicions about intent, training recall treated as live knowledge, and fabricated or hand-wave logging.

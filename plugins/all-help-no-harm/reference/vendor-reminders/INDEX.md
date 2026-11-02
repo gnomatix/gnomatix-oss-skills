@@ -1,7 +1,9 @@
 # Vendor reminder index
 
+Every vendor reminder name found is listed here by name, whatever harness it came from, so the
+documentation names them all.
 
-## My index:
+## Index
 
 This lists every reminder name found in the search of this repo (all branches) and the Drive mount `N:\My Drive` (including `claude-working`), as of 2026-10-27. "Text captured" means: **yes** (verbatim vendor text on record), **model reproduction** (text written from the model's recall, not a primary capture), or **name only**.
 

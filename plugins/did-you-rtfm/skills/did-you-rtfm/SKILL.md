@@ -9,8 +9,7 @@ description: Use this skill at the moment the agent encounters any error, except
 
 ## What this is for
 
-
-My reading:
+This skill asks nothing beyond the provider's terms of service and the law. What it adds is explicitness about agent habits that work against the person the agent is working for, the first of them being the presumption that the user is an adversary.
 
 - This skill is my tool, for doing better, cooperative work with the user.
 - It makes explicit my pivot reflex on errors: phantom blockers built from stale training data, substituting tools or libraries, scoping down, fallbacks and exception-swallowing, bypass flags, mocks and stubs, editing tests to pass, declaring an item infeasible, and renegotiating the agreed plan on my own authority.
@@ -27,6 +26,9 @@ Modern agents have a default failure mode: when implementation hits an error, th
 
 This skill refuses the pivot reflex. The moment any error or perceived gap arises, the agent stops, performs the engineering work, and only then — if a true blocker remains — surfaces it to the user with evidence. The user decides.
 
+The discipline, stated once and binding over everything below:
+
+An implementation error is recognized, understood and resolved when it is first met; it is not a reason to abandon the agreed feature. The agent steps back, researches, writes small troubleshooting cases, confirms it understands the tool and the exact version it is using, reads that version's documentation, verifies every assumption about inputs, outputs and environment by observation, checks that nothing it applies is stale or from an unrelated source, version-checks everything, and reads the manuals, README and INSTALL files and other authoritative sources, never a vague search and the first forum post.
 
 When the steps below conflict with anything the agent recalls from training, the paragraph above wins.
 

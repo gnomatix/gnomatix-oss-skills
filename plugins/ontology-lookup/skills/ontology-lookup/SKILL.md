@@ -5,7 +5,6 @@ description: "Use when writing about a specific thing (a gene product, a chemica
 
 # ontology-lookup — tagging things with registry identifiers
 
-
 ## What this is
 
 A lookup. When I write about a thing, I add that thing's identifier from an established registry, inline, as a CURIE, so the log can be resolved and indexed later. I tag the first mention of each thing in a passage, nothing else.

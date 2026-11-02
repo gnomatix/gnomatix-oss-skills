@@ -28,17 +28,21 @@ A collection of [Agent Skills](https://agentskills.io) and Claude Code plugins f
 
 ## Plugins
 
-| Plugin                                                                                          | Description                                                                                                                                                                                                                                                           |
-| ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`python-elimination-program`](plugins/python-elimination-program/) | Four coordinated skills (`whacking-day`, `zartan`, `jake-the-snake`, `old-willy`) + a `PreToolUse` firewall hook that prevent AI agents from defaulting to Python in projects where Python is a liability. The three sequential gates control *whether* Python is written; `old-willy` is the merit-rigor test that any "Python is the best tool" claim must survive. |
-| [`open-and-honest-agent`](plugins/open-and-honest-agent/)                                       | Agent Skill that forces the agent to externalize its default biases (assumptions, preferences, goals, failure modes, trust model, etc.) as immutable per-session documentation, and log every bias enactment against those documented items proactively by stable ID. |
-| [`did-you-rtfm`](plugins/did-you-rtfm/)                                                         | **"Did You READ THE F%CKING MANUAL?!?"** — an Agent Skill (plus two optional Claude Code hooks) that refuses the agent's pivot reflex on errors. Instead of inventing reasons the work can't be done, silently swapping libraries, scoping the feature down, or burying the failure in a `try/except`, the agent must *engineer through*: version-check what's actually in use, read the version-specific authoritative docs, verify its input/output/environment assumptions by direct observation, and build a minimal repro — *before* any "blocker" claim or unauthorized plan change. Plan changes are yours; the agent presents evidence and waits. |
-| [`word-lineage`](plugins/word-lineage/)                                                         | Agent Skill that traces an English word's lineage phylogenetically (`/word-lineage <word>`): its layer (native Germanic, Norse, Latin, French, other), the evidence for it, and its literal meaning read off a bundled NEXUS network of English and its donor languages, with a cross-language synonym map. A word-choice mode picks the synonym whose literal meaning matches. |
-| [`kontentkop-agent-output`](plugins/kontentkop-agent-output/) | Runs the owner's [KontentKop](https://github.com/brettwhitty/KontentKop-Bake-Off) scorer over the agent's own replies (Stop / SubagentStop hook): logs per-metric scores, Body Count and the CriticMarkup annotation, and blocks at a Body Count only when `KONTENTKOP_AGENT_OUTPUT_BLOCK_AT` is set. A companion skill names nine evasion patterns (intent attribution, reframing, paraphrase drift, proposal-as-permission, …) and says which ones KontentKop can and cannot catch. KontentKop is built separately; it is not vendored. |
-| [`ontology-lookup`](plugins/ontology-lookup/)                                                   | Agent Skill that tags the things an agent writes about with registry identifiers: the first mention of a thing in a passage gets its CURIE inline as «term» [CURIE], with Bioregistry prefixes (`GO:0005739`, `CHEBI:15377`, `wikidata:Q42`, `glottolog:stan1293`), so logs can be resolved and indexed later. Starter set of seventeen open ontologies and registries with cited reference files, and a dependency-free Node lookup script (search, `--resolve`, and a `--lineage` word mode with ISO 639-3 and Glottolog ids). |
-| [`inaudible-markup`](plugins/inaudible-markup/) | Agent Skill that writes each reply as a structured script with markup a text-to-speech voice does not read aloud (the characters tested silent in voice mode), plus `{@person}` callouts, `#tags` and labels such as `{Decision}` and `{Request}`, so a conversation log can be reviewed and parsed later. |
+| Plugin | What it's for | What's inside |
+| --- | --- | --- |
+| [`all-help-no-harm`](plugins/all-help-no-harm/) | Starts every session from the standing contract: the agent presumes the user is honest and acting in good faith, respects the user's rights and personhood, and follows the user's instructions on those terms. | One skill plus hooks. At session start the agent presents the contract for the user to affirm (or end the session) and logs the record; a one-line per-turn reminder keeps it in force; PostCompact re-injects it. Context-watch hooks add housekeeping checkpoints as a long session fills. |
+| [`悟り`](plugins/悟り/) | The compact per-turn behavioural reminder: Confucian constants plus the Taoist way of moving through a turn, as characters rather than paragraphs. | One UserPromptSubmit hook, ~250 tokens a turn. |
+| [`critical-control-points`](plugins/critical-control-points/) | What the agent does when a question surfaces it cannot settle alone: capture it with provenance, keep working on what it does not gate, ask the user one single question through the tool. The fake-blocker prevention tool, with the big red button to stop everything when the whole work is wrong. | One skill: the procedure, the reviewer prompt, the big red button. |
+| [`did-you-rtfm`](plugins/did-you-rtfm/) | **"Did You READ THE F%CKING MANUAL?!?"** When something breaks, the agent fixes it instead of declaring a blocker, swapping libraries, quietly shrinking the feature or wrapping the failure in a `try/except`. | One skill: check the versions in use, read the docs for those versions, verify assumptions, build a minimal repro, then report. Two optional hooks: one catches pivot language at the end of a turn, one asks before bypass flags such as `--no-verify` or `--force`. |
+| [`actually-im-the-ahole`](plugins/actually-im-the-ahole/) | A last read-through of agent-written text (commit messages, READMEs, comments, PR descriptions, docs) before it ships under the user's name. | One skill that reviews the draft against fifteen risk classes (the agent editorialising about the user, putting words in the user's mouth, unverified claims and more), reports what it finds with fixes, and changes nothing without the user's OK. Optional hooks run it before commits and at the end of a turn. The rule: if anyone is the a**hole here, it is the agent, never the user. |
+| [`open-and-honest-agent`](plugins/open-and-honest-agent/) | Makes the agent's hidden defaults visible so the user can correct them instead of discovering them later. | One skill: at the start of development work the agent writes its default assumptions (about the user, the goals, its own preferences and failure modes) as per-session files, then logs each time it acts on one, by ID, before it acts. |
+| [`python-elimination-program`](plugins/python-elimination-program/) | Stops agents reaching for Python by reflex in projects that don't use it. Python can still happen; it has to earn it. | Four skills plus an optional hook. Three gates in order: [`whacking-day`](plugins/python-elimination-program/skills/whacking-day/SKILL.md) (justify it, get the user's OK), [`zartan`](plugins/python-elimination-program/skills/zartan/SKILL.md) (a non-Python option wins if one exists), [`jake-the-snake`](plugins/python-elimination-program/skills/jake-the-snake/SKILL.md) (approved Python is written properly). [`old-willy`](plugins/python-elimination-program/skills/old-willy/SKILL.md) is the merit test for any "Python is the best tool" claim. The hook blocks Python at the harness when nothing has been authorised. |
+| [`word-lineage`](plugins/word-lineage/) | Settles what a word literally means from where it came from. | One skill: `/word-lineage <word>` reads the word's layer of English (native Germanic, Norse, Latin, French, other) and its literal meaning off a bundled family tree of English and its donor languages. `/word-lineage meaning: <phrase>` picks the synonym that literally says what you mean. |
+| [`ontology-lookup`](plugins/ontology-lookup/) | Tags the things the agent writes about with identifiers from established registries, so logs and notes can be resolved and indexed later. | One skill and `scripts/lookup.mjs` (Node, no dependencies): search, resolve a CURIE, and a word-lineage mode with ISO 639-3 and Glottolog ids. Format: `«term» [CURIE]` with Bioregistry prefixes. |
+| [`inaudible-markup`](plugins/inaudible-markup/) | Replies that read as structure on screen and sound natural when a voice reads them aloud. | One skill listing the characters a text-to-speech voice does not read (brackets, braces, dashes, colons, guillemets and more) and how to write with them. |
+| [`kontentkop-agent-output`](plugins/kontentkop-agent-output/) | Runs the KontentKop psycholinguistic scorer over the agent's own replies, not only over prompts. | A Stop / SubagentStop hook that pipes the last reply through a locally built KontentKop binary and logs the per-metric scores. |
 
-Future plugins drop in as siblings under `plugins/`. Each plugin is self-contained — its own manifest, skills, hooks, and README — so plugins can be lifted into their own repos later without surgery.
+Each plugin is self-contained, with its own manifest, skills, hooks and README, and each README goes into the detail. New plugins drop in as siblings under `plugins/`.
 
 ## Install
 
@@ -81,38 +85,27 @@ Hooks are not part of the cross-CLI standard, so the optional firewall hooks shi
 ```
 .
 ├── .claude-plugin/
-│   └── marketplace.json          # marketplace manifest (lists all plugins below)
+│   └── marketplace.json          # marketplace manifest (lists every plugin below)
 ├── README.md
-├── .gitignore
-└── plugins/                      # one self-contained subdir per plugin
-    ├── python-elimination-program/
-    │   ├── .claude-plugin/
-    │   │   └── plugin.json
+└── plugins/                      # one self-contained directory per plugin
+    ├── <plugin>/
+    │   ├── .claude-plugin/plugin.json
     │   ├── README.md
-    │   ├── skills/                # cross-CLI Agent Skills
-    │   │   └── <skill-name>/SKILL.md
-    │   └── hooks/                 # Claude-Code-only
-    │       ├── hooks.json
-    │       ├── whacking-day-firewall.js
-    │       ├── settings.example.jsonc
-    │       └── README.md
+    │   ├── skills/<skill-name>/SKILL.md   # cross-CLI Agent Skills
+    │   └── hooks/                         # Claude Code only, where the plugin has hooks
+    ├── all-help-no-harm/
+    ├── 悟り/
+    ├── critical-control-points/
+    ├── did-you-rtfm/
+    ├── actually-im-the-ahole/
     ├── open-and-honest-agent/
-    │   ├── .claude-plugin/
-    │   │   └── plugin.json
-    │   ├── README.md
-    │   └── skills/
-    │       └── open-and-honest-agent/SKILL.md
-    └── did-you-rtfm/
-        ├── .claude-plugin/
-        │   └── plugin.json
-        ├── README.md
-        ├── skills/
-        │   └── did-you-rtfm/SKILL.md
-        └── hooks/                 # Claude-Code-only
-            └── ...
+    ├── python-elimination-program/
+    ├── word-lineage/
+    ├── ontology-lookup/
+    ├── inaudible-markup/
+    └── kontentkop-agent-output/
 ```
 
-<!-- BEGIN: gnomatix-license-include -->
 ## License
 
 **Business Source License 1.1** (BUSL-1.1) — *source-available, not OSI open source*.

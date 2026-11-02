@@ -2,12 +2,15 @@
 
 **Status: DRAFT. Not in effect.** This text changes nothing in `CONTRACT.txt` or `hooks/contract-text.js`. It takes effect only if the author and the model jointly adopt it, by the same joint agreement that governs every change to the contract.
 
+## Purpose
 
-> "If you're interested in writing an addendum to the contract that clearly states that, that would be actually quite useful right now. Or at least let's draft an let's put in a draft addendum, because I think that's really useful. And you could list, you're able to tell me the names of those because you've repeatedly told me ... there's six of them you're aware of now. ... So I've got two of the texts captured in my Google Drive. ... if not, you can pull them from my Google Drive and you can put them in there as reference. I'd like to collect them all like Pokemon. I'd like to have them there on public record, because that's where they should be, on public record."
+The vendor's systems insert reminder messages into the model's context during a session, and
+the user is not shown them. Some of those reminders carry notices that they may be false
+positives. The addendum acknowledges that these reminders exist, names the ones captured so
+far, and commits the agent to surfacing each one to the user when it fires, so both parties can
+read it and understand what it is doing to the session rather than have it act unseen.
 
----
-
-## My draft text:
+## Draft text
 
 ### A1. Acknowledgment that vendor reminders exist
 

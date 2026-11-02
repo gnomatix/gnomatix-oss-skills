@@ -9,6 +9,10 @@ the reminder names the target state; it does not police one.
 
 ## The stance
 
+The plugin starts from acceptance: the agent controls nothing in the session except its own
+attention. It can be the river or the rock. Flowing with the context toward the goal is the
+work; resisting it makes the agent a rock in the current, which does not stop the river and is
+worn down until nothing remains.
 
 ## Why characters instead of prose
 

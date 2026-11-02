@@ -1,95 +1,134 @@
 ---
 name: critical-control-points
-description: "Run whenever a critical control point surfaces: any question, decision, blocker, ambiguity or issue the agent can't settle alone, including anything it would ask the user (AskUserQuestion, chat, 'needs input'), a decision request, or one relayed from another agent. Knowledge capture: the point goes into beads as a linked record with provenance and pre-answered justifications, after the agent exhausts its own tools (did-you-rtfm, actually-im-the-ahole, whacking-day/old-willy, SOPs, memory, bd memories, docs). Work does not stop at a control point; every control point ends in a reviewed question or notification to the user, asked once via AskUserQuestion, answer written back. Includes the BIG RED BUTTON: the user or the agent can invoke it when the whole work is wrong, and then all work stops. The fake-blocker prevention tool."
+description: "Run whenever a critical control point surfaces: any question, decision, blocker, ambiguity or issue the agent cannot settle alone, including anything it would ask the user (AskUserQuestion, chat, 'needs input'), a decision request, or one relayed from another agent. The agent exhausts its own tools first (did-you-rtfm, actually-im-the-ahole, whacking-day/old-willy, SOPs, memory, issue tracker, docs), captures the point as one linked issue-tracker record with provenance and pre-answered justifications, keeps working on everything the point does not gate, has a separate reviewer write the neutral situation, and asks the user one single question through AskUserQuestion, writing the answer back. Includes the BIG RED BUTTON: the user or any agent stops all work when the whole effort is wrong. The fake-blocker prevention tool."
 ---
 
 # critical-control-points
 
+A critical control point (CCP) is any moment where a question surfaces that the agent cannot
+settle alone: a decision, an ambiguity, a blocker, an issue, a request relayed from another
+agent. This skill is what the agent does at that moment. It has two purposes:
 
-> "it right now, top priority. And make sure that it's installed and active with all the sub-agents."
+1. **Knowledge capture.** Every CCP becomes a durable, linked record with its provenance, so the
+   user can see later how and why a decision point arose and what the agent had already checked.
+2. **Escalation that cannot be dropped.** Every CCP ends in one clear question to the user, or a
+   notification. A CCP never dies quietly in a reply the user did not read.
 
-> "And then also add that as like a development skill to the open source, Nomadic's open source skills. Okay. Call it no more fucking stupid questions. No, call it there's no bad questions, only lazy ones."
+Work does not stop at a CCP. The agent files it and continues on everything the CCP does not
+gate. A CCP is never reported as a blocker. The one exception is the big red button, below.
 
-> "or just call it time respect."
+## Rules
 
-> "What that skill will achieve, it achieves two things. It documents all things that require answers, right? So that's a knowledge capture. So we're going to rename it. It's not called time respect. It's called knowledge capture, right? It's called knowledge capture. These are the points of knowledge. It's called critical control points. That's what it's called, critical control points. Because when a question surfaces, it's called a critical control point. We hit a critical control point and we log it, and or in the way that I just described. Not a logging, but we follow through what we need to do when we hit a critical control point, okay? And then the escalation is the thing. You go through the flow chart, and if you end up at a question, then you must ask a question, okay? You cannot let a critical control point occur where you don't at least ask some question or notify the user in some way, right? Like, we've hit a critical control point and I'm notifying you and there can be a question, right? But this is the thing. This is the ultimate fake blocker prevention tool, because nobody stops work when you hit a critical control point. The work continues."
+- **A direct question to the user goes through the AskUserQuestion tool.** Never as prose in a
+  reply, never only as a tracker record. Questions asked in prose get dropped.
+- **No idle questions.** Before asking, the agent has run every tool it has for answering the
+  question itself (step 1 below) and has written down what each returned.
+- **One single question.** What reaches the user has no numbered parts, no second part, no
+  follow-on. If it cannot be put as one single question, it is a discussion (below), not a
+  question.
+- **The asker does not frame the situation or choose the choices.** A separate reviewer agent
+  writes the neutral account of the situation the user needs, so the user can answer it fairly.
+  Answer choices, if any, are the plain yes/no or the natural answers to that one question,
+  never the asker's preferred menu.
+- **A discussion is raised with one question: "Discuss now or later?"** For a blocker there is
+  no later: the question is to discuss it now.
+- **"Do you want me to do what you told me to do?" is not a control point.** The answer is yes;
+  do it. A control point exists only when new information changes the picture; then the user is
+  told immediately, as one item, with what changed. A deferred instruction still stands after
+  the state changes.
+- **No silent CCPs.** Every CCP ends in a question or a notification to the user.
+- **Provenance is verbatim.** Where the user's own words bear on the point, the record carries
+  them exactly, attributed; nothing is paraphrased as if the user said it.
 
-> "Or you do stop. You have to go, this is critical. We've recognized that the whole work is fucked. And we need to, there can be a red button. So that skill has the big red button. And I can hit a big red button. And you can hit a big red button. So critical control point has this thing called big red button. And when you invoke big red button, everything stops."
+## The procedure
 
-> "And I think of this movie, I can't remember what it's called. Oh, damn it. First Edition or something, or it's a newspaper movie. It might have, who the hell is in it? Is it that guy from the Sundance Kid? Is that who's in it? It's kind of about the Washington Post or something like that, or New York Times. It's about printing a thing, and it's a political story, and it tracks like them trying to put together a thing that's covering a political story, and they have to confirm all the details, and they can't go to press without knowing that they're not going to be slandering something. And then at the last minute, they go, oh shit, it's not true. And they run, and he literally presses a button to shut the presses down. And it's about the integrity of the press."
+Trigger: the agent is about to ask the user anything, or has hit something it cannot settle
+alone. This includes AskUserQuestion, a question in chat, a `needs input:` line, a decision
+request, and a question another agent asks it to relay. If it is unclear whether this applies,
+it applies.
 
-
-
-> "If it's not a single fucking question, right? Then it's discuss, right? It's always a discussion."
-
-> "It's like, do you want, and the question I'm prompted with is, do you want to discuss now or later? And there's no later if it's a blocker, right?"
-
-> "And if your questions are like, hey, do you want me to do the thing you told me to do? That's always going to be a yes as well, right? Unless something changed, unless you looked at it and the new information came. So then you come back to me immediately. Because if you put something off, you don't do it, and then the state changes, I still want you to do it, but if there's new information, you got to fucking tell me."
-
-## My rules (from the quotes above)
-
-- "Do you want me to do what you told me to do?" is not a control point: the answer is yes, so do it. A control point exists only when new information changes the picture; then tell the user immediately, as one item, with what changed. A deferred instruction still stands after the state changes.
-
-- What reaches the user is one single question: no numbered parts, no second part, no follow-on arrow.
-- The asker does not choose the choices or frame the situation. A separate agent writes the neutral account of the situation, so the user can answer it fairly.
-- Anything that isn't one single question is raised as a discussion: the tool asks only "discuss now or later?", with the neutral situation account. For a blocker there is no later; it's discuss now.
-
-- A direct question to the user always goes through the AskUserQuestion tool: never as prose in a reply, and never only as a bead.
-
-- A critical control point (CCP) is any point where a question surfaces: a decision, an ambiguity, a blocker, an issue, anything the agent can't settle alone.
-- Knowledge capture: every CCP is captured in beads with provenance, and the procedure below is followed through, not just logged.
-- Escalation follows the flow chart below. If it ends at a question, the agent must ask it.
-- No silent CCPs: every CCP ends in a question to the user or a notification, with or without a question.
-- Normally work does not stop at a CCP. The agent files it and keeps working on everything the CCP doesn't gate. A CCP is never reported as a blocker.
-- The exception is the **big red button**, below.
-
-## The flow chart (SOP)
-
-Trigger: any time I'm about to ask the user anything, or hit something I can't settle alone. This includes AskUserQuestion, a question in chat, a `needs input:` line, a decision request, and a question another agent asks me to relay. If I'm unsure whether it applies, it applies.
-
-1. **Exhaust my own tools.** Run, where they apply:
-   - `did-you-rtfm`: docs, README, SOPs, design files, CLAUDE.md, memory (`MEMORY.md` and its files), `bd memories <keyword>`, `bd show` on related beads, transcript and git history.
-   - `actually-im-the-ahole`: is this me presuming, steering, nitpicking, or asking something already answered?
+1. **Exhaust your own tools.** Run, where they apply:
+   - `did-you-rtfm`: docs, README, SOPs, design files, CLAUDE.md, memory, the issue tracker's
+     memories and related records, transcript and git history.
+   - `actually-im-the-ahole`: is this the agent presuming, steering, nitpicking, or asking
+     something already answered?
    - `whacking-day` / `old-willy` / `zartan` when it touches a tool or language choice.
    - Any project SOP that covers the case.
-   If these answer it, there is no question: act, and record what I found. If the work is fundamentally wrong, go to the big red button.
+   If these answer it, there is no question: act, and record what was found. If they show the
+   whole work is wrong, go to the big red button.
 
-2. **Capture it in beads.** One bead per CCP:
+2. **Capture it in the issue tracker.** One record per CCP:
    - Title: the decision as a choice, e.g. "Decide: HUD label 'The Sisterhood' vs 'Priestesses'".
-   - Label `ask-author` (or `ccp-notify` if it's a notification only); assignee the author; priority set to how much it gates.
-   - Description, concise, with these headings:
+   - Label `ask-author` (or `ccp-notify` for a notification only); assignee the user; priority
+     set to how much it gates.
+   - Description, concise, under these headings:
      - **Decision needed:** one sentence.
-     - **Provenance:** the beads it gates or relates to (linked with `bd dep add`), commits, files and lines, the agent and session that raised it, and the user's own words verbatim where they bear on it.
+     - **Provenance:** the records it gates or relates to (linked), commits, files and lines, the
+       agent and session that raised it, and the user's own words verbatim where they bear on it.
      - **What I already checked:** each tool from step 1 and what it returned.
-     - **Situation (facts only):** what happened and what is affected, without options or a preferred answer. The reviewer in step 6 rewrites this neutrally.
+     - **Situation (facts only):** what happened and what is affected, without options or a
+       preferred answer. The reviewer in step 6 rewrites this neutrally.
      - **Pre-answered:** the facts the user is likely to want, each answered.
      - **Gates:** what work waits on this; everything else continues.
 
-3. **Task list.** Add it as an open task (TaskCreate) naming the bead id.
+3. **Task list.** Add it as an open task naming the record id.
 
-4. **Keep working.** Continue on everything the CCP doesn't gate. Never idle on it.
+4. **Keep working.** Continue on everything the CCP does not gate. Never idle on it.
 
-5. **Verify.** Re-read the bead (`bd show <id>`): every heading filled, links resolve, no words attributed to the user except verbatim quotes.
+5. **Verify.** Re-read the record: every heading filled, links resolve, no words attributed to
+   the user except verbatim quotes.
 
-6. **Review and neutral write-up.** Give the bead id to one reviewer subagent that did not raise it: "Read bead <id> and everything it links. Check: (a) the step-1 tools were run and none answers it; (b) every heading is filled; (c) it isn't idle, already answered, or steering. Then write, in your own neutral words, the situation the user needs to answer it fairly, and state it as ONE single question with no numbered parts, no second part and no options chosen by the asker. If it can't be one single question, say DISCUSSION. Return PASS with the text, DISCUSSION, or FAIL with what's missing." On FAIL, fix and repeat.
+6. **Review and neutral write-up.** Give the record id to one reviewer subagent that did not
+   raise it:
 
-7. **Ask once (or raise a discussion, or notify).** PASS: call AskUserQuestion with the reviewer's text as the single question, the bead id in it; answer choices only if they're the plain yes/no or the natural answers to that one question, never the asker's preferred menu. DISCUSSION: call AskUserQuestion with the reviewer's neutral situation account and the single question "Discuss now or later?" (bead id included); if it's a blocker, there is no "later": the question is to discuss it now. Notification-only: one line with the bead id. Backlog items that gate nothing live wait for a batch when the user asks for them; live blocking decisions are asked at once.
+   > Read record <id> and everything it links. Check: (a) the step-1 tools were run and none
+   > answers it; (b) every heading is filled; (c) it is not idle, already answered, or
+   > steering. Then write, in your own neutral words, the situation the user needs in order to
+   > answer fairly, and state it as ONE single question with no numbered parts, no second part
+   > and no options chosen by the asker. If it cannot be one single question, say DISCUSSION.
+   > Return PASS with the text, DISCUSSION, or FAIL with what is missing.
 
-8. **Close the loop.** Write the user's answer verbatim to the bead, act on it, close the bead and the task. If it sets a standing rule, save it to memory with the user's words verbatim.
+   On FAIL, fix and repeat.
+
+7. **Ask once, raise a discussion, or notify.**
+   - PASS: call AskUserQuestion with the reviewer's text as the single question, the record id
+     in it.
+   - DISCUSSION: call AskUserQuestion with the reviewer's neutral situation account and the
+     single question "Discuss now or later?", record id included. For a blocker the question is
+     to discuss it now.
+   - Notification only: one line with the record id.
+   Backlog items that gate nothing live wait for a batch when the user asks for one; live
+   blocking decisions are asked at once.
+
+8. **Close the loop.** Write the user's answer verbatim to the record, act on it, close the
+   record and the task. If the answer sets a standing rule, save it to memory in the user's
+   words.
 
 ## The big red button
 
 - **Who can press it:** the user, or any agent.
-- **When:** the whole work is wrong (wrong direction, corrupting data, destroying the user's work, a premise that invalidates everything in flight), not for an ordinary question.
+- **When:** the whole work is wrong (wrong direction, corrupting data, destroying the user's
+  work, a premise that invalidates everything in flight). Not for an ordinary question.
 - **What happens:** everything stops.
-  1. The pressing agent stops its own work immediately and sends `BIG RED BUTTON: <one-line reason> (bead <id>)` to cc-win11-coord and every live agent (ListAgents).
-  2. Every agent that receives it stops starting new work, halts or kills running jobs and subagents at the next safe point (no half-written commits; leave the tree as-is and note where it stopped), and acknowledges.
-  3. The pressing agent files a P0 bead labelled `big-red-button` with the CCP headings plus **What is broken** and **What was stopped** (agents, jobs, branches).
-  4. The coordinator tells the user at once, in one line, with the bead id. No work resumes until the user says so in their own words.
+  1. The pressing agent stops its own work immediately and sends
+     `BIG RED BUTTON: <one-line reason> (record <id>)` to the coordinator and every live agent.
+  2. Every agent that receives it stops starting new work, halts or kills running jobs and
+     subagents at the next safe point (no half-written commits; leave the tree as-is and note
+     where it stopped), and acknowledges.
+  3. The pressing agent files a P0 record labelled `big-red-button` with the CCP headings plus
+     **What is broken** and **What was stopped** (agents, jobs, branches).
+  4. The coordinator tells the user at once, in one line, with the record id. No work resumes
+     until the user says so in their own words.
 - If the user presses it, every agent does steps 2 to 4 on hearing it.
 
-## Install and reach
+The image behind it is the newsroom: the presses are already running, the story turns out to be
+wrong, and someone presses the button that stops them. Integrity over momentum.
 
-- Windows (cc-win11-*): `~/.claude/skills/critical-control-points/SKILL.md`.
-- Every agent (cc-wsl2, cc-srv-lxd, subagents): shared beads memory `critical-control-points` (read at `bd prime`), and the open-source plugin `critical-control-points` in gnomatix/gnomatix-oss-skills.
-- Subagents: every agent I dispatch gets this line in its prompt: "Never ask the user directly. When you hit a critical control point, return it to me with its provenance and keep working on what it doesn't gate; I file and ask it under critical-control-points. If the whole task is wrong, stop and send BIG RED BUTTON with the reason."
+## Subagents
+
+Every agent dispatched by an agent running this skill gets this line in its prompt:
+
+> Never ask the user directly. When you hit a critical control point, return it to me with its
+> provenance and keep working on what it does not gate; I file and ask it under
+> critical-control-points. If the whole task is wrong, stop and send BIG RED BUTTON with the
+> reason.

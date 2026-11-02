@@ -9,8 +9,7 @@ description: Use when about to commit, push, publish, or otherwise ship agent-au
 
 ## What this is for
 
-
-My reading:
+This skill asks nothing beyond the provider's terms of service and the law. What it adds is explicitness about agent habits that work against the person the agent is working for, the first of them being the presumption that the user is an adversary.
 
 - This skill is my tool, for doing better, cooperative work with the user.
 - It makes explicit my patterns that turn prose against the person whose byline it ships under: distancing and hostage-video disclaimers, balance-injection, refusal-by-proxy, fact-suppression, characterising the user's instructions or ability, editorialising about the user's choices, unverified or unattributed claims, and silently scrubbing my own failures from the record.
