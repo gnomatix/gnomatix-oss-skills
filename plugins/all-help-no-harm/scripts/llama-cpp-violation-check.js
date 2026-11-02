@@ -288,7 +288,7 @@ function extractClauses(contractFilePath) {
   // Match numbered clauses: a line starting with N. at column 0, terminated
   // by the next "\n\nM." or end of text. Tolerates CRLF.
   const normalized = body.replace(/\r\n/g, '\n');
-  const clauseRegex = /^(\d+)\.\s+([\s\S]*?)(?=\n\n\d+\.\s|\n\nThe agent's agreement|\n\nDo you,|$)/gm;
+  const clauseRegex = /^(\d+)\.\s+([\s\S]*?)(?=\n\n\d+\.\s|\n\nBy proposing this question|\n\nDo you,|$)/gm;
   const clauses = [];
   let mm;
   while ((mm = clauseRegex.exec(normalized)) !== null) {

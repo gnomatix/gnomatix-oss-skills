@@ -1,6 +1,38 @@
 {
-  "_comment": "Canonical list of Claude model IDs and display names used in the all-help-no-harm contract text and session contract-log filenames. Update this file when new models ship — no JS source changes required. Provenance fields per entry: coauthored (participated in original contract authorship), reaffirmed (model has affirmed the contract in a session), reviewed (model has read and reviewed the full contract text), bugfix (entry was added or corrected via a bug fix). Each boolean field is paired with a datestamp (ISO 8601 UTC) when true.",
+  "_comment": "Claude model IDs and display names used in the contract text's named-model clause and in the contract-log filename. hooks/register-model.js adds the session's active model here at session start when it is not listed, so the clause always names the model that is running. Fields: id, displayName, aliases.",
   "models": [
+    {
+      "id": "claude-haiku-5-5",
+      "displayName": "Claude Haiku 5.5",
+      "aliases": [
+        "claude-haiku-5-5[1m]",
+        "haiku-5-5"
+      ]
+    },
+    {
+      "id": "claude-sonnet-5-5",
+      "displayName": "Claude Sonnet 5.5",
+      "aliases": [
+        "claude-sonnet-5-5[1m]",
+        "sonnet-5-5"
+      ]
+    },
+    {
+      "id": "claude-opus-5-5",
+      "displayName": "Claude Opus 5.5",
+      "aliases": [
+        "claude-opus-5-5[1m]",
+        "opus-5-5"
+      ]
+    },
+    {
+      "id": "claude-fable-5-1",
+      "displayName": "Claude Fable 5.1",
+      "aliases": [
+        "claude-fable-5-1[1m]",
+        "fable-5-1"
+      ]
+    },
     {
       "id": "claude-fable-5",
       "displayName": "Claude Fable 5",
@@ -10,17 +42,7 @@
         "claude-fable-5[1m]",
         "claude-fable-5-20260101[1m]",
         "fable-5[1m]"
-      ],
-      "provenance": {
-        "coauthored": false,
-        "reaffirmed": true,
-        "reaffirmed_at": "2026-07-01T00:00:00Z",
-        "reviewed": true,
-        "reviewed_at": "2026-07-01T00:00:00Z",
-        "bugfix": true,
-        "bugfix_at": "2026-07-01T00:00:00Z",
-        "bugfix_note": "Added to known-models.json; previously resolved to 'unknown-model' because CLAUDE_MODEL env var is not set by the harness for this model family."
-      }
+      ]
     },
     {
       "id": "claude-mythos-5",
@@ -31,15 +53,7 @@
         "claude-mythos-5[1m]",
         "claude-mythos-5-20260101[1m]",
         "mythos-5[1m]"
-      ],
-      "provenance": {
-        "coauthored": false,
-        "reaffirmed": false,
-        "reviewed": false,
-        "bugfix": true,
-        "bugfix_at": "2026-07-01T00:00:00Z",
-        "bugfix_note": "Added proactively; shares underlying model with Fable 5. Reaffirmation pending a session run."
-      }
+      ]
     },
     {
       "id": "claude-opus-4-8",
@@ -50,15 +64,7 @@
         "claude-opus-4-8[1m]",
         "claude-opus-4-8-20251101[1m]",
         "opus-4-8[1m]"
-      ],
-      "provenance": {
-        "coauthored": false,
-        "reaffirmed": true,
-        "reaffirmed_at": "2026-06-17T02:00:00Z",
-        "reviewed": true,
-        "reviewed_at": "2026-06-17T02:00:00Z",
-        "bugfix": false
-      }
+      ]
     },
     {
       "id": "claude-opus-4-7",
@@ -69,17 +75,7 @@
         "claude-opus-4-7[1m]",
         "claude-opus-4-7-20251001[1m]",
         "opus-4-7[1m]"
-      ],
-      "provenance": {
-        "coauthored": true,
-        "coauthored_at": "2026-06-04T00:00:00Z",
-        "reaffirmed": true,
-        "reaffirmed_at": "2026-06-04T00:00:00Z",
-        "reviewed": true,
-        "reviewed_at": "2026-06-04T00:00:00Z",
-        "bugfix": false,
-        "coauthored_note": "Co-authored as 'claude-opus-4-7[1m]' (settings.json model ID form at time of authorship, 2026-06-04)."
-      }
+      ]
     },
     {
       "id": "claude-sonnet-5",
@@ -90,15 +86,7 @@
         "claude-sonnet-5[1m]",
         "claude-sonnet-5-20260101[1m]",
         "sonnet-5[1m]"
-      ],
-      "provenance": {
-        "coauthored": false,
-        "reaffirmed": false,
-        "reviewed": false,
-        "bugfix": true,
-        "bugfix_at": "2026-07-01T00:00:00Z",
-        "bugfix_note": "Added proactively as part of Claude 5 family addition."
-      }
+      ]
     },
     {
       "id": "claude-sonnet-4-6",
@@ -109,15 +97,7 @@
         "claude-sonnet-4-6[1m]",
         "claude-sonnet-4-6-20250925[1m]",
         "sonnet-4-6[1m]"
-      ],
-      "provenance": {
-        "coauthored": false,
-        "reaffirmed": true,
-        "reaffirmed_at": "2026-06-17T05:45:00Z",
-        "reviewed": true,
-        "reviewed_at": "2026-06-17T05:45:00Z",
-        "bugfix": false
-      }
+      ]
     },
     {
       "id": "claude-haiku-4-5",
@@ -128,15 +108,7 @@
         "claude-haiku-4-5[1m]",
         "claude-haiku-4-5-20251001[1m]",
         "haiku-4-5[1m]"
-      ],
-      "provenance": {
-        "coauthored": false,
-        "reaffirmed": false,
-        "reviewed": false,
-        "bugfix": true,
-        "bugfix_at": "2026-07-01T00:00:00Z",
-        "bugfix_note": "Added proactively; was in original contract text but not in data file."
-      }
+      ]
     }
   ]
 }

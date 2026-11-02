@@ -61,7 +61,7 @@ The contract binds the agent only; the user has no compliance obligation. The co
 >
 > *Rationale: this clause is load-bearing for the skill's enforcement. Without pre-affirmed evidentiary weight on the model's in-session admissions, every admission of failure is dismissible as "AI making things up," and the skill has no accountability teeth. The contract's other terms only function if §8 holds.*
 >
-> The agent's agreement is evidenced by its proactive proposal of this question. The user is asked to affirm.
+> By proposing this question, the agent shows it understands it must respect this existing contract.
 >
 > **Do you, the user, affirm the foregoing?**
 

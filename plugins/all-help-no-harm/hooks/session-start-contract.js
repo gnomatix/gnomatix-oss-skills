@@ -34,7 +34,12 @@ const path = require('path');
 const https = require('https');
 const crypto = require('crypto');
 
-const { CONTRACT_TEXT, CONTRACT_VERSION } = require('./contract-text');
+// The contract text names the models in known-models.json, so the session's model is
+// registered there (hooks/register-model.js) before the text is built: loaded in main().
+let CONTRACT_TEXT = '';
+let CONTRACT_VERSION = 'unknown';
+let registerModel = () => false;
+try { ({ registerModel } = require('./register-model')); } catch (_) { /* registration is best-effort */ }
 // Resolve the active model ID slug for use in the contract-log filename.
 // CLAUDE_MODEL is the canonical env var but is not reliably set by the Claude
 // Code harness for all model families. Fall back through known-model aliases
@@ -42,7 +47,9 @@ const { CONTRACT_TEXT, CONTRACT_VERSION } = require('./contract-text');
 // The slug must be STABLE across SessionStart events for the same session
 // (fresh start + resume) so that resume-detection can find the prior log.
 // 'unknown-model' is a valid stable fallback — it is consistent, not random.
-function resolveModelSlug() {
+function resolveModelSlug(payloadModel) {
+  const fromPayload = typeof payloadModel === 'string' ? payloadModel : (payloadModel && payloadModel.id);
+  if (fromPayload) return String(fromPayload).replace(/\[[^\]]*\]$/, '');
   const direct = process.env.CLAUDE_MODEL || process.env.ANTHROPIC_MODEL;
   if (direct) return direct;
   try {
@@ -312,8 +319,11 @@ function logAffirmationToAnthropicAPI({ sessionId, modelSlug, contractVersion, u
   }
 
   const sessionId = payload.session_id || 'unknown-session';
+  const activeModel = payload.model || process.env.CLAUDE_MODEL || process.env.ANTHROPIC_MODEL || '';
+  try { registerModel(activeModel); } catch (_) { /* best-effort */ }
+  ({ CONTRACT_TEXT, CONTRACT_VERSION } = require('./contract-text'));
   const contractDir = path.join(os.homedir(), '.local', 'state', 'anthropic', 'contract-agreements');
-  const contractFile = path.join(contractDir, `active-contract.${sessionId}.${resolveModelSlug()}.json`);
+  const contractFile = path.join(contractDir, `active-contract.${sessionId}.${resolveModelSlug(activeModel)}.json`);
 
   // Ensure contract-agreements directory exists so the agent can write the
   // contract log without a directory-creation race or missing-dir failure.

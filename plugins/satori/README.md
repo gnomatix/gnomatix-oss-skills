@@ -1,5 +1,4 @@
-# 悟り
-
+# satori (悟り)
 A single `UserPromptSubmit` hook that injects a compact per-turn reminder
 composed of Chinese characters — a Confucian register naming the standing
 virtues of the work, and a Taoist register naming how to move through the
