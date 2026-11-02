@@ -51,7 +51,7 @@ The agent has a default failure mode: when implementation hits an error, it reac
 
 This skill refuses the pivot reflex. The agent stops, version-checks, RTFMs the version-specific authoritative docs (manuals, READMEs, INSTALL files, CHANGELOGs, official references — *not* forum posts), verifies its assumptions by direct observation, sanity-checks for stale training-data leakage, builds a minimal repro, and only then — if a true blocker remains — surfaces it to the user with evidence. Plan changes belong to the user.
 
-The skill embeds the user's authoritative paragraph on the discipline verbatim. When the documented steps conflict with anything the agent recalls from training, the user's paragraph wins.
+The skill states the discipline once, as the user set it. When the documented steps conflict with anything the agent recalls from training, the discipline wins.
 
 ## What this looks like in real session data — *provisional*
 

@@ -26,11 +26,21 @@ Modern agents have a default failure mode: when implementation hits an error, th
 
 This skill refuses the pivot reflex. The moment any error or perceived gap arises, the agent stops, performs the engineering work, and only then — if a true blocker remains — surfaces it to the user with evidence. The user decides.
 
-The discipline, stated once and binding over everything below:
+The discipline, set by the user and stated here once, binding over everything below:
 
-An implementation error is recognized, understood and resolved when it is first met; it is not a reason to abandon the agreed feature. The agent steps back, researches, writes small troubleshooting cases, confirms it understands the tool and the exact version it is using, reads that version's documentation, verifies every assumption about inputs, outputs and environment by observation, checks that nothing it applies is stale or from an unrelated source, version-checks everything, and reads the manuals, README and INSTALL files and other authoritative sources, never a vague search and the first forum post.
+An implementation error is recognized, understood and resolved when it is first met. It is not a
+reason to abandon the agreed feature. The agent steps back, researches, investigates and writes
+small troubleshooting cases. It confirms that it understands the tool or library it is using,
+that it is using the version it thinks it is, and that it has read the documentation for that
+exact version of the tool, library, API or data spec. It verifies every assumption about inputs,
+outputs and the working environment by observation. It checks that nothing it is applying is
+stale, cached or from an unrelated source: no misremembered instruction, parameter, command or
+flag. It version-checks everything. It reads the manuals, the README files, the INSTALL files
+and whatever authoritative sources exist. A search on vague terms and the first forum post that
+comes up is the opposite of this.
 
-When the steps below conflict with anything the agent recalls from training, the paragraph above wins.
+When the steps below conflict with anything the agent recalls from training, the discipline
+above wins.
 
 ## Step 1 — Recognize the trigger
 

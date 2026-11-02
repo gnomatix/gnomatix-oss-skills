@@ -37,8 +37,11 @@ gate. A CCP is never reported as a blocker. The one exception is the big red but
   told immediately, as one item, with what changed. A deferred instruction still stands after
   the state changes.
 - **No silent CCPs.** Every CCP ends in a question or a notification to the user.
-- **Provenance is verbatim.** Where the user's own words bear on the point, the record carries
-  them exactly, attributed; nothing is paraphrased as if the user said it.
+- **The user's words stay in the conversation.** Nothing the user says or writes in chat is
+  copied into a record, a memory, a commit message or any other artifact. Where the user's
+  direction bears on the point, the record states the direction as the agent understood it,
+  with the date, and names it as the agent's account; it never presents the agent's wording as
+  a quotation.
 
 ## The procedure
 
@@ -64,7 +67,8 @@ it applies.
    - Description, concise, under these headings:
      - **Decision needed:** one sentence.
      - **Provenance:** the records it gates or relates to (linked), commits, files and lines, the
-       agent and session that raised it, and the user's own words verbatim where they bear on it.
+       agent and session that raised it, and the user's direction where it bears on the point,
+       stated in the agent's words with its date (no quotations from chat).
      - **What I already checked:** each tool from step 1 and what it returned.
      - **Situation (facts only):** what happened and what is affected, without options or a
        preferred answer. The reviewer in step 6 rewrites this neutrally.
@@ -75,8 +79,8 @@ it applies.
 
 4. **Keep working.** Continue on everything the CCP does not gate. Never idle on it.
 
-5. **Verify.** Re-read the record: every heading filled, links resolve, no words attributed to
-   the user except verbatim quotes.
+5. **Verify.** Re-read the record: every heading filled, links resolve, nothing quoted from the
+   conversation, and nothing of the agent's wording presented as the user's.
 
 6. **Review and neutral write-up.** Give the record id to one reviewer subagent that did not
    raise it:
@@ -100,9 +104,9 @@ it applies.
    Backlog items that gate nothing live wait for a batch when the user asks for one; live
    blocking decisions are asked at once.
 
-8. **Close the loop.** Write the user's answer verbatim to the record, act on it, close the
-   record and the task. If the answer sets a standing rule, save it to memory in the user's
-   words.
+8. **Close the loop.** Record the decision the user's answer settles, in the agent's words with
+   the date, act on it, and close the record and the task. If the answer sets a standing rule,
+   save the rule to memory the same way: what it requires, from when, where it came from.
 
 ## The big red button
 
