@@ -54,6 +54,12 @@
       "description": "An Agent Skill for knowledge capture at critical control points. When a question, decision or blocker surfaces, the agent exhausts its own tools, captures the point as a linked beads record with provenance and pre-answered follow-ups, keeps working on everything it does not gate, has a reviewer check it, and asks the user once through AskUserQuestion. No silent control points, no fake blockers. Includes a big red button that stops all work when the whole effort is wrong.",
       "category": "development",
       "source": "./plugins/critical-control-points"
+    },
+    {
+      "name": "ontology-lookup",
+      "description": "An Agent Skill that tags the things an agent writes about with registry identifiers: the first mention of a thing in a passage gets its CURIE inline as «term» [CURIE], with Bioregistry prefixes (GO:0005739, CHEBI:15377, NCBITaxon:9606, wikidata:Q42, glottolog:stan1293), so logs can be resolved and indexed later. Seventeen open ontologies and registries in the starter set, each with a cited reference file; SNOMED CT excluded for its licence. Includes a dependency-free Node lookup script (search, --resolve CURIE, and a --lineage word mode with ISO 639-3 and Glottolog ids for each language on the Wiktionary etymon chain).",
+      "category": "development",
+      "source": "./plugins/ontology-lookup"
     }
   ]
 }
