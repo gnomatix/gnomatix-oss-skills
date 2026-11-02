@@ -288,3 +288,11 @@ for (const f of fixtures) {
     assert.deepEqual(log.map((r) => r.blocked), [false, false, true]);
   });
 }
+
+test('scorer runs from the plugin config dir when CLAUDE_PLUGIN_ROOT is set and no KONTENTKOP_CONFIG_DIR', (t) => {
+  const d = tmpDir(t);
+  const root = path.resolve(__dirname, '..');
+  assert.ok(fs.existsSync(path.join(root, 'config', 'config.yaml')), 'plugin config.yaml exists');
+  const r = withFakeEnv({ FAKE_KK_MODE: 'cwd' }, () => hook.run({ last_assistant_message: 'x' }, envFor(d, { CLAUDE_PLUGIN_ROOT: root }), { runScorer: fakeRunner() }));
+  assert.equal(fs.realpathSync(r.record.annotated), fs.realpathSync(path.join(root, 'config')));
+});

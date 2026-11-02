@@ -235,11 +235,19 @@ function resolveScorer(env) {
   if (!path.isAbsolute(bin)) return { status: 'not-absolute', bin };
   const st = safeStat(bin);
   if (!st || !st.isFile()) return { status: 'not-found', bin };
+  // Working directory, because KontentKop reads config.yaml from its cwd:
+  // KONTENTKOP_CONFIG_DIR, else the plugin's own config/ (which carries the
+  // lowered threshold the Go hook also uses), else the binary's directory.
   let cwd = path.dirname(bin);
+  const pluginCfg = env.CLAUDE_PLUGIN_ROOT && path.isAbsolute(env.CLAUDE_PLUGIN_ROOT)
+    ? path.join(env.CLAUDE_PLUGIN_ROOT, 'config') : null;
   if (env.KONTENTKOP_CONFIG_DIR) {
     const cst = safeStat(env.KONTENTKOP_CONFIG_DIR);
     if (cst && cst.isDirectory()) cwd = env.KONTENTKOP_CONFIG_DIR;
     else warn(`KONTENTKOP_CONFIG_DIR is not a directory; running scorer from ${cwd}`);
+  } else if (pluginCfg) {
+    const pst = safeStat(path.join(pluginCfg, 'config.yaml'));
+    if (pst && pst.isFile()) cwd = pluginCfg;
   }
   return { status: 'ok', bin, cwd };
 }

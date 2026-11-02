@@ -1,12 +1,12 @@
 {
-  "description": "kontentkop-agent-output — Stop / SubagentStop hook that runs the KontentKop scorer over the agent's own last reply and logs scores, Body Count and the CriticMarkup annotation to the user's state directory. Log and pass through by default; KONTENTKOP_AGENT_OUTPUT_BLOCK_AT=<BC> turns on blocking at that Body Count.",
+  "description": "kontentkop-agent-output — Stop / SubagentStop hook that scores the agent's own last reply with KontentKop and logs scores, Body Count and the CriticMarkup annotation to the user's state directory. The Go binary under hooks/bin/ embeds the scorer (no subprocess, scores on every reply); if no binary matches the platform, the pure-Node hook runs instead and needs KONTENTKOP_BIN. Log and pass through by default; KONTENTKOP_AGENT_OUTPUT_BLOCK_AT=<BC> turns on blocking at that Body Count.",
   "hooks": {
     "Stop": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/kontentkop-agent-output.js",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/bin/kontentkop-agent-output-${platform}-${arch}${exe} || node ${CLAUDE_PLUGIN_ROOT}/hooks/kontentkop-agent-output.js",
             "timeout": 30
           }
         ]
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/kontentkop-agent-output.js",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/bin/kontentkop-agent-output-${platform}-${arch}${exe} || node ${CLAUDE_PLUGIN_ROOT}/hooks/kontentkop-agent-output.js",
             "timeout": 30
           }
         ]

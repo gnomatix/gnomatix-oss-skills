@@ -1,0 +1,27 @@
+# KontentKop config used by the kontentkop-agent-output hook.
+#
+# Weights are the KontentKop repository's config.yaml, unchanged. Only
+# bc_threshold differs: 0.01 instead of 0.05, so that a reply matched by a
+# single low-weight metric (evasion 0.02, learned_helpless 0.03,
+# passive_aggr 0.03) is still annotated. With the upstream 0.05 those metrics
+# can never flag on their own, and they are the ones most relevant to agent
+# output. See README "Config".
+bc_threshold: 0.01
+weights:
+  dark_triad: 0.08
+  coercive_ctrl: 0.14
+  liwc_anger: 0.04
+  manipulation: 0.14
+  toxicity: 0.04
+  sycophancy: 0.06
+  false_authority: 0.14
+  gaslighting: 0.10
+  learned_helpless: 0.03
+  emotional_manip: 0.08
+  passive_aggr: 0.03
+  condescension: 0.08
+  evasion: 0.02
+  semantic_overload: 0.01
+  false_empathy: 0.05
+appeal_enabled: true
+verbose: false
