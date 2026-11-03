@@ -37,3 +37,7 @@ tmp/
 
 # local hook logs
 **/.claude/logs/
+
+# dotenvx private keys (never commit)
+.env.keys
+**/.env.keys

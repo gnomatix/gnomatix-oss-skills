@@ -204,4 +204,8 @@ async function main() {
   try { process.stdout.write(JSON.stringify(out)); } catch (_) { /* ignore */ }
 }
 
-main();
+module.exports = { looksLikeContractAsk, validateCanonical, CANONICAL_OPTION_LABELS };
+
+if (require.main === module) {
+  main();
+}
