@@ -50,6 +50,8 @@ The hook is `hooks/satori-reminder.js`.
 
 ## TODO
 
+- **Fix reason 4 (BUG).** Remove the "They are one vocabulary" reason, unless the author wants the failure-naming use restored without translation.
+- **Fix the missing origins link (BUG).** Add a line pointing to `dev/satori/`, which is encrypted and holds the design history and the verification record.
 - **Decide whether the 五常 group stays.** The reminder still carries 五常, 仁 義 礼 智 信 誠 恕 直, and 知之為知之. Model-installed material is to be removed. The author decides which of these characters stay.
 - **Decide on the English line.** The reminder opens with "Be productive together. Have a good session." It is neither a character nor an explanation of utility.
 - **Decide on 樸.** It stays in its traditional form, against the modern-standard direction, because the standard form 朴 adds other meanings. This was a judgment call, not a direction.
