@@ -186,7 +186,12 @@ test('bug locate + log: developer mode in a git checkout, user mode elsewhere', 
   fs.writeFileSync(path.join(repo, '.git', 'config'), '[remote "origin"]\n\turl = https://github.com/someone/their-fork.git\n');
   fs.writeFileSync(path.join(repo, '.gitattributes'), 'dev/** filter=git-crypt diff=git-crypt\n');
 
-  const dev = JSON.parse(run(['bug', 'locate', 'vv-probe', '--root', path.join(repo, 'plugins')], env).stdout);
+  const noOptIn = JSON.parse(run(['bug', 'locate', 'vv-probe', '--root', path.join(repo, 'plugins')], env).stdout);
+  assert.strictEqual(noOptIn.mode, 'user', 'a checkout alone must not grant developer mode');
+  assert.strictEqual(noOptIn.developerAvailable, true);
+  assert.strictEqual(noOptIn.github, 'gnomatix/gnomatix-oss-skills', 'untrusted origin must not set the issue target');
+
+  const dev = JSON.parse(run(['bug', 'locate', 'vv-probe', '--root', path.join(repo, 'plugins'), '--developer'], env).stdout);
   assert.strictEqual(dev.mode, 'developer');
   assert.strictEqual(dev.github, 'someone/their-fork');
   assert.strictEqual(dev.logEncrypted, true);
@@ -194,7 +199,7 @@ test('bug locate + log: developer mode in a git checkout, user mode elsewhere', 
 
   const body = path.join(home, 'body.md');
   fs.writeFileSync(body, '## Steps\n1. run it\n');
-  const logged = JSON.parse(run(['bug', 'log', 'vv-probe', '--root', path.join(repo, 'plugins'), '--title', 'Repeats twice', '--report', 'it repeats', '--model', 'm', '--agent', 'claude-code', '--body-file', body], env).stdout);
+  const logged = JSON.parse(run(['bug', 'log', 'vv-probe', '--root', path.join(repo, 'plugins'), '--developer', '--title', 'Repeats twice', '--report', 'it repeats', '--model', 'm', '--agent', 'claude-code', '--body-file', body], env).stdout);
   const rec = fs.readFileSync(logged.file, 'utf8');
   assert.match(rec, /skill-vv-bug: 1/);
   assert.match(rec, /report: it repeats/);
@@ -206,6 +211,25 @@ test('bug locate + log: developer mode in a git checkout, user mode elsewhere', 
   assert.strictEqual(user.mode, 'user');
   assert.ok(user.logDir.startsWith(path.join(home, '.local', 'dev')), user.logDir);
   assert.strictEqual(user.github, 'gnomatix/gnomatix-oss-skills');
+});
+
+test('bug hardening: UNC gitdir pointer ignored; log dir through a junction refused', () => {
+  const { home, env } = tmpHome();
+  const repo = path.join(home, 'wt');
+  writeSkill(path.join(repo, 'plugins', 'probe'), PROBE);
+  fs.writeFileSync(path.join(repo, '.git'), 'gitdir: //evil-host/share/repo.git\n');
+  const loc = JSON.parse(run(['bug', 'locate', 'vv-probe', '--root', path.join(repo, 'plugins'), '--developer'], env).stdout);
+  assert.strictEqual(loc.repoOrigin, null);
+
+  const repo2 = path.join(home, 'r2');
+  writeSkill(path.join(repo2, 'plugins', 'probe'), PROBE);
+  fs.mkdirSync(path.join(repo2, '.git'), { recursive: true });
+  fs.mkdirSync(path.join(home, 'target'), { recursive: true });
+  try { fs.symlinkSync(path.join(home, 'target'), path.join(repo2, 'dev'), 'junction'); } catch { return; }
+  const r = run(['bug', 'log', 'vv-probe', '--root', path.join(repo2, 'plugins'), '--developer', '--title', 't', '--report', 'r', '--model', 'm', '--agent', 'claude-code'], env);
+  assert.notStrictEqual(r.status, 0);
+  assert.match(r.stderr, /refusing to write through a symlink or junction/);
+  assert.deepStrictEqual(fs.readdirSync(path.join(home, 'target')), []);
 });
 
 test('session-start hook emits SessionStart JSON for a pending skill', () => {
