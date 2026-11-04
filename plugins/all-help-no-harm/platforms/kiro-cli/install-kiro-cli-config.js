@@ -6,12 +6,6 @@
 //   chat.enableContextUsageIndicator     = true
 //   chat.greeting.enabled                = true
 //
-// Plus, optionally, writes a small wrapper-shim script the user can adopt
-// as their PROMPT_COMMAND / preexec to inject the all-help-no-harm contract
-// glyph (U+1F9EC) into the terminal title before each Kiro CLI session via
-// the OSC 0 escape, mirroring the Claude Code integration's terminal-title
-// behavior.
-//
 // Kiro CLI's documented theme command targets only the autocomplete
 // dropdown (dark / light / system) — it does not expose a custom theme JSON
 // surface. So this installer's color-theme contribution lives in the

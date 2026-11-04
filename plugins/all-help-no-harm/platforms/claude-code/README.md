@@ -17,13 +17,9 @@ that other platform sub-directories under `platforms/` model themselves on.
 
 ## GNOMATIX integration enabled here
 
-- **Brand glyph:** U+1F9EC DNA double helix (💗), prefixed to every status-line
-  render. Optional VS16 (`--vs16`) for force-emoji-presentation terminals.
-- **Status line:** `💗`, the heart alone with no text, from
-  `scripts/contract-active-indicator.js --mode=statusline`.
-- **Window title:** OSC 0 sequence with the same glyph + phrase. Emitted by
-  `hooks/terminal-title-hook.js` (owned by a separate worker, listed for
-  cross-reference only — do not edit from this directory).
+- **Status line:** `💗` (U+1F497 beating heart), the heart alone with no
+  text, from `scripts/contract-active-indicator.js --mode=statusline`.
+  Optional VS16 (`--vs16`) for force-emoji-presentation terminals.
 
 ## How to enable
 

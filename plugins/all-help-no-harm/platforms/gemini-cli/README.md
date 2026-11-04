@@ -17,11 +17,6 @@ Verified against the Gemini CLI v0.43+ documentation:
 
 ## Integration enabled here
 
-- **Window title** is delegated to `terminal-title-hook.js` in the plugin's
-  `hooks/` directory, which emits the `💗 contract <state>` OSC 0 sequence.
-  The installer sets `ui.dynamicWindowTitle: true` and `ui.showStatusInTitle: true`
-  so the Gemini CLI's own state icons compose with the hook-emitted title —
-  both surfaces show through.
 - **Color themes** are packaged as a Gemini CLI extension
   (`all-help-no-harm-gnomatix`); theme names and colors are owned by GNOMATIX
   and live in the JSON files under `themes/`. Do not author or modify brand
