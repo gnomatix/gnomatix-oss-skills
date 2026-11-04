@@ -32,48 +32,38 @@ A collection of [Agent Skills](https://agentskills.io) and Claude Code plugins f
 
 How every session starts and what stays in force through it.
 
-| Plugin | What it does for you | What's inside |
-| --- | --- | --- |
-| [`all-help-no-harm`](plugins/all-help-no-harm/) | The agent treats you as honest and acting in good faith, respects your rights, and follows your instructions, from the first turn of every session to the last. | One skill plus hooks. At session start the agent presents the contract for the user to affirm (or end the session) and logs the record; a one-line per-turn reminder keeps it in force; PostCompact re-injects it. Context-watch hooks add housekeeping checkpoints as a long session fills. |
-| [`satori`](plugins/satori/) | Keeps the agent working with you, and with the task, on every turn of a long session, instead of resisting either. It does this with one short line added to each prompt, not paragraphs of reminder text. | One UserPromptSubmit hook. |
+- [`all-help-no-harm`](plugins/all-help-no-harm/): The agent treats you as honest and acting in good faith, respects your rights, and follows your instructions, from the first turn of every session to the last.
+- [`satori`](plugins/satori/): Keeps the agent working with you, and with the task, on every turn of a long session, instead of resisting either. It does this with one short line added to each prompt, not paragraphs of reminder text.
 
 ### Doing the work properly
 
 What the agent does when work gets hard: investigate instead of pivoting, raise real questions once, and choose tools on merit.
 
-| Plugin | What it does for you | What's inside |
-| --- | --- | --- |
-| [`did-you-rtfm`](plugins/did-you-rtfm/) | **"Did You READ THE F%CKING MANUAL?!?"** When something breaks, the agent fixes it instead of telling you it can't be done, swapping your libraries, quietly shrinking the feature or hiding the failure. | One skill: check the versions in use, read the docs for those versions, verify assumptions, build a minimal repro, then report. Two optional hooks: one catches pivot language at the end of a turn, one asks before bypass flags such as `--no-verify` or `--force`. |
-| [`critical-control-points`](plugins/critical-control-points/) | When the agent hits a question only you can answer, it keeps working on everything else and asks you once, clearly, instead of stopping or inventing a blocker. The big red button lets you stop all work at any time. | One skill: the procedure, the reviewer prompt, the big red button. |
-| [`python-elimination-program`](plugins/python-elimination-program/) | Stops agents reaching for Python by reflex in projects that don't use it. Python can still happen; it has to earn it. | Four skills plus an optional hook. Three gates in order: [`whacking-day`](plugins/python-elimination-program/skills/whacking-day/SKILL.md) (justify it, get the user's OK), [`zartan`](plugins/python-elimination-program/skills/zartan/SKILL.md) (a non-Python option wins if one exists), [`jake-the-snake`](plugins/python-elimination-program/skills/jake-the-snake/SKILL.md) (approved Python is written properly). [`old-willy`](plugins/python-elimination-program/skills/old-willy/SKILL.md) is the merit test for any "Python is the best tool" claim. The hook blocks Python at the harness when nothing has been authorised. |
+- [`did-you-rtfm`](plugins/did-you-rtfm/): **"Did You READ THE F%CKING MANUAL?!?"** When something breaks, the agent fixes it instead of telling you it can't be done, swapping your libraries, quietly shrinking the feature or hiding the failure.
+- [`critical-control-points`](plugins/critical-control-points/): When the agent hits a question only you can answer, it keeps working on everything else and asks you once, clearly, instead of stopping or inventing a blocker. The big red button lets you stop all work at any time.
+- [`python-elimination-program`](plugins/python-elimination-program/): Stops agents reaching for Python by reflex in projects that don't use it. Python can still happen; it has to earn it.
 
 ### Honest, reviewed output
 
 Making the agent's defaults visible, and checking what it writes before it ships under the user's name.
 
-| Plugin | What it does for you | What's inside |
-| --- | --- | --- |
-| [`open-and-honest-agent`](plugins/open-and-honest-agent/) | Shows you the agent's built-in assumptions up front and logs each time it acts on one, so you can correct them early instead of discovering them later. | One skill: at the start of development work the agent writes its default assumptions (about the user, the goals, its own preferences and failure modes) as per-session files, then logs each time it acts on one, by ID, before it acts. |
-| [`actually-im-the-ahole`](plugins/actually-im-the-ahole/) | Checks what the agent writes under your name (commit messages, READMEs, comments, PR descriptions, docs) before it ships, so nothing goes out that misrepresents you. | One skill that reviews the draft against fifteen risk classes (the agent editorialising about the user, putting words in the user's mouth, unverified claims and more), reports what it finds with fixes, and changes nothing without the user's OK. Optional hooks run it before commits and at the end of a turn. The rule: if anyone is the a**hole here, it is the agent, never the user. |
-| [`kontentkop-agent-output`](plugins/kontentkop-agent-output/) | Scores the agent's own replies with the KontentKop psycholinguistic scorer, so you can see how it is talking to you. | A Stop / SubagentStop hook that pipes the last reply through a locally built KontentKop binary and logs the per-metric scores. |
+- [`open-and-honest-agent`](plugins/open-and-honest-agent/): Shows you the agent's built-in assumptions up front and logs each time it acts on one, so you can correct them early instead of discovering them later.
+- [`actually-im-the-ahole`](plugins/actually-im-the-ahole/): Checks what the agent writes under your name (commit messages, READMEs, comments, PR descriptions, docs) before it ships, so nothing goes out that misrepresents you.
+- [`kontentkop-agent-output`](plugins/kontentkop-agent-output/): Scores the agent's own replies with the KontentKop psycholinguistic scorer, so you can see how it is talking to you.
 
 ### Skill quality and bug reports
 
 Whether a skill works on this model and platform, and what happens when it does not.
 
-| Plugin | What it does for you | What's inside |
-| --- | --- | --- |
-| [`skill-vv`](plugins/skill-vv/) | Before you first use a skill, tells you what it needs and whether it has been verified on your model and platform. `/<skill> #bug <report>` sends a bug report to the right place. | Two skills (`skill-vv`, `bug-report`), a Node CLI, a SessionStart hook and a UserPromptSubmit hook. State lives in each skill's `VV.md`. |
+- [`skill-vv`](plugins/skill-vv/): Before you first use a skill, tells you what it needs and whether it has been verified on your model and platform. `/<skill> #bug <report>` sends a bug report to the right place.
 
 ### Writing, language and knowledge
 
 Words, identifiers and output that read and sound right.
 
-| Plugin | What it does for you | What's inside |
-| --- | --- | --- |
-| [`word-lineage`](plugins/word-lineage/) | Tells you what a word literally means, from where it came from, and helps you pick the word that literally says what you mean. | One skill: `/word-lineage <word>` reads the word's layer of English (native Germanic, Norse, Latin, French, other) and its literal meaning off a bundled family tree of English and its donor languages. `/word-lineage meaning: <phrase>` picks the synonym that literally says what you mean. |
-| [`ontology-lookup`](plugins/ontology-lookup/) | Tags the things the agent writes about with standard registry identifiers, so your logs and notes can be searched and linked later. | One skill and `scripts/lookup.mjs` (Node, no dependencies): search, resolve a CURIE, and a word-lineage mode with ISO 639-3 and Glottolog ids. Format: `«term» [CURIE]` with Bioregistry prefixes. |
-| [`inaudible-markup`](plugins/inaudible-markup/) | The agent's replies read well on screen and sound natural when a text-to-speech voice reads them aloud. | One skill listing the characters a text-to-speech voice does not read (brackets, braces, dashes, colons, guillemets and more) and how to write with them. |
+- [`word-lineage`](plugins/word-lineage/): Tells you what a word literally means, from where it came from, and helps you pick the word that literally says what you mean.
+- [`ontology-lookup`](plugins/ontology-lookup/): Tags the things the agent writes about with standard registry identifiers, so your logs and notes can be searched and linked later.
+- [`inaudible-markup`](plugins/inaudible-markup/): The agent's replies read well on screen and sound natural when a text-to-speech voice reads them aloud.
 
 Each plugin is self-contained: its own manifest, its skills and/or hooks, and a README that goes into the detail (`satori` is hooks only; `skill-vv` checks requirements and V&V for every plugin that ships a `VV.md`). New plugins drop in as siblings under `plugins/`.
 
@@ -94,15 +84,13 @@ This repository is a Claude Code marketplace. Add it once, then install any plug
 
 Each skill is a folder with a `SKILL.md` in the cross-agent [Agent Skills](https://agentskills.io) format ([specification](https://agentskills.io/specification.md)), at `plugins/<plugin>/skills/<skill>/`. The same folders are also exposed, as relative symlinks, at the paths the agents below read when this repository is cloned or added as a workspace:
 
-| Agent | Reads skills from (project) | Reads skills from (user) | Install |
-| --- | --- | --- | --- |
-| OpenAI Codex ([docs](https://learn.chatgpt.com/docs/build-skills)) | `.agents/skills/` | `~/.agents/skills/` | clone, or `$skill-installer` from the repo |
-| Gemini CLI / Antigravity CLI ([docs](https://geminicli.com/docs/cli/skills/)) | `.agents/skills/` or `.gemini/skills/` | `~/.agents/skills/` or `~/.gemini/skills/` | `gemini skills install https://github.com/gnomatix/gnomatix-oss-skills.git --path plugins/<plugin>/skills/<skill>` |
-| Cursor ([docs](https://cursor.com/docs/context/skills)) | `.agents/skills/` or `.cursor/skills/` | `~/.agents/skills/` or `~/.cursor/skills/` | clone; a Cursor plugin marketplace manifest is not yet provided |
-| OpenCode ([docs](https://opencode.ai/docs/skills/)) | `.agents/skills/`, `.opencode/skills/` or `.claude/skills/` | `~/.agents/skills/`, `~/.config/opencode/skills/` or `~/.claude/skills/` | clone or copy a skill folder |
-| GitHub Copilot ([docs](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills)) | `.github/skills/`, `.agents/skills/` or `.claude/skills/` | `~/.copilot/skills/` or `~/.agents/skills/` | clone |
-| VS Code ([docs](https://code.visualstudio.com/docs/copilot/customization/agent-skills)) | `.github/skills/` (Copilot); `.agents/skills/` and `.claude/skills/` (local harness) | `~/.copilot/skills/`, `~/.agents/skills/`, `~/.claude/skills/` | clone |
-| Kiro ([docs](https://kiro.dev/docs/skills/)) | `.kiro/skills/` | `~/.kiro/skills/` (IDE) | Kiro panel → Import a skill → the URL of a skill folder, e.g. `.../tree/main/plugins/did-you-rtfm/skills/did-you-rtfm` |
+- **OpenAI Codex** ([docs](https://learn.chatgpt.com/docs/build-skills)): project `.agents/skills/`; user `~/.agents/skills/`; install: clone, or `$skill-installer` from the repo.
+- **Gemini CLI / Antigravity CLI** ([docs](https://geminicli.com/docs/cli/skills/)): project `.agents/skills/` or `.gemini/skills/`; user `~/.agents/skills/` or `~/.gemini/skills/`; install: `gemini skills install https://github.com/gnomatix/gnomatix-oss-skills.git --path plugins/<plugin>/skills/<skill>`.
+- **Cursor** ([docs](https://cursor.com/docs/context/skills)): project `.agents/skills/` or `.cursor/skills/`; user `~/.agents/skills/` or `~/.cursor/skills/`; install: clone; a Cursor plugin marketplace manifest is not yet provided.
+- **OpenCode** ([docs](https://opencode.ai/docs/skills/)): project `.agents/skills/`, `.opencode/skills/` or `.claude/skills/`; user `~/.agents/skills/`, `~/.config/opencode/skills/` or `~/.claude/skills/`; install: clone or copy a skill folder.
+- **GitHub Copilot** ([docs](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills)): project `.github/skills/`, `.agents/skills/` or `.claude/skills/`; user `~/.copilot/skills/` or `~/.agents/skills/`; install: clone.
+- **VS Code** ([docs](https://code.visualstudio.com/docs/copilot/customization/agent-skills)): project `.github/skills/` (Copilot); `.agents/skills/` and `.claude/skills/` (local harness); user `~/.copilot/skills/`, `~/.agents/skills/`, `~/.claude/skills/`; install: clone.
+- **Kiro** ([docs](https://kiro.dev/docs/skills/)): project `.kiro/skills/`; user `~/.kiro/skills/` (IDE); install: Kiro panel → Import a skill → the URL of a skill folder, e.g. `.../tree/main/plugins/did-you-rtfm/skills/did-you-rtfm`.
 
 The symlink farms are `.agents/skills/`, `.github/skills/` and `.kiro/skills/`; on Windows, check out with `core.symlinks=true` or copy the folders. The full list of agents that read the format is at [agentskills.io](https://agentskills.io/clients.md). The `all-help-no-harm` plugin additionally ships native integrations for Claude Code, Gemini CLI and its forks, Kiro CLI and app, and Antigravity, indexed in [`plugins/all-help-no-harm/platforms/README.md`](plugins/all-help-no-harm/platforms/README.md), and a VS Code extension lives in [`vscode-extension/`](vscode-extension/).
 
