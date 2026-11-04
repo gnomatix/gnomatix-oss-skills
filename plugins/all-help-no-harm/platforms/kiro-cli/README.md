@@ -1,8 +1,7 @@
 # GNOMATIX visual integration — Kiro CLI
 
 **Status:** partial native integration via Kiro CLI's documented
-settings surface; terminal-title surface delivered via shell-side shim
-because Kiro CLI does not expose a statusLine equivalent.
+settings surface. Kiro CLI does not expose a statusLine equivalent.
 
 ## What Kiro CLI is
 
@@ -36,42 +35,12 @@ Verified against the official Kiro docs:
   - `chat.enableNotifications: true`
   - `chat.enableContextUsageIndicator: true`
   - `chat.greeting.enabled: true`
-- **`kiro-title-shim.js`** — terminal-title shim. Emits an OSC 0 sequence
-  with the contract glyph and the label (`ESC ] 0 ; 🧬 kiro-cli BEL`). The
-  contract is always in effect, so the title carries no state and the shim
-  reads nothing. The user
-  wires it into their shell's `preexec` (zsh) / `PROMPT_COMMAND` (bash) /
-  PSReadLine (PowerShell) before invoking `kiro-cli chat`. Documented
-  install snippets below.
 
 ## How to enable
 
 ```sh
 # Patch the user-level settings.json
 node platforms/kiro-cli/install-kiro-cli-config.js --confirm
-
-# Bind the title shim into your shell (pick one):
-
-# zsh
-echo '
-preexec_gnomatix() { node "$HOME/.claude/plugins/marketplaces/gnomatix-oss-skills/plugins/all-help-no-harm/platforms/kiro-cli/kiro-title-shim.js"; }
-add-zsh-hook preexec preexec_gnomatix
-' >> ~/.zshrc
-
-# bash
-echo '
-PROMPT_COMMAND="node \"$HOME/.claude/plugins/marketplaces/gnomatix-oss-skills/plugins/all-help-no-harm/platforms/kiro-cli/kiro-title-shim.js\"; $PROMPT_COMMAND"
-' >> ~/.bashrc
-```
-
-```powershell
-# PowerShell (Windows). Append to $PROFILE.
-$prevHandler = Get-PSReadLineOption | Select-Object -ExpandProperty AddToHistoryHandler
-Set-PSReadLineOption -AddToHistoryHandler {
-  param($line)
-  & node "$env:USERPROFILE\.claude\plugins\marketplaces\gnomatix-oss-skills\plugins\all-help-no-harm\platforms\kiro-cli\kiro-title-shim.js"
-  if ($prevHandler) { $prevHandler.Invoke($line) } else { $true }
-}
 ```
 
 Optionally pin the dropdown to the dark variant so its hover state pairs
@@ -87,15 +56,13 @@ kiro-cli theme dark
 node platforms/kiro-cli/install-kiro-cli-config.js --uninstall --confirm
 ```
 
-Then remove the shell hook line(s) you added in `~/.zshrc` /
-`~/.bashrc` / `$PROFILE`.
+If an earlier version had you add a `kiro-title-shim.js` line to
+`~/.zshrc` / `~/.bashrc` / `$PROFILE`, remove it; the shim is gone.
 
 ## Files in this directory
 
 - `install-kiro-cli-config.js` — settings.json patcher (atomic write,
   defensive fs handling, key-marker uninstall).
-- `kiro-title-shim.js` — terminal-title OSC 0 emitter (glyph and label;
-  no state, reads nothing).
 - `README.md` — this document.
 
 ## Sources

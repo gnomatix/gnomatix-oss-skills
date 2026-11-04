@@ -5,8 +5,6 @@
 //      user's Gemini CLI extensions directory.
 //   2. Patches ~/.gemini/settings.json (or platform equivalent) so:
 //        ui.theme                 = "GNOMATIX (all-help-no-harm-gnomatix)"
-//        ui.dynamicWindowTitle    = true   (lets terminal-title-hook.js win)
-//        ui.showStatusInTitle     = true
 //        ui.footer.showLabels     = true
 //
 // Behavior is opt-in: requires --confirm. Supports --uninstall, --dry-run,
@@ -17,7 +15,7 @@
 //
 // Doc sources verified during authoring:
 //   https://geminicli.com/docs/reference/configuration/  (ui.theme,
-//     ui.dynamicWindowTitle, ui.showStatusInTitle, ui.footer.* settings)
+//     ui.footer.* settings)
 //   https://geminicli.com/docs/cli/themes/  (custom-theme JSON schema and
 //     the "<name> (<extension-name>)" reference convention)
 //   https://geminicli.com/docs/extensions/  (themes array in
@@ -159,8 +157,6 @@ function applySettingsPatch(settings, themeNameFull, uninstall) {
   }
 
   settings.ui.theme = themeNameFull;
-  settings.ui.dynamicWindowTitle = true;
-  settings.ui.showStatusInTitle = true;
   settings.ui.footer.showLabels = true;
   return settings;
 }

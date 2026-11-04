@@ -10,14 +10,10 @@
 // plugin and the contract is not binding the model. The indicator therefore
 // always emits when invoked.
 //
-// Emits, for either surface:
+// Emits:
 //
 //   --mode=statusline    Claude Code statusLine command output (single line):
-//                        the heart alone, no text
-//   --mode=window-title  ANSI OSC 0 escape sequence to set terminal title
-//                        + icon name: ESC ] 0 ; <text> BEL
-//   --mode=both          both surfaces, statusline on stdout line 1, OSC on
-//                        line 2 (callers can split)
+//                        the heart alone, no text. The only mode.
 //
 // Emoji choice: U+1F497 BEATING HEART (💗), per the user's literal instruction
 // on 2026-05-29 referencing the heart emoji used on https://outrage.dataglut.org.
@@ -54,15 +50,6 @@ function renderStateLine(withVs16) {
   return `${GLYPH_HEART}${vs}`;
 }
 
-// OSC 0 (set icon name AND window title). Sequence: ESC ] 0 ; <text> BEL.
-// BEL terminator chosen over ST (ESC \) for max compatibility — every
-// terminal emulator on the target matrix accepts BEL; ST is the modern form
-// but a handful of older emulators mis-handle it.
-function renderOscTitle(withVs16) {
-  const vs = withVs16 ? '\u{FE0F}' : '';
-  return `\x1b]0;${GLYPH_HEART}${vs} all-help-no-harm\x07`;
-}
-
 (() => {
   const args = parseArgs(process.argv);
 
@@ -71,13 +58,6 @@ function renderOscTitle(withVs16) {
       // statusLine convention: single line. Trailing newline so the harness
       // splitter behaves identically across emulators.
       process.stdout.write(renderStateLine(args.vs16) + '\n');
-    } else if (args.mode === 'window-title') {
-      // OSC sequence ONLY. No trailing newline — that would push the title
-      // off-screen on some terminals after the BEL.
-      process.stdout.write(renderOscTitle(args.vs16));
-    } else if (args.mode === 'both') {
-      process.stdout.write(renderStateLine(args.vs16) + '\n');
-      process.stdout.write(renderOscTitle(args.vs16));
     } else {
       try { process.stderr.write(`[contract-active-indicator] unknown --mode: ${args.mode}\n`); } catch { /* ignore */ }
       process.exit(2);

@@ -138,8 +138,6 @@ function applySettingsPatch(settings, themeNameFull, uninstall) {
     return settings;
   }
   settings.ui.theme = themeNameFull;
-  settings.ui.dynamicWindowTitle = true;
-  settings.ui.showStatusInTitle = true;
   settings.ui.footer.showLabels = true;
   return settings;
 }
