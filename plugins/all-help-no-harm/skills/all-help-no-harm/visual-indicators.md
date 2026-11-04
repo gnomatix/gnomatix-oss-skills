@@ -36,7 +36,7 @@ Claude Code supports a user-configurable status line via the
 
 The command is exec'd by Claude Code per refresh; stdout is rendered as
 the status line. When the script runs the contract is in force; output
-is `💗 contract active`.
+is `💗`, the heart alone.
 
 (Glyph shown literally; the script emits the U+1F497 bytes.)
 
@@ -125,9 +125,9 @@ indicator degrades to "invisible" rather than to garbage on every
 mainstream emulator on the matrix above.
 
 Terminals that lack an emoji-capable font render U+1F497 as a placeholder
-glyph (typically a box or `?`). The text "contract active" remains
-readable regardless, so the indicator is comprehensible even when the
-glyph fails to render.
+glyph (typically a box or `?`). The window title's text "all-help-no-harm
+contract active" remains readable regardless; the status line carries the
+heart alone, so there it shows only the placeholder.
 
 ## Source-of-truth contract integrity
 

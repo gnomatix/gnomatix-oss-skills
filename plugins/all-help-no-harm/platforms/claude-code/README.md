@@ -19,9 +19,8 @@ that other platform sub-directories under `platforms/` model themselves on.
 
 - **Brand glyph:** U+1F9EC DNA double helix (💗), prefixed to every status-line
   render. Optional VS16 (`--vs16`) for force-emoji-presentation terminals.
-- **Status text:** `💗 contract active` / `💗 contract pending` /
-  `⛔ contract declined`, derived from the per-session contract log at
-  `${cwd}/.claude/contract-agreements/<session-id>.json`.
+- **Status line:** `💗`, the heart alone with no text, from
+  `scripts/contract-active-indicator.js --mode=statusline`.
 - **Window title:** OSC 0 sequence with the same glyph + phrase. Emitted by
   `hooks/terminal-title-hook.js` (owned by a separate worker, listed for
   cross-reference only — do not edit from this directory).

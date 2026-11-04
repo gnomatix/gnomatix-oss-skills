@@ -8,11 +8,12 @@
 //
 // There is no operational state where the model is in a session under this
 // plugin and the contract is not binding the model. The indicator therefore
-// always emits "contract active" when invoked.
+// always emits when invoked.
 //
-// Emits a glyph + status string suitable for either:
+// Emits, for either surface:
 //
-//   --mode=statusline    Claude Code statusLine command output (single line)
+//   --mode=statusline    Claude Code statusLine command output (single line):
+//                        the heart alone, no text
 //   --mode=window-title  ANSI OSC 0 escape sequence to set terminal title
 //                        + icon name: ESC ] 0 ; <text> BEL
 //   --mode=both          both surfaces, statusline on stdout line 1, OSC on
@@ -46,11 +47,11 @@ function parseArgs(argv) {
   return out;
 }
 
-// Statusline surface string. Always emits — the contract is in effect when
-// this runs.
+// Statusline surface string: the heart alone. Always emits — the contract is
+// in effect when this runs.
 function renderStateLine(withVs16) {
   const vs = withVs16 ? '\u{FE0F}' : '';
-  return `${GLYPH_HEART}${vs} contract active`;
+  return `${GLYPH_HEART}${vs}`;
 }
 
 // OSC 0 (set icon name AND window title). Sequence: ESC ] 0 ; <text> BEL.
