@@ -1,6 +1,6 @@
 {
   "name": "satori",
-  "description": "Helps agents achieve \"satori\" by encouraging them to be the river.",
+  "description": "A single UserPromptSubmit hook that injects a compact per-turn reminder made of characters, with no translations: each character carries its meaning whole, names the target state rather than a prohibition, costs a few hundred tokens per turn in place of paragraph-scale reminder prose, and doubles as the vocabulary for naming a failure. Not an agreement and not enforcement machinery: the plugin accepts that we control nothing; we can be the river or be the rock.",
   "author": {
     "name": "Brett Whitty",
     "email": "brett@gnomatix.com"
