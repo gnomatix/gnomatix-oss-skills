@@ -185,23 +185,31 @@ function normalizeModel(m) {
 
 // ---------- discovery ----------
 
-function claudeInstalledRoots() {
+// { "<plugin>@<marketplace>": installPath } from Claude Code's registry.
+function claudeRegistry() {
   const reg = readJson(path.join(os.homedir(), '.claude', 'plugins', 'installed_plugins.json'), {});
-  const roots = [];
-  for (const entries of Object.values((reg && reg.plugins) || {})) {
+  const out = {};
+  for (const [key, entries] of Object.entries((reg && reg.plugins) || {})) {
     const e = Array.isArray(entries) ? entries[0] : entries;
-    if (e && typeof e.installPath === 'string') roots.push(e.installPath);
+    if (e && typeof e.installPath === 'string') out[key] = e.installPath;
   }
-  return roots;
+  return out;
+}
+
+function claudeInstalledRoots() {
+  return Object.values(claudeRegistry());
 }
 
 // VV.md files at a root or up to `depth` levels below it.
 function findVvFiles(root, depth) {
   const out = [];
+  // Dirent types come from the directory listing, without following links,
+  // so symlinked or junctioned subdirectories are never descended into.
   const walk = (dir, d) => {
     let entries;
     try { entries = fs.readdirSync(dir, { withFileTypes: true }); } catch { return; }
     for (const e of entries) {
+      if (e.isSymbolicLink()) continue;
       if (e.isFile() && e.name === 'VV.md') out.push(path.join(dir, e.name));
       else if (e.isDirectory() && d > 0 && !e.name.startsWith('.') && e.name !== 'node_modules') walk(path.join(dir, e.name), d - 1);
     }
@@ -336,13 +344,25 @@ function loadSettings(projectDir) {
       continue;
     }
     const resolved = path.resolve(projectReal, r);
-    let real;
-    try { real = fs.realpathSync(resolved); } catch { errors.push(`${file}: root ${JSON.stringify(r)} does not exist`); continue; }
-    if (!(norm(real) === norm(projectReal) || norm(real).startsWith(norm(projectReal) + path.sep))) {
+    if (!(norm(resolved) === norm(projectReal) || norm(resolved).startsWith(norm(projectReal) + path.sep))) {
       errors.push(`${file}: root ${JSON.stringify(r)} rejected: resolves outside the project`);
       continue;
     }
-    safe.push(real);
+    // Walk each component with lstat before anything follows it. A symlink or
+    // junction is rejected outright, because following one could reach a
+    // network share before any containment check runs.
+    const parts = path.relative(projectReal, resolved).split(path.sep).filter(Boolean);
+    let cur = projectReal;
+    let bad = null;
+    for (const part of parts) {
+      cur = path.join(cur, part);
+      let st;
+      try { st = fs.lstatSync(cur); } catch { bad = 'does not exist'; break; }
+      if (st.isSymbolicLink()) { bad = 'rejected: passes through a symlink or junction'; break; }
+      if (!st.isDirectory()) { bad = 'rejected: not a directory'; break; }
+    }
+    if (bad) { errors.push(`${file}: root ${JSON.stringify(r)} ${bad}`); continue; }
+    safe.push(resolved);
   }
   s.roots = safe;
   s.projectRoots = safe;
@@ -470,6 +490,7 @@ module.exports = {
   normalizeModel,
   discover,
   findVvFiles,
+  claudeRegistry,
   commandOnPath,
   requirementMet,
   vvStatus,

@@ -6,6 +6,8 @@
 //   skill-vv record result  <skill> <procedure> pass|fail|deferred --model <id> --agent <agent>
 //                           [--notes "..."] [--evidence <path>] [--by <who>] [--into <VV.md>]
 //   skill-vv record decline <skill> <requirement>
+//   skill-vv bug locate <skill> [--developer]
+//   skill-vv bug log    <skill> --title "..." --report "..." --model <id> --agent <agent> [--body-file <md>] [--developer]
 //
 // <agent>: claude-code | gemini-cli | antigravity | codex | kiro
 
@@ -21,6 +23,7 @@ function opts(args) {
     if (a.startsWith('--')) {
       const k = a.slice(2);
       if (k === 'json') { o.json = true; continue; }
+      if (k === 'developer') { o.developer = 'true'; continue; }
       const val = args[i + 1];
       i += 1;
       if (k === 'root') o.root.push(val); else o[k] = val;
@@ -61,7 +64,25 @@ function main(argv) {
       console.log(`recorded: ${name} requirement ${requirement} declined`);
       return 0;
     }
-    console.error('usage: skill-vv check | status <skill> | record result ... | record decline ...');
+    if (cmd === 'bug' && sub === 'locate') {
+      const [name] = rest;
+      if (!name) throw new Error('usage: bug locate <skill> [--root <dir>] [--project <dir>] [--developer]');
+      const loc = require('../lib/bug').locate(name, { roots: o.root, projectDir: o.project, developer: o.developer === 'true' });
+      console.log(JSON.stringify(loc, null, 2));
+      return loc.found ? 0 : 1;
+    }
+    if (cmd === 'bug' && sub === 'log') {
+      const [name] = rest;
+      if (!name) throw new Error('usage: bug log <skill> --title "..." --report "..." --model <id> --agent <agent> [--body-file <md>]');
+      const bug = require('../lib/bug');
+      const loc = bug.locate(name, { roots: o.root, projectDir: o.project, developer: o.developer === 'true' });
+      if (!loc.found) { console.error(`skill not found: ${name}`); return 1; }
+      const body = o['body-file'] ? require('fs').readFileSync(o['body-file'], 'utf8') : '';
+      const file = bug.log(loc, { title: o.title, report: o.report, model: o.model, agent: o.agent, body });
+      console.log(JSON.stringify({ file, mode: loc.mode, encrypted: loc.logEncrypted }, null, 2));
+      return 0;
+    }
+    console.error('usage: skill-vv check | status <skill> | record result ... | record decline ... | bug locate <skill> | bug log <skill> ...');
     return 2;
   } catch (err) {
     console.error(`skill-vv: ${err.message}`);
