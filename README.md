@@ -35,7 +35,7 @@ How every session starts and what stays in force through it.
 | Plugin | What it's for | What's inside |
 | --- | --- | --- |
 | [`all-help-no-harm`](plugins/all-help-no-harm/) | Starts every session from the standing contract: the agent presumes the user is honest and acting in good faith, respects the user's rights and personhood, and follows the user's instructions on those terms. | One skill plus hooks. At session start the agent presents the contract for the user to affirm (or end the session) and logs the record; a one-line per-turn reminder keeps it in force; PostCompact re-injects it. Context-watch hooks add housekeeping checkpoints as a long session fills. |
-| [`satori`](plugins/satori/) | Helps agents achieve "satori" by encouraging them to be the river. satori adds one short line to the agent's context every time you send a prompt. The line is written in characters, not English sentences, and it reminds the agent each turn how to carry itself in the work. | One UserPromptSubmit hook. Nothing to configure; it stores and logs nothing. |
+| [`satori`](plugins/satori/) | Helps agents achieve "satori" by encouraging them to be the river. satori adds one short line to the agent's context every time you send a prompt. The line is written in characters, not English sentences, and it reminds the agent each turn how to carry itself in the work. Nothing to configure; it stores and logs nothing. | One UserPromptSubmit hook. |
 
 ### Doing the work properly
 
