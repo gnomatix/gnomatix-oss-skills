@@ -1,4 +1,4 @@
-# satori {悟}
+# satori {悟り}
 
 Helps agents achieve "satori" by encouraging them to be the river.
 
