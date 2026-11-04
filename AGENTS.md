@@ -30,6 +30,8 @@ Then check all of the following, every time, before staging or committing anythi
 
 ## REQUIRED: no false claims of authorship
 
+The only author of code in this repo is Brett Whitty <brett@gnomatix.com>, as of 2026-11-03. Any revision to that will be noted explicitly.
+
 Zero false claims of authorship by software tools. This must not be misinterpreted as an instruction to strip user-directed statements of software review and sign-off on the contract terms of the `all-help-no-harm` skill, or any user-configured working session git user name strings. Those are userids, not a claim of authorship.
 
 In practice:
