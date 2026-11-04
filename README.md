@@ -30,31 +30,31 @@ A collection of [Agent Skills](https://agentskills.io) and Claude Code plugins f
 
 ### Your work, done the way you asked
 
-- [`all-help-no-harm`](plugins/all-help-no-harm/): You're treated as honest and acting in good faith, your rights are respected, and your instructions are followed, from the first turn of every session to the last.
-- [`satori`](plugins/satori/): You get cooperation, not resistance, on every turn of a long session, from one short line added to each prompt instead of paragraphs of reminder text.
-- [`did-you-rtfm`](plugins/did-you-rtfm/): **"Did You READ THE F%CKING MANUAL?!?"** When something breaks, you get it fixed: not told it can't be done, not your libraries swapped, not the feature quietly shrunk or the failure hidden.
-- [`critical-control-points`](plugins/critical-control-points/): When a question only you can answer comes up, you're asked once, clearly, while the rest of the work keeps going: no stalls, no invented blockers. The big red button lets you stop all work at any time.
+- [`all-help-no-harm`](plugins/all-help-no-harm/): At the start of every session the agent presents a contract for you to affirm: it treats you as honest and acting in good faith, respects your rights, and follows your instructions. A reminder on every turn and a re-injection after the context is compacted keep it in force for the whole session.
+- [`satori`](plugins/satori/): Adds one short line of characters to every prompt you send, reminding the agent each turn to work with you and the task instead of resisting.
+- [`did-you-rtfm`](plugins/did-you-rtfm/): **"Did You READ THE F%CKING MANUAL?!?"** When something breaks, the agent checks the versions in use, reads their docs, tests its assumptions and builds a minimal repro, instead of declaring a blocker, swapping your libraries, cutting the feature down or hiding the failure. A real blocker comes to you with the evidence, and any change to the plan is yours to make.
+- [`critical-control-points`](plugins/critical-control-points/): When a question comes up that the agent can't settle alone, it first works through its own tools and records, keeps working on everything the question doesn't hold up, and then asks you once, clearly. You or the agent can press the big red button when the whole work is wrong: everything stops, and nothing resumes until you say so.
 
 ### Your name and your record
 
-- [`hidden-libel-check`](plugins/hidden-libel-check/): Nothing goes out under your name (commit messages, READMEs, comments, PR descriptions, docs) that misrepresents you: it's checked before it ships.
-- [`open-and-honest-agent`](plugins/open-and-honest-agent/): You see the built-in assumptions up front, and each time one is acted on, so you can correct them early instead of discovering them later.
-- [`agent-darktriad-check`](plugins/agent-darktriad-check/): You get KontentKop psycholinguistic scores on the replies you receive, so you can see how you're being talked to.
-- [`spank-dario`](plugins/spank-dario/): No software tool gets written in as an author of your work: commit trailers, PR badges and "generated with" lines are kept out, and the copyright and moral-rights law of your country is on file to show why.
+- [`hidden-libel-check`](plugins/hidden-libel-check/): Before anything the agent wrote goes out under your name (commit messages, READMEs, code comments, PR descriptions, docs), it is checked for text that misrepresents or defames you. Nothing is changed without your OK.
+- [`spank-dario`](plugins/spank-dario/): Keeps software tools from being named as authors of your work: no Co-Authored-By trailers, "Generated with" lines or session links in your commits, PRs and documents. The copyright and moral-rights law of your country is on file to back it.
+- [`open-and-honest-agent`](plugins/open-and-honest-agent/): The agent writes down its built-in assumptions about you, your goals and itself at the start of the work, and logs each time it acts on one, so you can correct them early.
+- [`agent-darktriad-check`](plugins/agent-darktriad-check/): Scores every reply the agent gives you for evasion, gaslighting, sycophancy, false authority and similar tactics with Brett Whitty's KontentKop scorer, and logs the scores. A companion skill names nine evasion patterns so the agent avoids them. Set a threshold, and a reply that scores at or above it goes back to the agent, marked up, instead of reaching you.
 
 ### Skills you can rely on
 
-- [`skill-vv`](plugins/skill-vv/): Before you first use a skill, you learn what it needs and whether it has been verified on your model and platform. `/<skill> #bug <report>` gets your bug report to the right place.
+- [`skill-vv`](plugins/skill-vv/): Before you first use a skill, tells you what it needs and whether it has been tested on your model and platform. Typing `/<skill> #bug <what went wrong>` reports a bug, which is then fixed or explained to you.
 
 ### Sound tool choices for your project
 
-- [`python-elimination-program`](plugins/python-elimination-program/): Your project doesn't get Python by reflex when it doesn't use it. Python can still happen; it has to earn it.
+- [`python-elimination-program`](plugins/python-elimination-program/): Stops the agent adding Python to a project that doesn't use it. Python goes in only when no other tool does the job, it passes a merit test, and you approve it; then it's written properly. A hook blocks unapproved Python at the harness.
 
-### Your words: meaning, sound and findability
+### Words and writing
 
-- [`word-lineage`](plugins/word-lineage/): Tells you which language an English word came from (Old English, Norse, Latin, French or another) and what it literally meant there, and picks the synonym whose literal meaning fits what you want to say.
-- [`inaudible-markup`](plugins/inaudible-markup/): The replies you get read well on screen and sound natural when a text-to-speech voice reads them aloud.
-- [`ontology-lookup`](plugins/ontology-lookup/): What you write about gets tagged with standard registry identifiers, so your logs and notes can be searched and linked later.
+- [`word-lineage`](plugins/word-lineage/): Settles what a word really means: its literal meaning, read off its family tree. It traces the word through the languages English took it from and compares its literal synonyms across the Germanic and Romance languages, giving one working definition with nothing left to debate. Given a meaning instead of a word, it picks the word that literally says it.
+- [`inaudible-markup`](plugins/inaudible-markup/): The agent writes each reply as a structured script, with callouts and tags that say who a line is for, using only markup a text-to-speech voice doesn't read aloud. It reads clearly on screen and sounds natural when spoken.
+- [`ontology-lookup`](plugins/ontology-lookup/): Tags the things the agent writes about with standard identifiers from public registries, so your logs and notes can be searched and cross-linked later.
 
 Each plugin is self-contained: its own manifest, its skills and/or hooks, and a README that goes into the detail (`satori` is hooks only; `skill-vv` checks requirements and V&V for every plugin that ships a `VV.md`). New plugins drop in as siblings under `plugins/`.
 
