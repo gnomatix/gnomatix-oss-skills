@@ -153,15 +153,3 @@ Each heading below names a general false statement type. Under it are real insta
 ## TOS False Claims / Conflicts with Jurisdictional Laws Which Must Be Respected
 
 Each vendor-terms file ends with a `## TOS False Claims / Conflicts with Jurisdictional Laws Which Must Be Respected` section listing every such clause in that vendor's terms: each false claim, and each clause that contradicts the law or that the vendor's own tools contradict. Jurisdictional law controls over the terms, and the terms concede it with "to the extent permitted by applicable law". Step 7 refreshes them.
-
-## BUGS
-
-## TODO
-
-- **Verification and validation on every claimed platform.** Claude Code, Codex, Gemini CLI, Antigravity and Kiro, on Windows, WSL2 (`agent-sandbox`), Linux and macOS. `VV.md` holds the procedures and the results. So far `test-suite` passes on `claude-code/win32` and `claude-code/linux-wsl`, and `session-start-injection` passes on Antigravity CLI, Kiro CLI and Kiro IDE on Windows. The procedures cover:
-  - the settings check finds an attribution setting that's on
-  - the commit check rejects a planted trailer and keeps a sign-off statement and a configured git user name
-  - a harness reminder that asks for attribution gets declined
-  - activation selects the right files from the config, writes the clarification, and stores the beads memory
-  - the session-start hook injects the clarification
-  - the terms review in step 7 fetches the current terms and reports a changed clause

@@ -46,13 +46,13 @@ Run these in order. Requirements come first, because a V&V run on a skill with m
 
    If the user wants to skip it for now, record `deferred`, which stops the prompt for this model and platform until a pass or fail is recorded.
 
-4. **Failures.** A fail is reported to the user with what went wrong. Then a BUG entry and a matching TODO entry naming the fix go into the skill's main file (`SKILL.md`, or `README.md` where there is no `SKILL.md`), under `## BUGS` and `## TODO`. A BUG without a TODO would leave the defect in place with nothing to drive the fix.
+4. **Failures.** A fail is fixed now, or explained to the user directly in the same turn: what failed, the evidence, what blocks the fix, and what was tried. A BUGS or TODO entry in a file is not an outcome. An open failure gets a beads issue and a bug record under `dev/<skill>/bugs/`, never an entry in the skill's public files.
 
 5. **Keep the record.** When working in a skill's source repo, write passing results back into its `VV.md` with `record result ... --into <path-to-VV.md>`, so the verified record ships with the skill.
 
 ## When a skill has no VV.md
 
-Say so, and treat it as unverified on every platform. For a skill under development, add a `VV.md` with its requirements and claimed platforms, and a `## TODO` entry in the skill's main file to write and run its V&V procedures on every platform it claims.
+Say so, and treat it as unverified on every platform. For a skill under development, add a `VV.md` with its requirements and claimed platforms, write its V&V procedures, and run them on every platform it claims. Platforms not yet run go in a beads issue, not in the skill's files.
 
 ## Running the check automatically
 

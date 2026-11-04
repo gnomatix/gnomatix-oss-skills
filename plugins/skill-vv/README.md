@@ -7,7 +7,7 @@ Before a skill's first real use in a session, skill-vv does two things, in this 
 1. It surfaces the skill's requirements, such as commands, environment variables or files, and offers to install or configure anything missing.
 2. It checks whether the current model and platform have passed the skill's V&V procedures, and offers to run them if not.
 
-Results are recorded, and a failure becomes a BUG plus a matching TODO in the skill's main file.
+Results are recorded. A failure is fixed on the spot, or explained to you directly with the evidence and what blocks the fix.
 
 ## How it works
 
@@ -24,7 +24,7 @@ Typing `/<skill> #bug <what went wrong>` for any skill routes the prompt to `ski
 
 - **Developer:** the skill sits in a git checkout outside the plugin cache.
   - The record goes to `<repo>/dev/<skill>/bugs/`, which is git-crypt encrypted in GNOMATIX repos.
-  - A BUG entry and a matching TODO go into the skill's main file.
+  - The bug is fixed then and there, or you're told directly what blocks the fix. An open bug gets a beads issue, not an entry in the skill's files.
   - A V&V failure is recorded in its `VV.md`.
 - **End user:** an installed copy, which is never edited.
   - The record goes to `~/.local/dev/<skill>/bugs/`.
@@ -58,16 +58,3 @@ Keep it out of git with `.claude/*.local.md`. The CLI reads it from the current 
 ```
 node --test plugins/skill-vv/test/skill-vv.test.js
 ```
-
-## BUGS
-
-- **`/<plugin> #bug` may not reach the hook for hooks-only plugins.** Claude Code accepts `/<name>` only when `<name>` is a command or skill. A plugin with no command or skill, such as satori, may be rejected before the UserPromptSubmit hook runs.
-
-## TODO
-
-- **Fix the hooks-only `#bug` gap (BUG).** Verify how Claude Code handles `/<unknown> ...`. If it's rejected, give each hooks-only plugin a minimal command, or document `/skill-vv:bug-report <plugin> <report>` as the form to use.
-- **Verification and validation on every claimed platform.** Run the `cli-suite` and `check-in-session` procedures in `VV.md` on each platform it claims, and record the results:
-  - `claude-code`: `win32`, `linux-wsl` on the `agent-sandbox` distro, `linux`, `darwin`
-  - `win32` on `gemini-cli`, `antigravity`, `codex` and `kiro`
-- **Wire the check into the other vendors.** Add a line to each vendor's instruction file (`AGENTS.md`, `GEMINI.md`, the Kiro and Antigravity rules) that runs `skill-vv check` at session start. Claude Code is the only one with a hook.
-- **Add `VV.md` to the other plugins** in this marketplace, starting with all-help-no-harm. Its requirements are `node`, `dotenvx`, `bash` for context-watch, and the optional `ANTHROPIC_CONTRACT_LOG_KEY`.

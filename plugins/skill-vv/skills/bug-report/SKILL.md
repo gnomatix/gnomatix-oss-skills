@@ -1,11 +1,11 @@
 ---
 name: bug-report
-description: Document a bug in a skill or plugin with the user, then record it in the right place. Use it whenever a prompt has the form "/<skill-name> #bug <report>", which the skill-vv hook routes here. Also use it when the user says a skill misbehaved, gave wrong output, failed on their model or platform, or wants to report, log, file or fix a problem with a skill, even without the #bug tag. The skill author working in the source repo gets the bug written into the skill's BUGS and TODO sections. An end user gets a private log, and the option of a GitHub issue or a patch in their own fork.
+description: Document a bug in a skill or plugin with the user, then record it in the right place. Use it whenever a prompt has the form "/<skill-name> #bug <report>", which the skill-vv hook routes here. Also use it when the user says a skill misbehaved, gave wrong output, failed on their model or platform, or wants to report, log, file or fix a problem with a skill, even without the #bug tag. For the skill author working in the source repo, the bug is fixed now, or the author is told directly why it can't be. An end user gets a private log, and the option of a GitHub issue or a patch in their own fork.
 ---
 
 # bug-report
 
-A bug report is only useful if someone can act on it. This skill turns a one-line complaint into a documented bug, then puts it where it will get fixed. That might be the skill's own BUGS and TODO sections, a GitHub issue, or the user's fork, depending on who is reporting.
+A bug report is only useful if someone acts on it. This skill turns a one-line complaint into a documented bug, then gets it fixed. For the author in the source repo, that means fixing it now. For an end user, it means a GitHub issue or a fix in their own fork.
 
 ## 1. Locate the skill and the mode
 
@@ -49,12 +49,12 @@ The record keeps the user's report as given, plus the documented details. It may
 
 ### Developer mode (the author, in the source repo)
 
-1. Add a `## BUGS` entry to the skill's main file. State the defect plainly, in one or two sentences.
-2. Add a matching `## TODO` entry naming the fix. Every BUG needs its TODO, so the defect drives a fix rather than sitting as a label.
-3. If the bug shows a V&V procedure failing on this model and platform, record it:
+1. **Fix it now.** Investigate the cause against the installed versions and their docs, make the fix, run the skill's tests, and confirm the original report no longer reproduces. Then commit it.
+2. **If it can't be fixed now, tell the author directly, in the same turn.** Say what blocks the fix, with the evidence: the exact error, the versions, the docs read, what was tried. Then ask what to do. A BUGS or TODO entry in a file is not an outcome and doesn't replace this.
+3. **Keep the record in beads and the bug log only.** The bug record stays in `logDir`, and an open bug gets a beads issue. Neither goes into the skill's public files.
+4. If the bug shows a V&V procedure failing on this model and platform, record it:
    `node <skill-vv>/bin/skill-vv.js record result <skill> <procedure> fail --model <id> --agent <agent> --notes "<summary>" --into <VV.md>`
-4. If `logEncrypted` is false, say so before committing. The record could then be pushed in plaintext.
-5. Ask whether to fix it now. Making the fix is a separate decision.
+5. If `logEncrypted` is false, say so before committing. The record could then be pushed in plaintext.
 
 ### User mode (an installed copy)
 

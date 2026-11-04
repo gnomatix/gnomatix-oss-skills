@@ -430,7 +430,7 @@ function formatReport(report, cliPath) {
         lines.push(`- ${p.id}: ${p.summary.replace(/\.?$/, '.')} Procedure: ${where}.${last}`);
       }
       lines.push(`  Record: ${cli} record result ${s.name} <procedure> pass|fail|deferred --model ${report.model} --agent ${report.platform.split('/')[0]} --notes "..."`);
-      lines.push('  On fail: report it, and add a BUG and a matching TODO to the skill\'s main file.');
+      lines.push('  On fail: fix it now, or tell the user directly what blocks the fix, with the evidence. Record an open failure in beads and dev/<skill>/bugs/, not in the skill\'s files.');
     }
   }
   if (report.errors.length) {
