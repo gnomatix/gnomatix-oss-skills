@@ -18,7 +18,15 @@ const cases = [
   ['real script', 'python3 build.py', 'deny'],
   ['chained real', 'cd x && python3 -m mypkg', 'deny'],
   ['heredoc then real', "cat > a <<EOF\nhello\nEOF\npython3 run.py", 'deny'],
-  ['bash -c executes', 'bash -c "python3 run.py"', 'deny'],  // CLI-tool patterns: still passed.
+  ['bash -c executes', 'bash -c "python3 run.py"', 'deny'],
+  // Windows line endings and PowerShell quoting (tool_name PowerShell for names starting "PS").
+  ['heredoc CRLF', "cat >> a <<'EOF'\r\nx; python3 -m mypkg\r\nEOF\r\n", 'pass'],
+  ['PS here-string prose', "@'\nnote; python3 -m mypkg\n'@ | Add-Content notes.md", 'pass'],
+  ['PS backtick escape', 'Write-Host "say `"hi`" then; python3 -m mypkg"', 'pass'],
+  ['PS doubled quote', "Write-Host 'it''s; pip install requests'", 'pass'],
+  ['PS real pip', 'pip install requests', 'deny'],
+  ['PS real script', 'python build.py', 'deny'],
+  // CLI-tool patterns: still passed.
   ['pipx', 'pipx install black', 'pass'],
   ['pip --user', 'pip install --user black', 'pass'],
 ];
@@ -26,7 +34,7 @@ const cases = [
 let failures = 0;
 for (const [name, command, want] of cases) {
   const r = spawnSync(process.execPath, [hook], {
-    input: JSON.stringify({ tool_name: 'Bash', tool_input: { command }, cwd: '/nonexistent' }),
+    input: JSON.stringify({ tool_name: name.startsWith('PS') ? 'PowerShell' : 'Bash', tool_input: { command }, cwd: '/nonexistent' }),
     encoding: 'utf8',
   });
   let got;

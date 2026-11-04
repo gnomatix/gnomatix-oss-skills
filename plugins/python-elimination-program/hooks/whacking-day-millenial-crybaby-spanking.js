@@ -190,7 +190,7 @@ function analyzePythonCommand(head, args) {
 // argument) is split on ; | && and judged as if it ran. A quoted string that
 // follows `-c` or `eval` is executed by the shell, so it is kept.
 function stripNonCommandText(command) {
-  const heredoc = /<<-?[ \t]*(['"]?)([A-Za-z_][A-Za-z0-9_]*)\1([^\n]*)\n[\s\S]*?\n[ \t]*\2[ \t]*(?=\n|$)/g;
+  const heredoc = /<<-?[ \t]*(['"]?)([A-Za-z_][A-Za-z0-9_]*)\1([^\r\n]*)\r?\n[\s\S]*?\r?\n[ \t]*\2[ \t]*\r?(?=\n|$)/g;
   let out = command.replace(heredoc, (_m, _q, tag, rest) => `<<${tag}${rest}`);
   out = out.replace(/(?<!(?:^|\s)(?:-c|eval)\s+)'[^']*'/g, "''");
   out = out.replace(/(?<!(?:^|\s)(?:-c|eval)\s+)"(?:[^"\\]|\\.)*"/g, '""');
