@@ -18,6 +18,21 @@ Results are recorded, and a failure becomes a BUG plus a matching TODO in the sk
 
 Results from installed copies go to `~/.local/state/skill-vv/`. Results kept with a skill are written back into its source `VV.md` with `record result ... --into <VV.md>`.
 
+## Project settings
+
+The settings file is optional. It lives at `<project>/.claude/skill-vv.local.md`, and its frontmatter holds the settings:
+
+```markdown
+---
+enabled: true        # false turns skill-vv off in this project
+agent: claude-code   # default when --agent is not given
+roots: [./plugins]   # extra directories to scan, relative to the project
+ignore: [satori]     # skills not to prompt for in this project
+---
+```
+
+Keep it out of git with `.claude/*.local.md`. The CLI reads it from the current directory, or from `--project <dir>`. The hook reads it from the session's working directory. Invalid values are reported, and the defaults are used in their place.
+
 ## Requirements
 
 - `node`: `mise use -g node@lts`

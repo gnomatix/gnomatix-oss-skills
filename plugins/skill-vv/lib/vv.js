@@ -57,18 +57,34 @@ function findInMiseBase(base) {
   return null;
 }
 
+// Only directories under the user's own home or LOCALAPPDATA are trusted,
+// and only a package that names itself js-yaml. No bare require(): that
+// would search every node_modules above the plugin.
+function trustedYamlDir(dir) {
+  if (!dir) return false;
+  const real = (() => { try { return fs.realpathSync(dir); } catch { return null; } })();
+  if (!real) return false;
+  // MISE_DATA_DIR is trusted when the user sets it: whoever controls the
+  // environment already controls which node runs.
+  const bases = [os.homedir(), process.env.LOCALAPPDATA, process.env.MISE_DATA_DIR].filter(Boolean).map((b) => {
+    try { return fs.realpathSync(b); } catch { return path.resolve(b); }
+  });
+  const norm = (p) => (process.platform === 'win32' ? p.toLowerCase() : p);
+  const under = bases.some((b) => norm(real) === norm(b) || norm(real).startsWith(norm(b) + path.sep));
+  if (!under) return false;
+  try {
+    const pkg = JSON.parse(fs.readFileSync(path.join(real, 'package.json'), 'utf8'));
+    return pkg && pkg.name === 'js-yaml';
+  } catch { return false; }
+}
+
 let yamlLib = null;
 function yaml() {
   if (yamlLib) return yamlLib;
-  try {
-    // eslint-disable-next-line global-require
-    yamlLib = require('js-yaml');
-    return yamlLib;
-  } catch { /* not on the module path */ }
   const dir = findInMise();
-  if (dir) {
+  if (dir && trustedYamlDir(dir)) {
     // eslint-disable-next-line global-require, import/no-dynamic-require
-    yamlLib = require(dir);
+    yamlLib = require(fs.realpathSync(dir));
     return yamlLib;
   }
   const err = new Error(`js-yaml is not available. Install it with: ${JS_YAML_INSTALL}`);
@@ -238,7 +254,7 @@ function requirementMet(r, env) {
   if (r.kind === 'file') { try { return fs.existsSync(expandHome(r.name)); } catch { return false; } }
   if (r.kind === 'node-module') {
     if (r.name === 'js-yaml') { try { yaml(); return true; } catch { return false; } }
-    try { require.resolve(r.name); return true; } catch { return false; }
+    return false; // only js-yaml has a trusted lookup; other modules are not resolved here
   }
   return false;
 }
@@ -270,17 +286,61 @@ function vvStatus(vv, { model, platform, localResults, declined, env } = {}) {
   return { name, file: vv.file, missing, procedures, claimed, claimedPlatforms: vv.data.platforms };
 }
 
-function check({ model, agent, roots, env } = {}) {
+// ---------- per-project settings: <project>/.claude/skill-vv.local.md ----------
+//
+// ---
+// enabled: true            # false turns skill-vv off for this project
+// agent: claude-code       # default agent when --agent is not given
+// roots: [./plugins]       # extra directories to scan, relative to the project
+// ignore: [satori]         # skills not to prompt for in this project
+// ---
+
+const SETTINGS_DEFAULTS = { enabled: true, agent: null, roots: [], ignore: [] };
+
+function loadSettings(projectDir) {
+  const dir = projectDir || process.cwd();
+  const file = path.join(dir, '.claude', 'skill-vv.local.md');
+  const text = readText(file);
+  if (text === null) return Object.assign({ file: null, errors: [] }, SETTINGS_DEFAULTS);
+  const errors = [];
+  let data = {};
+  const m = FRONTMATTER.exec(text);
+  if (!m) errors.push(`${file}: no YAML frontmatter`);
+  else {
+    try { data = yaml().load(m[1]) || {}; } catch (err) {
+      if (err.code === 'SKILL_VV_NO_YAML') throw err;
+      errors.push(`${file}: ${err.message}`);
+    }
+  }
+  const s = Object.assign({ file, errors }, SETTINGS_DEFAULTS);
+  if (data.enabled !== undefined) {
+    if (typeof data.enabled === 'boolean') s.enabled = data.enabled; else errors.push(`${file}: enabled must be true or false`);
+  }
+  if (data.agent !== undefined) {
+    if (AGENTS.includes(data.agent)) s.agent = data.agent; else errors.push(`${file}: agent must be one of ${AGENTS.join(', ')}`);
+  }
+  for (const k of ['roots', 'ignore']) {
+    if (data[k] === undefined) continue;
+    if (Array.isArray(data[k]) && data[k].every((x) => typeof x === 'string')) s[k] = data[k];
+    else errors.push(`${file}: ${k} must be a list of strings`);
+  }
+  s.roots = s.roots.map((r) => path.resolve(dir, expandHome(r)));
+  return s;
+}
+
+function check({ model, agent, roots, env, projectDir } = {}) {
+  const settings = loadSettings(projectDir);
   const mdl = normalizeModel(model);
-  const platform = platformKey(agent, env);
+  const platform = platformKey(agent || settings.agent, env);
+  if (!settings.enabled) return { model: mdl, platform, skills: [], errors: settings.errors, disabled: true };
   const localResults = readJsonl(RESULTS_FILE);
   const declined = readJson(DECLINED_FILE, {});
   const skills = [];
-  const errors = [];
-  for (const f of discover({ roots, env })) {
+  const errors = settings.errors.slice();
+  for (const f of discover({ roots: (roots || []).concat(settings.roots), env })) {
     try {
       const vv = loadVv(f);
-      if (vv) skills.push(vvStatus(vv, { model: mdl, platform, localResults, declined, env }));
+      if (vv && !settings.ignore.includes(vv.data.name)) skills.push(vvStatus(vv, { model: mdl, platform, localResults, declined, env }));
     } catch (err) {
       if (err.code === 'SKILL_VV_NO_YAML') throw err;
       errors.push(err.message);
@@ -385,6 +445,7 @@ module.exports = {
   vvStatus,
   check,
   needsAttention,
+  loadSettings,
   formatReport,
   recordResult,
   recordDecline,

@@ -41,3 +41,7 @@ tmp/
 # dotenvx private keys (never commit)
 .env.keys
 **/.env.keys
+
+# per-project plugin settings
+.claude/*.local.md
+.claude/*.local.json
