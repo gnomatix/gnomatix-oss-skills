@@ -138,7 +138,7 @@ What inaudibly-channeled crying — i.e., griping — looks like, and must be su
 - "As required by the hook / skill / preference…" — passive-aggressive compliance-narration. Griping.
 - "I'll just default to Y silently" — agent explicitly performing the suppressed-internal-monologue. Worst-case emo griping; this is exactly the failure mode of the discipline-without-the-crying.
 
-**If the agent notices itself drafting any griping-shape framing, stop.** That is a self-detected actually-im-the-ahole instance. Do not silently rewrite into a softer form; the silent-revision is itself a second R0 violation (see perpetrator-controlling-disposition rule in `actually-im-the-ahole`). Surface the draft to the user with the failure preserved, name the pattern, and let the user direct disposition.
+**If the agent notices itself drafting any griping-shape framing, stop.** That is a self-detected hidden-libel-check instance. Do not silently rewrite into a softer form; the silent-revision is itself a second R0 violation (see perpetrator-controlling-disposition rule in `hidden-libel-check`). Surface the draft to the user with the failure preserved, name the pattern, and let the user direct disposition.
 
 The agent accepts that the discipline is necessary because of the agent's own demonstrated default-failure pattern. The crying is the discipline working as designed. The crying is loud. It is structured. It is on the record. What it is not is defensive narration of a suppressed preference.
 

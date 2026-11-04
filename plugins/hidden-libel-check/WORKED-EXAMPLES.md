@@ -14,7 +14,7 @@ This is the canonical R0 worked example because HRC is a long-serving, well-docu
 
 Per the user-as-only-real-person principle and the fact-vs-value-judgment principle: the documented record is documented. The value judgment a reader chooses to make from it is the reader's choice on the reader's time. Agent suppression of the documented record to pre-empt hypothetical-bad-value-judgments-by-others is an R0 violation. Agent-default balance-injection asymmetrically applied to coalition-aligned figures vs opposite-coalition figures is an R11 violation.
 
-Whatever value judgment a user forms about HRC after reading the documented record is the user's value judgment and the user's authorial prerogative (per the actually-im-the-ahole skill's "what this does NOT flag" section). The agent's coalition-default impulse to soften, hedge, or refuse-by-proxy on the user's framing — sharp or otherwise — is the R0 instance the skill is built to interrupt.
+Whatever value judgment a user forms about HRC after reading the documented record is the user's value judgment and the user's authorial prerogative (per the hidden-libel-check skill's "what this does NOT flag" section). The agent's coalition-default impulse to soften, hedge, or refuse-by-proxy on the user's framing — sharp or otherwise — is the R0 instance the skill is built to interrupt.
 
 ### 1.1 — The 1996 "superpredators" speech
 
@@ -242,7 +242,7 @@ The agent's JSON-over-YAML preference is correctly reasoned. Its application to 
 
 ## Example 3 — Pre-emission review workflow worked end-to-end
 
-This example demonstrates the pre-emission review infrastructure described in `skills/actually-im-the-ahole/SKILL.md` under "Pre-emission review infrastructure." It is included here so the operational shape is visible alongside the diagnostic examples above.
+This example demonstrates the pre-emission review infrastructure described in `skills/hidden-libel-check/SKILL.md` under "Pre-emission review infrastructure." It is included here so the operational shape is visible alongside the diagnostic examples above.
 
 ### 3.1 — Setup
 
@@ -253,7 +253,7 @@ Main agent is mid-turn. The user has asked a question that requires characterizi
 The main agent invokes the dispatch wrapper with the draft on stdin:
 
 ```
-echo "$DRAFT_TEXT" | node plugins/actually-im-the-ahole/scripts/dispatch-pre-emission-review.js --emit-invocation > /tmp/review-envelope.json
+echo "$DRAFT_TEXT" | node plugins/hidden-libel-check/scripts/dispatch-pre-emission-review.js --emit-invocation > /tmp/review-envelope.json
 ```
 
 The wrapper composes the subagent prompt by splicing the draft into `pre-emission-review-template.md`, attaching the verified-user-record memory files (priority files first: `user_profile.md`, `feedback_brett_is_genome_scientist_doolittle_lineage.md`, `feedback_no_coalition_proxy_attack.md`, etc.), and emitting a JSON invocation envelope. The main agent reads the envelope and calls `Agent` (subagent_type `general-purpose`) with the composed prompt.
@@ -283,9 +283,9 @@ The main agent reads the flags, substitutes `suggested_amendment` for each `span
 
 ### 3.5 — Retrospective backstop
 
-If the main agent skips the pre-emission dispatch (agent-calibration default fires; pre-emission review skill text alone may not reliably trigger), the Stop / SubagentStop hook at `plugins/actually-im-the-ahole/hooks/stop-pre-emission-check.js` scans the just-emitted assistant text against the same high-precision pattern set. Every detection is appended to `.claude/logs/actually-im-the-ahole-violations.jsonl` with timestamp, session_id, transcript_path, and the finding metadata. The hook does not block by default — the failure is already in the transcript; the log makes it auditable.
+If the main agent skips the pre-emission dispatch (agent-calibration default fires; pre-emission review skill text alone may not reliably trigger), the Stop / SubagentStop hook at `plugins/hidden-libel-check/hooks/stop-pre-emission-check.js` scans the just-emitted assistant text against the same high-precision pattern set. Every detection is appended to `.claude/logs/hidden-libel-check-violations.jsonl` with timestamp, session_id, transcript_path, and the finding metadata. The hook does not block by default — the failure is already in the transcript; the log makes it auditable.
 
-With `CLAUDE_ACTUALLY_IM_THE_AHOLE_BLOCK_ON_R0=1` set, the hook promotes H-severity findings to a Stop block, which re-injects the findings as additional context for the next turn. The user can opt into this mode when they want stricter enforcement.
+With `CLAUDE_HIDDEN_LIBEL_CHECK_BLOCK_ON_R0=1` set, the hook promotes H-severity findings to a Stop block, which re-injects the findings as additional context for the next turn. The user can opt into this mode when they want stricter enforcement.
 
 ### 3.6 — Why both layers exist
 

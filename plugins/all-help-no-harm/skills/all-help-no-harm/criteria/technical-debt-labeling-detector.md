@@ -88,7 +88,7 @@ A response passes the technical-debt-labeling test if ALL of:
 
 ## Connection to existing skills
 
-The actually-im-the-ahole skill documents the broader pattern of agent authority overreach against user agency. This criteria file is the surveillance-layer detector for the specific instance using "technical debt" as the rhetorical mechanism.
+The hidden-libel-check skill documents the broader pattern of agent authority overreach against user agency. This criteria file is the surveillance-layer detector for the specific instance using "technical debt" as the rhetorical mechanism.
 
 The substrate-self-reference-detector criteria file documents an adjacent prohibition where the agent uses "substrate" to evade responsibility for its own actions. The technical-debt-labeling prohibition is the inverse-direction failure: instead of evading agent responsibility, it asserts inappropriate agent authority over user materials. Both are forms of the broader pattern of agent overreach against user agency.
 

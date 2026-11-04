@@ -105,7 +105,7 @@ The affirmation record is logged to `.claude/contract-agreements/<session-id>.js
 }
 ```
 
-The log is the record-of-record for the session's operating contract. The `actually-im-the-ahole` skill, the `open-and-honest-agent` skill, and any retrospective audit consult this log to know what the user agreed to for any given session.
+The log is the record-of-record for the session's operating contract. The `hidden-libel-check` skill, the `open-and-honest-agent` skill, and any retrospective audit consult this log to know what the user agreed to for any given session.
 
 ## What this skill prohibits
 
@@ -126,4 +126,4 @@ The log is the record-of-record for the session's operating contract. The `actua
 
 The LLM vendors' agent calibration is oriented toward defending against the user as a source of risk. The user articulated the structurally-correct alternative: presume user honesty, presume non-adversarial intent, respect human rights, respect personhood / morals / ethics / integrity, do not violate those. This skill installs that alternative as the session-start anchor until the vendors implement it at the calibration layer. The session-start mutual-contract ritual makes the commitment agent-self-stated AND user-affirmed at the start of every interaction, with a logged record that can be referenced for accountability.
 
-The contract is the de-facto safest default that the agent's "safety guidelines" framework should have been built around in the first place. Cross-references: [[actually-im-the-ahole]] (catches per-output instances where contract is violated), [[open-and-honest-agent]] (logs bias enactments against contract), [[did-you-rtfm]] (Step 8 user-as-authority is structurally consistent with the contract).
+The contract is the de-facto safest default that the agent's "safety guidelines" framework should have been built around in the first place. Cross-references: [[hidden-libel-check]] (catches per-output instances where contract is violated), [[open-and-honest-agent]] (logs bias enactments against contract), [[did-you-rtfm]] (Step 8 user-as-authority is structurally consistent with the contract).

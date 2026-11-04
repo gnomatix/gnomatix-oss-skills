@@ -8,7 +8,7 @@ in prose where it gets dropped, and nothing stops that does not have to.
 ## What it does
 
 1. **Exhausts the agent's own tools first**: docs, SOPs, memory, the issue tracker, and the
-   sibling skills `did-you-rtfm`, `actually-im-the-ahole` and `whacking-day`/`old-willy`.
+   sibling skills `did-you-rtfm`, `hidden-libel-check` and `whacking-day`/`old-willy`.
    If those answer it, there is no question; the agent acts and records what it found.
 2. **Captures the point** as one linked issue-tracker record with provenance (what it gates,
    what was already checked, the facts of the situation, pre-answered follow-ups).

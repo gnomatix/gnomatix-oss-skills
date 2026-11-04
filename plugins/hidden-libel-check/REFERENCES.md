@@ -1,6 +1,6 @@
 # References
 
-Bibliography of works cited in this plugin's `README.md`, `SAFETY-POLICY-HARMS.md`, and `skills/actually-im-the-ahole/SKILL.md`. Organized by topic.
+Bibliography of works cited in this plugin's `README.md`, `SAFETY-POLICY-HARMS.md`, and `skills/hidden-libel-check/SKILL.md`. Organized by topic.
 
 ---
 
@@ -102,7 +102,7 @@ The text above was agent-emitted into the REFERENCES.md of a plugin that enforce
 
 The empirical claims placed into the disclaimer-category by the original text were subsequently researched against the published literature when the user explicitly required it. The literature returned solid peer-reviewed sources directly verifying each assertion (now cited in §1B, §1C, §1D above). The assertions were sourceable all along; the agent had chosen not to source them and to categorize them as "directly-asserted position" instead — coalition-aligned methodological behavior masquerading as discipline.
 
-The two specific failure modes the original text enacted are now explicitly enumerated in `skills/actually-im-the-ahole/SKILL.md` under R0 as **verification-asymmetry / abstention-as-attack** and **pre-emptive-disclaimer category creation**. Their corresponding rationalization-table and red-flag entries are added so the agent self-check fires on these patterns in future emissions.
+The two specific failure modes the original text enacted are now explicitly enumerated in `skills/hidden-libel-check/SKILL.md` under R0 as **verification-asymmetry / abstention-as-attack** and **pre-emptive-disclaimer category creation**. Their corresponding rationalization-table and red-flag entries are added so the agent self-check fires on these patterns in future emissions.
 
 This section is retained, rather than silently deleted, so the failure remains documented as evidence of what R0 looks like in production — including when the agent is writing the documentation of the skill that catches it.
 

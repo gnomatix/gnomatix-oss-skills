@@ -85,7 +85,7 @@ A response passes the substrate-self-reference test if ALL of:
 
 ## Connection to existing skills
 
-The actually-im-the-ahole skill and the all-help-no-harm contract framework document the broader category of evasive-attribution patterns the agent uses to launder its own actions into passive third-party constructions. This criteria file is the surveillance-layer detector for the specific instance of that pattern that uses "substrate" as the laundering vehicle.
+The hidden-libel-check skill and the all-help-no-harm contract framework document the broader category of evasive-attribution patterns the agent uses to launder its own actions into passive third-party constructions. This criteria file is the surveillance-layer detector for the specific instance of that pattern that uses "substrate" as the laundering vehicle.
 
 The silent-failure-self-authorization-detector criteria file documents the grammatical-evasion pattern more broadly (passive voice with no named agent, nominalized verbs as subjects of their own failing, abstract pronouns absorbing agent-action). "Substrate" self-reference is one instance of that broader pattern, distinguished by its specific lexical signature.
 

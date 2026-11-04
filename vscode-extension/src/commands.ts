@@ -203,11 +203,11 @@ async function cmdOpenContract(): Promise<void> {
 
 async function cmdViewViolationsLog(): Promise<void> {
   const logDir = resolveLogDirectory();
-  const log = path.join(logDir, 'actually-im-the-ahole-violations.jsonl');
+  const log = path.join(logDir, 'hidden-libel-check-violations.jsonl');
   try {
     if (!fs.existsSync(log)) {
       vscode.window.showInformationMessage(
-        `Violations log not found at ${log}. The log is created the first time the actually-im-the-ahole skill records a finding.`,
+        `Violations log not found at ${log}. The log is created the first time the hidden-libel-check skill records a finding.`,
       );
       return;
     }

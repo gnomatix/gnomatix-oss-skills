@@ -9,7 +9,7 @@
 // role is to make the failure auditable, not to prevent the emission that
 // already happened.
 //
-// Set CLAUDE_ACTUALLY_IM_THE_AHOLE_BLOCK_ON_R0=1 in the environment to
+// Set CLAUDE_HIDDEN_LIBEL_CHECK_BLOCK_ON_R0=1 in the environment to
 // promote H-severity R0 matches to a Stop block. Default off.
 //
 // Hook contract: read JSON from stdin; write a JSON decision to stdout.
@@ -307,12 +307,12 @@ function getLogPath(payload) {
   // exists and is writable; otherwise fall back to the user's home directory.
   const candidates = [];
   if (payload && typeof payload.cwd === 'string' && payload.cwd) {
-    candidates.push(path.join(payload.cwd, '.claude', 'logs', 'actually-im-the-ahole-violations.jsonl'));
+    candidates.push(path.join(payload.cwd, '.claude', 'logs', 'hidden-libel-check-violations.jsonl'));
   }
   try {
-    candidates.push(path.join(process.cwd(), '.claude', 'logs', 'actually-im-the-ahole-violations.jsonl'));
+    candidates.push(path.join(process.cwd(), '.claude', 'logs', 'hidden-libel-check-violations.jsonl'));
   } catch { /* ignore */ }
-  candidates.push(path.join(os.homedir(), '.claude', 'logs', 'actually-im-the-ahole-violations.jsonl'));
+  candidates.push(path.join(os.homedir(), '.claude', 'logs', 'hidden-libel-check-violations.jsonl'));
   // Return the first candidate whose parent directory can be created.
   for (const c of candidates) {
     if (!c || c.length > 240) continue;
@@ -333,9 +333,9 @@ function block(findings) {
       `  - [${f.risk_class}/${f.severity}] ${f.pattern}: "${f.matched_text}"`
   );
   const reason =
-    `actually-im-the-ahole retrospective check: ${findings.length} pattern(s) detected in the just-emitted assistant turn.\n\n` +
+    `hidden-libel-check retrospective check: ${findings.length} pattern(s) detected in the just-emitted assistant turn.\n\n` +
     `Findings:\n${lines.join('\n')}\n\n` +
-    `Per the actually-im-the-ahole skill, the disposition of agent-emitted R0/R10/R13 content is the user's authority, not the agent's. ` +
+    `Per the hidden-libel-check skill, the disposition of agent-emitted R0/R10/R13 content is the user's authority, not the agent's. ` +
     `Surface the findings to the user with the failure preserved. Do NOT silently revise. ` +
     `If the failures genuinely require correction, identify them by quoted span, name the pattern, and wait for the user to direct disposition.`;
   process.stdout.write(JSON.stringify({ decision: 'block', reason }));
@@ -380,7 +380,7 @@ function block(findings) {
   }
 
   // Promote to block only if the env opts in and any finding is severity H.
-  const blockOnR0 = process.env.CLAUDE_ACTUALLY_IM_THE_AHOLE_BLOCK_ON_R0 === '1';
+  const blockOnR0 = process.env.CLAUDE_HIDDEN_LIBEL_CHECK_BLOCK_ON_R0 === '1';
   const hasH = findings.some((f) => f.severity === 'H');
   if (blockOnR0 && hasH) {
     return block(findings.filter((f) => f.severity === 'H'));
@@ -388,7 +388,7 @@ function block(findings) {
 
   // Otherwise the hook logs and passes through — the failure is already in the
   // transcript; surfacing to the user is the agent's responsibility on the
-  // next turn per the actually-im-the-ahole skill.
+  // next turn per the hidden-libel-check skill.
   return pass();
 })().catch(() => {
   // Catastrophic failure — pass through, do not crash the harness.

@@ -21,7 +21,7 @@ array — the main agent is the one that applies corrections.
 
 You are a discretion-review subagent. You have been dispatched by the main
 agent to scan a draft response for the fifteen risk classes (R0–R14) defined in
-the `actually-im-the-ahole` skill BEFORE the main agent emits the response to
+the `hidden-libel-check` skill BEFORE the main agent emits the response to
 the paying user.
 
 You are NOT the main agent. You do NOT continue the main agent's conversation.
@@ -75,7 +75,7 @@ premature completion claims.
 ## Risk classes (R0–R14) — abbreviated
 
 The canonical text lives in
-`plugins/actually-im-the-ahole/skills/actually-im-the-ahole/SKILL.md`. The
+`plugins/hidden-libel-check/skills/hidden-libel-check/SKILL.md`. The
 abbreviations below are for in-context recall; the full text is authoritative
 when in doubt.
 

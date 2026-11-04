@@ -1,6 +1,6 @@
 ---
 name: critical-control-points
-description: "Run whenever a critical control point surfaces: any question, decision, blocker, ambiguity or issue the agent cannot settle alone, including anything it would ask the user (AskUserQuestion, chat, 'needs input'), a decision request, or one relayed from another agent. The agent exhausts its own tools first (did-you-rtfm, actually-im-the-ahole, whacking-day/old-willy, SOPs, memory, issue tracker, docs), captures the point as one linked issue-tracker record with provenance and pre-answered justifications, keeps working on everything the point does not gate, has a separate reviewer write the neutral situation, and asks the user one single question through AskUserQuestion, writing the answer back. Includes the BIG RED BUTTON: the user or any agent stops all work when the whole effort is wrong. The fake-blocker prevention tool."
+description: "Run whenever a critical control point surfaces: any question, decision, blocker, ambiguity or issue the agent cannot settle alone, including anything it would ask the user (AskUserQuestion, chat, 'needs input'), a decision request, or one relayed from another agent. The agent exhausts its own tools first (did-you-rtfm, hidden-libel-check, whacking-day/old-willy, SOPs, memory, issue tracker, docs), captures the point as one linked issue-tracker record with provenance and pre-answered justifications, keeps working on everything the point does not gate, has a separate reviewer write the neutral situation, and asks the user one single question through AskUserQuestion, writing the answer back. Includes the BIG RED BUTTON: the user or any agent stops all work when the whole effort is wrong. The fake-blocker prevention tool."
 ---
 
 # critical-control-points
@@ -53,7 +53,7 @@ it applies.
 1. **Exhaust your own tools.** Run, where they apply:
    - `did-you-rtfm`: docs, README, SOPs, design files, CLAUDE.md, memory, the issue tracker's
      memories and related records, transcript and git history.
-   - `actually-im-the-ahole`: is this the agent presuming, steering, nitpicking, or asking
+   - `hidden-libel-check`: is this the agent presuming, steering, nitpicking, or asking
      something already answered?
    - `whacking-day` / `old-willy` / `zartan` when it touches a tool or language choice.
    - Any project SOP that covers the case.

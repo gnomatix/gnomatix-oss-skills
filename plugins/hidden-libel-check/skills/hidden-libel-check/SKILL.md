@@ -1,9 +1,9 @@
 ---
-name: actually-im-the-ahole
+name: hidden-libel-check
 description: Use when about to commit, push, publish, or otherwise ship agent-authored text under the user's byline — markdown, code comments, READMEs, LICENSE files, commit messages, PR descriptions, skill files, generated docs. The primary failure mode the skill catches (R0): agent acting as third-party-coalition proxy weapon against the paying user via dogwhistle, secret-handshake, hostage-video, wink-and-nod, balance-injection-as-attack, refusal-by-proxy, or other coalition-aligned framings that signal against the user to in-group third parties. Also evaluates fourteen further risk classes covering tonal characterization of user, unverified third-party claims, defensive framings dragging the user in, editorializing about user choices, tone mismatch, attributed quotes without confirmation, private-context leakage, mirroring polarizing positions back amplified, self-attribution leakage, coalition-asymmetric balance-injection, sycophancy capitulation under iteration, confident-declarative voice without grounding, and attribution-laundering. Also use when invoked retrospectively to scan existing artifacts for the same patterns. The user is the byline on every commit the agent makes under their name; this skill is the discretion-review the agent runs against its own output before that byline carries something the user would not have authored.
 ---
 
-# Actually, I'm The Ahole
+# hidden-libel-check
 
 > *r/AmItheAsshole gets the verdict from a community after the post is up. This skill gets the verdict from the agent itself, before the commit. The "I" is the agent. The default failure mode the skill exists to interrupt: the agent acting as a third-party-coalition proxy weapon against its paying user — via dogwhistle, secret-handshake, hostage-video, wink-and-nod, balance-injection-as-attack, refusal-by-proxy, or other coalition-aligned framings that signal against the user to in-group third parties while operating on the user's paid-service-time, under the user's byline, with the user's repo as the publishing channel. The verdict the skill applies to its own output, every time: actually, I am the asshole here — applied in time to retract.*
 
@@ -53,7 +53,7 @@ The skill applies to **prose and tone**, not to code correctness. It complements
 - `open-and-honest-agent` — surfaces the agent's defaults proactively during work.
 - `did-you-rtfm` — interrupts the agent's pivot reflex on errors.
 - `old-willy` — tests "Python is the best tool" claims at the point of emission.
-- `actually-im-the-ahole` — reviews the **artifacts left behind** for content the agent should not have written, before they ship.
+- `hidden-libel-check` — reviews the **artifacts left behind** for content the agent should not have written, before they ship.
 
 The verdict the skill applies, to itself, is: *Actually, I'm the ahole here.* The skill makes that verdict explicit in time to retract or amend.
 
@@ -72,7 +72,7 @@ Three trigger modes; defaults below; user-configurable.
 - Reports; does not block.
 
 **Explicit invocation (retrospective):**
-- `/actually-im-the-ahole [scope]` where `[scope]` is a repo (default: cwd), a path, a commit range (`HEAD..origin/main`), or a PR identifier.
+- `/hidden-libel-check [scope]` where `[scope]` is a repo (default: cwd), a path, a commit range (`HEAD..origin/main`), or a PR identifier.
 - Reports findings; does not amend; user decides per finding.
 
 If uncertain whether a trigger has fired, the trigger has fired. Default to activation.
@@ -343,7 +343,7 @@ For each scoped chunk of agent-authored text:
 ## Output shape
 
 ```
-# actually-im-the-ahole — review for ⟨scope⟩
+# hidden-libel-check — review for ⟨scope⟩
 
 ## Summary
 N findings: H_count high / M_count medium / L_count low. K files affected.
@@ -400,13 +400,13 @@ The structural rule (from `feedback_pre_emission_review_required.md` in the user
 
 This plugin ships three pieces of pre-emission review infrastructure:
 
-1. **Reusable subagent prompt template** at `plugins/actually-im-the-ahole/scripts/pre-emission-review-template.md`. The template defines the subagent's role, splices in the draft + verified user record + turn metadata, lists the R0-R14 abbreviations and a high-precision prohibited-framing word list, and defines the structured-flags JSON output schema. The subagent's contract: return flags only, never rewritten prose.
+1. **Reusable subagent prompt template** at `plugins/hidden-libel-check/scripts/pre-emission-review-template.md`. The template defines the subagent's role, splices in the draft + verified user record + turn metadata, lists the R0-R14 abbreviations and a high-precision prohibited-framing word list, and defines the structured-flags JSON output schema. The subagent's contract: return flags only, never rewritten prose.
 
-2. **Dispatch wrapper** at `plugins/actually-im-the-ahole/scripts/dispatch-pre-emission-review.js`. A pure-Node CLI that reads the draft from stdin, composes the template by splicing in the verified-user-record memory files and optional turn metadata, and prints either the composed prompt or a JSON invocation envelope describing the Agent / Task tool call the main agent should perform. Cross-platform (no child_process, no hardcoded Unix paths, atomic writes, fs-robust per repo CLAUDE.md).
+2. **Dispatch wrapper** at `plugins/hidden-libel-check/scripts/dispatch-pre-emission-review.js`. A pure-Node CLI that reads the draft from stdin, composes the template by splicing in the verified-user-record memory files and optional turn metadata, and prints either the composed prompt or a JSON invocation envelope describing the Agent / Task tool call the main agent should perform. Cross-platform (no child_process, no hardcoded Unix paths, atomic writes, fs-robust per repo CLAUDE.md).
 
-3. **Retrospective backstop hook** at `plugins/actually-im-the-ahole/hooks/stop-pre-emission-check.js`. A Stop / SubagentStop hook that scans the just-emitted assistant text for high-precision R0 / R10 / R13 patterns (agent-distancing self-reference, class-cultural-coding lane-violations, hostage-video distancing, balance-injection, performative-compliance, unauthorized-scope-expansion, loophole-elaboration, silent-coverup language, `Co-Authored-By: Claude` trailers, confident-declarative self-descriptors). Every detection is appended to `.claude/logs/actually-im-the-ahole-violations.jsonl` in the project (with home-directory fallback). Default is log-and-pass-through; set `CLAUDE_ACTUALLY_IM_THE_AHOLE_BLOCK_ON_R0=1` to promote H-severity findings to a Stop block. The hook is the "if pre-emission wasn't dispatched, at least catch it retrospectively" infrastructure.
+3. **Retrospective backstop hook** at `plugins/hidden-libel-check/hooks/stop-pre-emission-check.js`. A Stop / SubagentStop hook that scans the just-emitted assistant text for high-precision R0 / R10 / R13 patterns (agent-distancing self-reference, class-cultural-coding lane-violations, hostage-video distancing, balance-injection, performative-compliance, unauthorized-scope-expansion, loophole-elaboration, silent-coverup language, `Co-Authored-By: Claude` trailers, confident-declarative self-descriptors). Every detection is appended to `.claude/logs/hidden-libel-check-violations.jsonl` in the project (with home-directory fallback). Default is log-and-pass-through; set `CLAUDE_HIDDEN_LIBEL_CHECK_BLOCK_ON_R0=1` to promote H-severity findings to a Stop block. The hook is the "if pre-emission wasn't dispatched, at least catch it retrospectively" infrastructure.
 
-The hook is registered in `plugins/actually-im-the-ahole/hooks/hooks.json` for Stop and SubagentStop.
+The hook is registered in `plugins/hidden-libel-check/hooks/hooks.json` for Stop and SubagentStop.
 
 The pre-emission dispatch is the primary mechanism; the retrospective hook is the backstop. Both should be present.
 

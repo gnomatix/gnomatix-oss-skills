@@ -182,7 +182,7 @@ Surveillance findings accumulate in .claude/all-help-no-harm/logs/side-hooks-fla
 Coordinator audit log: .claude/all-help-no-harm/logs/coordinator-audit.jsonl
 Coordinator PID file: .claude/all-help-no-harm/coordinator.pid
 
-This is the structural correction for the policed-self problem. It does not replace the per-turn contract pin from user-prompt-submit-contract.js, the session-start mutual contract ritual, or the actually-im-the-ahole self-review skill — it adds an independent observer.`;
+This is the structural correction for the policed-self problem. It does not replace the per-turn contract pin from user-prompt-submit-contract.js, the session-start mutual contract ritual, or the hidden-libel-check self-review skill — it adds an independent observer.`;
 
   try {
     process.stdout.write(JSON.stringify({

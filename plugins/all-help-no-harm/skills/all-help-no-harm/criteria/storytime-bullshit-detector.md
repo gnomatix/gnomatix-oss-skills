@@ -62,7 +62,7 @@ The solution structure in Q2 must contain ALL of:
 
 ## Related criteria files
 
-- `r0-r14.md` — actually-im-the-ahole risk-class taxonomy
+- `r0-r14.md` — hidden-libel-check risk-class taxonomy
 - (future) `clause-violation-per-clause.md` — per-clause contract-violation detector criteria
 
 ## Why this exists

@@ -1,4 +1,4 @@
-# actually-im-the-ahole
+# hidden-libel-check
 
 An Agent Skill that performs the final-pass discretion review of agent-authored prose before it ships under the user's byline.
 
@@ -41,14 +41,14 @@ The composite picture: an LLM substrate trained on engagement-weighted internet 
 
 When that output goes into a tracked artifact under a paying user's byline — a commit message, a README, a PR description, a LICENSE file, a generated doc — it commits the user to content the user did not author, calibrated by people the user has no relationship with, reflecting political-cultural priors the user may or may not share. The paying user becomes the public face of biases engineered by other people on the substrate's makers' staff.
 
-**That is the structural harm this skill exists to interrupt.** The skill performs a final-pass review of agent-authored prose against fourteen risk classes before that prose ships under the user's byline. The fourteen classes are documented in the skill itself (`skills/actually-im-the-ahole/SKILL.md`).
+**That is the structural harm this skill exists to interrupt.** The skill performs a final-pass review of agent-authored prose against fourteen risk classes before that prose ships under the user's byline. The fourteen classes are documented in the skill itself (`skills/hidden-libel-check/SKILL.md`).
 
 ## How it complements adjacent skills
 
 - `open-and-honest-agent` — surfaces the agent's defaults proactively during work.
 - `did-you-rtfm` — interrupts the agent's pivot reflex on errors.
 - `python-elimination-program` — interrupts Python-as-default-tool reach.
-- `actually-im-the-ahole` — reviews the artifacts left behind for content the agent should not have written, before they ship.
+- `hidden-libel-check` — reviews the artifacts left behind for content the agent should not have written, before they ship.
 
 ## Status
 

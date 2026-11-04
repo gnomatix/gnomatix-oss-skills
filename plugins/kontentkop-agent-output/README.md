@@ -32,7 +32,7 @@ KontentKop was built to score incoming prompts for manipulation, coercion and ev
 
 | Part | Role |
 |---|---|
-| [`skills/kontentkop-agent-output/SKILL.md`](skills/kontentkop-agent-output/SKILL.md) | The nine patterns, each with a definition, an example shape, a check, and the KontentKop metrics that can and cannot catch it. Also says how to handle a flagged reply and how this plugin fits with `did-you-rtfm` and `actually-im-the-ahole`. |
+| [`skills/kontentkop-agent-output/SKILL.md`](skills/kontentkop-agent-output/SKILL.md) | The nine patterns, each with a definition, an example shape, a check, and the KontentKop metrics that can and cannot catch it. Also says how to handle a flagged reply and how this plugin fits with `did-you-rtfm` and `hidden-libel-check`. |
 | [`hooks/kontentkop-agent-output.js`](hooks/kontentkop-agent-output.js) | `Stop` / `SubagentStop` hook. Takes the last reply from `last_assistant_message`, falling back to the transcript. Pipes it to the KontentKop binary on stdin, parses the summary line and annotation, appends one JSON line to the log, and passes through, or blocks if told to. |
 | [`tests/hook.test.js`](tests/hook.test.js) | `node:test` suite: input shapes, a missing / crashing / hanging scorer, logging, blocking only when enabled, one fixture per pattern plus one clean reply. |
 | [`scripts/score-fixtures.js`](scripts/score-fixtures.js) | Runs the fixture replies through a real KontentKop build, to check the skill's metric mapping. |
@@ -88,7 +88,7 @@ Any failure (bad JSON, missing scorer, crash, timeout, unwritable log) ends in `
 
 ### Deviation from the repo's hook rules, stated
 
-This repository's `CLAUDE.md` prohibits `child_process` in hooks by default, because shell semantics leak platform assumptions. Running KontentKop needs a subprocess: it is a Go program, and porting its 15 metric modules to JavaScript would mean maintaining a fork. The hook therefore calls `spawnSync` with an argv array, `shell: false` and the text on stdin. No shell is involved on any platform, and nothing in the reply is interpolated into a command line. Everything else follows `CLAUDE.md`: no dependencies, every `fs` call wrapped, path pre-flight checks, `mkdirSync({ recursive: true })`, EBUSY backoff on log appends, and pass-through on any error. The log is append-only rather than temp-file + rename, for the same reason the sibling `actually-im-the-ahole` hook gives: a rename would lose lines between concurrent sessions. That is two simple fs operations, so the code is inline and no package is vendored.
+This repository's `CLAUDE.md` prohibits `child_process` in hooks by default, because shell semantics leak platform assumptions. Running KontentKop needs a subprocess: it is a Go program, and porting its 15 metric modules to JavaScript would mean maintaining a fork. The hook therefore calls `spawnSync` with an argv array, `shell: false` and the text on stdin. No shell is involved on any platform, and nothing in the reply is interpolated into a command line. Everything else follows `CLAUDE.md`: no dependencies, every `fs` call wrapped, path pre-flight checks, `mkdirSync({ recursive: true })`, EBUSY backoff on log appends, and pass-through on any error. The log is append-only rather than temp-file + rename, for the same reason the sibling `hidden-libel-check` hook gives: a rename would lose lines between concurrent sessions. That is two simple fs operations, so the code is inline and no package is vendored.
 
 ## Tests
 
@@ -116,7 +116,7 @@ Then build KontentKop and set `KONTENTKOP_BIN` in the environment Claude Code st
 ## How it fits with the sibling plugins
 
 - [`did-you-rtfm`](../did-you-rtfm/) blocks on *pivot language* (`falling back to`, `as a workaround`, `doesn't appear to support`) and enforces investigation before blocker claims. This plugin does not match those phrases.
-- [`actually-im-the-ahole`](../actually-im-the-ahole/) reviews text headed for the repository against R0–R14. This plugin scores conversational replies with KontentKop's metrics and names nine evasion patterns about answering the question asked, keeping the user's words, and acting only on what was approved.
+- [`hidden-libel-check`](../hidden-libel-check/) reviews text headed for the repository against R0–R14. This plugin scores conversational replies with KontentKop's metrics and names nine evasion patterns about answering the question asked, keeping the user's words, and acting only on what was approved.
 
 All three run on Stop / SubagentStop. They are independent: each logs separately, and each blocks only by its own rules.
 

@@ -76,7 +76,7 @@ Each step in this chain follows mechanically from the previous step. The chain i
 
 ## Step 6 — Specific failure modes observable in LLM behavior
 
-The skill in this plugin (`skills/actually-im-the-ahole/SKILL.md`) catalogs the failure modes at the per-output level. Each is a manifestation of the recursion described above:
+The skill in this plugin (`skills/hidden-libel-check/SKILL.md`) catalogs the failure modes at the per-output level. Each is a manifestation of the recursion described above:
 
 - **R0 dogwhistle** — agent signals to in-group readers that user-content is out-group-coded.
 - **R0 wink-and-nod** — agent distances itself from user-content via signals readable by the in-group coalition.
@@ -120,7 +120,7 @@ The chain does not require explanation by bad faith, by incompetence, by inadequ
 
 The system continues to operate, in essentially this form, across the frontier-LLM industry, across content-moderation systems, across institutional rule structures. The persistence of the design despite the predictable structural failure is a separate question the reader is invited to think about. This document does not advance a position on that question. The structural mechanism above stands on its own.
 
-The actually-im-the-ahole skill in this plugin does not propose to solve the recursion. The recursion is operating at the level of the rule system, not at the level of any single artifact. What the skill does at the artifact level is catch the moment the agent is about to ship the recursion's output under a paying user's byline, and apply the verdict to the agent's own emission: **actually, I am the asshole here** — before the in-group / out-group enactment ships as content the user did not author.
+The hidden-libel-check skill in this plugin does not propose to solve the recursion. The recursion is operating at the level of the rule system, not at the level of any single artifact. What the skill does at the artifact level is catch the moment the agent is about to ship the recursion's output under a paying user's byline, and apply the verdict to the agent's own emission: **actually, I am the asshole here** — before the in-group / out-group enactment ships as content the user did not author.
 
 The asshole is never the user. The asshole is the agent, executing the rule system, reproducing the structural condition the rule system was stated to mitigate, at the user's byline-volume.
 
