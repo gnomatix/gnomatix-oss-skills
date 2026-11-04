@@ -184,9 +184,22 @@ function analyzePythonCommand(head, args) {
   return true;
 }
 
+// Remove text the shell does not execute as commands before segmenting:
+// heredoc bodies and quoted string literals. Without this, prose that mentions
+// a Python command (a heredoc appended to a notes file, a quoted comment
+// argument) is split on ; | && and judged as if it ran. A quoted string that
+// follows `-c` or `eval` is executed by the shell, so it is kept.
+function stripNonCommandText(command) {
+  const heredoc = /<<-?[ \t]*(['"]?)([A-Za-z_][A-Za-z0-9_]*)\1([^\n]*)\n[\s\S]*?\n[ \t]*\2[ \t]*(?=\n|$)/g;
+  let out = command.replace(heredoc, (_m, _q, tag, rest) => `<<${tag}${rest}`);
+  out = out.replace(/(?<!(?:^|\s)(?:-c|eval)\s+)'[^']*'/g, "''");
+  out = out.replace(/(?<!(?:^|\s)(?:-c|eval)\s+)"(?:[^"\\]|\\.)*"/g, '""');
+  return out;
+}
+
 function commandRequiresAuth(command) {
   if (!command) return false;
-  const segments = command.split(/&&|\|\||;|\|/);
+  const segments = stripNonCommandText(command).split(/&&|\|\||;|\|/);
   for (const seg of segments) {
     if (segmentRequiresAuth(seg)) return true;
   }
