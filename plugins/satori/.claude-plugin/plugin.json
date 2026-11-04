@@ -1,6 +1,6 @@
 {
   "name": "satori",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Helps agents achieve \"satori\" by encouraging them to be the river. A single UserPromptSubmit hook that injects a compact per-turn reminder. Not an agreement and not enforcement machinery: the plugin accepts that we control nothing; we can be the river or be the rock.",
   "author": {
     "name": "Brett Whitty",
