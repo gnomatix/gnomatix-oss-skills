@@ -29,18 +29,32 @@ function gitRoot(start) {
   }
 }
 
+// gitdir and commondir pointers come from the repo, so they're untrusted.
+// UNC and device paths could reach network shares, so they're refused.
+function safePointer(p) {
+  return typeof p === 'string' && p.length > 0 && !/^(\\\\|\/\/|\\\\\?\\|\\\\\.\\)/.test(p);
+}
+
 function originUrl(repo) {
   // Reads .git/config directly (a file, or a gitdir pointer in a worktree).
   let gitDir = path.join(repo, '.git');
   try {
+    if (fs.lstatSync(gitDir).isSymbolicLink()) return null;
     if (fs.statSync(gitDir).isFile()) {
       const m = /gitdir:\s*(.+)/.exec(fs.readFileSync(gitDir, 'utf8'));
       if (m) {
-        gitDir = path.resolve(repo, m[1].trim());
+        const ptr = m[1].trim();
+        if (!safePointer(ptr)) return null;
+        gitDir = path.resolve(repo, ptr);
         const common = path.join(gitDir, 'commondir');
-        if (fs.existsSync(common)) gitDir = path.resolve(gitDir, fs.readFileSync(common, 'utf8').trim());
+        if (fs.existsSync(common)) {
+          const c = fs.readFileSync(common, 'utf8').trim();
+          if (!safePointer(c)) return null;
+          gitDir = path.resolve(gitDir, c);
+        }
       }
     }
+    if (!safePointer(gitDir)) return null;
     const cfg = fs.readFileSync(path.join(gitDir, 'config'), 'utf8');
     const m = /\[remote "origin"\][^[]*?url\s*=\s*(\S+)/.exec(cfg);
     return m ? m[1] : null;
@@ -66,46 +80,78 @@ function mainFile(root) {
 function findSkillRoot(skill, roots) {
   const reg = vv.claudeRegistry();
   for (const [key, root] of Object.entries(reg)) {
-    if (key.split('@')[0] === skill) return root;
+    if (key.split('@')[0] === skill) return { root, trusted: true };
   }
   for (const root of Object.values(reg)) {
     const s = path.join(root, 'skills', skill);
-    if (fs.existsSync(path.join(s, 'SKILL.md'))) return s;
+    if (fs.existsSync(path.join(s, 'SKILL.md'))) return { root: s, trusted: true };
   }
   for (const r of roots) {
     for (const cand of [path.join(r, skill), path.join(r, skill, 'skills', skill)]) {
-      if (fs.existsSync(cand)) return cand;
+      if (fs.existsSync(cand)) return { root: cand, trusted: false };
     }
   }
   return null;
+}
+
+// Creates base/<rel...>, refusing any existing component that is a symlink or
+// junction, so a planted link can't send the write to another place or share.
+function safeMkdirUnder(base, target) {
+  const rel = path.relative(base, target);
+  if (!rel || rel.startsWith('..') || path.isAbsolute(rel)) throw new Error(`log directory is not under ${base}`);
+  let cur = base;
+  for (const part of rel.split(path.sep).filter(Boolean)) {
+    cur = path.join(cur, part);
+    let st = null;
+    try { st = fs.lstatSync(cur); } catch { /* does not exist yet */ }
+    if (st) {
+      if (st.isSymbolicLink()) throw new Error(`refusing to write through a symlink or junction: ${cur}`);
+      if (!st.isDirectory()) throw new Error(`not a directory: ${cur}`);
+    } else {
+      fs.mkdirSync(cur);
+    }
+  }
 }
 
 // Finds the skill by its VV.md name, then by plugin or skill directory name.
 function locate(skill, { roots, projectDir, developer } = {}) {
   const report = vv.check({ roots, projectDir });
   let root = null;
-  const hit = report.skills.find((s) => s.name === skill);
-  if (hit) root = path.dirname(hit.file);
-  if (!root) root = findSkillRoot(skill, roots || []);
+  let trusted = false;
+  // Installed copies win over same-named skills found in a project or --root.
+  const hits = report.skills.filter((s) => s.name === skill);
+  const hit = hits.find((s) => s.trusted) || hits[0];
+  if (hit) { root = path.dirname(hit.file); trusted = Boolean(hit.trusted); }
+  if (!root) {
+    const found = findSkillRoot(skill, roots || []);
+    if (found) { root = found.root; trusted = found.trusted; }
+  }
   if (!root) return { skill, found: false };
 
   const inCache = norm(root).startsWith(norm(PLUGIN_CACHE) + path.sep);
   const repo = inCache ? null : gitRoot(root);
-  const mode = (developer || (repo && !inCache)) ? 'developer' : 'user';
-  const slug = githubSlug(repo ? originUrl(repo) : null) || 'gnomatix/gnomatix-oss-skills';
-  const logDir = mode === 'developer' && repo
+  // Developer mode is an explicit opt-in, given only after the author confirms
+  // the role. A repo is never trusted to grant it just by being a checkout.
+  const mode = developer && repo ? 'developer' : 'user';
+  const fromRepo = githubSlug(repo ? originUrl(repo) : null);
+  const slug = (mode === 'developer' && fromRepo) || 'gnomatix/gnomatix-oss-skills';
+  const logDir = mode === 'developer'
     ? path.join(repo, 'dev', skill, 'bugs')
     : path.join(os.homedir(), '.local', 'dev', skill, 'bugs');
   return {
     skill,
     found: true,
     mode,
+    source: trusted ? 'installed' : 'project-or-root',
+    developerAvailable: Boolean(repo),
     root,
     mainFile: mainFile(root),
     repo,
     github: slug,
+    repoOrigin: fromRepo,
     logDir,
-    logEncrypted: mode === 'developer' && repo ? encryptedPath(repo, 'dev') : false,
+    logBase: mode === 'developer' ? repo : os.homedir(),
+    logEncrypted: mode === 'developer' ? encryptedPath(repo, 'dev') : false,
   };
 }
 
@@ -123,7 +169,7 @@ function slugify(s) {
 // Writes a bug record. `fields` become frontmatter; `body` is the documented bug.
 function log(loc, { title, report, model, agent, body, status }) {
   if (!loc || !loc.found) throw new Error('skill not found');
-  fs.mkdirSync(loc.logDir, { recursive: true });
+  safeMkdirUnder(loc.logBase, loc.logDir);
   const now = new Date();
   const stamp = now.toISOString().replace(/[:.]/g, '-').slice(0, 19);
   const file = path.join(loc.logDir, `${stamp}-${slugify(title || report)}.md`);
@@ -139,9 +185,8 @@ function log(loc, { title, report, model, agent, body, status }) {
     report: report || null,
   };
   const text = `---\n${vv.yaml().dump(fm, { lineWidth: 100 })}---\n\n${body || ''}\n`;
-  const tmp = `${file}.tmp.${process.pid}`;
-  fs.writeFileSync(tmp, text, 'utf8');
-  fs.renameSync(tmp, file);
+  // Exclusive create: never overwrite or follow an existing path.
+  fs.writeFileSync(file, text, { encoding: 'utf8', flag: 'wx' });
   return file;
 }
 
