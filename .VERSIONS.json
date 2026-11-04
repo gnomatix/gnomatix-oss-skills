@@ -1,0 +1,77 @@
+{
+  "agent-darktriad-check": {
+    "version": "0.3.0",
+    "git_hash": "b4c6b42abe9f8b3629fe3466bbc4ef1000ed0002",
+    "path": "plugins/agent-darktriad-check"
+  },
+  "all-help-no-harm": {
+    "version": "0.2.0",
+    "git_hash": "ed2d821f56996f0a7cf11f43821edaeabde7861f",
+    "path": "plugins/all-help-no-harm"
+  },
+  "citation-farm-audit": {
+    "version": "0.1.0",
+    "git_hash": "d381b020e31c11b7e379945667446494a41c2a49",
+    "path": "plugins/citation-farm-audit"
+  },
+  "critical-control-points": {
+    "version": "0.2.0",
+    "git_hash": "5075c046d2efd365e0c3631a794c8dac73d6d512",
+    "path": "plugins/critical-control-points"
+  },
+  "did-you-rtfm": {
+    "version": "0.2.0",
+    "git_hash": "7e3f71aa5cf1a87b13d31b5b096d7e258c499fd3",
+    "path": "plugins/did-you-rtfm"
+  },
+  "gnox": {
+    "version": "0.1.0",
+    "git_hash": "4a800806e09adf40a1bd102e60c02abff5728cd3",
+    "path": "plugins/gnox"
+  },
+  "hidden-libel-check": {
+    "version": "0.2.0",
+    "git_hash": "6ae4cc9517238d1c04d51d852209dd47206422d7",
+    "path": "plugins/hidden-libel-check"
+  },
+  "inaudible-markup": {
+    "version": "0.2.0",
+    "git_hash": "0765e001616db88dbb96f18f0581033cac466e56",
+    "path": "plugins/inaudible-markup"
+  },
+  "ontology-lookup": {
+    "version": "0.2.0",
+    "git_hash": "778d3f5685a501baa505bd43a42de6db354eea46",
+    "path": "plugins/ontology-lookup"
+  },
+  "open-and-honest-agent": {
+    "version": "0.2.0",
+    "git_hash": "1c0e58bfaf7e87dda538260c45250a1c68b1daa2",
+    "path": "plugins/open-and-honest-agent"
+  },
+  "python-elimination-program": {
+    "version": "0.2.0",
+    "git_hash": "c9e957cdc6836184fcbc68f72d5b4b9675ca6a8d",
+    "path": "plugins/python-elimination-program"
+  },
+  "satori": {
+    "version": "0.2.0",
+    "git_hash": "0c15f4433606a3483d170e911c9e3f44a79c15cc",
+    "path": "plugins/satori"
+  },
+  "skill-vv": {
+    "version": "0.2.0",
+    "git_hash": "d411fabaf95c69a5e267e27400f154b5d1fd160a",
+    "path": "plugins/skill-vv"
+  },
+  "spank-dario": {
+    "version": "0.2.0",
+    "git_hash": "44915dc34689b4980666e5766b34b022789759da",
+    "path": "plugins/spank-dario"
+  },
+  "word-lineage": {
+    "version": "0.2.0",
+    "git_hash": "faeb677947db82775b83953915696afd9cd1150b",
+    "path": "plugins/word-lineage"
+  }
+}

@@ -114,6 +114,17 @@ The symlink farms are `.agents/skills/`, `.github/skills/` and `.kiro/skills/`; 
 
 Plugins: all-help-no-harm, satori, skill-vv, critical-control-points, did-you-rtfm, hidden-libel-check, open-and-honest-agent, python-elimination-program, word-lineage, ontology-lookup, inaudible-markup, agent-darktriad-check, spank-dario.
 
+## Versions
+
+Each plugin keeps its own version, and its patch number goes up when its content changes.
+`VERSION` at the root is the marketplace's own version; its patch goes up with any plugin's.
+A pre-commit hook does both on main, comparing each plugin folder's git tree hash with the one
+recorded in `.VERSIONS.json` (`scripts/version-bump.js`). Enable it once per clone:
+
+```
+git config core.hooksPath .githooks
+```
+
 <!-- BEGIN: gnomatix-license-include -->
 ## License
 

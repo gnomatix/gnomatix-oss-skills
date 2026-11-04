@@ -1,0 +1,4 @@
+#!/bin/sh
+# Bump the version of each plugin whose content changed, and the root VERSION (main only).
+# Enable once per clone: git config core.hooksPath .githooks
+exec node scripts/version-bump.js
