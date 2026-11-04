@@ -1,5 +1,6 @@
 {
   "name": "ontology-lookup",
+  "version": "0.1.0",
   "description": "An Agent Skill for tagging the things an agent writes about with identifiers from established registries. The first mention of a thing in a passage gets its CURIE inline as «term» [CURIE], with Bioregistry prefixes (GO:0005739, CHEBI:15377, UBERON:0000955, NCBITaxon:9606, wikidata:Q42, glottolog:stan1293, iso.639-3:eng), so logs can be resolved and indexed later. Starter set of seventeen open ontologies and registries (Wikidata, schema.org, SKOS, Dublin Core, PROV-O, OWL-Time, BFO, GO, ChEBI, UBERON, NCBITaxon, SO, EDAM, QUDT, ISO 639-3, Glottolog, MeSH), each with a reference file citing its licence and query routes; SNOMED CT excluded for its licence. Ships scripts/lookup.mjs (Node 20+, no dependencies): search via OLS4, Wikidata and vocabulary files, --resolve CURIE via Bioregistry, and a --lineage word mode giving a word's language and Wiktionary etymon chain with ISO 639-3 and Glottolog ids. Responses cached in a user-chosen directory; offline tests from recorded fixtures.",
   "author": {
     "name": "Brett Whitty",
