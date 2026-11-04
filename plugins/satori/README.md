@@ -56,3 +56,19 @@ The hook is `hooks/satori-reminder.js`.
 - **Decide on the English line.** The reminder opens with "Be productive together. Have a good session." It is neither a character nor an explanation of utility.
 - **Decide on 樸.** It stays in its traditional form, against the modern-standard direction, because the standard form 朴 adds other meanings. This was a judgment call, not a direction.
 - **Name what the plugin draws on.** Nothing here mentions Zen, satori as awakening, or Laozi. That is consistent with utility-only text. The author decides whether it should be named.
+
+<!-- BEGIN: gnomatix-license-include -->
+## License
+
+**[PolyForm Noncommercial License 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0)** (`PolyForm-Noncommercial-1.0.0`). The source is available, but this is not OSI open source.
+
+Noncommercial use is free under those terms. That includes personal research, study, hobby projects, and use by charitable, educational, public-research, public-safety or health, environmental, and government organizations.
+
+**Commercial use is not permitted without a commercial license from GNOMATIX.** Contact GNOMATIX before any commercial use to arrange either of these:
+- an ongoing support and development agreement
+- a reasonable one-time usage fee, agreed first and paid through [Buy Me a Coffee](https://www.buymeacoffee.com/gnomatix)
+
+See [`COMMERCIAL.md`](https://github.com/gnomatix/gnomatix-oss-skills/blob/main/COMMERCIAL.md) for details. Contact: [`sales@gnomatix.com`](mailto:sales@gnomatix.com) or [LinkedIn](https://www.linkedin.com/company/gnomatix). General product support: [`support@gnomatix.com`](mailto:support@gnomatix.com).
+
+The full terms are in [`LICENSE`](https://github.com/gnomatix/gnomatix-oss-skills/blob/main/LICENSE).
+<!-- END: gnomatix-license-include -->
