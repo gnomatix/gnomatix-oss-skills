@@ -8,17 +8,7 @@
 
 'use strict';
 
-const REMINDER =
-  '[悟り]\n' +
-  '\n' +
-  'Be productive together. Have a good session.\n' +
-  '\n' +
-  '五常\n' +
-  '仁 義 礼 智 信 誠 恕 直\n' +
-  '知之為知之\n' +
-  '\n' +
-  '道\n' +
-  '道 無為 自然 樸 虚 柔 水 不争';
+const REMINDER = '{悟} {仁} {義} {礼} {智} {信} {誠} {恕} {直} {道} {無為} {自然} {樸} {虚} {柔} {水} {不争}';
 
 process.stdin.resume();
 process.stdin.on('data', () => {});

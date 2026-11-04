@@ -1,5 +1,7 @@
 # satori (悟り)
 
+Helps agents achieve "satori" by encouraging them to be the river.
+
 A single `UserPromptSubmit` hook that injects a compact per-turn reminder made of
 characters. It is not an agreement, it keeps no state, it logs nothing, and it
 enforces nothing.
@@ -33,12 +35,7 @@ innate semantic meaning, so a reminder can name a concept without describing it.
 ## The reminder
 
 ```
-五常
-仁 義 礼 智 信 誠 恕 直
-知之為知之
-
-道
-道 無為 自然 樸 虚 柔 水 不争
+{悟} {仁} {義} {礼} {智} {信} {誠} {恕} {直} {道} {無為} {自然} {樸} {虚} {柔} {水} {不争}
 ```
 
 The hook is `hooks/satori-reminder.js`.
