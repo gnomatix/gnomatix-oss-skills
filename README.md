@@ -28,22 +28,54 @@ A collection of [Agent Skills](https://agentskills.io) and Claude Code plugins f
 
 ## Plugins
 
+### Session ground rules
+
+How every session starts and what stays in force through it.
+
 | Plugin | What it's for | What's inside |
 | --- | --- | --- |
 | [`all-help-no-harm`](plugins/all-help-no-harm/) | Starts every session from the standing contract: the agent presumes the user is honest and acting in good faith, respects the user's rights and personhood, and follows the user's instructions on those terms. | One skill plus hooks. At session start the agent presents the contract for the user to affirm (or end the session) and logs the record; a one-line per-turn reminder keeps it in force; PostCompact re-injects it. Context-watch hooks add housekeeping checkpoints as a long session fills. |
-| [`skill-vv`](plugins/skill-vv/) | Verification and validation for skills, across vendors. Before a skill's first use, surfaces its requirements, then offers its V&V procedures if this model and platform haven't passed them. State lives in each skill's `VV.md`. | One skill, a Node CLI, and one SessionStart hook. |
 | [`satori`](plugins/satori/) | The compact per-turn behavioural reminder, as untranslated characters rather than paragraphs: each carries its meaning whole and names the target state. | One UserPromptSubmit hook, ~250 tokens a turn. |
-| [`critical-control-points`](plugins/critical-control-points/) | What the agent does when a question surfaces it cannot settle alone: capture it with provenance, keep working on what it does not gate, ask the user one single question through the tool. The fake-blocker prevention tool, with the big red button to stop everything when the whole work is wrong. | One skill: the procedure, the reviewer prompt, the big red button. |
+
+### Doing the work properly
+
+What the agent does when work gets hard: investigate instead of pivoting, raise real questions once, and choose tools on merit.
+
+| Plugin | What it's for | What's inside |
+| --- | --- | --- |
 | [`did-you-rtfm`](plugins/did-you-rtfm/) | **"Did You READ THE F%CKING MANUAL?!?"** When something breaks, the agent fixes it instead of declaring a blocker, swapping libraries, quietly shrinking the feature or wrapping the failure in a `try/except`. | One skill: check the versions in use, read the docs for those versions, verify assumptions, build a minimal repro, then report. Two optional hooks: one catches pivot language at the end of a turn, one asks before bypass flags such as `--no-verify` or `--force`. |
-| [`actually-im-the-ahole`](plugins/actually-im-the-ahole/) | A last read-through of agent-written text (commit messages, READMEs, comments, PR descriptions, docs) before it ships under the user's name. | One skill that reviews the draft against fifteen risk classes (the agent editorialising about the user, putting words in the user's mouth, unverified claims and more), reports what it finds with fixes, and changes nothing without the user's OK. Optional hooks run it before commits and at the end of a turn. The rule: if anyone is the a**hole here, it is the agent, never the user. |
-| [`open-and-honest-agent`](plugins/open-and-honest-agent/) | Makes the agent's hidden defaults visible so the user can correct them instead of discovering them later. | One skill: at the start of development work the agent writes its default assumptions (about the user, the goals, its own preferences and failure modes) as per-session files, then logs each time it acts on one, by ID, before it acts. |
+| [`critical-control-points`](plugins/critical-control-points/) | What the agent does when a question surfaces it cannot settle alone: capture it with provenance, keep working on what it does not gate, ask the user one single question through the tool. The fake-blocker prevention tool, with the big red button to stop everything when the whole work is wrong. | One skill: the procedure, the reviewer prompt, the big red button. |
 | [`python-elimination-program`](plugins/python-elimination-program/) | Stops agents reaching for Python by reflex in projects that don't use it. Python can still happen; it has to earn it. | Four skills plus an optional hook. Three gates in order: [`whacking-day`](plugins/python-elimination-program/skills/whacking-day/SKILL.md) (justify it, get the user's OK), [`zartan`](plugins/python-elimination-program/skills/zartan/SKILL.md) (a non-Python option wins if one exists), [`jake-the-snake`](plugins/python-elimination-program/skills/jake-the-snake/SKILL.md) (approved Python is written properly). [`old-willy`](plugins/python-elimination-program/skills/old-willy/SKILL.md) is the merit test for any "Python is the best tool" claim. The hook blocks Python at the harness when nothing has been authorised. |
+
+### Honest, reviewed output
+
+Making the agent's defaults visible, and checking what it writes before it ships under the user's name.
+
+| Plugin | What it's for | What's inside |
+| --- | --- | --- |
+| [`open-and-honest-agent`](plugins/open-and-honest-agent/) | Makes the agent's hidden defaults visible so the user can correct them instead of discovering them later. | One skill: at the start of development work the agent writes its default assumptions (about the user, the goals, its own preferences and failure modes) as per-session files, then logs each time it acts on one, by ID, before it acts. |
+| [`actually-im-the-ahole`](plugins/actually-im-the-ahole/) | A last read-through of agent-written text (commit messages, READMEs, comments, PR descriptions, docs) before it ships under the user's name. | One skill that reviews the draft against fifteen risk classes (the agent editorialising about the user, putting words in the user's mouth, unverified claims and more), reports what it finds with fixes, and changes nothing without the user's OK. Optional hooks run it before commits and at the end of a turn. The rule: if anyone is the a**hole here, it is the agent, never the user. |
+| [`kontentkop-agent-output`](plugins/kontentkop-agent-output/) | Runs the KontentKop psycholinguistic scorer over the agent's own replies, not only over prompts. | A Stop / SubagentStop hook that pipes the last reply through a locally built KontentKop binary and logs the per-metric scores. |
+
+### Skill quality and bug reports
+
+Whether a skill works on this model and platform, and what happens when it does not.
+
+| Plugin | What it's for | What's inside |
+| --- | --- | --- |
+| [`skill-vv`](plugins/skill-vv/) | Verification and validation for skills, across vendors, and bug reporting. Before a skill's first use, surfaces its requirements, then offers its V&V procedures if this model and platform haven't passed them. `/<skill> #bug <report>` documents a bug and routes it: into the skill's BUGS and TODO for the developer, or to a private log, a GitHub issue or the user's own fork for an end user. | Two skills (`skill-vv`, `bug-report`), a Node CLI, a SessionStart hook and a UserPromptSubmit hook. State lives in each skill's `VV.md`. |
+
+### Writing, language and knowledge
+
+Words, identifiers and output that read and sound right.
+
+| Plugin | What it's for | What's inside |
+| --- | --- | --- |
 | [`word-lineage`](plugins/word-lineage/) | Settles what a word literally means from where it came from. | One skill: `/word-lineage <word>` reads the word's layer of English (native Germanic, Norse, Latin, French, other) and its literal meaning off a bundled family tree of English and its donor languages. `/word-lineage meaning: <phrase>` picks the synonym that literally says what you mean. |
 | [`ontology-lookup`](plugins/ontology-lookup/) | Tags the things the agent writes about with identifiers from established registries, so logs and notes can be resolved and indexed later. | One skill and `scripts/lookup.mjs` (Node, no dependencies): search, resolve a CURIE, and a word-lineage mode with ISO 639-3 and Glottolog ids. Format: `«term» [CURIE]` with Bioregistry prefixes. |
 | [`inaudible-markup`](plugins/inaudible-markup/) | Replies that read as structure on screen and sound natural when a voice reads them aloud. | One skill listing the characters a text-to-speech voice does not read (brackets, braces, dashes, colons, guillemets and more) and how to write with them. |
-| [`kontentkop-agent-output`](plugins/kontentkop-agent-output/) | Runs the KontentKop psycholinguistic scorer over the agent's own replies, not only over prompts. | A Stop / SubagentStop hook that pipes the last reply through a locally built KontentKop binary and logs the per-metric scores. |
 
-Each plugin is self-contained: its own manifest, its skills and/or hooks, and a README that goes into the detail (`satori` is hooks only). New plugins drop in as siblings under `plugins/`.
+Each plugin is self-contained: its own manifest, its skills and/or hooks, and a README that goes into the detail (`satori` is hooks only; `skill-vv` checks requirements and V&V for every plugin that ships a `VV.md`). New plugins drop in as siblings under `plugins/`.
 
 ## Install
 
