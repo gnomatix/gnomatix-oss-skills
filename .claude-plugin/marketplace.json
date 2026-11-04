@@ -90,6 +90,12 @@
       "description": "Traces social-science and policy sources to their authors, funders, citation networks and primary data, and flags citation farms, closed citation loops and grey literature promoted to evidence. A companion skill gives every source a provenance card of verifiable facts.",
       "category": "development",
       "source": "./plugins/citation-farm-audit"
+    },
+    {
+      "name": "gnox",
+      "description": "One namespace for every skill in this marketplace: /gnox:<plugin> runs a plugin's main skill (or lists its commands), /gnox:<plugin>:<skill> any other skill, and /gnox:<plugin>:<group>:<cmd> a plugin's own sub-commands. Install it alongside the plugins you use.",
+      "category": "development",
+      "source": "./plugins/gnox"
     }
   ]
 }
