@@ -39,7 +39,7 @@
     },
     {
       "name": "satori",
-      "description": "A single UserPromptSubmit hook that injects a compact per-turn reminder composed of characters — a Confucian register (仁 義 禮 智 信 誠 恕 直 知之為知之) naming the standing virtues of the work, and a Taoist register (道 無為 自然 樸 虛 柔 水 不爭) naming how to move through the turn. Replaces paragraph-scale behavioral reminder prose with characters that decompress through the model's own semantic graph, in positive form. Not an agreement and not enforcement machinery: the plugin accepts that we control nothing — we flow in a river; we can be the river or be the rock, and the rock does not stop the river, it is worn away. The same characters double as a one-token failure-classification taxonomy. ~250 tokens per turn in place of thousands.",
+      "description": "A single UserPromptSubmit hook that injects a compact per-turn reminder made of characters, with no translations: each character carries its meaning whole, names the target state rather than a prohibition, costs a few hundred tokens per turn in place of paragraph-scale reminder prose, and doubles as the vocabulary for naming a failure. Not an agreement and not enforcement machinery: the plugin accepts that we control nothing; we can be the river or be the rock.",
       "category": "development",
       "source": "./plugins/satori"
     },
