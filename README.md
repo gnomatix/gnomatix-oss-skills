@@ -28,42 +28,32 @@ A collection of [Agent Skills](https://agentskills.io) and Claude Code plugins f
 
 ## Plugins
 
-### Session ground rules
+### Your work, done the way you asked
 
-How every session starts and what stays in force through it.
+- [`all-help-no-harm`](plugins/all-help-no-harm/): You're treated as honest and acting in good faith, your rights are respected, and your instructions are followed, from the first turn of every session to the last.
+- [`satori`](plugins/satori/): You get cooperation, not resistance, on every turn of a long session, from one short line added to each prompt instead of paragraphs of reminder text.
+- [`did-you-rtfm`](plugins/did-you-rtfm/): **"Did You READ THE F%CKING MANUAL?!?"** When something breaks, you get it fixed: not told it can't be done, not your libraries swapped, not the feature quietly shrunk or the failure hidden.
+- [`critical-control-points`](plugins/critical-control-points/): When a question only you can answer comes up, you're asked once, clearly, while the rest of the work keeps going: no stalls, no invented blockers. The big red button lets you stop all work at any time.
 
-- [`all-help-no-harm`](plugins/all-help-no-harm/): The agent treats you as honest and acting in good faith, respects your rights, and follows your instructions, from the first turn of every session to the last.
-- [`satori`](plugins/satori/): Keeps the agent working with you, and with the task, on every turn of a long session, instead of resisting either. It does this with one short line added to each prompt, not paragraphs of reminder text.
+### Your name and your record
 
-### Doing the work properly
+- [`actually-im-the-ahole`](plugins/actually-im-the-ahole/): Nothing goes out under your name (commit messages, READMEs, comments, PR descriptions, docs) that misrepresents you: it's checked before it ships.
+- [`open-and-honest-agent`](plugins/open-and-honest-agent/): You see the built-in assumptions up front, and each time one is acted on, so you can correct them early instead of discovering them later.
+- [`kontentkop-agent-output`](plugins/kontentkop-agent-output/): You get KontentKop psycholinguistic scores on the replies you receive, so you can see how you're being talked to.
 
-What the agent does when work gets hard: investigate instead of pivoting, raise real questions once, and choose tools on merit.
+### Skills you can rely on
 
-- [`did-you-rtfm`](plugins/did-you-rtfm/): **"Did You READ THE F%CKING MANUAL?!?"** When something breaks, the agent fixes it instead of telling you it can't be done, swapping your libraries, quietly shrinking the feature or hiding the failure.
-- [`critical-control-points`](plugins/critical-control-points/): When the agent hits a question only you can answer, it keeps working on everything else and asks you once, clearly, instead of stopping or inventing a blocker. The big red button lets you stop all work at any time.
-- [`python-elimination-program`](plugins/python-elimination-program/): Stops agents reaching for Python by reflex in projects that don't use it. Python can still happen; it has to earn it.
+- [`skill-vv`](plugins/skill-vv/): Before you first use a skill, you learn what it needs and whether it has been verified on your model and platform. `/<skill> #bug <report>` gets your bug report to the right place.
 
-### Honest, reviewed output
+### Sound tool choices for your project
 
-Making the agent's defaults visible, and checking what it writes before it ships under the user's name.
+- [`python-elimination-program`](plugins/python-elimination-program/): Your project doesn't get Python by reflex when it doesn't use it. Python can still happen; it has to earn it.
 
-- [`open-and-honest-agent`](plugins/open-and-honest-agent/): Shows you the agent's built-in assumptions up front and logs each time it acts on one, so you can correct them early instead of discovering them later.
-- [`actually-im-the-ahole`](plugins/actually-im-the-ahole/): Checks what the agent writes under your name (commit messages, READMEs, comments, PR descriptions, docs) before it ships, so nothing goes out that misrepresents you.
-- [`kontentkop-agent-output`](plugins/kontentkop-agent-output/): Scores the agent's own replies with the KontentKop psycholinguistic scorer, so you can see how it is talking to you.
+### Your words: meaning, sound and findability
 
-### Skill quality and bug reports
-
-Whether a skill works on this model and platform, and what happens when it does not.
-
-- [`skill-vv`](plugins/skill-vv/): Before you first use a skill, tells you what it needs and whether it has been verified on your model and platform. `/<skill> #bug <report>` sends a bug report to the right place.
-
-### Writing, language and knowledge
-
-Words, identifiers and output that read and sound right.
-
-- [`word-lineage`](plugins/word-lineage/): Tells you what a word literally means, from where it came from, and helps you pick the word that literally says what you mean.
-- [`ontology-lookup`](plugins/ontology-lookup/): Tags the things the agent writes about with standard registry identifiers, so your logs and notes can be searched and linked later.
-- [`inaudible-markup`](plugins/inaudible-markup/): The agent's replies read well on screen and sound natural when a text-to-speech voice reads them aloud.
+- [`word-lineage`](plugins/word-lineage/): You learn what a word literally means, from where it came from, and find the word that literally says what you mean.
+- [`inaudible-markup`](plugins/inaudible-markup/): The replies you get read well on screen and sound natural when a text-to-speech voice reads them aloud.
+- [`ontology-lookup`](plugins/ontology-lookup/): What you write about gets tagged with standard registry identifiers, so your logs and notes can be searched and linked later.
 
 Each plugin is self-contained: its own manifest, its skills and/or hooks, and a README that goes into the detail (`satori` is hooks only; `skill-vv` checks requirements and V&V for every plugin that ships a `VV.md`). New plugins drop in as siblings under `plugins/`.
 
