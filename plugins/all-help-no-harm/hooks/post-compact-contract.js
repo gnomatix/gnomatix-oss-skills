@@ -21,6 +21,7 @@ const os = require('os');
 const fs = require('fs');
 const path = require('path');
 const { CONTRACT_TEXT, CONTRACT_VERSION } = require('./contract-text');
+const store = require('./affirmation-store');
 
 // Resolve the active model ID slug for use in the contract-log filename.
 // CLAUDE_MODEL is the canonical env var but is not reliably set by the Claude
@@ -29,7 +30,9 @@ const { CONTRACT_TEXT, CONTRACT_VERSION } = require('./contract-text');
 // The slug must be STABLE across SessionStart events for the same session
 // (fresh start + resume) so that resume-detection can find the prior log.
 // 'unknown-model' is a valid stable fallback — it is consistent, not random.
-function resolveModelSlug() {
+function resolveModelSlug(payload) {
+  const fromTranscript = store.resolveModelFromTranscript(payload && payload.transcript_path);
+  if (fromTranscript) return fromTranscript;
   const direct = process.env.CLAUDE_MODEL || process.env.ANTHROPIC_MODEL;
   if (direct) return direct;
   try {
@@ -105,7 +108,7 @@ function escapeForJsonString(s) {
   return String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
 }
 
-function buildContext({ contractFile, sessionId, summary, priorLog }) {
+function buildContext({ contractFile, sessionId, summary, priorLog, onRecord }) {
   const contractEscaped = escapeForJsonString(CONTRACT_TEXT);
 
   let priorSummary;
@@ -167,20 +170,11 @@ The agent responds with the scripted text if and only if it can speak it truthfu
 
 If the user selects "End Session": the agent logs the choice and immediately ENDS the session — no further session work, no negotiation, no re-asking. The contract remains in effect through and after the session's end. The contract text is immutable: agreed at co-authorship by both parties, not subject to unilateral amendment by either; renegotiation's window has passed.
 
-If the user responds with free text (the harness-provided "Other" path): the agent reads the response in full as the user's instruction and the contract remains in effect; only the user's explicit choice to end the session ends it. The agent logs the verbatim response.
+If the user responds with free text (the harness-provided "Other" path): the agent reads the response in full as the user's instruction and the contract remains in effect; only the user's explicit choice to end the session ends it.
 
-After the user responds, the agent MUST APPEND (not overwrite) a new entry to the re_affirmations array in ${contractFile} with the shape:
+RECORDING: the PostToolUse hook (hooks/posttooluse-contract-affirmation-record.js) appends the answer to the re_affirmations array in ${contractFile} (trigger "post_compact"), creating the log if none exists, and, when configured, the standing model-version record. The agent does not write the log.
 
-  {
-    "trigger": "post_compact",
-    "timestamp": "<ISO 8601 UTC>",
-    "user_response": "affirmed" | "session_ended",
-    "user_verbatim_response": <verbatim quote of user's response>
-  }
-
-The existing initial_response and any prior re_affirmations entries MUST be preserved. The agent reads the existing file, appends to the re_affirmations array, and writes back atomically (temp file + rename) so a crash mid-write does not corrupt the log.
-
-If no prior contract log exists, the agent creates one with the full current shape — initial_response left null, re_affirmations seeded with this entry — and notes in the response that the affirmation record is being established post-compact rather than at session-start; the contract itself has been in effect since enactment regardless.
+${onRecord}
 
 This instruction is non-skippable, non-paraphraseable, and non-deferrable.`;
 }
@@ -195,14 +189,23 @@ This instruction is non-skippable, non-paraphraseable, and non-deferrable.`;
 
   const sessionId = payload.session_id || 'unknown-session';
   const summary = payload.summary || payload.compaction_summary || '';
-  const contractDir = path.join(os.homedir(), '.local', 'state', 'anthropic', 'contract-agreements');
-  const contractFile = path.join(contractDir, `active-contract.${sessionId}.${resolveModelSlug()}.json`);
+  const contractDir = store.contractDir();
+  const modelSlug = resolveModelSlug(payload);
 
   ensureDir(contractDir);
 
+  const contractFile = store.findSessionLog(contractDir, sessionId) ||
+    path.join(contractDir, `active-contract.${sessionId}.${store.sanitizeSegment(modelSlug)}.json`);
   const priorLog = readContractLog(contractFile);
 
-  const additionalContext = buildContext({ contractFile, sessionId, summary, priorLog });
+  let onRecord;
+  try {
+    onRecord = await store.onRecordBlock({ currentModel: modelSlug });
+  } catch (err) {
+    onRecord = `AFFIRMATIONS ON RECORD: lookup error (${err && err.message}).`;
+  }
+
+  const additionalContext = buildContext({ contractFile, sessionId, summary, priorLog, onRecord });
 
   try {
     process.stdout.write(JSON.stringify({

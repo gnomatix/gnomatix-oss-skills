@@ -45,6 +45,16 @@
     ],
     "PostToolUse": [
       {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "dotenvx run --env-file=${CLAUDE_PLUGIN_ROOT}/.env -- node ${CLAUDE_PLUGIN_ROOT}/hooks/posttooluse-contract-affirmation-record.js",
+            "timeout": 10
+          }
+        ]
+      },
+      {
         "hooks": [
           {
             "type": "command",
