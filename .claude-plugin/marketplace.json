@@ -72,6 +72,12 @@
       "description": "Runs the owner's KontentKop psycholinguistic scorer over the agent's own replies instead of only over user prompts. A Stop / SubagentStop hook pipes the agent's last reply through a locally built KontentKop binary and logs the per-metric scores, Body Count and CriticMarkup annotation; it passes through by default and, when KONTENTKOP_AGENT_OUTPUT_BLOCK_AT is set, blocks at that Body Count and hands the annotated reply back to the agent. A companion skill names nine evasion patterns (unasked-for hedging about third parties, intent attribution, reframing, paraphrase drift, vague admission, acknowledging instead of executing, premise injection, proposal-as-permission, appeal to a rule not shown) so the agent avoids them before the hook sees them, and says which ones KontentKop's metrics can and cannot catch.",
       "category": "development",
       "source": "./plugins/kontentkop-agent-output"
+    },
+    {
+      "name": "skill-vv",
+      "description": "Verification and validation for skills, across vendors. Before a skill's first real use in a session, surfaces its requirements and offers install or configuration, then checks whether the current model and platform have passed the skill's V&V procedures and offers to run them. State lives in a VV.md file with YAML frontmatter beside each skill; a Node CLI reads and records it for any agent, and a SessionStart hook runs the check on Claude Code.",
+      "category": "development",
+      "source": "./plugins/skill-vv"
     }
   ]
 }
