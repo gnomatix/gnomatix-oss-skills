@@ -1,12 +1,12 @@
 {
-  "description": "agent-darktriad-check — Stop / SubagentStop hook that runs the KontentKop scorer over the agent's own last reply and logs scores, Body Count and the CriticMarkup annotation to the user's state directory. Log and pass through by default; AGENT_DARKTRIAD_CHECK_BLOCK_AT=<BC> turns on blocking at that Body Count.",
+  "description": "agent-darktriad-check — Stop / SubagentStop hook that scores the agent's own last reply with KontentKop and logs scores, Body Count and the CriticMarkup annotation to the user's state directory. The Go binary under hooks/bin/ embeds the scorer (no subprocess, scores on every reply); if no binary matches the platform, the pure-Node hook runs instead and needs KONTENTKOP_BIN. Log and pass through by default; AGENT_DARKTRIAD_CHECK_BLOCK_AT=<BC> turns on blocking at that Body Count.",
   "hooks": {
     "Stop": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/agent-darktriad-check.js",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/bin/agent-darktriad-check-${platform}-${arch}${exe} || node ${CLAUDE_PLUGIN_ROOT}/hooks/agent-darktriad-check.js",
             "timeout": 30
           }
         ]
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/agent-darktriad-check.js",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/bin/agent-darktriad-check-${platform}-${arch}${exe} || node ${CLAUDE_PLUGIN_ROOT}/hooks/agent-darktriad-check.js",
             "timeout": 30
           }
         ]

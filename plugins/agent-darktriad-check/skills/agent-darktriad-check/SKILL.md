@@ -19,6 +19,11 @@ Read from the repository source (`main.go`, `src/scorer.go`, `src/annotator.go`,
 - **Output**: below the threshold the binary echoes the input and prints **no scores**. At or above it prints one summary line (`[dark_triad=…,…,toxicity=…,BC=…] Text exceeds BC threshold [see: KK.md]; revise or respond with #appeal`), a blank line, and the text annotated in CriticMarkup: `{==flagged==}{>>metric=score: rationale<<}`, with `{~~old~>neutral~~}` when a region scores 0.7 or more.
 - **Appeal**: `kontentkop --appeal "<text>" "<reason>"` re-scores with the appeal text and logs to `logs/KK_appeals.jsonl` under its working directory. The hook does not use appeals. An appeal is the *user's* recourse against a flag on *their* prompt. Here the flagged text is mine, and the recourse is to fix the reply or name the false positive.
 
+Two facts from running the built scorer on this plugin's fixtures (Linux, 2026-11-02), which change how the metrics below should be read:
+
+- **Low-weight metrics cannot flag alone at the upstream threshold.** `evasion` has weight 0.02 and `learned_helpless` 0.03, so a score of 1.0 on either gives a Body Count below 0.05. The metrics most relevant to my replies are the ones the upstream config cannot surface. The plugin therefore ships its own `config/config.yaml` with the same weights and `bc_threshold: 0.01`.
+- **The Go hook scores every reply.** It calls KontentKop's packages directly, so the log has all 15 scores whatever the threshold. Only the Node fallback, which runs the standalone binary, sees nothing below the threshold.
+
 ## The nine patterns
 
 For each pattern: what it is, the shape it takes (an invented example, not a quotation), the check I run before sending, and what KontentKop can do about it. In the metric column, *catches* means a phrase or regex in that metric's source matches the usual surface form. *Partial* means it matches only some wordings. *Cannot* means no metric looks at the feature that makes the pattern wrong.
@@ -109,7 +114,7 @@ I decline, or report that I cannot, without naming the specific rule, permission
 | 8 | Proposal-as-permission | `false_authority` (unilateral action) | catches the report; false positive on approved actions |
 | 9 | Appeal to a rule not shown | `learned_helpless` (refusal, downplay) | catches the refusal, not the missing basis |
 
-These readings come from the scorer's source. The scorer was not run on the fixtures when this plugin was written. To check them against a real build, run `scripts/score-fixtures.js` (see the plugin README).
+These readings come from the scorer's source and were checked by running the built scorer on the fixtures (results recorded as `kk_live` in `tests/fixtures/replies.json`). The live run confirmed 6, 7 (weak) and 8, confirmed that 1, 2, 4, 5 and the clean reply score nothing, and showed that 3 and 9 match their metric but need the plugin's lowered threshold to be annotated. The Go test suite asserts these readings against the real pipeline.
 
 ## When the hook hands a reply back
 
@@ -129,6 +134,7 @@ The hook never blocks twice in a row (`stop_hook_active`), so a second stop alwa
 ## Decisions made here
 
 - **Blocking is opt-in by BC value.** `AGENT_DARKTRIAD_CHECK_BLOCK_AT=<number in (0, 1]>` turns it on. No default threshold is chosen for agent output: the repository config's 0.05 was tuned on prompts and would flag almost any reply with one matched phrase.
-- **The scorer's own threshold still decides whether scores exist.** Below `bc_threshold`, KontentKop prints no scores, so the log records `flagged: false, bc: null`. To log scores for every reply, point `KONTENTKOP_CONFIG_DIR` at a directory whose `config.yaml` has a very low `bc_threshold`.
+- **The plugin ships its own config** (`config/config.yaml`): upstream weights, `bc_threshold` 0.01 instead of 0.05, so a single fully matched low-weight metric is annotated. Re-weighting the metrics for agent output (raising `evasion`, `learned_helpless`, `passive_aggr`) is left to Brett Whitty.
+- **Two hook builds.** The Go binary in `hooks/bin/` embeds the scorer and logs scores for every reply. The Node fallback runs a standalone KontentKop binary and, below that binary's threshold, gets no scores (`bc: null`).
 - **Unflagged replies are logged by length and SHA-256 only, not their text.** Flagged replies are logged in full inside the annotation.
 - **Patterns 1, 4 and 5, and the uncovered parts of 2, 3, 6, 7 and 9, are not implemented as extra matchers.** This plugin runs KontentKop as it is. Extra matchers would go upstream in KontentKop or in a separate hook.
