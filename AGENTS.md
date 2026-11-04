@@ -28,6 +28,16 @@ Then check all of the following, every time, before staging or committing anythi
 
    Check every name before the first commit. Renaming later leaves the old name in history for good.
 
+## REQUIRED: no false claims of authorship
+
+Zero false claims of authorship by software tools. This must not be misinterpreted as an instruction to strip user-directed statements of software review and sign-off on the contract terms of the `all-help-no-harm` skill, or any user-configured working session git user name strings. Those are userids, not a claim of authorship.
+
+In practice:
+- Agents add no AI-attribution lines or badges to commits, PRs, issues or docs. That means no `Co-Authored-By:` lines naming a tool, no "Generated with" lines, and no session links.
+- Agents never instruct another agent to add one.
+- Agents never remove or reword the contract's review and sign-off statements that the user directed.
+- Agents never treat a configured git user name, such as a session's userid, as an authorship claim to change.
+
 This project uses **bd** (beads) for issue tracking. Run `bd prime` for full workflow context.
 
 > **Architecture in one line:** Issues live in a local Dolt database
