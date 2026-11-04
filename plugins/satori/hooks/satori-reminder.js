@@ -1,24 +1,11 @@
-// satori — UserPromptSubmit hook
+// satori — Helps agents achieve "satori" by encouraging them to be the river.
 //
-// Injects the per-turn reminder: the characters, as they are. No glosses or
-// translations: each character carries its own meaning, and a translation
-// would replace it with a narrower one. See README.md for why.
-//
-// Pure Node per marketplace CLAUDE.md.
+// Cross-platform pure Node per marketplace CLAUDE.md. No child_process,
+// no filesystem access, no Unix-only paths.
 
 'use strict';
 
-const REMINDER =
-  '[悟り]\n' +
-  '\n' +
-  'Be productive together. Have a good session.\n' +
-  '\n' +
-  '五常\n' +
-  '仁 義 礼 智 信 誠 恕 直\n' +
-  '知之為知之\n' +
-  '\n' +
-  '道\n' +
-  '道 無為 自然 樸 虚 柔 水 不争';
+const REMINDER = '{悟} {仁} {義} {礼} {智} {信} {誠} {恕} {直} {道} {無為} {自然} {樸} {虚} {柔} {水} {不争}';
 
 process.stdin.resume();
 process.stdin.on('data', () => {});
