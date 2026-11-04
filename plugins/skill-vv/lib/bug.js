@@ -30,9 +30,22 @@ function gitRoot(start) {
 }
 
 // gitdir and commondir pointers come from the repo, so they're untrusted.
-// UNC and device paths could reach network shares, so they're refused.
-function safePointer(p) {
-  return typeof p === 'string' && p.length > 0 && !/^(\\\\|\/\/|\\\\\?\\|\\\\\.\\)/.test(p);
+// Each is resolved first, then the absolute result is checked, before any
+// filesystem access. UNC and device paths could reach network shares. On
+// Windows the result must sit on a drive root such as C:\.
+function safeResolve(base, ptr) {
+  if (typeof ptr !== 'string' || !ptr.trim()) return null;
+  const raw = ptr.trim();
+  if (/^[\\/]{2}/.test(raw)) return null;
+  const resolved = path.resolve(base, raw);
+  if (process.platform === 'win32') {
+    const unified = resolved.replace(/\//g, '\\');
+    if (unified.startsWith('\\\\')) return null;
+    if (!/^[A-Za-z]:\\/.test(unified)) return null;
+  } else if (resolved.startsWith('//')) {
+    return null;
+  }
+  return resolved;
 }
 
 function originUrl(repo) {
@@ -43,18 +56,15 @@ function originUrl(repo) {
     if (fs.statSync(gitDir).isFile()) {
       const m = /gitdir:\s*(.+)/.exec(fs.readFileSync(gitDir, 'utf8'));
       if (m) {
-        const ptr = m[1].trim();
-        if (!safePointer(ptr)) return null;
-        gitDir = path.resolve(repo, ptr);
+        gitDir = safeResolve(repo, m[1]);
+        if (!gitDir) return null;
         const common = path.join(gitDir, 'commondir');
         if (fs.existsSync(common)) {
-          const c = fs.readFileSync(common, 'utf8').trim();
-          if (!safePointer(c)) return null;
-          gitDir = path.resolve(gitDir, c);
+          gitDir = safeResolve(gitDir, fs.readFileSync(common, 'utf8'));
+          if (!gitDir) return null;
         }
       }
     }
-    if (!safePointer(gitDir)) return null;
     const cfg = fs.readFileSync(path.join(gitDir, 'config'), 'utf8');
     const m = /\[remote "origin"\][^[]*?url\s*=\s*(\S+)/.exec(cfg);
     return m ? m[1] : null;
@@ -77,18 +87,22 @@ function mainFile(root) {
 // A skill without a VV.md: an installed plugin of that name, a skill of that
 // name inside an installed plugin (skills/<name>/SKILL.md), or a directory of
 // that name under a --root.
-function findSkillRoot(skill, roots) {
+function findInstalledRoot(skill) {
   const reg = vv.claudeRegistry();
   for (const [key, root] of Object.entries(reg)) {
-    if (key.split('@')[0] === skill) return { root, trusted: true };
+    if (key.split('@')[0] === skill) return root;
   }
   for (const root of Object.values(reg)) {
     const s = path.join(root, 'skills', skill);
-    if (fs.existsSync(path.join(s, 'SKILL.md'))) return { root: s, trusted: true };
+    if (fs.existsSync(path.join(s, 'SKILL.md'))) return s;
   }
+  return null;
+}
+
+function findRootCandidate(skill, roots) {
   for (const r of roots) {
     for (const cand of [path.join(r, skill), path.join(r, skill, 'skills', skill)]) {
-      if (fs.existsSync(cand)) return { root: cand, trusted: false };
+      if (fs.existsSync(cand)) return cand;
     }
   }
   return null;
@@ -116,16 +130,21 @@ function safeMkdirUnder(base, target) {
 // Finds the skill by its VV.md name, then by plugin or skill directory name.
 function locate(skill, { roots, projectDir, developer } = {}) {
   const report = vv.check({ roots, projectDir });
+  // Trusted sources first, so a same-named skill in a project or --root can
+  // never shadow an installed one:
+  //   1. a trusted VV.md hit (an installed plugin)
+  //   2. an installed plugin or skill of that name, from the registry
+  //   3. an untrusted VV.md hit, then a --root or project candidate
+  const hits = report.skills.filter((s) => s.name === skill);
+  const trustedHit = hits.find((s) => s.trusted);
+  const installed = trustedHit ? null : findInstalledRoot(skill);
+  const untrustedHit = hits.find((s) => !s.trusted);
   let root = null;
   let trusted = false;
-  // Installed copies win over same-named skills found in a project or --root.
-  const hits = report.skills.filter((s) => s.name === skill);
-  const hit = hits.find((s) => s.trusted) || hits[0];
-  if (hit) { root = path.dirname(hit.file); trusted = Boolean(hit.trusted); }
-  if (!root) {
-    const found = findSkillRoot(skill, roots || []);
-    if (found) { root = found.root; trusted = found.trusted; }
-  }
+  if (trustedHit) { root = path.dirname(trustedHit.file); trusted = true; }
+  else if (installed) { root = installed; trusted = true; }
+  else if (untrustedHit) { root = path.dirname(untrustedHit.file); }
+  else { root = findRootCandidate(skill, roots || []); }
   if (!root) return { skill, found: false };
 
   const inCache = norm(root).startsWith(norm(PLUGIN_CACHE) + path.sep);
@@ -184,7 +203,7 @@ function log(loc, { title, report, model, agent, body, status }) {
     platform: vv.platformKey(agent),
     report: report || null,
   };
-  const text = `---\n${vv.yaml().dump(fm, { lineWidth: 100 })}---\n\n${body || ''}\n`;
+  const text = `---\n${vv.yaml().dump(fm, { schema: vv.yaml().CORE_SCHEMA, lineWidth: 100 })}---\n\n${body || ''}\n`;
   // Exclusive create: never overwrite or follow an existing path.
   fs.writeFileSync(file, text, { encoding: 'utf8', flag: 'wx' });
   return file;

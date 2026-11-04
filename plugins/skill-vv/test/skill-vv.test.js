@@ -52,6 +52,23 @@ test('shipped VV.md files parse and validate', () => {
   }
 });
 
+test('dates stay plain strings: no timestamp conversion on load or dump', () => {
+  const vv = require('../lib/vv');
+  const satori = vv.loadVv(path.join(ROOT, '..', 'satori', 'VV.md'));
+  for (const r of satori.data.results) assert.strictEqual(typeof r.date, 'string', JSON.stringify(r));
+  assert.strictEqual(satori.data.results[0].date, '2026-11-03');
+
+  const { home, env } = tmpHome();
+  const dir = path.join(home, 'd', 'probe');
+  writeSkill(dir, PROBE.replace('results: []', 'results:\n  - procedure: probe\n    model: m\n    platform: claude-code/win32\n    result: fail\n    date: 2026-11-03\n    notes: x'));
+  const r = run(['check', '--model', 'm', '--agent', 'claude-code', '--root', path.join(home, 'd')], env);
+  assert.match(r.stdout, /Last result: fail on 2026-11-03: x/, r.stdout);
+  run(['record', 'result', 'vv-probe', 'probe', 'pass', '--model', 'm2', '--agent', 'claude-code', '--into', path.join(dir, 'VV.md')], env);
+  const text = fs.readFileSync(path.join(dir, 'VV.md'), 'utf8');
+  assert.match(text, /date: 2026-11-03\n/);
+  assert.doesNotMatch(text, /T00:00:00/);
+});
+
 test('check reports requirements before procedures, then clears after decline + pass', () => {
   const { home, env } = tmpHome();
   const skill = path.join(home, 'skills', 'probe');
@@ -220,6 +237,13 @@ test('bug hardening: UNC gitdir pointer ignored; log dir through a junction refu
   fs.writeFileSync(path.join(repo, '.git'), 'gitdir: //evil-host/share/repo.git\n');
   const loc = JSON.parse(run(['bug', 'locate', 'vv-probe', '--root', path.join(repo, 'plugins'), '--developer'], env).stdout);
   assert.strictEqual(loc.repoOrigin, null);
+
+  // relative pointer with forward slashes, resolving toward a share root
+  for (const ptr of ['../../../../../../../../../../../..//evil-host/share', '\\\\?\\UNC\\evil\\share', '//evil/share']) {
+    fs.writeFileSync(path.join(repo, '.git'), `gitdir: ${ptr}\n`);
+    const l = JSON.parse(run(['bug', 'locate', 'vv-probe', '--root', path.join(repo, 'plugins'), '--developer'], env).stdout);
+    assert.strictEqual(l.repoOrigin, null, ptr);
+  }
 
   const repo2 = path.join(home, 'r2');
   writeSkill(path.join(repo2, 'plugins', 'probe'), PROBE);
