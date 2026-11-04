@@ -1,5 +1,5 @@
 {
-  "description": "satori (悟り): Helps agents achieve \"satori\" by encouraging them to be the river. Per-turn reminder. One UserPromptSubmit hook injecting the characters, untranslated.",
+  "description": "satori {悟}:Helps agents achieve \"satori\" by encouraging them to be the river. Per-turn reminder. One UserPromptSubmit hook injecting the characters, untranslated.",
   "hooks": {
     "UserPromptSubmit": [
       {
