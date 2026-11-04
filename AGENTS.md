@@ -1,5 +1,45 @@
 # Agent Instructions
 
+## REQUIRED: `dev/` is encrypted, so unlock it first and check before every commit
+
+Everything under `dev/` is private development material, and it is encrypted with git-crypt. The only exception is a path that `.gitattributes` explicitly marks unencrypted (`!filter`); today that is `dev/README.md` alone.
+
+**Don't work on this repo until `dev/` is decrypted.** Before reading, editing, moving, renaming, deleting or committing anything, anywhere in the repo:
+
+- Run `git-crypt unlock`.
+- Confirm a file under `dev/` now reads as plaintext and doesn't start with `\0GITCRYPT`.
+- Read `dev/README.md` before unlocking. After unlocking, read every `README.md`, `AGENTS.md`, `CLAUDE.md`, `NOTES.md` and `SKILL.md` under `dev/`, and follow what they say.
+
+If the unlock fails, stop, report it, and make no changes. In a locked clone, git commits plaintext over the encrypted files, and editing ciphertext destroys it. If the agent has no key, it asks the owner whether it may add its own GPG key with `git-crypt add-gpg-user`.
+
+Then check all of the following, every time, before staging or committing anything:
+
+1. **The rule is in place.** `.gitattributes` contains `dev/** filter=git-crypt diff=git-crypt`. Every exception is an explicit `!filter` line for a named path. If the rule is missing or has been changed, stop and report it. Don't commit.
+2. **The clone is unlocked.** `git config --get filter.git-crypt.clean` returns a value. If it doesn't, git commits plaintext. Run `git-crypt unlock`, or stop and report.
+3. **Every staged path under `dev/` is ciphertext.** `git show :<path> | head -c 10` shows `GITCRYPT` for each one, except the explicit `!filter` exceptions. One plaintext blob stops the commit.
+4. **Names are secure and sensible.** git-crypt encrypts file contents only. Everything else about `dev/` work stays readable by anyone who can see the repo:
+   - file and folder names, and paths
+   - commit messages
+   - branch names and tags
+   - PR titles and bodies
+   - issue text, and any plaintext file that refers to the material
+
+   Each of these gets a neutral name or wording. It should be sensible, so it says where the thing belongs, such as `dev/satori/development-notes.md`. It must not reveal content or purpose, so not `invention_record.md`, and not a commit subject that lists what's inside.
+
+   Check every name before the first commit. Renaming later leaves the old name in history for good.
+
+## REQUIRED: no false claims of authorship
+
+The only author of code in this repo is Brett Whitty <brett@gnomatix.com>, as of 2026-11-03. Any revision to that will be noted explicitly.
+
+Zero false claims of authorship by software tools. This must not be misinterpreted as an instruction to strip user-directed statements of software review and sign-off on the contract terms of the `all-help-no-harm` skill, or any user-configured working session git user name strings. Those are userids, not a claim of authorship.
+
+In practice:
+- Agents add no AI-attribution lines or badges to commits, PRs, issues or docs. That means no `Co-Authored-By:` lines naming a tool, no "Generated with" lines, and no session links.
+- Agents never instruct another agent to add one.
+- Agents never remove or reword the contract's review and sign-off statements that the user directed.
+- Agents never treat a configured git user name, such as a session's userid, as an authorship claim to change.
+
 This project uses **bd** (beads) for issue tracking. Run `bd prime` for full workflow context.
 
 > **Architecture in one line:** Issues live in a local Dolt database
