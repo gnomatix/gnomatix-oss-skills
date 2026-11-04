@@ -52,7 +52,7 @@ A collection of [Agent Skills](https://agentskills.io) and Claude Code plugins f
 
 ### Your words: meaning, sound and findability
 
-- [`word-lineage`](plugins/word-lineage/): You learn what a word literally means, from where it came from, and find the word that literally says what you mean.
+- [`word-lineage`](plugins/word-lineage/): Tells you which language an English word came from (Old English, Norse, Latin, French or another) and what it literally meant there, and picks the synonym whose literal meaning fits what you want to say.
 - [`inaudible-markup`](plugins/inaudible-markup/): The replies you get read well on screen and sound natural when a text-to-speech voice reads them aloud.
 - [`ontology-lookup`](plugins/ontology-lookup/): What you write about gets tagged with standard registry identifiers, so your logs and notes can be searched and linked later.
 
