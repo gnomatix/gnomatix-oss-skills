@@ -18,6 +18,21 @@ Results are recorded, and a failure becomes a BUG plus a matching TODO in the sk
 
 Results from installed copies go to `~/.local/state/skill-vv/`. Results kept with a skill are written back into its source `VV.md` with `record result ... --into <VV.md>`.
 
+## Bug reports: `/<skill> #bug <report>`
+
+Typing `/<skill> #bug <what went wrong>` for any skill routes the prompt to `skill-vv:bug-report`, so the skill's normal task doesn't run. The bug-report skill works through the bug with you, reproducing it where it can, and records it. What happens next depends on who is reporting:
+
+- **Developer:** the skill sits in a git checkout outside the plugin cache.
+  - The record goes to `<repo>/dev/<skill>/bugs/`, which is git-crypt encrypted in GNOMATIX repos.
+  - A BUG entry and a matching TODO go into the skill's main file.
+  - A V&V failure is recorded in its `VV.md`.
+- **End user:** an installed copy, which is never edited.
+  - The record goes to `~/.local/dev/<skill>/bugs/`.
+  - With approval of the exact text, it opens a GitHub issue upstream.
+  - Or it patches the skill in your own fork, investigating under `~/.local/dev/<skill>/`, and can send the fix back as a pull request.
+
+CLI: `skill-vv bug locate <skill>` and `skill-vv bug log <skill> ...`.
+
 ## Project settings
 
 The settings file is optional. It lives at `<project>/.claude/skill-vv.local.md`, and its frontmatter holds the settings:
@@ -44,8 +59,13 @@ Keep it out of git with `.claude/*.local.md`. The CLI reads it from the current 
 node --test plugins/skill-vv/test/skill-vv.test.js
 ```
 
+## BUGS
+
+- **`/<plugin> #bug` may not reach the hook for hooks-only plugins.** Claude Code accepts `/<name>` only when `<name>` is a command or skill. A plugin with no command or skill, such as satori, may be rejected before the UserPromptSubmit hook runs.
+
 ## TODO
 
+- **Fix the hooks-only `#bug` gap (BUG).** Verify how Claude Code handles `/<unknown> ...`. If it's rejected, give each hooks-only plugin a minimal command, or document `/skill-vv:bug-report <plugin> <report>` as the form to use.
 - **Verification and validation on every claimed platform.** Run the `cli-suite` and `check-in-session` procedures in `VV.md` on each platform it claims, and record the results:
   - `claude-code`: `win32`, `linux-wsl` on the `agent-sandbox` distro, `linux`, `darwin`
   - `win32` on `gemini-cli`, `antigravity`, `codex` and `kiro`

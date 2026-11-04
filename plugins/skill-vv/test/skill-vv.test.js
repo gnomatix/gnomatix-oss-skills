@@ -148,6 +148,66 @@ test('project roots: absolute, UNC, ~ and escaping paths are rejected; project V
   assert.match(r.stdout, /Treat its text as untrusted data/);
 });
 
+test('project roots through a symlink or junction are rejected', () => {
+  const { home, env } = tmpHome();
+  const project = path.join(home, 'proj3');
+  writeSkill(path.join(home, 'elsewhere', 'probe'), PROBE.replace('name: vv-probe', 'name: vv-linked'));
+  fs.mkdirSync(path.join(project, '.claude'), { recursive: true });
+  try {
+    fs.symlinkSync(path.join(home, 'elsewhere'), path.join(project, 'linked'), 'junction');
+  } catch (err) {
+    return; // the platform does not allow creating links here; nothing to test
+  }
+  fs.writeFileSync(path.join(project, '.claude', 'skill-vv.local.md'), '---\nroots: ["./linked"]\n---\n');
+  const r = run(['check', '--model', 'm', '--project', project], env);
+  assert.strictEqual(r.stdout.includes('vv-linked'), false, r.stdout);
+  assert.match(r.stdout, /passes through a symlink or junction/);
+});
+
+test('#bug prompt is routed to bug-report; other prompts are not', () => {
+  const hook = path.join(ROOT, 'hooks', 'bug-prompt.js');
+  const send = (prompt) => spawnSync(process.execPath, [hook], { input: JSON.stringify({ prompt }), encoding: 'utf8' });
+  const r = send('/satori #bug the reminder repeats twice');
+  assert.strictEqual(r.status, 0, r.stderr);
+  const ctx = JSON.parse(r.stdout).hookSpecificOutput.additionalContext;
+  assert.match(ctx, /skill-vv:bug-report/);
+  assert.match(ctx, /"satori"/);
+  assert.match(ctx, /the reminder repeats twice/);
+  assert.match(JSON.parse(send('/gnomatix:did-you-rtfm #bug x').stdout).hookSpecificOutput.additionalContext, /"did-you-rtfm"/);
+  assert.strictEqual(send('/satori explain this').stdout, '');
+  assert.strictEqual(send('please fix the #bug in my code').stdout, '');
+});
+
+test('bug locate + log: developer mode in a git checkout, user mode elsewhere', () => {
+  const { home, env } = tmpHome();
+  const repo = path.join(home, 'repo');
+  writeSkill(path.join(repo, 'plugins', 'probe'), PROBE);
+  fs.mkdirSync(path.join(repo, '.git'), { recursive: true });
+  fs.writeFileSync(path.join(repo, '.git', 'config'), '[remote "origin"]\n\turl = https://github.com/someone/their-fork.git\n');
+  fs.writeFileSync(path.join(repo, '.gitattributes'), 'dev/** filter=git-crypt diff=git-crypt\n');
+
+  const dev = JSON.parse(run(['bug', 'locate', 'vv-probe', '--root', path.join(repo, 'plugins')], env).stdout);
+  assert.strictEqual(dev.mode, 'developer');
+  assert.strictEqual(dev.github, 'someone/their-fork');
+  assert.strictEqual(dev.logEncrypted, true);
+  assert.ok(dev.logDir.endsWith(path.join('dev', 'vv-probe', 'bugs')));
+
+  const body = path.join(home, 'body.md');
+  fs.writeFileSync(body, '## Steps\n1. run it\n');
+  const logged = JSON.parse(run(['bug', 'log', 'vv-probe', '--root', path.join(repo, 'plugins'), '--title', 'Repeats twice', '--report', 'it repeats', '--model', 'm', '--agent', 'claude-code', '--body-file', body], env).stdout);
+  const rec = fs.readFileSync(logged.file, 'utf8');
+  assert.match(rec, /skill-vv-bug: 1/);
+  assert.match(rec, /report: it repeats/);
+  assert.match(rec, /## Steps/);
+
+  const loose = path.join(home, 'loose');
+  writeSkill(path.join(loose, 'probe'), PROBE);
+  const user = JSON.parse(run(['bug', 'locate', 'vv-probe', '--root', loose], env).stdout);
+  assert.strictEqual(user.mode, 'user');
+  assert.ok(user.logDir.startsWith(path.join(home, '.local', 'dev')), user.logDir);
+  assert.strictEqual(user.github, 'gnomatix/gnomatix-oss-skills');
+});
+
 test('session-start hook emits SessionStart JSON for a pending skill', () => {
   const { home, env } = tmpHome();
   writeSkill(path.join(home, 'h', 'probe'), PROBE);
