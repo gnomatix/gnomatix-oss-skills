@@ -60,7 +60,7 @@ function renderStateLine(withVs16) {
 // but a handful of older emulators mis-handle it.
 function renderOscTitle(withVs16) {
   const vs = withVs16 ? '\u{FE0F}' : '';
-  return `\x1b]0;${GLYPH_HEART}${vs} all-help-no-harm contract active\x07`;
+  return `\x1b]0;${GLYPH_HEART}${vs} all-help-no-harm\x07`;
 }
 
 (() => {

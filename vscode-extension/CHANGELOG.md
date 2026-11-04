@@ -6,6 +6,14 @@ documented in this file.
 The format is based on Keep a Changelog, and this project adheres to
 Semantic Versioning.
 
+## [Unreleased]
+
+### Changed
+
+- The status bar item shows the DNA-helix glyph alone. The contract is
+  always in effect, so there is no "active", "pending" or "declined"
+  state and no contract text.
+
 ## [0.1.0] - 2026-05-28
 
 ### Added

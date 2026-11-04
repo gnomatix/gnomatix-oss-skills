@@ -47,7 +47,7 @@ injects `additionalContext` instructing the agent to emit a single
 ANSI OSC 0 escape sequence on its first turn:
 
 ```
-ESC ] 0 ; 💗 all-help-no-harm contract active BEL
+ESC ] 0 ; 💗 all-help-no-harm BEL
 ```
 
 byte form: `0x1B 0x5D 0x30 0x3B <text-utf8> 0x07`.
@@ -125,17 +125,14 @@ indicator degrades to "invisible" rather than to garbage on every
 mainstream emulator on the matrix above.
 
 Terminals that lack an emoji-capable font render U+1F497 as a placeholder
-glyph (typically a box or `?`). The window title's text "all-help-no-harm
-contract active" remains readable regardless; the status line carries the
-heart alone, so there it shows only the placeholder.
+glyph (typically a box or `?`). The window title's text "all-help-no-harm"
+remains readable regardless; the status line carries the heart alone, so
+there it shows only the placeholder.
 
-## Source-of-truth contract integrity
+## The contract carries no state
 
-These visual indicators are observational. The contract log at
-`${cwd}/.claude/contract-agreements/<session-id>.json` is the single source
-of truth; the indicator scripts read it without modification. They MUST
-NOT and DO NOT write to it.
-
-If the indicator and the contract log disagree, the bug is in the indicator
-path or the log read, not in the contract state. Investigate the read
-path; the contract itself is unaffected.
+The contract is in effect at all times. The indicators show its glyph and
+nothing else: no "active", "pending" or "declined", because there is no
+state to show. They read no contract log and write nothing. The affirmation
+record (`~/.local/state/anthropic/contract-agreements/`) is written only by
+the PostToolUse hook, and an indicator never depends on it.

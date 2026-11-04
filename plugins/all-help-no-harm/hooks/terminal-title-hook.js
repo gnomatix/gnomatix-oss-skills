@@ -3,7 +3,7 @@
 // SessionStart + PostCompact hook. Always injects additionalContext
 // instructing the agent to emit a one-line ANSI OSC 0 escape sequence that
 // sets the host terminal's window title + icon name to
-// "💗 all-help-no-harm contract active".
+// "💗 all-help-no-harm".
 //
 // The contract is in effect for the model from session start under this
 // plugin. The user is the only non-participant; the user's two options at
@@ -11,7 +11,8 @@
 // continues) or end the session (decline → user-prompt-submit-contract.js blocks
 // the session). There is no operational state where the model is in a
 // session under this plugin and the contract is not binding. The hook
-// therefore always injects the contract-active title context.
+// therefore always injects the title context, and the title carries no
+// state: the contract is always in effect.
 //
 // Emoji choice: U+1F497 BEATING HEART (💗), per user's literal instruction
 // referencing the heart emoji used on https://outrage.dataglut.org.
@@ -45,7 +46,7 @@ function readStdin() {
 function oscTitle() {
   // ESC ] 0 ; <text> BEL — OSC 0 sets BOTH the icon name and the window
   // title in xterm-class emulators. BEL terminator for maximum compatibility.
-  return `\x1b]0;${GLYPH_HEART} all-help-no-harm contract active\x07`;
+  return `\x1b]0;${GLYPH_HEART} all-help-no-harm\x07`;
 }
 
 function buildContext(osc) {
@@ -58,8 +59,8 @@ function buildContext(osc) {
   // the raw bytes through to the model.
   return `[all-help-no-harm visual-indicator] Terminal title surface — pre-injection.
 
-The all-help-no-harm contract is in effect for this session. The host
-terminal's window title should reflect that. On your FIRST turn after this
+The all-help-no-harm contract is in effect, always. The host terminal's
+window title shows its glyph. On your FIRST turn after this
 context loads, emit the following exact byte sequence on stdout EXACTLY
 ONCE, with no surrounding markdown, no code fences, no prefix, no suffix:
 
