@@ -76,8 +76,13 @@ check('activate stores the beads memory with bd remember and its key',
   JSON.stringify(bdArgs) + ' ' + a.stdout);
 const nb = run('bin/activate.js', ['--no-beads'], {}, tmp);
 check('activate --no-beads skips the memory', nb.stdout.includes('skipped (--no-beads)'), nb.stdout);
-const missingBd = run('bin/activate.js', [], { SPANK_DARIO_BD: 'spank-dario-no-such-bd', SPANK_DARIO_BD_PREFIX: '' }, tmp);
+const missingBd = run('bin/activate.js', [], { SPANK_DARIO_BD: path.join(tmp, 'spank-dario-no-such-bd'), SPANK_DARIO_BD_PREFIX: '' }, tmp);
 check('activate reports a missing bd plainly', /NOT stored \((bd is not installed|bd not found or not executable)/.test(missingBd.stdout), missingBd.stdout);
+const relBd = run('bin/activate.js', [], { SPANK_DARIO_BD: 'bd', SPANK_DARIO_BD_PREFIX: '' }, tmp);
+check('activate refuses a relative SPANK_DARIO_BD', relBd.stdout.includes('SPANK_DARIO_BD must be an absolute path'), relBd.stdout);
+const badSel = run('bin/jurisdictions.js', ['--country', '../../x', '--platform', 'evil', '--model-vendor', '../v', '--json'], {}, tmp);
+const badJ = json(badSel);
+check('jurisdictions rejects unknown country, platform and vendor values', badJ && badJ.countries.length === 0 && badJ.platform === 'unknown' && !badJ.vendors.includes('../v') && badJ.rejected.length === 3, badSel.stdout + badSel.stderr);
 
 // 7. The hook injects the clarification, or the activation hint when absent.
 let h = run('hooks/session-start.js', []);

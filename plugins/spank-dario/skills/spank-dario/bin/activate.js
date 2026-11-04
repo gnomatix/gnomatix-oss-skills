@@ -22,8 +22,14 @@ const MEMORY_KEY = 'spank-dario-clarification';
 
 function storeBeadsMemory(summary) {
   const cmd = process.env.SPANK_DARIO_BD || 'bd';
+  // An override must be an absolute path, and the bare name is looked up from the home
+  // directory with the current folder excluded, so a planted bd in the project can't run.
+  if (process.env.SPANK_DARIO_BD && !path.isAbsolute(cmd)) return { ok: false, why: 'SPANK_DARIO_BD must be an absolute path' };
   const pre = process.env.SPANK_DARIO_BD_PREFIX ? [process.env.SPANK_DARIO_BD_PREFIX] : [];
-  const r = spawnSync(cmd, [...pre, 'remember', summary, '--key', MEMORY_KEY], { encoding: 'utf8', shell: false, timeout: 30000 });
+  const r = spawnSync(cmd, [...pre, 'remember', summary, '--key', MEMORY_KEY], {
+    encoding: 'utf8', shell: false, timeout: 30000, cwd: os.homedir(),
+    env: { ...process.env, NoDefaultCurrentDirectoryInExePath: '1' },
+  });
   if (r.error) return { ok: false, why: r.error.code === 'ENOENT' ? 'bd is not installed' : r.error.code === 'EACCES' ? 'bd not found or not executable on PATH (EACCES)' : (r.error.code || r.error.message) };
   if (r.status !== 0) return { ok: false, why: (r.stderr || r.stdout || `exit ${r.status}`).trim().split(/\r?\n/).filter(l => !/beads\.role|git config beads\.role/.test(l)).pop() || `exit ${r.status}` };
   return { ok: true };

@@ -39,6 +39,16 @@ const PLATFORM_VENDOR = {
   'antigravity': 'google',
   'kiro': 'aws',
 };
+// Only these values may reach a reference path or the clarification text.
+const KNOWN_VENDORS = new Set(Object.values(PLATFORM_VENDOR));
+const COUNTRY_RE = /^[a-z]{2}$/;
+function keepValid(values, test, label, rejected) {
+  return values.filter(v => {
+    if (test(v)) return true;
+    rejected.push(`${label} ${JSON.stringify(String(v).slice(0, 40))}`);
+    return false;
+  });
+}
 
 function configFiles(cwd) {
   const base = process.env.XDG_CONFIG_HOME || path.join(os.homedir(), '.config');
@@ -117,10 +127,14 @@ function select(args, cwd) {
   if (!countries.length && process.env.SPANK_DARIO_COUNTRY) { countries = asList(process.env.SPANK_DARIO_COUNTRY.split(',')); countrySource = 'environment'; }
   if (!countries.length && cfg.countries.length) { countries = cfg.countries; countrySource = 'config'; }
   if (!countries.length) { const l = localeCountry(); if (l) { countries = [l]; countrySource = 'detected'; } }
+  const rejected = [];
+  countries = keepValid(countries, c => COUNTRY_RE.test(c), 'country', rejected);
   if (!countries.length) countrySource = 'none';
 
-  const platform = args.platform || cfg.platform || (process.env.CLAUDECODE ? 'claude-code' : 'unknown');
-  const vendors = new Set([...cfg.model_vendors, ...args.vendors]);
+  let platform = args.platform || cfg.platform || (process.env.CLAUDECODE ? 'claude-code' : 'unknown');
+  if (platform !== 'unknown' && !PLATFORM_VENDOR[platform]) { rejected.push(`platform ${JSON.stringify(String(platform).slice(0, 40))}`); platform = 'unknown'; }
+  const vendors = new Set(keepValid([...cfg.model_vendors, ...args.vendors], v => KNOWN_VENDORS.has(v), 'model vendor', rejected));
+  for (const r of rejected) process.stderr.write(`spank-dario: ignored unknown ${r}\n`);
   if (PLATFORM_VENDOR[platform]) vendors.add(PLATFORM_VENDOR[platform]);
 
   const want = [['int/berne.md', 'Berne Convention']];
@@ -155,11 +169,12 @@ function select(args, cwd) {
   for (const [rel, reason] of want) {
     if (seen.has(rel)) continue;
     seen.add(rel);
-    const abs = path.join(REF, ...rel.split('/'));
+    const abs = path.resolve(REF, ...rel.split('/'));
+    if (!abs.startsWith(path.resolve(REF) + path.sep)) { rejected.push(`path ${JSON.stringify(rel)}`); continue; }
     (isFile(abs) ? active : missing).push({ file: abs, reason });
   }
 
-  return { countries, country_source: countrySource, platform, vendors: [...vendors], config: cfg.sources, active, missing };
+  return { countries, country_source: countrySource, platform, vendors: [...vendors], config: cfg.sources, active, missing, rejected };
 }
 
 function main() {
