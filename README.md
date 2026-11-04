@@ -42,6 +42,10 @@ A collection of [Agent Skills](https://agentskills.io) and Claude Code plugins f
 - [`open-and-honest-agent`](plugins/open-and-honest-agent/): The agent writes down its built-in assumptions about you, your goals and itself at the start of the work, and logs each time it acts on one, so you can correct them early.
 - [`agent-darktriad-check`](plugins/agent-darktriad-check/): Scores every reply the agent gives you for evasion, gaslighting, sycophancy, false authority and similar tactics with Brett Whitty's KontentKop scorer, and logs the scores. A companion skill names nine evasion patterns so the agent avoids them. Set a threshold, and a reply that scores at or above it goes back to the agent, marked up, instead of reaching you.
 
+### The sources behind your claims
+
+- [`citation-farm-audit`](plugins/citation-farm-audit/): Before a social-science or policy source backs a claim in your work, the agent traces who wrote it, who paid for it, who cites it and whether its chain of citations reaches real data, and flags citation farms, closed citation loops and grey literature passed off as evidence. A companion skill, `source-provenance`, gives every source it pulls a card of verifiable facts on its funding, authors, data and method. Every side of a debate gets the same checks.
+
 ### Skills you can rely on
 
 - [`skill-vv`](plugins/skill-vv/): Before you first use a skill, tells you what it needs and whether it has been tested on your model and platform. Typing `/<skill> #bug <what went wrong>` reports a bug, which is then fixed or explained to you.
