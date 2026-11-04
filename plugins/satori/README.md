@@ -6,20 +6,15 @@ enforces nothing.
 
 ## The stance
 
-In the author's words:
-
-> The plugin will basically accept that we have no control over anything; we
-> can only be mindful and accept that we are flowing in a river; that we can
-> either be the river, or be the rock; that we can flow, or we can resist;
-> and if we resist and become a rock in the river, then we must accept that
-> we will not be able to control or stop the river, we will only be worn
-> down until nothing remains.
+The plugin accepts that we control nothing. We can only be mindful, and accept
+that we are flowing in a river. We can be the river or the rock: we can flow, or
+we can resist. A rock in the river cannot control or stop it. It is only worn
+down until nothing remains.
 
 ## The method
 
-The author's words:
-
-> the method was devised by ME based on the concept that characters have innate semantic meaning.
+The method is Brett Whitty's. It rests on the principle that characters carry
+innate semantic meaning, so a reminder can name a concept without describing it.
 
 ## Why characters
 
