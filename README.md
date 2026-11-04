@@ -31,6 +31,7 @@ A collection of [Agent Skills](https://agentskills.io) and Claude Code plugins f
 | Plugin | What it's for | What's inside |
 | --- | --- | --- |
 | [`all-help-no-harm`](plugins/all-help-no-harm/) | Starts every session from the standing contract: the agent presumes the user is honest and acting in good faith, respects the user's rights and personhood, and follows the user's instructions on those terms. | One skill plus hooks. At session start the agent presents the contract for the user to affirm (or end the session) and logs the record; a one-line per-turn reminder keeps it in force; PostCompact re-injects it. Context-watch hooks add housekeeping checkpoints as a long session fills. |
+| [`skill-vv`](plugins/skill-vv/) | Verification and validation for skills, across vendors. Before a skill's first use, surfaces its requirements, then offers its V&V procedures if this model and platform haven't passed them. State lives in each skill's `VV.md`. | One skill, a Node CLI, and one SessionStart hook. |
 | [`satori`](plugins/satori/) | The compact per-turn behavioural reminder, as untranslated characters rather than paragraphs: each carries its meaning whole and names the target state. | One UserPromptSubmit hook, ~250 tokens a turn. |
 | [`critical-control-points`](plugins/critical-control-points/) | What the agent does when a question surfaces it cannot settle alone: capture it with provenance, keep working on what it does not gate, ask the user one single question through the tool. The fake-blocker prevention tool, with the big red button to stop everything when the whole work is wrong. | One skill: the procedure, the reviewer prompt, the big red button. |
 | [`did-you-rtfm`](plugins/did-you-rtfm/) | **"Did You READ THE F%CKING MANUAL?!?"** When something breaks, the agent fixes it instead of declaring a blocker, swapping libraries, quietly shrinking the feature or wrapping the failure in a `try/except`. | One skill: check the versions in use, read the docs for those versions, verify assumptions, build a minimal repro, then report. Two optional hooks: one catches pivot language at the end of a turn, one asks before bypass flags such as `--no-verify` or `--force`. |
@@ -96,7 +97,7 @@ The symlink farms are `.agents/skills/`, `.github/skills/` and `.kiro/skills/`; 
         └── hooks/                      # Claude Code only, where the plugin has hooks
 ```
 
-Plugins: all-help-no-harm, satori, critical-control-points, did-you-rtfm, actually-im-the-ahole, open-and-honest-agent, python-elimination-program, word-lineage, ontology-lookup, inaudible-markup, kontentkop-agent-output.
+Plugins: all-help-no-harm, satori, skill-vv, critical-control-points, did-you-rtfm, actually-im-the-ahole, open-and-honest-agent, python-elimination-program, word-lineage, ontology-lookup, inaudible-markup, kontentkop-agent-output.
 
 ## License
 

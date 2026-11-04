@@ -1,0 +1,16 @@
+{
+  "description": "skill-vv: at session start, surface unmet skill requirements, then any V&V not yet passed for this session's model and platform.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/session-start.js",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
