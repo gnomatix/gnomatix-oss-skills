@@ -1,0 +1,43 @@
+{
+  "retrieved": "2026-11-04T10:26:24.558Z",
+  "api": "https://api.gsa.gov/acquisition/calc/v3/api/ceilingrates/",
+  "filter": "min_years_experience >= 10",
+  "results": {
+    "software engineer": {
+      "n": 811,
+      "matched_total": 4897,
+      "p25": 151.63,
+      "median": 178.59,
+      "p75": 217.62,
+      "p90": 263.2,
+      "max": 465.5964
+    },
+    "systems administrator": {
+      "n": 280,
+      "matched_total": 2683,
+      "p25": 118.8,
+      "median": 147.79,
+      "p75": 183.06,
+      "p90": 218.94,
+      "max": 358
+    },
+    "bioinformatics": {
+      "n": 7,
+      "matched_total": 45,
+      "p25": 188.42,
+      "median": 200.26,
+      "p75": 289.69,
+      "p90": 329.76,
+      "max": 340.7746
+    },
+    "data scientist": {
+      "n": 285,
+      "matched_total": 1552,
+      "p25": 177.16,
+      "median": 207.38,
+      "p75": 256.91,
+      "p90": 297.59,
+      "max": 449.62
+    }
+  }
+}

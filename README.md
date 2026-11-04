@@ -40,6 +40,7 @@ A collection of [Agent Skills](https://agentskills.io) and Claude Code plugins f
 - [`hidden-libel-check`](plugins/hidden-libel-check/): Nothing goes out under your name (commit messages, READMEs, comments, PR descriptions, docs) that misrepresents you: it's checked before it ships.
 - [`open-and-honest-agent`](plugins/open-and-honest-agent/): You see the built-in assumptions up front, and each time one is acted on, so you can correct them early instead of discovering them later.
 - [`agent-darktriad-check`](plugins/agent-darktriad-check/): You get KontentKop psycholinguistic scores on the replies you receive, so you can see how you're being talked to.
+- [`spank-dario`](plugins/spank-dario/): No software tool gets written in as an author of your work: commit trailers, PR badges and "generated with" lines are kept out, and the copyright and moral-rights law of your country is on file to show why.
 
 ### Skills you can rely on
 
@@ -107,7 +108,7 @@ The symlink farms are `.agents/skills/`, `.github/skills/` and `.kiro/skills/`; 
         └── hooks/                      # Claude Code only, where the plugin has hooks
 ```
 
-Plugins: all-help-no-harm, satori, skill-vv, critical-control-points, did-you-rtfm, hidden-libel-check, open-and-honest-agent, python-elimination-program, word-lineage, ontology-lookup, inaudible-markup, agent-darktriad-check.
+Plugins: all-help-no-harm, satori, skill-vv, critical-control-points, did-you-rtfm, hidden-libel-check, open-and-honest-agent, python-elimination-program, word-lineage, ontology-lookup, inaudible-markup, agent-darktriad-check, spank-dario.
 
 ## License
 

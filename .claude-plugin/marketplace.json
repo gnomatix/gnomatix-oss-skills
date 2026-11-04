@@ -78,6 +78,12 @@
       "description": "Verification and validation for skills, across vendors. Before a skill's first real use in a session, surfaces its requirements and offers install or configuration, then checks whether the current model and platform have passed the skill's V&V procedures and offers to run them. State lives in a VV.md file with YAML frontmatter beside each skill; a Node CLI reads and records it for any agent, and a SessionStart hook runs the check on Claude Code.",
       "category": "development",
       "source": "./plugins/skill-vv"
+    },
+    {
+      "name": "spank-dario",
+      "description": "Keeps false claims of authorship by software tools out of commits, PRs and documents, with verified copyright and moral-rights references by jurisdiction.",
+      "category": "development",
+      "source": "./plugins/spank-dario"
     }
   ]
 }

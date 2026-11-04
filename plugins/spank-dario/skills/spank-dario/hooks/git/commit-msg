@@ -1,0 +1,4 @@
+#!/bin/sh
+# spank-dario: git commit-msg hook wrapper. Git runs hooks with sh on every platform,
+# including Git for Windows, so this wrapper hands the message file to the Node hook.
+exec node "$(dirname "$0")/../commit-msg-no-tool-attribution.js" "$1"

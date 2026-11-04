@@ -1,0 +1,17 @@
+# Google terms: Japan
+
+Every entry was read and quoted from its primary source. Step 7 of the skill refreshes this file each time the skill runs.
+
+- The US-published documents in `../../us/vendor-terms/google.md` apply.
+
+## TOS False Claims / Conflicts with Jurisdictional Laws Which Must Be Respected
+
+Every statement in this vendor's terms and tools on file that is false under the law, or that the vendor's own terms or tools contradict. Each is quoted exactly from `../../us/vendor-terms/google.md`, which holds the same documents, with Japanese law stated for each.
+
+- **Origin.** Vendor statement: listed as deceptive: "providing services that appear to originate from you (or someone else) when they actually originate from us". False. Japanese law: an author "means a person who creates a work" (art. 2(1)(ii)). Other jurisdictions: their `skill.md`, under "Tool output isn't human work".
+- **Human work.** Vendor statement: "misleading others into thinking that generative AI content was created by a human" and "claiming it was created solely by a human, in order to deceive". False. Japanese law: an author "means a person who creates a work" (art. 2(1)(ii)). Other jurisdictions: their `skill.md`, under "Tool output isn't human work".
+- **Rights over the same content.** Vendor statement: "You acknowledge that Google may generate the same or similar content for others and that we reserve all rights to do so." False. The vendor holds no right in the user's work, so the "if any" assignment conveys nothing. Other jurisdictions: their `skill.md`, under "The vendor's assignment means the vendor owned the work".
+- **Responsibility against origin.** The Gemini API terms: "you are solely responsible for the actions and tasks performed by the service". Antigravity: "You are solely responsible for: (a) the actions and tasks performed by an AI Agent". The vendor's own claim that the work originates "from us" contradicts them.
+- **Agentic actions.** Vendor statement: "Agentic AI Actions are not Generated Output". False. No Japanese provision on file for this point. In Canada, a tribunal held: "It should be obvious to Air Canada that it is responsible for all the information on its website. It makes no difference whether the information comes from a static page or a chatbot." (*Moffatt v. Air Canada*, 2024 BCCRT 149, para. 27; ../../ca/skill.md) Other jurisdictions: their `skill.md`, under "The software, not its vendor, answers for what it says".
+- **License.** Vendor statement: Unpaid Gemini API: "Google uses the content you submit to the Services and any generated responses to provide, improve, and develop Google products and services". Antigravity: "We use Interactions to evaluate, develop, and improve Google and Alphabet research, products, services and machine learning technologies." False. Japanese law: "Author's moral rights are exclusive to that author, and are inalienable." (art. 59) Other jurisdictions: their `skill.md`, under "The vendor's terms bind the user over the law".
+- **Choice of law.** Vendor statement: "California law will govern these terms and all disputes". False. Japanese law: "Author's moral rights are exclusive to that author, and are inalienable." (art. 59) Other jurisdictions: their `skill.md`, under "The vendor's terms bind the user over the law".
