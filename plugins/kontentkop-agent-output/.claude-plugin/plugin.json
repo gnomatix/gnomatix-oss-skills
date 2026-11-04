@@ -1,8 +1,0 @@
-{
-  "name": "kontentkop-agent-output",
-  "description": "Runs the owner's KontentKop psycholinguistic scorer over the agent's own replies instead of only over user prompts. A Stop / SubagentStop hook pipes the agent's last reply through a locally built KontentKop binary and logs the per-metric scores, Body Count and CriticMarkup annotation; it passes through by default and, when KONTENTKOP_AGENT_OUTPUT_BLOCK_AT is set, blocks at that Body Count and hands the annotated reply back to the agent. A companion skill names nine evasion patterns (unasked-for hedging about third parties, intent attribution, reframing, paraphrase drift, vague admission, acknowledging instead of executing, premise injection, proposal-as-permission, appeal to a rule not shown) so the agent avoids them before the hook sees them, and says which ones KontentKop's metrics can and cannot catch.",
-  "author": {
-    "name": "Brett Whitty",
-    "email": "brett@gnomatix.com"
-  }
-}

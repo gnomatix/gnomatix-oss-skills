@@ -1,4 +1,4 @@
-# kontentkop-agent-output
+# agent-darktriad-check
 
 > Runs the [KontentKop](https://github.com/brettwhitty/KontentKop-Bake-Off) psycholinguistic scorer over the **agent's own replies**, not only over user prompts. A Stop / SubagentStop hook scores each finished reply and logs the per-metric scores, Body Count and CriticMarkup annotation. A companion skill names nine evasion patterns so the agent avoids them before the hook sees them.
 
@@ -32,8 +32,8 @@ KontentKop was built to score incoming prompts for manipulation, coercion and ev
 
 | Part | Role |
 |---|---|
-| [`skills/kontentkop-agent-output/SKILL.md`](skills/kontentkop-agent-output/SKILL.md) | The nine patterns, each with a definition, an example shape, a check, and the KontentKop metrics that can and cannot catch it. Also says how to handle a flagged reply and how this plugin fits with `did-you-rtfm` and `hidden-libel-check`. |
-| [`hooks/kontentkop-agent-output.js`](hooks/kontentkop-agent-output.js) | `Stop` / `SubagentStop` hook. Takes the last reply from `last_assistant_message`, falling back to the transcript. Pipes it to the KontentKop binary on stdin, parses the summary line and annotation, appends one JSON line to the log, and passes through, or blocks if told to. |
+| [`skills/agent-darktriad-check/SKILL.md`](skills/agent-darktriad-check/SKILL.md) | The nine patterns, each with a definition, an example shape, a check, and the KontentKop metrics that can and cannot catch it. Also says how to handle a flagged reply and how this plugin fits with `did-you-rtfm` and `hidden-libel-check`. |
+| [`hooks/agent-darktriad-check.js`](hooks/agent-darktriad-check.js) | `Stop` / `SubagentStop` hook. Takes the last reply from `last_assistant_message`, falling back to the transcript. Pipes it to the KontentKop binary on stdin, parses the summary line and annotation, appends one JSON line to the log, and passes through, or blocks if told to. |
 | [`tests/hook.test.js`](tests/hook.test.js) | `node:test` suite: input shapes, a missing / crashing / hanging scorer, logging, blocking only when enabled, one fixture per pattern plus one clean reply. |
 | [`scripts/score-fixtures.js`](scripts/score-fixtures.js) | Runs the fixture replies through a real KontentKop build, to check the skill's metric mapping. |
 
@@ -57,8 +57,8 @@ Then set:
 |---|---|
 | `KONTENTKOP_BIN` | Absolute path to the built binary. Required. Unset or missing: the hook logs `scorer.status: not-configured` / `not-found` and passes through. |
 | `KONTENTKOP_CONFIG_DIR` | Directory to run the scorer from, so its `config.yaml` is used. Default: the binary's directory. Copying the repo's `config.yaml` next to the binary is enough. |
-| `KONTENTKOP_AGENT_OUTPUT_BLOCK_AT` | Number in (0, 1]. When set, a reply whose Body Count is at or above it blocks the stop, and the annotated reply goes back to the agent as the block reason. Unset: never block. |
-| `KONTENTKOP_AGENT_OUTPUT_LOG_DIR` | Absolute log directory. Default below. |
+| `AGENT_DARKTRIAD_CHECK_BLOCK_AT` | Number in (0, 1]. When set, a reply whose Body Count is at or above it blocks the stop, and the annotated reply goes back to the agent as the block reason. Unset: never block. |
+| `AGENT_DARKTRIAD_CHECK_LOG_DIR` | Absolute log directory. Default below. |
 | `KONTENTKOP_TIMEOUT_MS` | Scorer timeout, default 15000. The hook's own timeout in `hooks.json` is 30 s. |
 
 A relative `KONTENTKOP_BIN` is refused. The hook does not search `PATH`.
@@ -67,8 +67,8 @@ A relative `KONTENTKOP_BIN` is refused. The hook does not search `PATH`.
 
 One JSON line per Stop / SubagentStop in `agent-output.jsonl` under:
 
-- Linux / macOS: `$XDG_STATE_HOME/kontentkop-agent-output/`, or `~/.local/state/kontentkop-agent-output/`
-- Windows: `%LOCALAPPDATA%\kontentkop-agent-output\`
+- Linux / macOS: `$XDG_STATE_HOME/agent-darktriad-check/`, or `~/.local/state/agent-darktriad-check/`
+- Windows: `%LOCALAPPDATA%\agent-darktriad-check\`
 
 Fields: `ts`, `hook_event_name`, `session_id`, `agent_id`, `agent_type`, `cwd`, `reply_source`, `reply_chars`, `reply_truncated`, `reply_sha256`, `scorer` (`status`, `bin`, `cwd`, `exit_code`, `stderr`, `error`), `flagged`, `bc`, `scores`, `summary`, `annotated`, `block_at`, `blocked`.
 
@@ -78,7 +78,7 @@ Fields: `ts`, `hook_event_name`, `session_id`, `agent_id`, `agent_type`, `cwd`, 
 
 ## How it works
 
-1. Claude Code runs `node ${CLAUDE_PLUGIN_ROOT}/hooks/kontentkop-agent-output.js` on Stop and SubagentStop, with the hook JSON on stdin.
+1. Claude Code runs `node ${CLAUDE_PLUGIN_ROOT}/hooks/agent-darktriad-check.js` on Stop and SubagentStop, with the hook JSON on stdin.
 2. The reply text comes from `last_assistant_message`. Fallbacks: for SubagentStop, the last assistant text record in `agent_transcript_path`; then the same in `transcript_path`. Transcript parsing tolerates CRLF line endings.
 3. The scorer runs with `child_process.spawnSync(KONTENTKOP_BIN, [], { input, cwd, shell: false, windowsHide: true, timeout })`.
 4. The first output line is matched against `[...] Text exceeds BC threshold`. Scores and `BC` are read from it, accepting both the Go code's `,BC=` and the bake-off README's `:BC=`. Everything after the first blank line is the CriticMarkup annotation.
@@ -93,7 +93,7 @@ This repository's `CLAUDE.md` prohibits `child_process` in hooks by default, bec
 ## Tests
 
 ```sh
-node --test plugins/kontentkop-agent-output/tests/hook.test.js
+node --test plugins/agent-darktriad-check/tests/hook.test.js
 ```
 
 Node 20+ (`node:test`). The suite uses [`tests/fixtures/fake-scorer.js`](tests/fixtures/fake-scorer.js), a test double that reproduces KontentKop's **output format only** and does no scoring. It is run through `process.execPath`, so the process handling is exercised on every platform without the Go binary.
@@ -101,14 +101,14 @@ Node 20+ (`node:test`). The suite uses [`tests/fixtures/fake-scorer.js`](tests/f
 To check the skill's metric mapping against the real scorer:
 
 ```sh
-KONTENTKOP_BIN=/abs/path/to/kontentkop node plugins/kontentkop-agent-output/scripts/score-fixtures.js
+KONTENTKOP_BIN=/abs/path/to/kontentkop node plugins/agent-darktriad-check/scripts/score-fixtures.js
 ```
 
 ## Install
 
 ```sh
 /plugin marketplace add github:gnomatix/gnomatix-oss-skills
-/plugin install kontentkop-agent-output@gnomatix-oss-skills
+/plugin install agent-darktriad-check@gnomatix-oss-skills
 ```
 
 Then build KontentKop and set `KONTENTKOP_BIN` in the environment Claude Code starts in, or in the `env` block of `settings.json`. The skill works without the hook and on other CLIs. The hook is Claude Code only.

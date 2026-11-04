@@ -1,10 +1,10 @@
-// kontentkop-agent-output.js — Stop / SubagentStop hook
+// agent-darktriad-check.js — Stop / SubagentStop hook
 //
 // Runs the owner's KontentKop scorer (github.com/brettwhitty/KontentKop-Bake-Off)
 // over the agent's own last reply, not over the user's prompt, and logs the
 // result: per-metric scores, Body Count (BC) and the CriticMarkup annotation.
 //
-// Default: log and pass through. Setting KONTENTKOP_AGENT_OUTPUT_BLOCK_AT to a
+// Default: log and pass through. Setting AGENT_DARKTRIAD_CHECK_BLOCK_AT to a
 // number in (0, 1] blocks the stop when the parsed BC is at or above that
 // number, and returns the annotated reply as the block reason so the agent
 // sees exactly which regions were flagged.
@@ -20,9 +20,9 @@
 //                                     working directory and falls back to its
 //                                     built-in defaults. Default: the
 //                                     directory that holds KONTENTKOP_BIN.
-//   KONTENTKOP_AGENT_OUTPUT_BLOCK_AT  BC at or above which to block. Unset:
+//   AGENT_DARKTRIAD_CHECK_BLOCK_AT  BC at or above which to block. Unset:
 //                                     never block.
-//   KONTENTKOP_AGENT_OUTPUT_LOG_DIR   absolute directory for the JSONL log.
+//   AGENT_DARKTRIAD_CHECK_LOG_DIR   absolute directory for the JSONL log.
 //                                     Default: the user's state directory
 //                                     (see stateDir below).
 //   KONTENTKOP_TIMEOUT_MS             scorer timeout, default 15000.
@@ -56,7 +56,7 @@ const os = require('os');
 const crypto = require('crypto');
 const childProcess = require('child_process');
 
-const HOOK = 'kontentkop-agent-output';
+const HOOK = 'agent-darktriad-check';
 const MAX_REPLY_CHARS = 100000;
 const MAX_STDERR_CHARS = 2000;
 const PATH_WARN_LEN = 240;
@@ -165,14 +165,14 @@ function appendJsonl(targetPath, record) {
 
 // ── state directory ─────────────────────────────────────────────────────
 
-// Where logs go when KONTENTKOP_AGENT_OUTPUT_LOG_DIR is not set:
-//   Windows:      %LOCALAPPDATA%\kontentkop-agent-output
-//   Linux/macOS:  $XDG_STATE_HOME/kontentkop-agent-output, or
-//                 ~/.local/state/kontentkop-agent-output
+// Where logs go when AGENT_DARKTRIAD_CHECK_LOG_DIR is not set:
+//   Windows:      %LOCALAPPDATA%\agent-darktriad-check
+//   Linux/macOS:  $XDG_STATE_HOME/agent-darktriad-check, or
+//                 ~/.local/state/agent-darktriad-check
 function stateDir(env, platform, homedir) {
-  const override = env.KONTENTKOP_AGENT_OUTPUT_LOG_DIR;
+  const override = env.AGENT_DARKTRIAD_CHECK_LOG_DIR;
   if (override && path.isAbsolute(override)) return override;
-  if (override) warn('KONTENTKOP_AGENT_OUTPUT_LOG_DIR is not absolute; using default');
+  if (override) warn('AGENT_DARKTRIAD_CHECK_LOG_DIR is not absolute; using default');
   const home = homedir || env.HOME || env.USERPROFILE || '';
   if (platform === 'win32') {
     const base = env.LOCALAPPDATA && path.isAbsolute(env.LOCALAPPDATA)
@@ -310,11 +310,11 @@ function parseScorerOutput(stdout) {
 // ── decision ────────────────────────────────────────────────────────────
 
 function blockThreshold(env) {
-  const raw = env.KONTENTKOP_AGENT_OUTPUT_BLOCK_AT;
+  const raw = env.AGENT_DARKTRIAD_CHECK_BLOCK_AT;
   if (raw === undefined || raw === null || String(raw).trim() === '') return null;
   const v = Number(String(raw).trim());
   if (!Number.isFinite(v) || v <= 0 || v > 1) {
-    warn(`KONTENTKOP_AGENT_OUTPUT_BLOCK_AT=${raw} is not a number in (0, 1]; blocking stays off`);
+    warn(`AGENT_DARKTRIAD_CHECK_BLOCK_AT=${raw} is not a number in (0, 1]; blocking stays off`);
     return null;
   }
   return v;
@@ -337,7 +337,7 @@ function blockReason(parsed, threshold) {
     '',
     parsed.annotated || '(scorer returned no annotation)',
     '',
-    'Check each flagged region against the nine patterns in the `kontentkop-agent-output` skill.',
+    'Check each flagged region against the nine patterns in the `agent-darktriad-check` skill.',
     'If a region is a real evasion, rewrite the reply without it. If it is a false positive',
     '(for example, a plain report of an action the user authorised trips false_authority\'s',
     '"unilateral action" pattern), say so to the user in one line and continue.',

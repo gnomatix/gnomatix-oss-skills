@@ -1,0 +1,27 @@
+{
+  "description": "agent-darktriad-check — Stop / SubagentStop hook that runs the KontentKop scorer over the agent's own last reply and logs scores, Body Count and the CriticMarkup annotation to the user's state directory. Log and pass through by default; AGENT_DARKTRIAD_CHECK_BLOCK_AT=<BC> turns on blocking at that Body Count.",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/agent-darktriad-check.js",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/agent-darktriad-check.js",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

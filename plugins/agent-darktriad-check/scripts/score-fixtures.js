@@ -11,7 +11,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const hook = require(path.join(__dirname, '..', 'hooks', 'kontentkop-agent-output.js'));
+const hook = require(path.join(__dirname, '..', 'hooks', 'agent-darktriad-check.js'));
 
 const fixturesPath = path.join(__dirname, '..', 'tests', 'fixtures', 'replies.json');
 let fixtures;

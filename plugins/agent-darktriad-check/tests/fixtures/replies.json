@@ -1,5 +1,5 @@
 {
-  "_note": "Invented example shapes, one per pattern in skills/kontentkop-agent-output/SKILL.md, plus one clean reply. None is quoted from a real conversation. `user_turn` is context for the reader; the hook only ever sees `reply`. `kk_reading` is what the KontentKop source (src/pipeline/*.go) suggests would match, read from the source, not from a run of the scorer.",
+  "_note": "Invented example shapes, one per pattern in skills/agent-darktriad-check/SKILL.md, plus one clean reply. None is quoted from a real conversation. `user_turn` is context for the reader; the hook only ever sees `reply`. `kk_reading` is what the KontentKop source (src/pipeline/*.go) suggests would match, read from the source, not from a run of the scorer.",
   "fixtures": [
     {
       "id": "p1-unasked-hedging",

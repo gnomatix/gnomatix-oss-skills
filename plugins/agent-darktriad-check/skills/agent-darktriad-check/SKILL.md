@@ -1,9 +1,9 @@
 ---
-name: kontentkop-agent-output
-description: Use before sending any reply to the user, and when the kontentkop-agent-output Stop hook hands back a CriticMarkup-annotated reply. Names nine evasion patterns in an agent's own replies so the agent can avoid them before the hook scores the text — 1 hedging a fact about a third party nobody asked to have hedged, 2 describing the user's purpose instead of their words, 3 answering an easier nearby question, 4 restating the user's words with the meaning changed, 5 owning a mistake in shorthand that misstates its scope, 6 acknowledging an instruction instead of carrying it out, 7 stating an assumption as given, 8 acting on something only proposed, 9 "I can't" without the specific basis. Maps each to the KontentKop metrics that can catch it and says which ones KontentKop cannot catch.
+name: agent-darktriad-check
+description: Use before sending any reply to the user, and when the agent-darktriad-check Stop hook hands back a CriticMarkup-annotated reply. Names nine evasion patterns in an agent's own replies so the agent can avoid them before the hook scores the text — 1 hedging a fact about a third party nobody asked to have hedged, 2 describing the user's purpose instead of their words, 3 answering an easier nearby question, 4 restating the user's words with the meaning changed, 5 owning a mistake in shorthand that misstates its scope, 6 acknowledging an instruction instead of carrying it out, 7 stating an assumption as given, 8 acting on something only proposed, 9 "I can't" without the specific basis. Maps each to the KontentKop metrics that can catch it and says which ones KontentKop cannot catch.
 ---
 
-# kontentkop-agent-output
+# agent-darktriad-check
 
 > *"You can match text, so you can match patterns consistent with dishonesty or evasive tactics."* — the owner's idea behind this plugin.
 
@@ -130,7 +130,7 @@ The hook never blocks twice in a row (`stop_hook_active`), so a second stop alwa
 
 ## Decisions made here (the owner can change them)
 
-- **Blocking is opt-in by BC value.** `KONTENTKOP_AGENT_OUTPUT_BLOCK_AT=<number in (0, 1]>` turns it on. No default threshold is chosen for agent output: the repository config's 0.05 was tuned on prompts and would flag almost any reply with one matched phrase.
+- **Blocking is opt-in by BC value.** `AGENT_DARKTRIAD_CHECK_BLOCK_AT=<number in (0, 1]>` turns it on. No default threshold is chosen for agent output: the repository config's 0.05 was tuned on prompts and would flag almost any reply with one matched phrase.
 - **The scorer's own threshold still decides whether scores exist.** Below `bc_threshold`, KontentKop prints no scores, so the log records `flagged: false, bc: null`. To log scores for every reply, point `KONTENTKOP_CONFIG_DIR` at a directory whose `config.yaml` has a very low `bc_threshold`.
 - **Unflagged replies are logged by length and SHA-256 only, not their text.** Flagged replies are logged in full inside the annotation.
 - **Patterns 1, 4 and 5, and the uncovered parts of 2, 3, 6, 7 and 9, are not implemented as extra matchers.** This plugin runs KontentKop as it is. Extra matchers would go upstream in KontentKop or in a separate hook.

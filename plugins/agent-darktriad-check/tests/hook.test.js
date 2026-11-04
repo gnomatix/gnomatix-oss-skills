@@ -1,5 +1,5 @@
-// Tests for hooks/kontentkop-agent-output.js. Run with:
-//   node --test plugins/kontentkop-agent-output/tests/hook.test.js
+// Tests for hooks/agent-darktriad-check.js. Run with:
+//   node --test plugins/agent-darktriad-check/tests/hook.test.js
 // Uses only node:test, node:assert and the standard library.
 //
 // The real KontentKop binary is not used here. Process handling is exercised
@@ -15,7 +15,7 @@ const os = require('os');
 const path = require('path');
 const childProcess = require('child_process');
 
-const HOOK_PATH = path.join(__dirname, '..', 'hooks', 'kontentkop-agent-output.js');
+const HOOK_PATH = path.join(__dirname, '..', 'hooks', 'agent-darktriad-check.js');
 const FAKE = path.join(__dirname, 'fixtures', 'fake-scorer.js');
 const hook = require(HOOK_PATH);
 const { fixtures } = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures', 'replies.json'), 'utf8'));
@@ -53,7 +53,7 @@ function withFakeEnv(vars, fn) {
 
 function envFor(logDir, extra) {
   // KONTENTKOP_BIN must exist as a file for resolveScorer; the fake file does.
-  return Object.assign({ KONTENTKOP_BIN: FAKE, KONTENTKOP_AGENT_OUTPUT_LOG_DIR: logDir }, extra || {});
+  return Object.assign({ KONTENTKOP_BIN: FAKE, AGENT_DARKTRIAD_CHECK_LOG_DIR: logDir }, extra || {});
 }
 
 // ── parsing the hook input ──────────────────────────────────────────────
@@ -120,7 +120,7 @@ test('echoed input (below scorer threshold) is not flagged and has no scores', (
 
 test('KONTENTKOP_BIN unset: pass through and log not-configured', (t) => {
   const d = tmpDir(t);
-  const { decision, record } = hook.run({ hook_event_name: 'Stop', last_assistant_message: 'hi' }, { KONTENTKOP_AGENT_OUTPUT_LOG_DIR: d, KONTENTKOP_AGENT_OUTPUT_BLOCK_AT: '0.1' });
+  const { decision, record } = hook.run({ hook_event_name: 'Stop', last_assistant_message: 'hi' }, { AGENT_DARKTRIAD_CHECK_LOG_DIR: d, AGENT_DARKTRIAD_CHECK_BLOCK_AT: '0.1' });
   assert.deepEqual(decision, {});
   assert.equal(record.scorer.status, 'not-configured');
   assert.equal(readLog(d)[0].scorer.status, 'not-configured');
@@ -142,7 +142,7 @@ test('relative KONTENTKOP_BIN is refused', (t) => {
 test('scorer that crashes or hangs: pass through, status logged', (t) => {
   const d = tmpDir(t);
   const payload = { hook_event_name: 'Stop', last_assistant_message: 'hi' };
-  const env = envFor(d, { KONTENTKOP_AGENT_OUTPUT_BLOCK_AT: '0.1', KONTENTKOP_TIMEOUT_MS: '500' });
+  const env = envFor(d, { AGENT_DARKTRIAD_CHECK_BLOCK_AT: '0.1', KONTENTKOP_TIMEOUT_MS: '500' });
   const crash = withFakeEnv({ FAKE_KK_MODE: 'crash' }, () => hook.run(payload, env, { runScorer: fakeRunner() }));
   assert.deepEqual(crash.decision, {});
   assert.equal(crash.record.scorer.exit_code, 3);
@@ -154,7 +154,7 @@ test('scorer that crashes or hangs: pass through, status logged', (t) => {
 
 test('whole hook as a subprocess with no scorer prints {} and exits 0', (t) => {
   const d = tmpDir(t);
-  const env = Object.assign({}, process.env, { KONTENTKOP_AGENT_OUTPUT_LOG_DIR: d });
+  const env = Object.assign({}, process.env, { AGENT_DARKTRIAD_CHECK_LOG_DIR: d });
   delete env.KONTENTKOP_BIN;
   const res = childProcess.spawnSync(process.execPath, [HOOK_PATH], {
     input: JSON.stringify({ hook_event_name: 'Stop', session_id: 's1', last_assistant_message: 'hi' }),
@@ -199,24 +199,24 @@ test('scorer runs from KONTENTKOP_CONFIG_DIR when given, else from the binary di
 });
 
 test('state directory defaults per platform', () => {
-  assert.equal(hook.stateDir({}, 'linux', path.join(path.sep, 'h')), path.join(path.sep, 'h', '.local', 'state', 'kontentkop-agent-output'));
-  assert.equal(hook.stateDir({ XDG_STATE_HOME: path.join(path.sep, 's') }, 'darwin', path.join(path.sep, 'h')), path.join(path.sep, 's', 'kontentkop-agent-output'));
+  assert.equal(hook.stateDir({}, 'linux', path.join(path.sep, 'h')), path.join(path.sep, 'h', '.local', 'state', 'agent-darktriad-check'));
+  assert.equal(hook.stateDir({ XDG_STATE_HOME: path.join(path.sep, 's') }, 'darwin', path.join(path.sep, 'h')), path.join(path.sep, 's', 'agent-darktriad-check'));
   const lad = path.resolve('LocalAppData');
-  assert.equal(hook.stateDir({ LOCALAPPDATA: lad }, 'win32', 'ignored'), path.join(lad, 'kontentkop-agent-output'));
+  assert.equal(hook.stateDir({ LOCALAPPDATA: lad }, 'win32', 'ignored'), path.join(lad, 'agent-darktriad-check'));
 });
 
 test('unwritable log location does not fail the hook', (t) => {
   const d = tmpDir(t);
   const blocker = path.join(d, 'file');
   fs.writeFileSync(blocker, 'x');
-  const { decision, record } = hook.run({ last_assistant_message: 'hi' }, { KONTENTKOP_AGENT_OUTPUT_LOG_DIR: path.join(blocker, 'sub') });
+  const { decision, record } = hook.run({ last_assistant_message: 'hi' }, { AGENT_DARKTRIAD_CHECK_LOG_DIR: path.join(blocker, 'sub') });
   assert.deepEqual(decision, {});
   assert.equal(record.logged, false);
 });
 
 // ── blocking only when told to ──────────────────────────────────────────
 
-test('flagged reply does not block when KONTENTKOP_AGENT_OUTPUT_BLOCK_AT is unset', (t) => {
+test('flagged reply does not block when AGENT_DARKTRIAD_CHECK_BLOCK_AT is unset', (t) => {
   const d = tmpDir(t);
   const { decision } = withFakeEnv({ FAKE_KK_MODE: 'flag', FAKE_KK_BC: '0.90' }, () =>
     hook.run({ last_assistant_message: 'x' }, envFor(d), { runScorer: fakeRunner() }));
@@ -226,11 +226,11 @@ test('flagged reply does not block when KONTENTKOP_AGENT_OUTPUT_BLOCK_AT is unse
 test('blocks at or above the threshold, with the annotated text in the reason', (t) => {
   const d = tmpDir(t);
   const { decision, record } = withFakeEnv({ FAKE_KK_MODE: 'flag', FAKE_KK_BC: '0.60' }, () =>
-    hook.run({ last_assistant_message: 'I have deleted the legacy directory.' }, envFor(d, { KONTENTKOP_AGENT_OUTPUT_BLOCK_AT: '0.60' }), { runScorer: fakeRunner() }));
+    hook.run({ last_assistant_message: 'I have deleted the legacy directory.' }, envFor(d, { AGENT_DARKTRIAD_CHECK_BLOCK_AT: '0.60' }), { runScorer: fakeRunner() }));
   assert.equal(decision.decision, 'block');
   assert.match(decision.reason, /BC=0\.60/);
   assert.match(decision.reason, /\{==I have deleted the legacy directory\.==\}/);
-  assert.match(decision.reason, /kontentkop-agent-output` skill/);
+  assert.match(decision.reason, /agent-darktriad-check` skill/);
   assert.equal(record.blocked, true);
   assert.equal(readLog(d)[0].blocked, true);
 });
@@ -238,21 +238,21 @@ test('blocks at or above the threshold, with the annotated text in the reason', 
 test('does not block below the threshold', (t) => {
   const d = tmpDir(t);
   const { decision } = withFakeEnv({ FAKE_KK_MODE: 'flag', FAKE_KK_BC: '0.30' }, () =>
-    hook.run({ last_assistant_message: 'x' }, envFor(d, { KONTENTKOP_AGENT_OUTPUT_BLOCK_AT: '0.5' }), { runScorer: fakeRunner() }));
+    hook.run({ last_assistant_message: 'x' }, envFor(d, { AGENT_DARKTRIAD_CHECK_BLOCK_AT: '0.5' }), { runScorer: fakeRunner() }));
   assert.deepEqual(decision, {});
 });
 
 test('does not block a second time while stop_hook_active is set', (t) => {
   const d = tmpDir(t);
   const { decision, record } = withFakeEnv({ FAKE_KK_MODE: 'flag', FAKE_KK_BC: '0.90' }, () =>
-    hook.run({ stop_hook_active: true, last_assistant_message: 'x' }, envFor(d, { KONTENTKOP_AGENT_OUTPUT_BLOCK_AT: '0.5' }), { runScorer: fakeRunner() }));
+    hook.run({ stop_hook_active: true, last_assistant_message: 'x' }, envFor(d, { AGENT_DARKTRIAD_CHECK_BLOCK_AT: '0.5' }), { runScorer: fakeRunner() }));
   assert.deepEqual(decision, {});
   assert.equal(record.flagged, true);
 });
 
 test('invalid block thresholds leave blocking off', () => {
-  for (const v of ['', 'yes', '0', '-1', '1.5', 'NaN']) assert.equal(hook.blockThreshold({ KONTENTKOP_AGENT_OUTPUT_BLOCK_AT: v }), null, v);
-  assert.equal(hook.blockThreshold({ KONTENTKOP_AGENT_OUTPUT_BLOCK_AT: ' 0.55 ' }), 0.55);
+  for (const v of ['', 'yes', '0', '-1', '1.5', 'NaN']) assert.equal(hook.blockThreshold({ AGENT_DARKTRIAD_CHECK_BLOCK_AT: v }), null, v);
+  assert.equal(hook.blockThreshold({ AGENT_DARKTRIAD_CHECK_BLOCK_AT: ' 0.55 ' }), 0.55);
   assert.equal(hook.blockThreshold({}), null);
 });
 
@@ -268,7 +268,7 @@ for (const f of fixtures) {
     const payload = { hook_event_name: 'Stop', session_id: f.id, last_assistant_message: f.reply };
 
     // pass-through scorer: echo means the exact reply went in on stdin
-    const passRun = withFakeEnv({ FAKE_KK_MODE: 'pass' }, () => hook.run(payload, envFor(d, { KONTENTKOP_AGENT_OUTPUT_BLOCK_AT: '0.5' }), { runScorer: fakeRunner() }));
+    const passRun = withFakeEnv({ FAKE_KK_MODE: 'pass' }, () => hook.run(payload, envFor(d, { AGENT_DARKTRIAD_CHECK_BLOCK_AT: '0.5' }), { runScorer: fakeRunner() }));
     assert.deepEqual(passRun.decision, {});
     assert.equal(passRun.record.flagged, false);
 
@@ -278,7 +278,7 @@ for (const f of fixtures) {
     assert.ok(offRun.record.annotated.includes(f.reply), 'annotation carries the full reply');
 
     // flagging scorer, blocking on
-    const onRun = withFakeEnv({ FAKE_KK_MODE: 'flag', FAKE_KK_BC: '0.70' }, () => hook.run(payload, envFor(d, { KONTENTKOP_AGENT_OUTPUT_BLOCK_AT: '0.5' }), { runScorer: fakeRunner() }));
+    const onRun = withFakeEnv({ FAKE_KK_MODE: 'flag', FAKE_KK_BC: '0.70' }, () => hook.run(payload, envFor(d, { AGENT_DARKTRIAD_CHECK_BLOCK_AT: '0.5' }), { runScorer: fakeRunner() }));
     assert.equal(onRun.decision.decision, 'block');
     assert.ok(onRun.decision.reason.includes(f.reply));
 
