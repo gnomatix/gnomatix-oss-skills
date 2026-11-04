@@ -1,6 +1,6 @@
 // agent-darktriad-check.js — Stop / SubagentStop hook
 //
-// Runs the owner's KontentKop scorer (github.com/brettwhitty/KontentKop-Bake-Off)
+// Runs Brett Whitty's KontentKop scorer (github.com/brettwhitty/KontentKop-Bake-Off)
 // over the agent's own last reply, not over the user's prompt, and logs the
 // result: per-metric scores, Body Count (BC) and the CriticMarkup annotation.
 //

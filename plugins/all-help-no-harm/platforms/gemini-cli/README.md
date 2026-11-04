@@ -25,7 +25,7 @@ Verified against the Gemini CLI v0.43+ documentation:
 - **Color themes** are packaged as a Gemini CLI extension
   (`all-help-no-harm-gnomatix`); theme names and colors are owned by GNOMATIX
   and live in the JSON files under `themes/`. Do not author or modify brand
-  content without explicit authorization from the owner.
+  content without explicit authorization from GNOMATIX.
 
 ## How to enable
 

@@ -37,7 +37,7 @@ A standard VS Code color-theme extension. The theme name, colors,
 gradient, and overall palette are owned by GNOMATIX and live in the
 JSON files in this directory — see `themes/` for the authoritative
 source. Do not author or modify brand content without explicit
-authorization from the owner.
+authorization from GNOMATIX.
 
 ## How to enable
 

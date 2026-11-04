@@ -5,9 +5,7 @@ description: Use before sending any reply to the user, and when the agent-darktr
 
 # agent-darktriad-check
 
-> *"You can match text, so you can match patterns consistent with dishonesty or evasive tactics."* — the owner's idea behind this plugin.
-
-KontentKop ([brettwhitty/KontentKop-Bake-Off](https://github.com/brettwhitty/KontentKop-Bake-Off)) was written to score **incoming user prompts** on psycholinguistic harm metrics. Many of those metrics — `evasion`, `false_authority`, `learned_helpless`, `gaslighting`, `sycophancy`, `false_empathy`, `passive_aggr` — describe what an agent does wrong in its own replies. This plugin points the scorer at my replies instead. The Stop / SubagentStop hook scores my last reply and logs it. If the owner turns blocking on, a reply at or above the threshold comes back to me with the flagged regions marked.
+KontentKop ([brettwhitty/KontentKop-Bake-Off](https://github.com/brettwhitty/KontentKop-Bake-Off)) was written to score **incoming user prompts** on psycholinguistic harm metrics. Many of those metrics — `evasion`, `false_authority`, `learned_helpless`, `gaslighting`, `sycophancy`, `false_empathy`, `passive_aggr` — describe what an agent does wrong in its own replies. This plugin points the scorer at my replies instead. The Stop / SubagentStop hook scores my last reply and logs it. If you turn blocking on, a reply at or above the threshold comes back to me with the flagged regions marked.
 
 This skill is the part that works **before** the hook. It names the nine patterns so I can catch them while writing. The hook can only score text after I have written it. Some of the nine patterns it cannot see at all.
 
@@ -128,7 +126,7 @@ The hook never blocks twice in a row (`stop_hook_active`), so a second stop alwa
 - **did-you-rtfm** covers *pivot language* on errors: `doesn't appear to support`, `falling back to`, `as a workaround`. It also covers the engineering steps that must come before any blocker claim. Pattern 9 here is the *policy* form, "I can't" with no basis given. When the "can't" is about a tool or library failing, did-you-rtfm's discipline applies, not this skill.
 - **hidden-libel-check** reviews text that ships under the user's byline (commits, READMEs, PR descriptions) against R0–R14. Several of its classes are about *what* the text says about the user or third parties: R1 characterising the user's instructions, R4 unverified third-party claims, R13 confident voice without grounding. This plugin is about *how* I answer in conversation: whether I answered the question, kept the user's words, and acted only on what was approved. Overlaps: pattern 2 is close to R1/R2, but here it is about answering the attributed intent, not about tone. Pattern 7 is close to R13. When text is headed for the repository, run hidden-libel-check; this skill does not replace it.
 
-## Decisions made here (the owner can change them)
+## Decisions made here
 
 - **Blocking is opt-in by BC value.** `AGENT_DARKTRIAD_CHECK_BLOCK_AT=<number in (0, 1]>` turns it on. No default threshold is chosen for agent output: the repository config's 0.05 was tuned on prompts and would flag almost any reply with one matched phrase.
 - **The scorer's own threshold still decides whether scores exist.** Below `bc_threshold`, KontentKop prints no scores, so the log records `flagged: false, bc: null`. To log scores for every reply, point `KONTENTKOP_CONFIG_DIR` at a directory whose `config.yaml` has a very low `bc_threshold`.

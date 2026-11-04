@@ -8,7 +8,7 @@ Hooks are not part of the cross-CLI [Agent Skills](https://agentskills.io) stand
 
 After the agent finishes a turn, scans the assistant's just-completed text for high-precision pivot-language phrases. If matched, blocks the stop and routes the agent back into the skill discipline.
 
-**Pattern set** (precision-tuned against ~62k lines of real assistant text on the project owner's machine; see [`../README.md`](../README.md) for the corpus and counts):
+**Pattern set** (precision-tuned against ~62k lines of real assistant text on Brett Whitty's machine; see [`../README.md`](../README.md) for the corpus and counts):
 
 - `doesn't (appear to / seem to) (support / have / provide / expose)` — the phantom-blocker shape
 - `falling back to` / `falls back to`
@@ -46,7 +46,7 @@ The following shapes are *known* agent-workaround patterns observed in the wild 
 - `yes |` — sometimes a legitimate auto-confirm; sometimes a workaround for missing `--yes` flag.
 - `/dev/tty` direct opens — rare enough that hard-coded matching has high false-positive cost vs. value.
 
-These are documented here for transparency. If the project owner observes a high rate of any of these in agent failure modes, they can be added to a future revision of the bypass hook.
+These are documented here for transparency. If Brett Whitty observes a high rate of any of these in agent failure modes, they can be added to a future revision of the bypass hook.
 
 ## Activation
 
@@ -82,4 +82,4 @@ Remove the `hooks` block from your settings file or uninstall the plugin.
 
 ## Notes on calibration
 
-The pivot-language pattern set was tuned against the project owner's own transcripts. Other users' agent-failure-language profiles will overlap but not match exactly. The `Stop` hook errs toward conservative recall — it won't fire on every conceivable pivot, but the patterns it does fire on were verified to be near-100% enactments of the failure mode rather than meta-discussion in the calibration corpus. Tuning for a different user means re-running the methodology in `dev/failure-mode-investigation/` (private — author's encrypted dev directory) and updating the regex set.
+The pivot-language pattern set was tuned against Brett Whitty's own transcripts. Other users' agent-failure-language profiles will overlap but not match exactly. The `Stop` hook errs toward conservative recall — it won't fire on every conceivable pivot, but the patterns it does fire on were verified to be near-100% enactments of the failure mode rather than meta-discussion in the calibration corpus. Tuning for a different user means re-running the methodology in `dev/failure-mode-investigation/` (private — author's encrypted dev directory) and updating the regex set.

@@ -6,7 +6,7 @@
 // back into the `did-you-rtfm` skill discipline.
 //
 // Pattern set is precision-tuned: each pattern was sampled against ~62k lines
-// of real assistant text on the project owner's machine and confirmed to fire
+// of real assistant text on Brett Whitty's machine and confirmed to fire
 // predominantly on enactments of the failure mode rather than meta-discussion.
 // See plugins/did-you-rtfm/README.md for the corpus and counts.
 //

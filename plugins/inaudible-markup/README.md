@@ -36,7 +36,7 @@ For anyone whose conversations are read later by a person, another model or a kn
 
 A voice reply and a log entry are the same text. Ordinary markdown reads badly aloud, and plain speech leaves a log with no structure. Marks that the voice does not pronounce let one text serve both: the listener hears words, and the log keeps sections, ordered lists, scope, addressees and tags.
 
-The silent set was tested by the owner in a voice-mode session on 2026-06-28. Characters not tested are not assumed silent.
+The silent set was tested by Brett Whitty in a voice-mode session on 2026-06-28. Characters not tested are not assumed silent.
 
 ## Install
 

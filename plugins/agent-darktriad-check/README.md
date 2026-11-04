@@ -26,7 +26,7 @@
 
 ## Why
 
-KontentKop was built to score incoming prompts for manipulation, coercion and evasion. The owner's idea: *"You can match text, so you can match patterns consistent with dishonesty or evasive tactics."* Pointed at the agent's output, the same metrics (`evasion`, `false_authority`, `learned_helpless`, `gaslighting`, `sycophancy`, …) catch the agent's own evasions.
+KontentKop was built to score incoming prompts for manipulation, coercion and evasion. Pointed at the agent's output, the same metrics (`evasion`, `false_authority`, `learned_helpless`, `gaslighting`, `sycophancy`, …) catch the agent's own evasions.
 
 ## Contents
 

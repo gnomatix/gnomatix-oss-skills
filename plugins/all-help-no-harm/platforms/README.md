@@ -9,7 +9,7 @@ isn't possible.
 
 **Status-line / window-name glyph:** U+1F497 beating heart (💗), per the indicator-emoji ask referencing https://outrage.dataglut.org.
 
-Brand glyphs, colors, taglines, theme names, and other brand content are owned by GNOMATIX and live in the relevant asset files (`vscode-extension/media/`, per-platform `themes/`). Do not author or modify brand content without explicit authorization from the owner.
+Brand glyphs, colors, taglines, theme names, and other brand content are owned by GNOMATIX and live in the relevant asset files (`vscode-extension/media/`, per-platform `themes/`). Do not author or modify brand content without explicit authorization from GNOMATIX.
 
 ## Per-platform status
 

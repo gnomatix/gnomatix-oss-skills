@@ -10,7 +10,7 @@ Everything under `dev/` is private development material, and it is encrypted wit
 - Confirm a file under `dev/` now reads as plaintext and doesn't start with `\0GITCRYPT`.
 - Read `dev/README.md` before unlocking. After unlocking, read every `README.md`, `AGENTS.md`, `CLAUDE.md`, `NOTES.md` and `SKILL.md` under `dev/`, and follow what they say.
 
-If the unlock fails, stop, report it, and make no changes. In a locked clone, git commits plaintext over the encrypted files, and editing ciphertext destroys it. If the agent has no key, it asks the owner whether it may add its own GPG key with `git-crypt add-gpg-user`.
+If the unlock fails, stop, report it, and make no changes. In a locked clone, git commits plaintext over the encrypted files, and editing ciphertext destroys it. If the agent has no key, it asks Brett Whitty whether it may add its own GPG key with `git-crypt add-gpg-user`.
 
 Then check all of the following, every time, before staging or committing anything:
 

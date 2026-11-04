@@ -89,4 +89,4 @@ cross-platform requirements:
 
 ## Branding
 
-Brand decisions (glyph, tagline, copy) are owned by GNOMATIX. Do not author or modify brand content without explicit authorization from the owner.
+Brand decisions (glyph, tagline, copy) are owned by GNOMATIX. Do not author or modify brand content without explicit authorization from GNOMATIX.

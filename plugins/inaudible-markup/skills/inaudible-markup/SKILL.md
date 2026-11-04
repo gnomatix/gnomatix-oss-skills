@@ -15,7 +15,7 @@ The markup is **inaudible**: tested in voice mode, the characters below are not 
 
 ## Characters that are not spoken
 
-Tested silent in voice mode (owner's session, 2026-06-28):
+Tested silent in voice mode (Brett Whitty's session, 2026-06-28):
 
 | Mark | Use |
 |---|---|
