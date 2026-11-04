@@ -30,7 +30,7 @@ function emit(text) {
   try { payload = JSON.parse((await readStdin()) || '{}'); } catch { payload = {}; }
   try {
     const vv = require('../lib/vv');
-    const report = vv.check({ model: payload.model, agent: 'claude-code' });
+    const report = vv.check({ model: payload.model, agent: 'claude-code', projectDir: payload.cwd });
     const text = vv.formatReport(report, path.join(__dirname, '..', 'bin', 'skill-vv.js'));
     if (text) emit(text);
   } catch (err) {

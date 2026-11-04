@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // skill-vv CLI — the same commands for every vendor's agent.
 //
-//   skill-vv check  --model <id> --agent <agent> [--root <dir>]... [--json]
+//   skill-vv check  --model <id> --agent <agent> [--root <dir>]... [--project <dir>] [--json]
 //   skill-vv status <skill> --model <id> --agent <agent> [--root <dir>]...
 //   skill-vv record result  <skill> <procedure> pass|fail|deferred --model <id> --agent <agent>
 //                           [--notes "..."] [--evidence <path>] [--by <who>] [--into <VV.md>]
@@ -35,13 +35,13 @@ function main(argv) {
   const cli = path.resolve(__filename);
   try {
     if (cmd === 'check') {
-      const report = vv.check({ model: o.model, agent: o.agent, roots: o.root });
+      const report = vv.check({ model: o.model, agent: o.agent, roots: o.root, projectDir: o.project });
       if (o.json) console.log(JSON.stringify(report, null, 2));
       else { const t = vv.formatReport(report, cli); if (t) console.log(t); }
       return 0;
     }
     if (cmd === 'status') {
-      const report = vv.check({ model: o.model, agent: o.agent, roots: o.root });
+      const report = vv.check({ model: o.model, agent: o.agent, roots: o.root, projectDir: o.project });
       const s = report.skills.find((x) => x.name === sub);
       if (!s) { console.error(`no VV.md found for ${sub}`); return 1; }
       console.log(JSON.stringify(Object.assign({ model: report.model, platform: report.platform }, s), null, 2));

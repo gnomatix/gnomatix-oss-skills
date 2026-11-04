@@ -105,6 +105,31 @@ test('unclaimed platform is flagged; malformed VV.md is reported, not fatal', ()
   assert.match(r.stdout, /could not be read[\s\S]*skill-vv must be 1/);
 });
 
+test('project settings: ignore, extra roots, default agent, and enabled:false', () => {
+  const { home, env } = tmpHome();
+  const project = path.join(home, 'proj');
+  writeSkill(path.join(project, 'plugins', 'probe'), PROBE);
+  fs.mkdirSync(path.join(project, '.claude'), { recursive: true });
+  const settings = (fm) => fs.writeFileSync(path.join(project, '.claude', 'skill-vv.local.md'), `---\n${fm}---\n`);
+
+  settings('roots: [./plugins]\nagent: codex\n');
+  let r = run(['check', '--model', 'm', '--project', project], env);
+  assert.match(r.stdout, /vv-probe/);
+  assert.match(r.stdout, /Platform: codex\//);
+
+  settings('roots: [./plugins]\nignore: [vv-probe]\n');
+  r = run(['check', '--model', 'm', '--project', project], env);
+  assert.strictEqual(r.stdout.includes('vv-probe'), false, r.stdout);
+
+  settings('enabled: false\nroots: [./plugins]\n');
+  r = run(['check', '--model', 'm', '--project', project], env);
+  assert.strictEqual(r.stdout.trim(), '');
+
+  settings('enabled: maybe\n');
+  r = run(['check', '--model', 'm', '--project', project], env);
+  assert.match(r.stdout, /enabled must be true or false/);
+});
+
 test('session-start hook emits SessionStart JSON for a pending skill', () => {
   const { home, env } = tmpHome();
   writeSkill(path.join(home, 'h', 'probe'), PROBE);
