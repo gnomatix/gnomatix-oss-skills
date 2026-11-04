@@ -39,11 +39,11 @@ The author's words:
 
 ```
 五常
-仁 義 禮 智 信 誠 恕 直
+仁 義 礼 智 信 誠 恕 直
 知之為知之
 
 道
-道 無為 自然 樸 虛 柔 水 不爭
+道 無為 自然 樸 虚 柔 水 不争
 ```
 
 The hook is `hooks/satori-reminder.js`.
