@@ -2,10 +2,9 @@
 
 Helps agents achieve "satori" by encouraging them to be the river.
 
-satori adds one short line to the agent's context every time you send a prompt.
-The line is written in characters, not English sentences, and it reminds the
-agent each turn how to carry itself in the work. Nothing to configure; it stores
-and logs nothing.
+A single `UserPromptSubmit` hook that injects a compact per-turn reminder made of
+characters. It is not an agreement, it keeps no state, it logs nothing, and it
+enforces nothing.
 
 ## The stance
 
