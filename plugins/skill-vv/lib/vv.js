@@ -138,7 +138,7 @@ const FRONTMATTER = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/;
 function parseVv(text, file) {
   const m = FRONTMATTER.exec(text || '');
   if (!m) throw new Error(`${file}: no YAML frontmatter`);
-  const data = yaml().load(m[1]) || {};
+  const data = yaml().load(m[1], { schema: yaml().CORE_SCHEMA }) || {};
   const problems = [];
   if (data['skill-vv'] !== 1) problems.push('skill-vv must be 1');
   if (!data.name || typeof data.name !== 'string') problems.push('name is required');
@@ -158,7 +158,7 @@ function loadVv(file) {
 }
 
 function writeVv(file, data, body) {
-  const text = `---\n${yaml().dump(data, { lineWidth: 100, noRefs: true })}---\n${body || ''}`;
+  const text = `---\n${yaml().dump(data, { schema: yaml().CORE_SCHEMA, lineWidth: 100, noRefs: true })}---\n${body || ''}`;
   return atomicWrite(file, text);
 }
 
@@ -315,7 +315,7 @@ function loadSettings(projectDir) {
   const m = FRONTMATTER.exec(text);
   if (!m) errors.push(`${file}: no YAML frontmatter`);
   else {
-    try { data = yaml().load(m[1]) || {}; } catch (err) {
+    try { data = yaml().load(m[1], { schema: yaml().CORE_SCHEMA }) || {}; } catch (err) {
       if (err.code === 'SKILL_VV_NO_YAML') throw err;
       errors.push(`${file}: ${err.message}`);
     }
