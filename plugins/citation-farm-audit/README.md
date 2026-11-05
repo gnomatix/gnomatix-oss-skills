@@ -43,7 +43,7 @@ For other agents, the skills are linked from `.agents/skills/`, `.github/skills/
 
 **[Business Source License 1.1](https://github.com/gnomatix/gnomatix-oss-skills/blob/main/LICENSE)** (`BUSL-1.1`). The source is available, but this is not OSI open source.
 
-**Commercial use is strictly prohibited without a paid commercial licensing / usage agreement with GNOMATIX.** Contact GNOMATIX first to arrange either of these:
+**Commercial use is strictly prohibited without a paid commercial licensing / usage agreement with GNOMATIX.** Use by or for any government, government agency or charity is commercial use. Contact GNOMATIX first to arrange either of these:
 - an ongoing support & development agreement
 - a reasonable one-time usage fee, paid via [Buy Me a Coffee](https://www.buymeacoffee.com/gnomatix)
 

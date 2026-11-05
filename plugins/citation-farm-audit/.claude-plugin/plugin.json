@@ -1,6 +1,6 @@
 {
   "name": "citation-farm-audit",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Traces social-science and policy sources to their authors, funders, citation networks and primary data, and flags citation farms, closed citation loops and grey literature promoted to evidence. A companion skill gives every source a provenance card of verifiable facts.",
   "author": {
     "name": "Brett Whitty",
