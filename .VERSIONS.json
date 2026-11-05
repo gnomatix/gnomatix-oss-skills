@@ -75,7 +75,7 @@
     "path": "plugins/word-lineage"
   },
   "_marketplace": {
-    "version": "0.1.5",
+    "version": "0.1.6",
     "plugins_fingerprint": "1085d141cf97a123fc925062933ef7de7b71bb804fd2d5b0949f5f8b5a4b4aec"
   }
 }

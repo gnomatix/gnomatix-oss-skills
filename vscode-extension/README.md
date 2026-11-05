@@ -63,15 +63,11 @@ is published to the VS Code Marketplace:
 
 ### License
 
-The extension's `LICENSE` file is currently a placeholder. The webview's
-About panel reads the license text from the **marketplace root**
-(`LICENSE`, `LICENSE.md`, or `LICENSE.txt`). The marketplace does not
-currently ship a `LICENSE` file, and none of the plugin manifests declare a
-license field. Add a `LICENSE` at the marketplace root (or to the
-extension root) and the About panel will pick it up automatically.
-
-The `package.json` `license` field is set to `SEE LICENSE IN LICENSE`,
-which is the conventional way to defer to the file.
+Done. `LICENSE` here holds the same Business Source License 1.1 text as the marketplace root's
+`LICENSE`, and every plugin manifest declares `"license": "BUSL-1.1"`. The webview's About panel
+reads the license text from the marketplace root (`LICENSE`, `LICENSE.md`, or `LICENSE.txt`). The
+`package.json` `license` field is `SEE LICENSE IN LICENSE`, which defers to that file. The terms
+are summarized in the License section at the end of this README.
 
 ## Cross-platform notes
 
@@ -90,3 +86,17 @@ cross-platform requirements:
 ## Branding
 
 Brand decisions (glyph, tagline, copy) are owned by GNOMATIX. Do not author or modify brand content without explicit authorization from GNOMATIX.
+
+<!-- BEGIN: gnomatix-license-include -->
+## License
+
+**[Business Source License 1.1](https://github.com/gnomatix/gnomatix-oss-skills/blob/main/LICENSE)** (`BUSL-1.1`). The source is available, but this is not OSI open source.
+
+**Commercial use is strictly prohibited without a paid commercial licensing / usage agreement with GNOMATIX.** Use by or for any government, government agency or charity is commercial use. Contact GNOMATIX first to arrange either of these:
+- an ongoing support & development agreement
+- a reasonable one-time usage fee, paid via [Buy Me a Coffee](https://www.buymeacoffee.com/gnomatix)
+
+Both support continued development work on GNOMATIX projects. Contact: [`sales@gnomatix.com`](mailto:sales@gnomatix.com) or [LinkedIn](https://www.linkedin.com/company/gnomatix). General product support: [`support@gnomatix.com`](mailto:support@gnomatix.com).
+
+The full terms, including the Additional Use Grant, the Change Date and the Change License, are in [`LICENSE`](https://github.com/gnomatix/gnomatix-oss-skills/blob/main/LICENSE).
+<!-- END: gnomatix-license-include -->
