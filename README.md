@@ -118,12 +118,14 @@ Plugins: all-help-no-harm, satori, skill-vv, critical-control-points, did-you-rt
 
 Each plugin keeps its own version, and its patch number goes up when its content changes.
 `VERSION` at the root is the marketplace's own version; its patch goes up with any plugin's.
-A pre-commit hook does both on main, comparing each plugin folder's git tree hash with the one
-recorded in `.VERSIONS.json` (`scripts/version-bump.js`). Enable it once per clone:
+`scripts/version-bump.js` compares each plugin folder's git tree hash with the one recorded in
+`.VERSIONS.json`.
 
-```
-git config core.hooksPath .githooks
-```
+- A pre-commit hook bumps changed plugins in the commit itself, on main. Enable it once per
+  clone: `git config core.hooksPath .githooks`
+- A GitHub Action (`.github/workflows/version-bump.yml`) runs on every push to main. It bumps any
+  plugin a commit made without the hook missed, and it is the only thing that bumps `VERSION`.
+  So a clone without the hook still gets correct versions, one commit later.
 
 <!-- BEGIN: gnomatix-license-include -->
 ## License

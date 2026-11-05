@@ -1,0 +1,35 @@
+name: version-bump
+
+# Backstop for the pre-commit hook: a commit made where the hook isn't enabled still gets its
+# plugin versions bumped here, and this is the only place the root VERSION is bumped.
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: version-bump
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Bump changed plugins and VERSION
+        run: node scripts/version-bump.js --ci
+      - name: Commit and push
+        run: |
+          if git diff --cached --quiet; then
+            echo "Nothing to bump."
+            exit 0
+          fi
+          git -c user.name="Brett Whitty" -c user.email="brett@gnomatix.com" \
+            commit -m "Versions: bump changed plugins and VERSION [skip ci]"
+          git push origin HEAD:main

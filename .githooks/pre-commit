@@ -1,4 +1,5 @@
 #!/bin/sh
-# Bump the version of each plugin whose content changed, and the root VERSION (main only).
+# Bump the version of each plugin whose content changed (main only). The root VERSION is
+# bumped by the GitHub Action, which also catches commits made without this hook.
 # Enable once per clone: git config core.hooksPath .githooks
 exec node scripts/version-bump.js

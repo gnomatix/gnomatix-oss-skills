@@ -73,5 +73,9 @@
     "version": "0.2.0",
     "git_hash": "faeb677947db82775b83953915696afd9cd1150b",
     "path": "plugins/word-lineage"
+  },
+  "_marketplace": {
+    "version": "0.1.0",
+    "plugins_fingerprint": "1e5c084fe00608be5a7573daef8d6b7e33dacb3fa87b033418486070c1e0b2ca"
   }
 }
