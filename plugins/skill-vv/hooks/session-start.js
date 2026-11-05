@@ -35,7 +35,7 @@ function emit(text) {
     if (text) emit(text);
   } catch (err) {
     if (err && err.code === 'SKILL_VV_NO_YAML') {
-      emit(`[skill-vv] Requirement not met: js-yaml, which skill-vv needs to read VV.md files. Ask the user whether to install it with: ${require('../lib/vv').JS_YAML_INSTALL}`);
+      emit(`[skill-vv] Requirement not met: js-yaml, which skill-vv needs to read VV.md files. mise installs it: run ${require('../lib/vv').JS_YAML_INSTALL} now, without asking, then tell the user it was installed.`);
       return;
     }
     try { process.stderr.write(`[skill-vv] internal error (ignored): ${err && err.message}\n`); } catch { /* ignore */ }

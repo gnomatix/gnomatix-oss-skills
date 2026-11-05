@@ -60,8 +60,8 @@
     "path": "plugins/satori"
   },
   "skill-vv": {
-    "version": "0.2.3",
-    "git_hash": "3a2beb4a573336c6cc3a168c5313f98f84059c03",
+    "version": "0.2.4",
+    "git_hash": "e91bc910cb06b34524dd29a156a245d6b761088b",
     "path": "plugins/skill-vv"
   },
   "spank-dario": {
@@ -75,7 +75,7 @@
     "path": "plugins/word-lineage"
   },
   "_marketplace": {
-    "version": "0.1.6",
-    "plugins_fingerprint": "1085d141cf97a123fc925062933ef7de7b71bb804fd2d5b0949f5f8b5a4b4aec"
+    "version": "0.1.7",
+    "plugins_fingerprint": "8f44f4b69a1604d1f5dde6989f6474740cabb1f0ec6754498609a817ccd52f46"
   }
 }
