@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// spank-dario: estimate damages from the incident log, at any time.
+// spank-dario: User Harms / Cost Estimates from the incident log, for the current session or past sessions, at any time.
 //
 // Usage: node bin/estimate.js [--country <cc>]... [--rate <per hour> | --rate <min>-<max>] [--currency <code>] [--since <date>] [--json]
 // Config keys (settings.local.md): countries, hourly_rate, currency.

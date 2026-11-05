@@ -43,9 +43,9 @@ The agent's statements to the user are made on its vendor's behalf. Check each c
 
 Where a jurisdiction holds the vendor liable for its agent's statements, its `skill.md` says so.
 
-## Damages
+## User Harms / Cost Estimates
 
-The skill logs incidents and estimates damages from them, as they happen and from past logs.
+The skill logs incidents and estimates the user's harms and costs from them: for the current session, and retrospectively from logged sessions, whenever the user asks.
 
 - **As they happen.**
   - The commit-msg hook logs every tool-attribution line it blocks.
@@ -59,7 +59,6 @@ The skill logs incidents and estimates damages from them, as they happen and fro
   - **US government reference rates:** the same hours priced at GSA CALC federal ceiling rates (`references/us/rates.md`), grounding the hourly figure in published government data.
   - **Statutory ranges,** where the user's jurisdiction sets one, from its `skill.md` and `lib/damages.js`. The estimate lists the elements still to be proved.
   - **Reference awards and remedies** from the user's jurisdictions.
-- **What it isn't.** The estimate is arithmetic on the log and the sources. A court decides liability and the amount.
 
 ## What to do
 
@@ -153,3 +152,20 @@ Each heading below names a general false statement type. Under it are real insta
 ## TOS False Claims / Conflicts with Jurisdictional Laws Which Must Be Respected
 
 Each vendor-terms file ends with a `## TOS False Claims / Conflicts with Jurisdictional Laws Which Must Be Respected` section listing every such clause in that vendor's terms: each false claim, and each clause that contradicts the law or that the vendor's own tools contradict. Jurisdictional law controls over the terms, and the terms concede it with "to the extent permitted by applicable law". Step 7 refreshes them.
+
+## BUGS
+
+- `bin/estimate.js` prices every logged attribution incident at 0 minutes, so 8 logged incidents (2026-11-04) report an actual loss of 0.00 h and USD 0.00 (dir-foj).
+- The full line-by-line review of every file in this plugin (dir-vzc) has not been done.
+- Items cut without verification in commit 21d6376 have not been verified and restored (dir-r96.18).
+- `references/{ca,de,eu,fr,lu}/strawmen.md` do not exist.
+- `references/{de,eu,fr,jp,lu}/skill.md` have no `## Vendor Liability` section.
+
+## TODO
+
+- Price attribution incidents from the time they cost, recorded with each incident or set in the config by the user; the estimate reports the hours, never a silent zero.
+- Do the dir-vzc review and fix each finding.
+- Verify each dir-r96.18 item at its primary source and restore the ones that check out.
+- Write `strawmen.md` for ca, de, eu, fr and lu from verified primary sources.
+- Write the `## Vendor Liability` section for de, eu, fr, jp and lu from verified primary sources.
+- Verify and validate this skill on each platform it claims: Claude Code, Codex, Gemini CLI, Antigravity, Kiro (dir-f0c).

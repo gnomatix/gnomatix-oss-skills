@@ -14,7 +14,7 @@ platform: claude-code
 # Vendors of the models available in your sessions. The platform's own vendor is always added.
 model_vendors: [anthropic]
 
-# Your hourly rate and currency, for bin/estimate.js.
-hourly_rate: 0
-currency: CAD
+# Your hourly rate and currency, for bin/estimate.js: a number, or [min, max] for a range.
+hourly_rate: [100, 300]
+currency: USD
 ---

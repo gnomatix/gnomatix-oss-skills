@@ -182,7 +182,7 @@ check('kiro --workspace writes the workspace hook file', fs.existsSync(path.join
 rr = reg('kiro', false);
 check('registration without --write changes nothing and reports', rr.stdout.includes('already registered'), rr.stdout);
 
-// 13. Incidents and damages.
+// 13. Incidents and User Harms / Cost Estimates.
 let ir = run('bin/incident.js', ['refusal', '--minutes', '30', '--note', 'test refusal']);
 check('incident.js records a refusal', ir.status === 0 && ir.stdout.includes('recorded refusal'), ir.stdout + ir.stderr);
 run('bin/incident.js', ['misrepresentation', '--minutes', '30', '--loss', '50', '--source', 'm1']);
