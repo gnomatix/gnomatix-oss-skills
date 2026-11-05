@@ -1,0 +1,2 @@
+# Keep captured vendor texts byte-exact (BOM, CRLF) so the recorded sha256 values still verify.
+*.txt -text

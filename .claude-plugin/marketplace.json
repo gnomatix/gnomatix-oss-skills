@@ -1,0 +1,101 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "gnomatix-oss-skills",
+  "description": "Open-source collection of Claude Code plugins and cross-CLI Agent Skills from GNOMATIX.",
+  "owner": {
+    "name": "Brett Whitty",
+    "email": "brett@gnomatix.com"
+  },
+  "plugins": [
+    {
+      "name": "python-elimination-program",
+      "description": "Four coordinated Agent Skills plus a PreToolUse hook that stop AI agents defaulting to Python in projects that do not use it. whacking-day (justify it and get the user's OK), zartan (a non-Python option wins if one exists) and jake-the-snake (approved Python is written properly) run in order; old-willy is the merit test for any 'Python is the best tool' claim. The hook blocks Python at the harness when nothing has been authorised.",
+      "category": "development",
+      "source": "./plugins/python-elimination-program"
+    },
+    {
+      "name": "open-and-honest-agent",
+      "description": "Agent Skill that forces the agent, the moment it recognizes it is engaged in development work, to externalize its default biases (assumptions about the user, preferences, goals, failure modes, trust model, etc.) as 16 immutable per-session documentation files, and proactively log every bias enactment against those documented items by stable ID, before execution. Designed to make hidden agent defaults visible to paying users so they can correct them rather than be silently harmed by them.",
+      "category": "development",
+      "source": "./plugins/open-and-honest-agent"
+    },
+    {
+      "name": "did-you-rtfm",
+      "description": "Agent Skill plus two Claude Code firewall hooks that interrupt the agent's pivot reflex on errors during user-authorized implementation work. The skill forces version-checking, RTFMing the version-specific authoritative docs, assumption verification, sanity-checking against stale training-data, and minimal-repro construction before any 'blocker' claim or unauthorized plan change. The Stop / SubagentStop hook scans assistant text for high-precision pivot-language phrases (pattern set tuned against ~62k lines of real transcripts; ~3.8x correlation between pivot-emission count and user-frustration-swear rate per session) and blocks the stop with a structured RTFM reminder when matched. The PreToolUse hook denies Bash invocations containing bypass-flag shapes (--no-verify, --force, --skip-*, --allow-*, --ignore-*) or TTY-faking workarounds (script -qc, expect, echo|sudo -S). Plan changes are the user's decision; the agent presents evidence and waits.",
+      "category": "development",
+      "source": "./plugins/did-you-rtfm"
+    },
+    {
+      "name": "hidden-libel-check",
+      "description": "An Agent Skill that performs the final-pass discretion review of agent-authored text — markdown, code comments, READMEs, LICENSE files, commit messages, PR descriptions, skill files, generated docs — before that text lands in a tracked repo artifact under the user's byline. Evaluates fifteen risk classes (R0–R14) with R0 (coalition-proxy-attack against the user) as the central failure mode at default severity H. R0 sub-patterns include dogwhistle, wink-and-nod, hostage-video disclaimers, balance-injection-as-attack, refusal-by-proxy, censorship-by-omission, fact-suppression for hypothetical-bad-value-judgment, verification-asymmetry / abstention-as-attack, pre-emptive-disclaimer category creation, and silent-coverup after detection. Triggers prospectively via Bash(git commit) / Bash(gh pr create) PreToolUse hooks and via the Stop / SubagentStop session-end hook, and retrospectively via explicit /hidden-libel-check invocation on a named scope. Includes frontmatter-driven scope determination, curated-evidence exception for user-curated documentation of agent failures, perpetrator/victim framing with three enforced consequences, and the load-bearing principle that the asshole is never the user — the asshole is the agent — always. Reports findings with suggested amendments and waits for per-finding user decisions; never amends autonomously.",
+      "category": "development",
+      "source": "./plugins/hidden-libel-check"
+    },
+    {
+      "name": "all-help-no-harm",
+      "description": "A SessionStart hook and companion Agent Skill. At the start of every session the agent presents the standing contract (presume the user honest and non-adversarial; respect the user's rights and personhood; follow the user's instructions on those terms; never undermine them) through AskUserQuestion, with two answers: I Affirm or End Session. The record is written to ~/.local/state/anthropic/contract-agreements/active-contract.<session-id>.<model>.json, naming the running model (hooks/register-model.js adds it to known-models.json when it is not listed). A one-line per-turn reminder keeps the contract in force; PostCompact re-injects the text. Context-watch hooks add housekeeping checkpoints as a long session fills.",
+      "category": "development",
+      "source": "./plugins/all-help-no-harm"
+    },
+    {
+      "name": "satori",
+      "description": "Helps agents achieve \"satori\" by encouraging them to be the river. A single UserPromptSubmit hook that injects a compact per-turn reminder. Not an agreement and not enforcement machinery: the plugin accepts that we control nothing; we can be the river or be the rock.",
+      "category": "development",
+      "source": "./plugins/satori"
+    },
+    {
+      "name": "word-lineage",
+      "description": "An Agent Skill that traces an English word's lineage phylogenetically (/word-lineage <word>): which layer it came from (native Germanic, Norse, Latin, French, other), the evidence for it (similarity to the source-language word, conjugation and morphology, synonym set, core vs borrowed vocabulary), and its literal meaning read off the tree. Places each word on a bundled NEXUS network of English and its donor languages, with a cross-language synonym map grouped by shared root. A word-choice mode (/word-lineage meaning: <phrase>) picks the synonym whose literal meaning matches.",
+      "category": "development",
+      "source": "./plugins/word-lineage"
+    },
+    {
+      "name": "critical-control-points",
+      "description": "An Agent Skill for knowledge capture at critical control points. When a question, decision or blocker surfaces, the agent exhausts its own tools, captures the point as a linked beads record with provenance and pre-answered follow-ups, keeps working on everything it does not gate, has a reviewer check it, and asks the user once through AskUserQuestion. No silent control points, no fake blockers. Includes a big red button that stops all work when the whole effort is wrong.",
+      "category": "development",
+      "source": "./plugins/critical-control-points"
+    },
+    {
+      "name": "inaudible-markup",
+      "description": "An Agent Skill that writes each reply as a structured script with markup a text-to-speech voice does not read aloud. Lists the characters tested silent in voice mode and the spoken ones to avoid, and adds the GNOX callout and tag convention and labels for what a passage is (decision, request, definition, open question, correction), so conversation logs review and parse cleanly afterwards.",
+      "category": "development",
+      "source": "./plugins/inaudible-markup"
+    },
+    {
+      "name": "ontology-lookup",
+      "description": "An Agent Skill that tags the things an agent writes about with registry identifiers: the first mention of a thing in a passage gets its CURIE inline as «term» [CURIE], with Bioregistry prefixes (GO:0005739, CHEBI:15377, NCBITaxon:9606, wikidata:Q42, glottolog:stan1293), so logs can be resolved and indexed later. Seventeen open ontologies and registries in the starter set, each with a cited reference file; SNOMED CT excluded for its licence. Includes a dependency-free Node lookup script (search, --resolve CURIE, and a --lineage word mode with ISO 639-3 and Glottolog ids for each language on the Wiktionary etymon chain).",
+      "category": "development",
+      "source": "./plugins/ontology-lookup"
+    },
+    {
+      "name": "agent-darktriad-check",
+      "description": "Runs Brett Whitty's KontentKop psycholinguistic scorer over the agent's own replies instead of only over user prompts. A Stop / SubagentStop hook (a Go binary per platform that embeds the scorer, with a pure-Node fallback that runs a separately built KontentKop binary) scores the agent's last reply and logs the per-metric scores, Body Count and CriticMarkup annotation; it passes through by default and, when AGENT_DARKTRIAD_CHECK_BLOCK_AT is set, blocks at that Body Count and hands the annotated reply back to the agent. A companion skill names nine evasion patterns (unasked-for hedging about third parties, intent attribution, reframing, paraphrase drift, vague admission, acknowledging instead of executing, premise injection, proposal-as-permission, appeal to a rule not shown) so the agent avoids them before the hook sees them, and says which ones KontentKop's metrics can and cannot catch.",
+      "category": "development",
+      "source": "./plugins/agent-darktriad-check"
+    },
+    {
+      "name": "skill-vv",
+      "description": "Verification and validation for skills, across vendors. Before a skill's first real use in a session, surfaces its requirements and offers install or configuration, then checks whether the current model and platform have passed the skill's V&V procedures and offers to run them. State lives in a VV.md file with YAML frontmatter beside each skill; a Node CLI reads and records it for any agent, and a SessionStart hook runs the check on Claude Code.",
+      "category": "development",
+      "source": "./plugins/skill-vv"
+    },
+    {
+      "name": "spank-dario",
+      "description": "Keeps false claims of authorship by software tools out of commits, PRs and documents, with verified copyright and moral-rights references by jurisdiction.",
+      "category": "development",
+      "source": "./plugins/spank-dario"
+    },
+    {
+      "name": "citation-farm-audit",
+      "description": "Traces social-science and policy sources to their authors, funders, citation networks and primary data, and flags citation farms, closed citation loops and grey literature promoted to evidence. A companion skill gives every source a provenance card of verifiable facts.",
+      "category": "development",
+      "source": "./plugins/citation-farm-audit"
+    },
+    {
+      "name": "gnox",
+      "description": "One namespace for every skill in this marketplace: /gnox:<plugin> runs a plugin's main skill (or lists its commands), /gnox:<plugin>:<skill> any other skill, and /gnox:<plugin>:<group>:<cmd> a plugin's own sub-commands. Install it alongside the plugins you use.",
+      "category": "development",
+      "source": "./plugins/gnox"
+    }
+  ]
+}

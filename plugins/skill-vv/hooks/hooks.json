@@ -1,0 +1,27 @@
+{
+  "description": "skill-vv: at session start, surface unmet skill requirements, then any V&V not yet passed for this session's model and platform. On each prompt, route '/<skill> #bug <report>' to the skill-vv:bug-report skill.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/session-start.js",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/bug-prompt.js",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

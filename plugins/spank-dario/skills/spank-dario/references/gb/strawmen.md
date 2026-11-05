@@ -1,0 +1,6 @@
+# United Kingdom: Vendor False Claims / Straw Men
+
+Each source is quoted exactly from its primary text. Each concerns works with no human author, or a registration or policy question. None of them describes work an author directs with a software tool, an LLM included. The skill's section "Common vendor-trained false statements" quotes real instances of their misuse.
+
+- CDPA 1988 s. 9(3) — read — https://www.legislation.gov.uk/ukpga/1988/48/section/9 — "In the case of a literary, dramatic, musical or artistic work which is computer-generated, the author shall be taken to be the person by whom the arrangements necessary for the creation of the work are undertaken." It applies only to a computer-generated work, which s. 178 defines as one where "there is no human author of the work". Misused as: work made with an LLM is computer-generated.
+- Report on Copyright and Artificial Intelligence, 18 March 2026 — read — https://www.gov.uk/government/publications/report-and-impact-assessment-on-copyright-and-artificial-intelligence/report-on-copyright-and-artificial-intelligence — "in the absence of evidence of its ongoing value, we propose that this specific type of protection should be removed, while copyright should continue to protect works created with AI assistance." The proposal concerns s. 9(3) works only.

@@ -1,0 +1,16 @@
+.vscode/**
+.vscode-test/**
+src/**
+**/*.ts
+**/*.map
+**/tsconfig.json
+.gitignore
+.git/**
+node_modules/**
+**/.DS_Store
+CHANGELOG.md.bak
+# Webview templates must ship in the .vsix because config.ts / about.ts
+# read them at runtime via fs. Negation re-includes them after src/** was
+# excluded above.
+!src/webviews/**/*.html
+!src/webviews/**/*.css

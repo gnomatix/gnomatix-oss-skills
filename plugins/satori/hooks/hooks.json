@@ -1,0 +1,16 @@
+{
+  "description": "satori {悟り}: Helps agents achieve \"satori\" by encouraging them to be the river. Per-turn reminder. One UserPromptSubmit hook injecting the characters, untranslated.",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/satori-reminder.js",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

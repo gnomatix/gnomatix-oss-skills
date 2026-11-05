@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "mise": {
+      "command": "mise",
+      "args": ["--cd", "${CLAUDE_PROJECT_DIR}", "mcp"],
+      "env": {
+        "MISE_SAFE": "1"
+      }
+    }
+  }
+}

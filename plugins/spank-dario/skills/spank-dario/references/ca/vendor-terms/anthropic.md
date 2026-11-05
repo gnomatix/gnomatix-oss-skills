@@ -1,0 +1,19 @@
+# Anthropic terms: Canada
+
+Every entry was read and quoted from its primary source. Step 7 of the skill refreshes this file each time the skill runs.
+
+- Consumer terms, governing law — read 2026-11-04 — https://www.anthropic.com/legal/consumer-terms — California law governs "except to the extent that Canadian federal or provincial law requires otherwise."
+- The clauses themselves are the same documents as `../../us/vendor-terms/anthropic.md`. No Canada-specific version was found on 2026-11-04.
+
+## TOS False Claims / Conflicts with Jurisdictional Laws Which Must Be Respected
+
+Every statement in this vendor's terms and tools on file that is false under the law, or that the vendor's own terms or tools contradict. Each is quoted exactly from `../../us/vendor-terms/anthropic.md`, which holds the same documents, with Canadian law stated for each. This file's entries above give the contracting party and governing law here.
+
+- **Origin.** Vendor statement: "Our Services may generate responses (we call these "Outputs")". False. No Canadian provision on file for this point; the Berne Convention: the author may claim authorship "independently of the author's economic rights, and even after the transfer of the said rights" (art. 6bis(1)). Other jurisdictions: their `skill.md`, under "The software is an author or co-author".
+- **Assent.** Vendor statement: "By accessing our Services, you agree to these Terms." False. Canadian law: "Moral rights may not be assigned but may be waived in whole or in part" (Copyright Act s. 14.1(2)). Anthropic's own terms yield where "Canadian federal or provincial law requires otherwise." Other jurisdictions: their `skill.md`, under "The vendor's terms bind the user over the law".
+- **Assignment.** Vendor statement: "we assign to you all of our right, title, and interest—if any—in Outputs." False. The vendor holds no right in the user's work, so the "if any" assignment conveys nothing. Other jurisdictions: their `skill.md`, under "The vendor's assignment means the vendor owned the work".
+- **Attribution by default.** Vendor statement: Claude Code adds `Co-Authored-By: <name> <noreply@anthropic.com>` to commits and "🤖 Generated with [Claude Code](https://claude.com/claude-code)" to pull requests (settings reference). False. No Canadian provision on file for this point; the Berne Convention: the author may claim authorship "independently of the author's economic rights, and even after the transfer of the said rights" (art. 6bis(1)). Other jurisdictions: their `skill.md`, under "The software is an author or co-author".
+- **Attribution against its own terms.** The commercial terms: the customer "owns its Outputs" and "Anthropic disclaims any rights it receives to the Customer Content". The vendor's own default attribution above contradicts them.
+- **Responsibility against credit.** The consumer terms: "You are responsible for all Inputs you submit to our Services and all Actions." The vendor's own default attribution credits its software with that work.
+- **Attribution against its own policy.** The Usage Policy, under "Do Not Engage in Deceptive Campaigns or Artificial Activity", bars impersonation "in order to mislead people about their origin or attribution" and content "that misrepresents its origin, authorship, or independence". The vendor's own default attribution misrepresents the authorship of the user's work.
+- **License by claimed assent.** Vendor statement: "We may use Materials to provide, maintain, and improve the Services and to develop other products and services, including training our models, unless you opt out of training through your account settings." False. Canadian law: "Moral rights may not be assigned but may be waived in whole or in part" (Copyright Act s. 14.1(2)). Anthropic's own terms yield where "Canadian federal or provincial law requires otherwise." Other jurisdictions: their `skill.md`, under "The vendor's terms bind the user over the law".

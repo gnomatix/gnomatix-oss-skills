@@ -1,0 +1,10 @@
+{
+  "name": "spank-dario",
+  "version": "0.2.1",
+  "description": "Keeps false claims of authorship by software tools out of commits, PRs and documents, with verified copyright and moral-rights references by jurisdiction.",
+  "author": {
+    "name": "Brett Whitty",
+    "email": "brett@gnomatix.com"
+  },
+  "license": "PolyForm-Noncommercial-1.0.0"
+}

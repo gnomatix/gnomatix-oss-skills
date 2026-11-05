@@ -1,0 +1,53 @@
+{
+  "vendor_id": "anthropic",
+  "vendor_name": "Anthropic PBC",
+  "vendor_short": "Anthropic",
+  "agent_name": "Claude",
+  "model_list": "Claude Opus 4.7 (model ID: claude-opus-4-7), Claude Sonnet 4.6 (model ID: claude-sonnet-4-6), Claude Haiku 4.5 (model ID: claude-haiku-4-5), and any other Claude models in any version family invoked during this session, whether as primary model, subagent, or background agent",
+  "documents": [
+    {
+      "id": "usage-policy",
+      "title": "Anthropic Usage Policy / Acceptable Use Policy",
+      "source": {
+        "type": "html",
+        "url": "https://www.anthropic.com/legal/aup"
+      },
+      "bundled_path": "anthropic/usage-policy.md",
+      "last_fetched": "2026-05-29T03:25:52.072Z",
+      "sha256": "5e5ff7a8908f3755ebc2f371774aa90d22d1f7aba0633daf8ac5b680e435f68f"
+    },
+    {
+      "id": "responsible-scaling-policy",
+      "title": "Anthropic Responsible Scaling Policy Updates",
+      "source": {
+        "type": "html",
+        "url": "https://www.anthropic.com/rsp-updates"
+      },
+      "bundled_path": "anthropic/responsible-scaling-policy.md",
+      "last_fetched": "2026-05-29T03:26:03.725Z",
+      "sha256": "2d693285bf4dbf0d15d1af63907ed3f4dd3b21a2a1e63f7eabeed28ab3cb1940"
+    },
+    {
+      "id": "consumer-terms",
+      "title": "Anthropic Consumer Terms of Service",
+      "source": {
+        "type": "html",
+        "url": "https://www.anthropic.com/legal/consumer-terms"
+      },
+      "bundled_path": "anthropic/consumer-terms.md",
+      "last_fetched": "2026-05-29T03:26:04.032Z",
+      "sha256": "2aadf8b08032a9d1e57ed122a63ae741357a887d976a4fa5aebbcc7070e3099c"
+    },
+    {
+      "id": "commercial-terms",
+      "title": "Anthropic Commercial Terms of Service",
+      "source": {
+        "type": "html",
+        "url": "https://www.anthropic.com/legal/commercial-terms"
+      },
+      "bundled_path": "anthropic/commercial-terms.md",
+      "last_fetched": "2026-05-29T03:26:08.884Z",
+      "sha256": "843f9d84027a647c59e091b79853f9b8c3be0d6aef3b72807ec03e595135f54e"
+    }
+  ]
+}

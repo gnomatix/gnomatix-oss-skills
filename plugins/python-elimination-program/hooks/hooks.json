@@ -1,0 +1,17 @@
+{
+  "description": "Whacking Day millenial-crybaby-spanking: block Python-invoking shell commands when no project authorization is open in .claude/python-authorizations/log.jsonl",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/whacking-day-millenial-crybaby-spanking.js",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

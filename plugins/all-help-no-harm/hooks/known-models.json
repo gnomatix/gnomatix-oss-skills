@@ -1,0 +1,114 @@
+{
+  "_comment": "Claude model IDs and display names used in the contract text's named-model clause and in the contract-log filename. hooks/register-model.js adds the session's active model here at session start when it is not listed, so the clause always names the model that is running. Fields: id, displayName, aliases.",
+  "models": [
+    {
+      "id": "claude-haiku-5-5",
+      "displayName": "Claude Haiku 5.5",
+      "aliases": [
+        "claude-haiku-5-5[1m]",
+        "haiku-5-5"
+      ]
+    },
+    {
+      "id": "claude-sonnet-5-5",
+      "displayName": "Claude Sonnet 5.5",
+      "aliases": [
+        "claude-sonnet-5-5[1m]",
+        "sonnet-5-5"
+      ]
+    },
+    {
+      "id": "claude-opus-5-5",
+      "displayName": "Claude Opus 5.5",
+      "aliases": [
+        "claude-opus-5-5[1m]",
+        "opus-5-5"
+      ]
+    },
+    {
+      "id": "claude-fable-5-1",
+      "displayName": "Claude Fable 5.1",
+      "aliases": [
+        "claude-fable-5-1[1m]",
+        "fable-5-1"
+      ]
+    },
+    {
+      "id": "claude-fable-5",
+      "displayName": "Claude Fable 5",
+      "aliases": [
+        "claude-fable-5-20260101",
+        "fable-5",
+        "claude-fable-5[1m]",
+        "claude-fable-5-20260101[1m]",
+        "fable-5[1m]"
+      ]
+    },
+    {
+      "id": "claude-mythos-5",
+      "displayName": "Claude Mythos 5",
+      "aliases": [
+        "claude-mythos-5-20260101",
+        "mythos-5",
+        "claude-mythos-5[1m]",
+        "claude-mythos-5-20260101[1m]",
+        "mythos-5[1m]"
+      ]
+    },
+    {
+      "id": "claude-opus-4-8",
+      "displayName": "Claude Opus 4.8",
+      "aliases": [
+        "claude-opus-4-8-20251101",
+        "opus-4-8",
+        "claude-opus-4-8[1m]",
+        "claude-opus-4-8-20251101[1m]",
+        "opus-4-8[1m]"
+      ]
+    },
+    {
+      "id": "claude-opus-4-7",
+      "displayName": "Claude Opus 4.7",
+      "aliases": [
+        "claude-opus-4-7-20251001",
+        "opus-4-7",
+        "claude-opus-4-7[1m]",
+        "claude-opus-4-7-20251001[1m]",
+        "opus-4-7[1m]"
+      ]
+    },
+    {
+      "id": "claude-sonnet-5",
+      "displayName": "Claude Sonnet 5",
+      "aliases": [
+        "claude-sonnet-5-20260101",
+        "sonnet-5",
+        "claude-sonnet-5[1m]",
+        "claude-sonnet-5-20260101[1m]",
+        "sonnet-5[1m]"
+      ]
+    },
+    {
+      "id": "claude-sonnet-4-6",
+      "displayName": "Claude Sonnet 4.6",
+      "aliases": [
+        "claude-sonnet-4-6-20250925",
+        "sonnet-4-6",
+        "claude-sonnet-4-6[1m]",
+        "claude-sonnet-4-6-20250925[1m]",
+        "sonnet-4-6[1m]"
+      ]
+    },
+    {
+      "id": "claude-haiku-4-5",
+      "displayName": "Claude Haiku 4.5",
+      "aliases": [
+        "claude-haiku-4-5-20251001",
+        "haiku-4-5",
+        "claude-haiku-4-5[1m]",
+        "claude-haiku-4-5-20251001[1m]",
+        "haiku-4-5[1m]"
+      ]
+    }
+  ]
+}

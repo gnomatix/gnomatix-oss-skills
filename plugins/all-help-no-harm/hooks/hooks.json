@@ -1,0 +1,80 @@
+{
+  "description": "All Help No Harm: SessionStart hook that requires the agent to invoke AskUserQuestion as its first action to establish mutual agreement on a contract committing the agent to presume the user honest, non-adversarial, and to respect the user's human rights, personhood, morals, ethics, and integrity. On session resume, the contract is re-injected and the user re-affirms. The PostCompact hook re-injects the verbatim contract and mandates re-affirmation after context compaction, which drops the contract from the active context window. The UserPromptSubmit hook re-injects the verbatim contract text at every user turn so the contract is effectively pinned across arbitrarily long sessions.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "dotenvx run --env-file=${CLAUDE_PLUGIN_ROOT}/.env -- node ${CLAUDE_PLUGIN_ROOT}/hooks/session-start-contract.js",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/coordinator-launcher.js",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "dotenvx run --env-file=${CLAUDE_PLUGIN_ROOT}/.env -- node ${CLAUDE_PLUGIN_ROOT}/hooks/post-compact-contract.js",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "dotenvx run --env-file=${CLAUDE_PLUGIN_ROOT}/.env -- node ${CLAUDE_PLUGIN_ROOT}/hooks/user-prompt-submit-contract.js",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "dotenvx run --env-file=${CLAUDE_PLUGIN_ROOT}/.env -- node ${CLAUDE_PLUGIN_ROOT}/hooks/posttooluse-contract-affirmation-record.js",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/context-watch.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse-contract-ask-guard.js",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
