@@ -1,10 +1,9 @@
 {
   "name": "skill-vv",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Verification and validation for skills, across vendors. Before a skill's first real use in a session, surfaces its requirements and offers install or configuration, then checks whether the current model and platform have passed the skill's V&V procedures and offers to run them. State lives in a VV.md file with YAML frontmatter beside each skill; a Node CLI reads and records it for any agent, and a SessionStart hook runs the check on Claude Code.",
   "author": {
     "name": "Brett Whitty",
     "email": "brett@gnomatix.com"
-  },
-  "license": "PolyForm-Noncommercial-1.0.0"
+  }
 }

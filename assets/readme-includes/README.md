@@ -9,7 +9,7 @@ When the canonical content changes, edit the file here and propagate to every RE
 | File | Block ID | Purpose |
 |---|---|---|
 | [`promo.md`](promo.md) | `gnomatix-promo-include` | "Buy Me A Coffee" button + GNOMATIX branding. Sits near the top of each README, below the heading and tagline, above the main content. |
-| [`license.md`](license.md) | `gnomatix-license-include` | License declaration (PolyForm Noncommercial 1.0.0, with commercial licensing through GNOMATIX) for the project. Sits in the `## License` section at the bottom of each README. |
+| [`license.md`](license.md) | `gnomatix-license-include` | License declaration (Business Source License 1.1) for the project. Sits in the `## License` section at the bottom of each README. |
 
 ## How to use
 
