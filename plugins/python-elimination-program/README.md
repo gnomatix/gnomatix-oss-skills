@@ -157,7 +157,15 @@ Naming references:
 - **Florida Fish & Wildlife Conservation Commission**, **Florida Department of Environmental Protection**, and the **South Florida Water Management District's [Python Elimination Program](https://www.sfwmd.gov/our-work/python-program)** — for the actual ongoing fight against the python in the Everglades.
 - **Zartan** — master of disguise; killer of Serpentor in *G.I. Joe: A Real American Hero* #76 ("All's Fair", September 1988, Marvel, Larry Hama); joined the *Snake Hunt* arc (#266–275, IDW) to recover Snake-Eyes from Cobra; lairs in the Florida Everglades.
 - **Jake "The Snake" Roberts** — professional wrestler, kept a python.
-- **Old Willy** — Stanley Lee Wilson (1939–2018), high-school math, physics, and computer science teacher in St. Catharines, Ontario. Dropped out of his PhD program at MIT after his thesis project was scooped — a principled exit on integrity grounds, not a failure of capability. Earlier turned down an NHL goaltending career with the Chicago Blackhawks to attend university; played with Stan Mikita on the Blackhawks' St. Catharines farm team before walking away. Spent his working life teaching the rigorous, defensible answer to teenagers who would otherwise have settled for the popular one. The `old-willy` skill is named for him because it does what he did — refuses to let "what everybody picks" stand in for "what the analysis actually supports."
+- **Old Willy** — Stanley Lee Wilson (1941–2022), high-school math, physics, and computer science teacher in St. Catharines, Ontario. Dropped out of his PhD program at MIT after his thesis project was scooped — a principled exit on integrity grounds, not a failure of capability. Earlier turned down an NHL goaltending career with the Chicago Blackhawks to attend university; played with Stan Mikita on the Blackhawks' St. Catharines farm team before walking away. Spent his working life teaching the rigorous, defensible answer to teenagers who would otherwise have settled for the popular one. The `old-willy` skill is named for him because it does what he did — refuses to let "what everybody picks" stand in for "what the analysis actually supports."
+
+<p align="center">
+  <a href="https://www.legacy.com/ca/obituaries/stcatharinesstandard/name/stanley-wilson-obituary?id=39732079">
+    <img src="assets/images/old-willy-tribute-oval.png" alt="In Memoriam: Stanley 'Old Willy' Wilson (March 22, 1941 – December 3, 2022)" width="260">
+  </a>
+  <br>
+  <em>In Memoriam: <a href="https://www.legacy.com/ca/obituaries/stcatharinesstandard/name/stanley-wilson-obituary?id=39732079">Stanley Lee "Old Willy" Wilson (March 22, 1941 – December 3, 2022)</a> — Sir Winston Churchill Secondary School, St. Catharines, ON (1966–1998)</em>
+</p>
 
 <!-- BEGIN: gnomatix-license-include -->
 ## License

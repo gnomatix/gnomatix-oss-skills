@@ -5,7 +5,7 @@ description: Use this skill (the merit-rigor test, complementary to whacking-day
 
 # Old Willy — the merit test
 
-> *Stanley Lee Wilson (1939–2018). High-school math, physics, and computer science teacher, St. Catharines, Ontario. Dropped out of his PhD program at MIT after his thesis project was scooped — a principled exit on integrity grounds, not a failure of capability. Earlier turned down an NHL goaltending career with the Chicago Blackhawks to attend university; played with Stan Mikita on the Blackhawks' St. Catharines farm team before walking away. Spent his working life teaching the rigorous, defensible answer to teenagers who would otherwise have settled for the popular one. This skill is named for him because it does what he did — refuses to let "what everybody picks" stand in for "what the analysis actually supports."*
+> *Stanley Lee Wilson (1941–2022). High-school math, physics, and computer science teacher, St. Catharines, Ontario. Dropped out of his PhD program at MIT after his thesis project was scooped — a principled exit on integrity grounds, not a failure of capability. Earlier turned down an NHL goaltending career with the Chicago Blackhawks to attend university; played with Stan Mikita on the Blackhawks' St. Catharines farm team before walking away. Spent his working life teaching the rigorous, defensible answer to teenagers who would otherwise have settled for the popular one. This skill is named for him because it does what he did — refuses to let "what everybody picks" stand in for "what the analysis actually supports."*
 
 ## What this is for
 
@@ -214,3 +214,10 @@ If the user, having seen this result, still chooses to write Python for a given 
 - **Not optional once triggered.** If the agent is about to claim Python is the best tool for new code, the procedure runs, and the honest result is reported — including, almost always, the result that the claim was not supportable.
 - **Not a license to reach for ecosystem-mandate cases as evidence of Python's merit.** A mandate is downstream of platform choice; it is evidence about the platform, not about Python.
 - **Not a license to pad the surviving list.** Zero is the correct answer in almost all reference runs. Inflating to ten by relaxing the criteria reproduces the failure mode the skill is designed to interrupt.
+
+---
+
+<p align="center">
+  <img src="../../assets/images/old-willy-computer-lab-panel.jpg" alt="Stanley 'Old Willy' Wilson stalking a 1990s school computer lab with his meter stick rested across his shoulders" width="760">
+</p>
+

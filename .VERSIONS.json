@@ -50,8 +50,8 @@
     "path": "plugins/open-and-honest-agent"
   },
   "python-elimination-program": {
-    "version": "0.2.3",
-    "git_hash": "e08772a5464bbf10843bf4ab856cec845efd772b",
+    "version": "0.2.4",
+    "git_hash": "7a660cc32fce6a1180c1c651ff2a87aae4017b33",
     "path": "plugins/python-elimination-program"
   },
   "satori": {
@@ -75,7 +75,7 @@
     "path": "plugins/word-lineage"
   },
   "_marketplace": {
-    "version": "0.1.7",
-    "plugins_fingerprint": "8f44f4b69a1604d1f5dde6989f6474740cabb1f0ec6754498609a817ccd52f46"
+    "version": "0.1.8",
+    "plugins_fingerprint": "b12af3108e367d74ddf95fe20ed16477a5575633ea176090a06d5fbd6cd43f21"
   }
 }
