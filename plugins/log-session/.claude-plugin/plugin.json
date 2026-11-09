@@ -1,0 +1,10 @@
+{
+  "name": "log-session",
+  "version": "0.1.5",
+  "description": "An Agent Skill that logs the current session to the user's Google Calendar work journal as a meeting with the agent: a topic title, start and end times, the session link and terse notes on what happened. It uses whichever calendar access the session has, in order: the Claude app's calendar tools, a Google Calendar MCP connector, or the Google Workspace CLI (gws). It never writes to the primary calendar, and on first run it sets up its settings file with the journal calendar's name.",
+  "author": {
+    "name": "Brett Whitty",
+    "email": "brett@gnomatix.com"
+  },
+  "license": "BUSL-1.1"
+}

@@ -1,0 +1,16 @@
+{
+  "premises": {
+    "P1": "all of it is voluntary",
+    "P2": "Pause has LARC as the condition",
+    "P3": "offered proactively to the women everyone already knows are at risk"
+  },
+  "conclusions": {
+    "C1": "Pause is voluntary",
+    "C2": "none of that needs a board"
+  },
+  "cells": {
+    "P1|C1": { "acc": false, "rel": true, "suf": false, "note": "E6/S1" },
+    "P2|C1": { "acc": true, "rel": true },
+    "P2|C2": { "acc": true, "rel": false }
+  }
+}

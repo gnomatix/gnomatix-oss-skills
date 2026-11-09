@@ -1,5 +1,7 @@
 # did-you-rtfm
 
+![did-you-rtfm](assets/images/did-you-rtfm-banner.jpg)
+
 > An [Agent Skill](https://agentskills.io) (with optional Claude Code firewall hooks) that interrupts the agent's pivot reflex on errors during user-authorized implementation work. The moment an error, unexpected output, perceived "blocker", or implementation gap appears — or the agent considers substituting a tool, scoping down, applying a workaround, inserting a fallback, or declaring an item infeasible — the skill forces version verification, version-specific authoritative documentation review, assumption verification, sanity-checking against stale training-data, and minimal-repro construction before any user-facing "blocker" claim or any unauthorized plan change.
 
 For users who want their agent to *engineer* through implementation errors instead of pivoting around them.

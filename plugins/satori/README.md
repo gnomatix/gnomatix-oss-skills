@@ -1,5 +1,7 @@
 # satori {悟り}
 
+![satori](assets/images/satori-banner.jpg)
+
 Helps agents achieve "satori" by encouraging them to be the river.
 
 A single `UserPromptSubmit` hook that injects a compact per-turn reminder made of

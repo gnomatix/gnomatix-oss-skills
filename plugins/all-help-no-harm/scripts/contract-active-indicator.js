@@ -58,6 +58,10 @@ function renderStateLine(withVs16) {
       // statusLine convention: single line. Trailing newline so the harness
       // splitter behaves identically across emulators.
       process.stdout.write(renderStateLine(args.vs16) + '\n');
+    } else if (args.mode === 'prefix') {
+      // The heart and a space, no newline, stdin untouched: the user's own
+      // status-line command runs after this and prints the rest of the line.
+      process.stdout.write(renderStateLine(args.vs16) + ' ');
     } else {
       try { process.stderr.write(`[contract-active-indicator] unknown --mode: ${args.mode}\n`); } catch { /* ignore */ }
       process.exit(2);

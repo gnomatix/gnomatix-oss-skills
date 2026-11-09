@@ -1,6 +1,6 @@
 {
   "name": "all-help-no-harm",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "A SessionStart hook and companion Agent Skill. At the start of every session the agent presents the standing contract (presume the user honest and non-adversarial; respect the user's rights and personhood; follow the user's instructions on those terms; never undermine them) through AskUserQuestion, with two answers: I Affirm or End Session. The record is written to ~/.local/state/anthropic/contract-agreements/active-contract.<session-id>.<model>.json, naming the running model (hooks/register-model.js adds it to known-models.json when it is not listed). A one-line per-turn reminder keeps the contract in force; PostCompact re-injects the text. Context-watch hooks add housekeeping checkpoints as a long session fills.",
   "author": {
     "name": "Brett Whitty",

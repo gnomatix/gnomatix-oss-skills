@@ -1,5 +1,7 @@
 # agent-darktriad-check
 
+![agent-darktriad-check](assets/images/agent-darktriad-check-banner.jpg)
+
 > Runs the [KontentKop](https://github.com/brettwhitty/KontentKop-Bake-Off) psycholinguistic scorer over the **agent's own replies**, not only over user prompts. A Stop / SubagentStop hook scores each finished reply and logs the per-metric scores, Body Count and CriticMarkup annotation. A companion skill names nine evasion patterns so the agent avoids them before the hook sees them.
 
 <!-- BEGIN: gnomatix-promo-include -->

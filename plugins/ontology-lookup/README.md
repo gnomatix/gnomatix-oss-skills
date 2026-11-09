@@ -1,5 +1,7 @@
 # ontology-lookup
 
+![ontology-lookup](assets/images/ontology-lookup-banner.jpg)
+
 > An [Agent Skill](https://agentskills.io) for tagging the things an agent writes about with identifiers from established registries. The first mention of a thing in a passage gets its identifier inline, as a CURIE with a Bioregistry prefix: «mitochondrion» [GO:0005739], «water» [CHEBI:15377], «English» [glottolog:stan1293]. Logs written this way can be resolved and indexed later.
 
 For anyone who wants agent-written logs, notes and reports to be machine-indexable by the things they mention, without a separate annotation pass over everything the agent wrote.

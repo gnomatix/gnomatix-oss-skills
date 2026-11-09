@@ -168,3 +168,18 @@ test('recorder ignores non-contract questions', () => {
   assert.strictEqual(r.stdout, '');
   assert.ok(!fs.existsSync(path.join(home, '.local')));
 });
+
+test('recorder puts the heart in front of the user\'s status line after an affirmation, not after a decline', () => {
+  const home = fs.mkdtempSync(path.join(os.tmpdir(), 'ahnh-'));
+  const settings = path.join(home, '.claude', 'settings.json');
+  fs.mkdirSync(path.dirname(settings), { recursive: true });
+  fs.writeFileSync(settings, JSON.stringify({ statusLine: { type: 'command', command: 'echo mine' } }));
+  const env = { HOME: home, USERPROFILE: home, XDG_STATE_HOME: path.join(home, 'state'), ANTHROPIC_CONTRACT_LOG_KEY: '' };
+  const declined = runHook('posttooluse-contract-affirmation-record.js', contractPayload(home, 'End Session'), env);
+  assert.strictEqual(declined.status, 0, declined.stderr);
+  assert.strictEqual(JSON.parse(fs.readFileSync(settings, 'utf8')).statusLine.command, 'echo mine');
+  const r = runHook('posttooluse-contract-affirmation-record.js', contractPayload(home, 'I Affirm'), env);
+  assert.strictEqual(r.status, 0, r.stderr);
+  assert.match(JSON.parse(r.stdout).hookSpecificOutput.additionalContext, /status line: heart added/);
+  assert.match(JSON.parse(fs.readFileSync(settings, 'utf8')).statusLine.command, /--mode=prefix; echo mine$/);
+});

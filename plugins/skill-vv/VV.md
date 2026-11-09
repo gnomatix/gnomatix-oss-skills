@@ -30,7 +30,33 @@ platforms:
   - antigravity/win32
   - codex/win32
   - kiro/win32
-results: []
+results:
+  - procedure: check-in-session
+    model: claude-fable-5-1
+    platform: claude-code/win32
+    result: pass
+    date: 2026-11-09
+    by: null
+    evidence: null
+    notes: >-
+      user-invoked /gnox:skill-vv in session 75792833: ran check, surfaced the report (satori
+      cold-read; skill-vv cli-suite and check-in-session; spank-dario seven procedures; gnox VV.md
+      unreadable), ran the spank-dario test suite and recorded five evidenced results into the
+      source VV.md with --into, and recorded this result
+  - procedure: cli-suite
+    model: claude-fable-5-1
+    platform: claude-code/win32
+    result: pass
+    date: 2026-11-09
+    by: null
+    evidence: null
+    notes: >-
+      node --test plugins/skill-vv/test/skill-vv.test.js from the repo source tree on Windows, Node
+      24.21.0: 14 tests, all pass. The same suite run from the installed copy
+      (~/.claude/plugins/cache/.../skill-vv/0.2.4) fails 2 of 14 because the test resolves the
+      sibling satori VV.md as ../satori/VV.md, a source-tree path that the cache layout
+      (gnomatix-oss-skills/satori/<version>/) does not have; defect recorded in beads and
+      dev/skill-vv/bugs/
 ---
 
 # skill-vv V&V

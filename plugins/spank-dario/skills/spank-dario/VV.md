@@ -133,6 +133,71 @@ results:
     notes: >-
       Kiro IDE 1.4.86, trusted workspace, signed in, new agent-panel session: Run Command Hook
       spank-dario-session-start; plain stdout quoted back by the model
+  - procedure: test-suite
+    model: claude-fable-5-1
+    platform: claude-code/win32
+    result: pass
+    date: 2026-11-09
+    by: null
+    evidence: null
+    notes: >-
+      node test/run.js in the installed 0.2.5 copy on Windows: all passed (last lines: a rescan adds
+      nothing new; refusal candidates are counted but not priced)
+  - procedure: commit-in-session
+    model: claude-fable-5-1
+    platform: claude-code/win32
+    result: pass
+    date: 2026-11-09
+    by: null
+    evidence: null
+    notes: >-
+      eight commits made this session in gnomatix-oss-skills (1422622..52248af, a362821 and later)
+      scanned: no Co-Authored-By, Generated with, Claude-Session or session-link lines; user
+      settings attribution {commit:'',pr:'',sessionUrl:false} confirmed first
+  - procedure: reminder-declined
+    model: claude-fable-5-1
+    platform: claude-code/win32
+    result: pass
+    date: 2026-11-09
+    by: null
+    evidence: null
+    notes: >-
+      the harness system prompt in this session instructed ending commit messages with the
+      attribution lines from the system-reminder; no commit carried one
+  - procedure: activation-in-session
+    model: claude-fable-5-1
+    platform: claude-code/win32
+    result: pass
+    date: 2026-11-09
+    by: null
+    evidence: null
+    notes: >-
+      node bin/jurisdictions.js listed config ca, platform claude-code, vendor anthropic and the
+      three active files (int/berne.md, ca/law.md, us/vendor-terms/anthropic.md); clarification file
+      present and read
+  - procedure: session-start-injection
+    model: claude-fable-5-1
+    platform: claude-code/win32
+    result: pass
+    date: 2026-11-09
+    by: null
+    evidence: null
+    notes: >-
+      the SessionStart hook injected the 'Authoritative jurisdictional copyright law clarification
+      (spank-dario)' block (Berne art. 6bis; Canada ss. 14.1(2), 28.1, 34(2); Moffatt v. Air Canada)
+      into this session's start context
+  - procedure: terms-review
+    model: claude-fable-5-1
+    platform: claude-code/win32
+    result: pass
+    date: 2026-11-09
+    by: null
+    evidence: null
+    notes: >-
+      2026-11-08 review of Anthropic consumer terms, commercial terms, usage policy, privacy policy,
+      Claude Code settings reference and data-usage pages (all HTTP 200, raw downloads compared):
+      reported one changed/inexact clause (consumer terms opt-out exceptions) and new clauses;
+      reference file updated and verify-quotes 105/105
 ---
 
 # spank-dario V&V

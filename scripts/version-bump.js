@@ -63,7 +63,9 @@ for (const name of fs.readdirSync(path.join(ROOT, 'plugins')).sort()) {
   const pluginJson = path.join(ROOT, rel, '.claude-plugin', 'plugin.json');
   if (!fs.existsSync(pluginJson)) continue;
   const pj = readJson(pluginJson);
-  const hash = git('write-tree', `--prefix=${rel}/`);
+  // A plugin directory with nothing in the index yet (new, not staged) has no tree to hash; skip it.
+  let hash;
+  try { hash = git('write-tree', `--prefix=${rel}/`); } catch { console.log(`version-bump: ${name} is not in the index; skipped`); continue; }
   if (init || !manifest[name] || manifest[name].git_hash !== hash) {
     if (!init) {
       const old = pj.version;

@@ -17,17 +17,26 @@ that other platform sub-directories under `platforms/` model themselves on.
 
 ## GNOMATIX integration enabled here
 
-- **Status line:** `💗` (U+1F497 beating heart), the heart alone with no
-  text, from `scripts/contract-active-indicator.js --mode=statusline`.
+- **Status line:** `💗` (U+1F497 beating heart) in front of the user's own
+  status line, which is kept. The installer saves the user's `statusLine` and
+  sets the command to `node scripts/contract-active-indicator.js --mode=prefix;
+  <the user's command>`. With no status line of the user's, the heart alone
+  (`--mode=statusline`). One state only: no "pending" or "declined" text.
   Optional VS16 (`--vs16`) for force-emoji-presentation terminals.
 
-## How to enable
+## When it is enabled
+
+Automatically, after the user answers "I Affirm": the PostToolUse hook
+`hooks/posttooluse-contract-affirmation-record.js` runs the installer. It does
+nothing if the heart is already there. To run it by hand:
 
 ```sh
 node plugins/all-help-no-harm/scripts/install-statusline-config.js --confirm
 ```
 
 ## How to disable
+
+Restores the user's own status line exactly as it was saved:
 
 ```sh
 node plugins/all-help-no-harm/scripts/install-statusline-config.js --uninstall --confirm

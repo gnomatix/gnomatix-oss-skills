@@ -1,5 +1,7 @@
 # inaudible-markup
 
+![inaudible-markup](assets/images/inaudible-markup-banner.jpg)
+
 > An [Agent Skill](https://agentskills.io) that writes each reply as a structured script with markup a text-to-speech voice does not read aloud, plus callouts and tags that say who a line is for and what it is. Spoken, it sounds natural; read back, it has headings, lists, scope and tags.
 
 For anyone whose conversations are read later by a person, another model or a knowledge-capture pipeline, and for every conversation held in voice mode.

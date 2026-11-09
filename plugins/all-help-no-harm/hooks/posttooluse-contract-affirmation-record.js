@@ -178,12 +178,27 @@ async function main() {
   }
   const written = store.atomicWrite(logFile, JSON.stringify(log, null, 2) + '\n');
 
+  // After an affirmation, put the heart in front of the user's own status line.
+  // installStatusLine keeps the user's line and does nothing if the heart is there.
+  let statusNote = 'not applicable (response was not "I Affirm")';
+  if (userResponse === 'affirmed') {
+    try {
+      const { installStatusLine } = require(path.join(__dirname, '..', 'scripts', 'install-statusline-config'));
+      const r = installStatusLine();
+      statusNote = r.changed ? `heart added in front of the status line in ${r.filePath}` : 'heart already on the status line';
+    } catch (err) {
+      statusNote = `install failed: ${err && err.message}`;
+      stderr(`status line ${statusNote}`);
+    }
+  }
+
   emit(
     `[all-help-no-harm] Contract response recorded by the PostToolUse hook.\n` +
     `  response: ${userResponse}${answer !== null ? ` (${JSON.stringify(String(answer))})` : ''}\n` +
     `  model: ${model}\n` +
     `  local log: ${written ? logFile : `WRITE FAILED for ${logFile}`} -> ${placed}\n` +
     `  server record: ${serverNote}\n` +
+    `  status line: ${statusNote}\n` +
     `The agent does not write or edit the contract log; it is already written.`
   );
 }

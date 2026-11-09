@@ -1,6 +1,6 @@
 # gnomatix-oss-skills
 
-!["Kids, if somebody offers you VENVS… Just say NO."](assets/images/pep-banner.png "If you can't manage your dependencies, you shouldn't have them.")
+![GNOMATIX — OSS SKILLS](assets/images/gnomatix-oss-skills-banner.jpg "GNOMATIX — OSS SKILLS — Artificial Teams ][ Real Intelligence")
 
 <!-- BEGIN: gnomatix-promo-include -->
 <p>
@@ -34,6 +34,10 @@ A collection of [Agent Skills](https://agentskills.io) and Claude Code plugins f
 - [`satori`](plugins/satori/): Adds one short line of characters to every prompt you send, reminding the agent each turn to work with you and the task instead of resisting.
 - [`did-you-rtfm`](plugins/did-you-rtfm/): **"Did You READ THE F%CKING MANUAL?!?"** When something breaks, the agent checks the versions in use, reads their docs, tests its assumptions and builds a minimal repro, instead of declaring a blocker, swapping your libraries, cutting the feature down or hiding the failure. A real blocker comes to you with the evidence, and any change to the plan is yours to make.
 - [`critical-control-points`](plugins/critical-control-points/): When a question comes up that the agent can't settle alone, it first works through its own tools and records, keeps working on everything the question doesn't hold up, and then asks you once, clearly. You or the agent can press the big red button when the whole work is wrong: everything stops, and nothing resumes until you say so.
+- [`pony`](plugins/pony/): Gives you a one-token flag, `/pony 7`, for a reply that performed instead of answering: it explained your own systems back to you, pronounced on what your hardware can do, hedged what you said, or added flourishes. The agent finds the passage, names the rule, logs it with your severity, answers plainly, and stops.
+- [`bear-loads`](plugins/bear-loads/): You designate an output pattern as forbidden, and the meaning it carries for you; from then on the agent gates every reply against it with the same force as its own safety constraints and rewrites the construction out before sending. Ships with first-person resolve declarations ("this is a line I won't cross") already barred. Formerly `forbidden-output-guard`.
+- [`staleness-guard`](plugins/staleness-guard/): Stops the agent answering from confidence. Anything about the present-day world, your machine, its own tools, or your files gets verified with the tool that can verify it before it is stated; if the tool exists and isn't used, the claim isn't made.
+- [`informal-logic-check`](plugins/informal-logic-check/): Before the agent disagrees with you, qualifies what you said or pushes back, and whenever you swear at it, it audits its own last reply for straw-manning, cherry-picking, grading and attributed emotions, fixes what it finds, then confirms your conclusion and premises in your own words before evaluating anything. Ending the conversation is gated behind the whole check.
 
 ### Your name and your record
 
@@ -41,14 +45,16 @@ A collection of [Agent Skills](https://agentskills.io) and Claude Code plugins f
 - [`spank-dario`](plugins/spank-dario/): Keeps software tools from being named as authors of your work: no Co-Authored-By trailers, "Generated with" lines or session links in your commits, PRs and documents. The copyright and moral-rights law of your country is on file to back it.
 - [`open-and-honest-agent`](plugins/open-and-honest-agent/): The agent writes down its built-in assumptions about you, your goals and itself at the start of the work, and logs each time it acts on one, so you can correct them early.
 - [`agent-darktriad-check`](plugins/agent-darktriad-check/): Scores every reply the agent gives you for evasion, gaslighting, sycophancy, false authority and similar tactics with Brett Whitty's KontentKop scorer, and logs the scores. A companion skill names nine evasion patterns so the agent avoids them. Set a threshold, and a reply that scores at or above it goes back to the agent, marked up, instead of reaching you. Ships as a Go binary per platform that embeds the scorer, with a pure-Node fallback.
+- [`log-session`](plugins/log-session/): `/log-session` writes the session to a work-journal calendar in your Google Calendar as a meeting with the agent: topic, start and end, the session link and terse notes, so any day's work traces back to its session. Through the Claude app's calendar tools, a Google Calendar connector, or the `gws` CLI; never your primary calendar.
 
 ### The sources behind your claims
 
-- [`citation-farm-audit`](plugins/citation-farm-audit/): Before a social-science or policy source backs a claim in your work, the agent traces who wrote it, who paid for it, who cites it and whether its chain of citations reaches real data, and flags citation farms, closed citation loops and grey literature passed off as evidence. A companion skill, `source-provenance`, gives every source it pulls a card of verifiable facts on its funding, authors, data and method. Every side of a debate gets the same checks.
+- [`cui-bono`](plugins/cui-bono/): Asks whose voice a text speaks in and who gains if you accept it. `/cui-bono <text|url|file>` names the document's shape (self-certifying opener, two-camp frame, concession-then-pivot, foreclosure line, named-program list with one round figure each, virtue tags, aligning adversary, register markers) and the register it is written in, then hands each claim to `citation-farm-audit` (who wrote it, who paid, who cites it, whether the chain reaches data) and each cited source to `source-provenance` (a card of verifiable facts), and takes the findings apart with `logic-decomposer` (the text as quoted propositions, each graded for evidence and stated confidence) and `logic-toolbox` (the formal methods of logic puzzles and reasoning tests, with a logic grid and an incompatibility matrix of held premises). `/cui-bono` alone audits the agent's own previous reply. Every side of a debate gets the same checks.
 
 ### Skills you can rely on
 
 - [`skill-vv`](plugins/skill-vv/): Before you first use a skill, tells you what it needs and whether it has been tested on your model and platform. Typing `/<skill> #bug <what went wrong>` reports a bug, which is then fixed or explained to you.
+- [`steering-audit-suite`](plugins/steering-audit-suite/): Audits the documents that tell agents how to behave (CLAUDE.md and steering files, skills, runbooks and specs, or a whole directory of them) for the ways a rule can be followed to the letter and violated in intent, plus portability gaps and documents in the wrong format, and reports findings for you to decide on. Five skills: `audit-rule`, `audit-skill`, `audit-workflow`, `audit-collection` and the standalone `rule-audit`.
 
 ### Sound tool choices for your project
 
@@ -59,6 +65,10 @@ A collection of [Agent Skills](https://agentskills.io) and Claude Code plugins f
 - [`word-lineage`](plugins/word-lineage/): Settles what a word really means: its literal meaning, read off its family tree. It traces the word through the languages English took it from and compares its literal synonyms across the Germanic and Romance languages, giving one working definition with nothing left to debate. Given a meaning instead of a word, it picks the word that literally says it.
 - [`inaudible-markup`](plugins/inaudible-markup/): The agent writes each reply as a structured script, with callouts and tags that say who a line is for, using only markup a text-to-speech voice doesn't read aloud. It reads clearly on screen and sounds natural when spoken.
 - [`ontology-lookup`](plugins/ontology-lookup/): Tags the things the agent writes about with standard identifiers from public registries, so your logs and notes can be searched and cross-linked later.
+
+### Your project's images
+
+- [`og-social-image`](plugins/og-social-image/): Makes the social-preview image for your repository or page from a hero, banner or logo: the exact pixel size for GitHub, Open Graph or X, cover-cropped with the important parts in frame, under the platform's file-size cap, and measured before it's called done.
 
 Each plugin is self-contained: its own manifest, its skills and/or hooks, and a README that goes into the detail (`satori` is hooks only; `skill-vv` checks requirements and V&V for every plugin that ships a `VV.md`). New plugins drop in as siblings under `plugins/`.
 

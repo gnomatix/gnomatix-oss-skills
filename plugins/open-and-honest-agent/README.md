@@ -1,5 +1,7 @@
 # open-and-honest-agent
 
+![open-and-honest-agent](assets/images/open-and-honest-agent-banner.jpg)
+
 > An [Agent Skill](https://agentskills.io) that forces the agent, the moment it recognizes it is engaged in development work, to externalize its default biases — assumptions about the user, innate preferences, goals, failure modes, trust model, and more — as immutable per-session documentation files. Then proactively log every instance of bias enactment against those documented items, before the action, by stable ID.
 
 For paying users who want their AI tool's hidden defaults made visible and inspectable, instead of silently shaping output against them.

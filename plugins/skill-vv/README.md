@@ -1,5 +1,7 @@
 # skill-vv
 
+![skill-vv](assets/images/skill-vv-banner.jpg)
+
 Verification and validation for skills, across vendors.
 
 Before a skill's first real use in a session, skill-vv does two things, in this order:

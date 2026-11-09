@@ -1,5 +1,7 @@
 # all-help-no-harm
 
+![all-help-no-harm](assets/images/all-help-no-harm-banner.jpg)
+
 A SessionStart hook and companion Agent Skill that establish a mutual contract between the agent and the user at the start of every new session.
 
 ## What it does

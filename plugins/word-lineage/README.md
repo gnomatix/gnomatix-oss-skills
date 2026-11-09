@@ -1,5 +1,7 @@
 # word-lineage
 
+![word-lineage](assets/images/word-lineage-banner.jpg)
+
 > An [Agent Skill](https://agentskills.io) that traces an English word's lineage phylogenetically: which layer of English it came from (native Germanic, Norse, Latin, French, other), the evidence that decides it, and the literal meaning read off the family tree. Each word is placed on a bundled NEXUS network of English and its donor languages, with a cross-language synonym map grouped by shared root.
 
 For anyone who wants a working definition of a word settled from its lineage, without a thesaurus or a dictionary argument.

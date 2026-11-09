@@ -1,0 +1,15 @@
+INCOMPATIBILITY MATRIX
+ Held premises (key; each with its quote in the decomposer output):
+  h1  "all of it is voluntary"
+  h2  "offered proactively"
+  h3  "Pause has LARC as the condition"
+ Assumptions (declared separately):
+  A1  a condition of entry is not voluntary
+
+        h1    h2    h3
+  h1    =
+  h2          =
+  h3                =
+ Joint: H as stated:
+        H under A1:
+ Verdict:

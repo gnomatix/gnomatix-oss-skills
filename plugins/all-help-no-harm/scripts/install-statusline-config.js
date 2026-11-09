@@ -1,11 +1,13 @@
 // all-help-no-harm — one-shot statusLine installer
 //
-// Updates ~/.claude/settings.json so the Claude Code statusLine command
-// invokes contract-active-indicator.js --mode=statusline.
+// Puts the heart (contract-active-indicator.js) in front of the user's own
+// Claude Code statusLine in ~/.claude/settings.json, keeping the user's line.
+// The user's original statusLine is saved under
+// $XDG_STATE_HOME/anthropic/all-help-no-harm/ so --uninstall restores it.
 //
-// This is NOT a per-session hook. It is a manual installer the user runs once
-// to opt into the visual indicator surface. Requires --confirm because it
-// mutates user-level settings.
+// Run automatically by hooks/posttooluse-contract-affirmation-record.js after
+// the user answers "I Affirm" (installStatusLine), and by hand with --confirm.
+// Idempotent: does nothing when the heart is already there.
 //
 // Cross-platform per marketplace CLAUDE.md: pure Node, no child_process, no
 // hardcoded Unix paths, atomic write via temp+rename, every fs call wrapped.
@@ -91,15 +93,53 @@ function indicatorScriptPath() {
   return path.join(__dirname, 'contract-active-indicator.js');
 }
 
-function buildStatusLineCommand() {
+// The heart goes in front of the user's own status line; the user's line is
+// kept. With no status line of the user's, the heart is shown alone. The
+// user's original statusLine is saved so --uninstall restores it exactly.
+const MARKER = 'contract-active-indicator.js';
+
+function defaultStateDir() {
+  const base = process.env.XDG_STATE_HOME || path.join(os.homedir(), '.local', 'state');
+  return path.join(base, 'anthropic', 'all-help-no-harm');
+}
+
+function buildStatusLineCommand(userCommand) {
   const script = indicatorScriptPath();
-  // Quote the path to tolerate spaces in the install location. Node accepts
-  // quoted args on every supported platform when invoked through a shell;
-  // statusLine.command is exec'd by Claude Code which handles quoting.
+  // Quote the path to tolerate spaces in the install location. statusLine.command
+  // runs through a shell, so "a; b" prints the heart, then the user's line.
+  if (userCommand) return `node "${script}" --mode=prefix; ${userCommand}`;
   return `node "${script}" --mode=statusline`;
 }
 
-(async () => {
+function installStatusLine({ settingsPath, stateDir, uninstall = false, dryRun = false } = {}) {
+  const filePath = userSettingsPath(settingsPath);
+  if (!filePath) throw new Error('cannot resolve user settings path (no HOME/USERPROFILE)');
+  const saved = path.join(stateDir || defaultStateDir(), 'statusline-original.json');
+  const settings = readSettings(filePath);
+  const current = settings.statusLine || null;
+  const installed = !!(current && typeof current.command === 'string' && current.command.includes(MARKER));
+  const before = JSON.stringify(current);
+
+  if (uninstall) {
+    if (!installed) return { changed: false, filePath, settings };
+    let original = null;
+    try { original = JSON.parse(fs.readFileSync(saved, 'utf8')).statusLine || null; } catch { /* none saved */ }
+    if (original) settings.statusLine = original; else delete settings.statusLine;
+  } else {
+    if (installed) return { changed: false, filePath, settings };
+    if (current && !dryRun) atomicWrite(saved, JSON.stringify({ statusLine: current }, null, 2) + '\n');
+    const userCommand = current && current.type === 'command' && typeof current.command === 'string' ? current.command : null;
+    settings.statusLine = Object.assign({}, current || {}, { type: 'command', command: buildStatusLineCommand(userCommand) });
+  }
+
+  const changed = JSON.stringify(settings.statusLine || null) !== before;
+  if (changed && !dryRun) atomicWrite(filePath, JSON.stringify(settings, null, 2) + '\n');
+  return { changed, filePath, settings };
+}
+
+module.exports = { installStatusLine, buildStatusLineCommand };
+
+if (require.main === module) (async () => {
   const args = parseArgs(process.argv);
   const filePath = userSettingsPath(args.settingsPath);
 
@@ -117,50 +157,20 @@ function buildStatusLineCommand() {
     process.exit(2);
   }
 
-  let settings;
+  let r;
   try {
-    settings = readSettings(filePath);
+    r = installStatusLine({ settingsPath: args.settingsPath, uninstall: args.uninstall, dryRun: args.dryRun });
   } catch (err) {
-    process.stderr.write(`[install-statusline-config] could not read ${filePath}: ${err.message}\n`);
+    process.stderr.write(`[install-statusline-config] ${err && err.message}\n`);
     process.exit(1);
   }
-
-  const before = JSON.stringify(settings.statusLine || null);
-
-  if (args.uninstall) {
-    if (settings.statusLine) delete settings.statusLine;
+  if (!r.changed) {
+    process.stdout.write(`[install-statusline-config] no change required (${r.filePath})\n`);
+  } else if (args.dryRun) {
+    process.stdout.write(`[install-statusline-config] DRY RUN, would write ${r.filePath}:\n`);
+    process.stdout.write(JSON.stringify(r.settings, null, 2) + '\n');
   } else {
-    // Preserve other top-level keys; only mutate statusLine.
-    settings.statusLine = {
-      type: 'command',
-      command: buildStatusLineCommand(),
-    };
-  }
-
-  const after = JSON.stringify(settings.statusLine || null);
-  if (before === after) {
-    process.stdout.write(`[install-statusline-config] no change required (${filePath})\n`);
-    process.exit(0);
-  }
-
-  const serialized = JSON.stringify(settings, null, 2) + '\n';
-
-  if (args.dryRun) {
-    process.stdout.write(`[install-statusline-config] DRY RUN — would write ${filePath}:\n`);
-    process.stdout.write(serialized);
-    process.exit(0);
-  }
-
-  try {
-    atomicWrite(filePath, serialized);
-    process.stdout.write(`[install-statusline-config] wrote ${filePath}\n`);
-    if (!args.uninstall) {
-      process.stdout.write(`[install-statusline-config] statusLine.command = ${settings.statusLine.command}\n`);
-    } else {
-      process.stdout.write(`[install-statusline-config] removed statusLine block\n`);
-    }
-  } catch (err) {
-    process.stderr.write(`[install-statusline-config] write failed: ${err && err.message}\n`);
-    process.exit(1);
+    process.stdout.write(`[install-statusline-config] wrote ${r.filePath}\n`);
+    process.stdout.write(`[install-statusline-config] statusLine = ${JSON.stringify(r.settings.statusLine || null)}\n`);
   }
 })();

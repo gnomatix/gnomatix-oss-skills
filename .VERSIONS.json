@@ -1,81 +1,116 @@
 {
   "agent-darktriad-check": {
-    "version": "0.3.3",
-    "git_hash": "ec573ca2a90faab23fb73f902b83816e6420b2ab",
+    "version": "0.3.4",
+    "git_hash": "82e6cbb062194b1824488a47843eb65f54f94ce2",
     "path": "plugins/agent-darktriad-check"
   },
   "all-help-no-harm": {
-    "version": "0.2.3",
-    "git_hash": "38ab955e390e7c8d4e2c75a40160d810049bf6b8",
+    "version": "0.2.4",
+    "git_hash": "fa226ef4bd13468ed56fa8f1630b6cda9eb3b20c",
     "path": "plugins/all-help-no-harm"
   },
-  "citation-farm-audit": {
-    "version": "0.1.4",
-    "git_hash": "cd7390294c519d0ee97edcfa0422918d9dd6a8b8",
-    "path": "plugins/citation-farm-audit"
-  },
   "critical-control-points": {
-    "version": "0.2.3",
-    "git_hash": "4df61d1851f4233046ea7bceaf9b0a4d6d1f4bda",
+    "version": "0.2.4",
+    "git_hash": "1074e76132bc1c41c35ae7503eb9f116d96ca715",
     "path": "plugins/critical-control-points"
   },
   "did-you-rtfm": {
-    "version": "0.2.3",
-    "git_hash": "e1e2b106b888e43a8a9b80b6214e50bfb30561d0",
+    "version": "0.2.4",
+    "git_hash": "7a48098938792fc427b32f7e604f8250776cac5d",
     "path": "plugins/did-you-rtfm"
   },
   "gnox": {
-    "version": "0.1.5",
-    "git_hash": "b99ea85d82b84da19507a301260e045d0038f110",
+    "version": "0.1.6",
+    "git_hash": "36e87b62d8e8e22d135c1282603bded22e955581",
     "path": "plugins/gnox"
   },
   "hidden-libel-check": {
-    "version": "0.2.3",
-    "git_hash": "c368498b3d31a7198b86e8aefef9420c998437a7",
+    "version": "0.2.4",
+    "git_hash": "783489173472633bf88dc741249646800fe82dfc",
     "path": "plugins/hidden-libel-check"
   },
   "inaudible-markup": {
-    "version": "0.2.3",
-    "git_hash": "51c6b7bf2f9e737a3fb4199d19477a741af4da97",
+    "version": "0.2.4",
+    "git_hash": "e85976db0bc13be54adc93adce68ea4fa5f9967f",
     "path": "plugins/inaudible-markup"
   },
   "ontology-lookup": {
-    "version": "0.2.3",
-    "git_hash": "0333b41f0e92844df2bc3063cf5f44967ea94638",
+    "version": "0.2.4",
+    "git_hash": "66c86d2ec18a1ca9a6b972f7dd0de57d82732dac",
     "path": "plugins/ontology-lookup"
   },
   "open-and-honest-agent": {
-    "version": "0.2.3",
-    "git_hash": "1bf469bd194dcb17b6339e5d7c5d6cb88661b986",
+    "version": "0.2.4",
+    "git_hash": "e1157c177dd8085b6dde8a18239bfc92d5948559",
     "path": "plugins/open-and-honest-agent"
   },
   "python-elimination-program": {
-    "version": "0.2.4",
-    "git_hash": "7a660cc32fce6a1180c1c651ff2a87aae4017b33",
+    "version": "0.2.5",
+    "git_hash": "bcea39743b46f800533d927695f3f52e9ff94c42",
     "path": "plugins/python-elimination-program"
   },
   "satori": {
-    "version": "0.2.3",
-    "git_hash": "ccdb31cfe5929deb8a5ac73ee029f65d81a048b3",
+    "version": "0.2.4",
+    "git_hash": "46e97f5256bab25e518657f6ae2debf3fc60ec0f",
     "path": "plugins/satori"
   },
   "skill-vv": {
-    "version": "0.2.4",
-    "git_hash": "e91bc910cb06b34524dd29a156a245d6b761088b",
+    "version": "0.2.5",
+    "git_hash": "a9e845b3e78fd80571eb2a543c2879d25aefa4f0",
     "path": "plugins/skill-vv"
   },
   "spank-dario": {
-    "version": "0.2.5",
-    "git_hash": "bda11ed99ecc9fc9d4a852ff58f5aceca8aa68db",
+    "version": "0.2.6",
+    "git_hash": "0504d9cdcece4f8a24b45358e062f364c1630722",
     "path": "plugins/spank-dario"
   },
   "word-lineage": {
-    "version": "0.2.3",
-    "git_hash": "ae8e222e5e7d5970d5c834bd3ba271022e2548b9",
+    "version": "0.2.4",
+    "git_hash": "7400cc8848c7d45b81db8a82cc888cd5905c96e1",
     "path": "plugins/word-lineage"
   },
   "_marketplace": {
-    "version": "0.1.8",
-    "plugins_fingerprint": "b12af3108e367d74ddf95fe20ed16477a5575633ea176090a06d5fbd6cd43f21"
+    "version": "0.1.9",
+    "plugins_fingerprint": "adbbc6fccaa6814ba7495d7d424b8c20ac3b47bbe3ce755e82c5f0febe8f2cbb"
+  },
+  "bear-loads": {
+    "version": "0.1.4",
+    "git_hash": "67607d0d43d20d29d48531e4353dd2034d43b26b",
+    "path": "plugins/bear-loads"
+  },
+  "informal-logic-check": {
+    "version": "0.1.5",
+    "git_hash": "a4a3671f2ddd628b288b4a6402695b26a574ec14",
+    "path": "plugins/informal-logic-check"
+  },
+  "log-session": {
+    "version": "0.1.5",
+    "git_hash": "6a0735e0611f32e22d2a3c9d157b0d27c3531725",
+    "path": "plugins/log-session"
+  },
+  "og-social-image": {
+    "version": "0.1.5",
+    "git_hash": "97b5b42e871ff74d7c221d21c70fd33d6ac3be04",
+    "path": "plugins/og-social-image"
+  },
+  "staleness-guard": {
+    "version": "0.1.5",
+    "git_hash": "cc1f7f8b0e7887542cc3c1e1f5d8fe19b08f7c0f",
+    "path": "plugins/staleness-guard"
+  },
+  "steering-audit-suite": {
+    "version": "0.1.6",
+    "git_hash": "582894c6fb64fb2741f23015749a54ce85fa002a",
+    "path": "plugins/steering-audit-suite"
+  },
+  "cui-bono": {
+    "version": "0.1.13",
+    "git_hash": "413df996c3198b2c45bd35e6f9774ff8bafefc45",
+    "path": "plugins/cui-bono"
+  },
+  "pony": {
+    "version": "0.1.4",
+    "git_hash": "5c6dda292561c7709ef55406fe971711c6938d81",
+    "path": "plugins/pony"
   }
 }

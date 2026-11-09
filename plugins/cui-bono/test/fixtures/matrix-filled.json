@@ -1,0 +1,15 @@
+{
+  "premises": {
+    "h1": { "quote": "all of it is voluntary", "formula": "Funded -> Voluntary" },
+    "h2": { "quote": "offered proactively", "formula": "Proactive" },
+    "h3": { "quote": "Pause has LARC as the condition", "formula": "Pause & Funded" }
+  },
+  "assumptions": {
+    "A1": { "text": "a condition of entry is not voluntary", "formula": "Pause -> /Voluntary" }
+  },
+  "cells": {
+    "h1|h2": { "status": "ok" },
+    "h1|h3": { "status": "under", "under": "A1", "reason": "entry conditional on LARC" },
+    "h2|h3": { "status": "ok" }
+  }
+}

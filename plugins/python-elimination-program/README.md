@@ -1,5 +1,7 @@
 # python-elimination-program
 
+![python-elimination-program](assets/images/python-elimination-program-banner.jpg)
+
 > A coordinated set of [Agent Skills](https://agentskills.io) plus a Claude Code millenial-crybaby-spanking hook for projects where Python is not used.
 
 <!-- BEGIN: gnomatix-promo-include -->

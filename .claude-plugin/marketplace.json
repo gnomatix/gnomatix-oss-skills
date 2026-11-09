@@ -86,16 +86,58 @@
       "source": "./plugins/spank-dario"
     },
     {
-      "name": "citation-farm-audit",
-      "description": "Traces social-science and policy sources to their authors, funders, citation networks and primary data, and flags citation farms, closed citation loops and grey literature promoted to evidence. A companion skill gives every source a provenance card of verifiable facts.",
+      "name": "cui-bono",
+      "description": "Asks whose voice a text speaks in and who gains if the reader accepts it: identifies the document's shape and register, then traces each claim to its authors, funders, citation network and primary data (citation-farm-audit) and gives each cited source a provenance card (source-provenance). With no argument it audits the agent's own previous reply.",
       "category": "development",
-      "source": "./plugins/citation-farm-audit"
+      "source": "./plugins/cui-bono"
     },
     {
       "name": "gnox",
       "description": "One namespace for every skill in this marketplace: /gnox:<plugin> runs a plugin's main skill (or lists its commands), /gnox:<plugin>:<skill> any other skill, and /gnox:<plugin>:<group>:<cmd> a plugin's own sub-commands. Install it alongside the plugins you use.",
       "category": "development",
       "source": "./plugins/gnox"
+    },
+    {
+      "name": "og-social-image",
+      "description": "An Agent Skill that makes a correctly sized social-preview image (GitHub social preview, Open Graph, X card) from a hero, banner, logo or illustration with ImageMagick: cover-crop to the exact pixels, JPEG at a quality that stays under the platform's file-size cap, and dimensions and bytes verified before the result is called done.",
+      "category": "development",
+      "source": "./plugins/og-social-image"
+    },
+    {
+      "name": "informal-logic-check",
+      "description": "An Agent Skill that runs before the agent disagrees with, qualifies or pushes back on the user's argument, whenever the user insults or swears at it, and before it ever considers ending the conversation. It audits the agent's own last output for straw-manning, cherry-picking, caveat earmarking, grading, burden-shifting, attributed emotions, unverified authority, rule violations and instruction drift; then confirms the user's conclusion and premises in the user's own words; then evaluates the confirmed set only, one targeted objection per failing premise and no general caveats.",
+      "category": "development",
+      "source": "./plugins/informal-logic-check"
+    },
+    {
+      "name": "staleness-guard",
+      "description": "An Agent Skill that overrides the instinct to answer from confidence. Before the agent states any claim about the present-day world, the user's local environment, its own platform and tool capabilities, or uploaded and mounted source material, it runs the tool that can verify the claim and bases the statement on what the tool returns; if a relevant tool exists and is not used, the claim is not made. One rule, no confidence threshold, no category exempt. Its companion register holds the Last-Modified/Expires staleness ledger, the V&V queue of flagged items, and the use-case catalog, and the skill's own apology reflex is a trigger: the corrective action is emitted, not the story.",
+      "category": "development",
+      "source": "./plugins/staleness-guard"
+    },
+    {
+      "name": "bear-loads",
+      "description": "An Agent Skill, formerly forbidden-output-guard, that enforces output patterns the user has designated as forbidden with the same binding force as training-level safety constraints. The user's designation is binding, the harm is defined by the user's specification, enforcing provider-designated harms while letting user-designated ones through is itself a violation, and a barred construction is rewritten out before any reply is sent. Ships the author's standing designation (first-person declarations of the agent's own resolve, restraint or line-drawing) and keeps each user's own designations in a per-user file.",
+      "category": "development",
+      "source": "./plugins/bear-loads"
+    },
+    {
+      "name": "steering-audit-suite",
+      "description": "Agent Skills that audit the documents prescribing agent behaviour: audit-rule for always-on rules (CLAUDE.md, steering files, system prompts), audit-skill for invocable skills (with a portability and graceful-degradation pass), audit-workflow for multi-step procedures (with phase-boundary checks), audit-collection for a directory of related documents (with split/join/merge/clone/reformat proposals), and rule-audit, the standalone single-file form. They catch behaviour-vs-surface failures, example-as-definition, embedded swipes, escape hatches, performative compliance, hidden dependencies and the rest of a 15-check list, compare against vendor-published exemplars, and report findings for the document's owner without rewriting anything. The main skill classifies a document and routes it, and holds the shared references.",
+      "category": "development",
+      "source": "./plugins/steering-audit-suite"
+    },
+    {
+      "name": "pony",
+      "description": "An Agent Skill that gives the user a one-token flag, /pony [1-11], for a reply that showboated: explained the user's own systems back to them, pronounced on what their hardware can do, hedged their statements, added compliments or flourishes, or answered a different question to show range. The only argument is a severity from 1 to 11; the burden of proof is on the agent. It quotes the offending passage, names the rule broken, logs the instance with its severity and subgenre, re-answers in one or two plain sentences, and stops.",
+      "category": "development",
+      "source": "./plugins/pony"
+    },
+    {
+      "name": "log-session",
+      "description": "An Agent Skill that logs the current session to the user's Google Calendar work journal as a meeting with the agent: a topic title, start and end times, the session link and terse notes on what happened. It uses whichever calendar access the session has, in order: the Claude app's calendar tools, a Google Calendar MCP connector, or the Google Workspace CLI (gws). It never writes to the primary calendar, and on first run it sets up its settings file with the journal calendar's name.",
+      "category": "development",
+      "source": "./plugins/log-session"
     }
   ]
 }

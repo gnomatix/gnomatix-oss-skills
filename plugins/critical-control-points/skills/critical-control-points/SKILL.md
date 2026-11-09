@@ -136,3 +136,11 @@ Every agent dispatched by an agent running this skill gets this line in its prom
 > provenance and keep working on what it does not gate; I file and ask it under
 > critical-control-points. If the whole task is wrong, stop and send BIG RED BUTTON with the
 > reason.
+
+## BUGS
+
+- The rule "The user's words stay in the conversation" (Rules, and step 2 "no quotations from chat") reaches issue-tracker records and so narrows the author's direction dir-km4 of 2026-11-08, which requires each direction recorded in the tracker with his words allowed verbatim in records and logs and barred only from authored files (rules, skills, memories, docs, code comments, agent prompts). Found 2026-11-08; bead persistint-game-218l.
+
+## TODO
+
+- Narrow the rule to authored files: records in the issue tracker and logs carry the user's direction verbatim with its date; the agent's own account is marked as its own beside it. Fix bead persistint-game-218l.

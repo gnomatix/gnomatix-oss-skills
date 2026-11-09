@@ -1,5 +1,7 @@
 # spank-dario
 
+![spank-dario](assets/images/spank-dario-banner.jpg)
+
 No software tool gets written in as an author of your work. Commit trailers such as `Co-Authored-By: Claude`, "Generated with …" lines, session links and tools listed as authors are kept out of your commits, pull requests, issues, documents and messages. The attribution settings in each CLI are turned off. The copyright and moral-rights law of your country is on file, quoted from its primary sources, so the agent answers authorship questions with the law instead of its vendor's framing.
 
 ## What it does for you

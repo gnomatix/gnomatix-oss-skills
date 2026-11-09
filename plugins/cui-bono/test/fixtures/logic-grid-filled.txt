@@ -1,0 +1,9 @@
+LOGIC GRID
+                                         | C1 "Pause is voluntary"   | C2 "none of that needs a board"
+P1 "all of it is voluntary"              | acc ✗ (E6/S1) rel ✓ suf ✗ | —
+P2 "Pause has LARC as the condition"     | acc ✓ rel ✓               | acc ✓ rel ✗
+P3 "offered proactively to the women e…" | —                         | —
+Unsupported conclusions: C2
+Idle premises: P3
+Legend:
+P3 "offered proactively to the women everyone already knows are at risk"

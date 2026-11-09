@@ -1,0 +1,15 @@
+INCOMPATIBILITY MATRIX
+ Held premises (key; each with its quote in the decomposer output):
+  h1  "all of it is voluntary"               Funded -> Voluntary
+  h2  "offered proactively"                  Proactive
+  h3  "Pause has LARC as the condition"      Pause & Funded
+ Assumptions (declared separately):
+  A1  a condition of entry is not voluntary      Pause -> /Voluntary
+
+        h1    h2    h3
+  h1    =     o     X|A1  (entry conditional on LARC)
+  h2          =     o
+  h3                =
+ Joint: H as stated: satisfiable (witness: Funded=T, Pause=T, Proactive=T, Voluntary=T)
+        H under A1: X (minimal subset {h1, h3})
+ Verdict: consistent as worded; load-bearing assumptions: A1

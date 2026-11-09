@@ -1,6 +1,6 @@
 {
   "name": "gnox",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "One namespace for every skill in the gnomatix-oss-skills marketplace: /gnox:<plugin> runs a plugin's main skill (or lists its commands) and /gnox:<plugin>:<skill> runs any other. Each command hands off to the plugin's own skill, so install the plugins you want alongside gnox.",
   "author": {
     "name": "Brett Whitty",

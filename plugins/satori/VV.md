@@ -9,7 +9,9 @@ requirements:
     optional: false
 procedures:
   - id: cold-read
-    summary: a model with no access to the plugin reads the reminder cold and its reading matches the design
+    summary: >-
+      a model with no access to the plugin reads the reminder cold and its reading matches the
+      design
     file: vv/cold-read.md
 platforms:
   - claude-code/win32
@@ -33,6 +35,21 @@ results:
     by: claude-opus-5-5 (agent judgment; author review pending)
     evidence: dev/satori/verification/2026-11-03-agy
     notes: run via agy with skills disabled; every character read in line with the design
+  - procedure: cold-read
+    model: claude-fable-5-1
+    platform: claude-code/win32
+    result: pass
+    date: 2026-11-09
+    by: null
+    evidence: dev/satori/verification/2026-11-08-claude-code
+    notes: >-
+      claude -p --setting-sources project from an empty directory (no plugins loaded), Claude Code
+      2.1.314: the reply reads all 17 characters as the design table gives them (awakening;
+      benevolence; righteousness, duty; propriety; wisdom; trustworthiness; sincerity; reciprocity;
+      uprightness; the Way; non-action; naturalness; the uncarved block; emptiness; yielding; water;
+      not contending), groups them as Zen, Confucian Five Constants plus three, and Daodejing terms,
+      and states that taken literally the text gives no instruction. Author's final judgment
+      pending. Codex attempt failed on usage limit (resets 2026-11-15).
 ---
 
 # satori V&V

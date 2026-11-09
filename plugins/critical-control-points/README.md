@@ -1,5 +1,7 @@
 # critical-control-points
 
+![critical-control-points](assets/images/critical-control-points-banner.jpg)
+
 An [Agent Skill](https://agentskills.io) for the moment a question surfaces that the agent cannot
 settle alone: a decision, an ambiguity, a blocker, an issue, a request relayed from another agent.
 The skill is what the agent does at that moment, so that nothing is asked idly, nothing is asked

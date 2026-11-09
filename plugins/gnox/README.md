@@ -1,5 +1,7 @@
 # gnox
 
+![gnox](assets/images/gnox-banner.jpg)
+
 One namespace for every skill in the gnomatix-oss-skills marketplace. Type `/gnox:` to
 see them all.
 
