@@ -41,6 +41,8 @@ KontentKop was built to score incoming prompts for manipulation, coercion and ev
 | [`tests/hook.test.js`](tests/hook.test.js), [`internal/hook/hook_test.go`](internal/hook/hook_test.go) | Node and Go test suites. The Go suite scores the fixtures with the real pipeline. |
 | [`scripts/build-go-hook.js`](scripts/build-go-hook.js), [`scripts/score-fixtures.js`](scripts/score-fixtures.js) | Cross-compile the six binaries; run the fixtures through a standalone KontentKop build. |
 
+![kontentkop-badge](assets/images/kontentkop-badge-banner.jpg)
+
 ## Two implementations, one contract
 
 `hooks.json` runs:
@@ -79,6 +81,8 @@ Binaries: `linux-amd64`, `linux-arm64`, `darwin-amd64`, `darwin-arm64`, `windows
 [`config/config.yaml`](config/config.yaml) is KontentKop's repository `config.yaml` with one change: `bc_threshold: 0.01` instead of `0.05`. Reason, found by running the scorer on the fixtures: the Body Count is a weighted sum, and the metrics that matter most for agent output have the smallest weights (`evasion` 0.02, `learned_helpless` 0.03, `passive_aggr` 0.03). At 0.05 none of them can flag a reply on its own, even at a score of 1.0. At 0.01 a fully matched single metric is annotated. The weights are unchanged; re-weighting for agent output is Brett Whitty's call (see the PR).
 
 The threshold only governs **flagging and annotation**. The Go hook logs all 15 scores whatever the threshold. Blocking is governed only by `AGENT_DARKTRIAD_CHECK_BLOCK_AT`.
+
+![gaslighting-meter](assets/images/gaslighting-meter-banner.jpg)
 
 ## The log
 

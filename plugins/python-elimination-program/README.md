@@ -55,6 +55,8 @@ The plugin enforces "if you can't manage your dependencies, you shouldn't have t
 | [`jake-the-snake`](skills/jake-the-snake/SKILL.md) | Executes Python only after both gates have cleared. Enforces strict process: planning doc, full OOP, complete docstrings, type hints, step-by-step user approval, no scope creep. |
 | [`old-willy`](skills/old-willy/SKILL.md) | The merit-rigor test, orthogonal to the gate chain. Activates whenever an agent emits — or relies on — a "Python is the best tool for X" claim. Forces per-task identification of the actual best-in-class candidate language/tool with authoritative citation, scores Python against it on the C3 criteria (correctness, performance, maintainability, deployability, security, portability, longevity, cost of operation), and disqualifies wins that reduce to ecosystem mandate, team-skill contingency, or "easier for human authors." Almost always returns that the "Python is best" claim was not supportable, forcing the actual reason for using Python (mandate / team / human-ease) to be named honestly instead of laundered as merit. |
 
+![old-willy](assets/images/old-willy-computer-lab-panel.jpg)
+
 ## Install
 
 ### Claude Code (with the millenial-crybaby-spanking hook)

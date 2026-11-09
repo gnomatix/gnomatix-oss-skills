@@ -1,7 +1,7 @@
 {
   "agent-darktriad-check": {
-    "version": "0.3.4",
-    "git_hash": "82e6cbb062194b1824488a47843eb65f54f94ce2",
+    "version": "0.3.5",
+    "git_hash": "657de25fd75e101027409b4756968cad3aaea7e2",
     "path": "plugins/agent-darktriad-check"
   },
   "all-help-no-harm": {
@@ -45,8 +45,8 @@
     "path": "plugins/open-and-honest-agent"
   },
   "python-elimination-program": {
-    "version": "0.2.5",
-    "git_hash": "bcea39743b46f800533d927695f3f52e9ff94c42",
+    "version": "0.2.6",
+    "git_hash": "418ad5386b3ba2e77cd5241b389c8c25072388c8",
     "path": "plugins/python-elimination-program"
   },
   "satori": {
@@ -70,8 +70,8 @@
     "path": "plugins/word-lineage"
   },
   "_marketplace": {
-    "version": "0.1.9",
-    "plugins_fingerprint": "adbbc6fccaa6814ba7495d7d424b8c20ac3b47bbe3ce755e82c5f0febe8f2cbb"
+    "version": "0.1.10",
+    "plugins_fingerprint": "6bc30ce48b226e370d5026e2287d8c9817e2ad2d303d2fed7b43ef488d02b4e5"
   },
   "bear-loads": {
     "version": "0.1.4",
@@ -99,13 +99,13 @@
     "path": "plugins/staleness-guard"
   },
   "steering-audit-suite": {
-    "version": "0.1.6",
-    "git_hash": "582894c6fb64fb2741f23015749a54ce85fa002a",
+    "version": "0.1.7",
+    "git_hash": "63aadb33d2a30b5a6943e3e6a6877b8586c96045",
     "path": "plugins/steering-audit-suite"
   },
   "cui-bono": {
-    "version": "0.1.13",
-    "git_hash": "413df996c3198b2c45bd35e6f9774ff8bafefc45",
+    "version": "0.1.14",
+    "git_hash": "098cb6a61a961802c70932c0f23d2038549683df",
     "path": "plugins/cui-bono"
   },
   "pony": {

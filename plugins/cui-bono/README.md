@@ -10,8 +10,13 @@
 - **A decomposition per text** (`logic-decomposer`): every sentence numbered and classified, every proposition quoted with its sentence id, conditionals written with their direction and contrapositive, quantifiers with scope, entities and constraints, two grades per proposition (evidence from the record E0–E6, GRADE-adjusted; confidence as stated S1–S7 or S?) with the overclaim/underclaim gap, and a validity report on the decomposition itself.
 - **The formal methods, with their working** (`logic-toolbox`): conditional chains, sequencing and grouping setups, the cross-elimination grid, constraint propagation, syllogisms and Venn diagrams, truth tables, indirect proof, the premise logic grid, the incompatibility matrix of held premises with a joint-satisfiability check, assumption and flaw tests, Toulmin maps and Wigmore charts.
 - **A network card per claim** (`citation-farm-audit`): the citation graph from the policy document down to its primary data, the people and the money in it (authors, funders, boards, committee seats), the flags raised, where the chain ends (objective data, self-report or opinion), and what was not verified.
+
+![citation-farm-audit](assets/images/citation-farm-audit-banner.jpg)
+
 - **A person record per recurring name**: degree, thesis and repository link, appointment, funders, organizational roles and network position, each fact with its source. You decide what goes in the flag column.
 - **A provenance card per source** (`source-provenance`): funding traced to the funder's own stated mission, author affiliations and career incentives, self-citation counts, the data the claim rests on, whether the method could have come out against its premise, and the declared conflicts set against the record.
+
+![source-provenance](assets/images/source-provenance-banner.jpg)
 
 ## When it runs
 

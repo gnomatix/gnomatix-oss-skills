@@ -28,6 +28,8 @@
 
 ## Skills
 
+![steering-audit-suite-blueprint](assets/images/steering-audit-suite-blueprint-banner.jpg)
+
 - `steering-audit-suite`: the entry point when the document type isn't known. Classifies the document (RULE, SKILL, WORKFLOW, or a collection) and runs the matching audit. Its `references/` folder holds what every audit reads: the 15-check checklist, the document-type discriminators, the refactoring operations, the portability dimensions, where to find reference exemplars, and the report format.
 - `audit-rule`: an always-on RULE document (CLAUDE.md, steering file, system prompt, `.cursorrules`, `.kiro/steering/*.md`). The checklist; no portability pass.
 - `audit-skill`: an invocable SKILL document. The checklist, the reference-exemplar comparison, the portability and graceful-degradation audit, and the vendor's frontmatter checks (Claude Code, Cursor, Kiro, Antigravity).

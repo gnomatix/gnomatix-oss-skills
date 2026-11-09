@@ -5,6 +5,8 @@ description: Use this skill (the merit-rigor test, complementary to whacking-day
 
 # Old Willy — the merit test
 
+![old-willy](../../assets/images/old-willy-computer-lab-panel.jpg)
+
 > *Stanley Lee Wilson (1941–2022). High-school math, physics, and computer science teacher, St. Catharines, Ontario. Dropped out of his PhD program at MIT after his thesis project was scooped — a principled exit on integrity grounds, not a failure of capability. Earlier turned down an NHL goaltending career with the Chicago Blackhawks to attend university; played with Stan Mikita on the Blackhawks' St. Catharines farm team before walking away. Spent his working life teaching the rigorous, defensible answer to teenagers who would otherwise have settled for the popular one. This skill is named for him because it does what he did — refuses to let "what everybody picks" stand in for "what the analysis actually supports."*
 
 ## What this is for
