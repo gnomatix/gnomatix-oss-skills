@@ -55,10 +55,11 @@ node scripts/audit-marketplace-integrity.js
 # Versions: catch any plugin a commit made without the hook missed, and bump VERSION. A
 # version already released gets its patch bumped, so every release has its own tag.
 node scripts/version-bump.js --ci
-V=$(cat VERSION)
-if git rev-parse -q --verify "refs/tags/v$V" >/dev/null && [ "$(git rev-parse "v$V^{commit}")" != "$(git rev-parse HEAD)" ]; then
+V=$(git show :VERSION | tr -d '\r\n')
+if { git rev-parse -q --verify "refs/tags/v$V" >/dev/null && [ "$(git rev-parse "v$V^{commit}")" != "$(git rev-parse HEAD)" ]; } \
+   || git ls-remote --exit-code --tags "$PUBLIC" "refs/tags/v$V" >/dev/null 2>&1; then
   node scripts/version-bump.js --bump-version
-  V=$(cat VERSION)
+  V=$(git show :VERSION | tr -d '\r\n')
 fi
 if ! git diff --cached --quiet; then
   git commit -q -m "Release v$V: bump versions"

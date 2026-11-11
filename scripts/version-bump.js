@@ -107,10 +107,11 @@ function stage(rel, text) {
 
 // Rewrite the working-tree copy of <rel>: when it matched the old staged text, write the new
 // staged text; otherwise apply <edit> to its own JSON so unstaged edits there survive.
+const normEol = (s) => (typeof s === 'string' ? s.replace(/\r\n/g, '\n') : s);
 function updateWorkingTree(rel, oldText, newText, edit) {
   const p = wtPath(rel);
   const current = readFile(p);
-  if (current === null || current === oldText) { atomicWrite(p, newText); return; }
+  if (current === null || normEol(current) === normEol(oldText)) { atomicWrite(p, newText); return; }
   const obj = edit ? parseJson(current) : null;
   if (!obj) { warn(`${rel} in the working tree differs from the index; left as is`); return; }
   edit(obj);
