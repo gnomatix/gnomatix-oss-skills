@@ -1,0 +1,10 @@
+{
+  "name": "citation-farm-audit",
+  "version": "0.1.6",
+  "description": "Traces social-science and policy sources to their authors, funders, citation networks and primary data, and flags citation farms, closed citation loops and grey literature promoted to evidence. A companion command gives every source a provenance card of verifiable facts; dovetails automatically with cui-bono when installed.",
+  "author": {
+    "name": "Brett Whitty",
+    "email": "brett@gnomatix.com"
+  },
+  "license": "BUSL-1.1"
+}

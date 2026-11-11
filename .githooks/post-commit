@@ -1,0 +1,5 @@
+#!/bin/sh
+# After a pathspec commit (git commit -- <paths>), bring the main index up to the version
+# files the pre-commit hook bumped, so they are not left staged as a reversion of the bump.
+# Enable once per clone: git config core.hooksPath .githooks
+exec node scripts/version-bump.js --post-commit

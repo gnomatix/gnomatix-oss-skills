@@ -3,9 +3,12 @@
 #
 # The live repo is the private Gitea one. The public GitHub repo, which Claude Code installs
 # from, gets releases only: one snapshot commit per release on its main, tagged v<VERSION>.
-# It never sees the live history, the tracker, agent logs or the encrypted dev/ folder.
+# It never sees the live history, the tracker, agent logs, the encrypted dev/ folder, or
+# unapproved in-progress plugins gated via GNOMATIX YAML frontmatter (`review_status`,
+# `authority`, `approved_versions`).
 #
 #   sh scripts/release.sh          bump versions (version-bump.js --ci), tag v<VERSION> here,
+#                                  build and validate the YAML-gated release snapshot, and
 #                                  publish that release to GitHub
 #   sh scripts/release.sh --wipe   the first release: replace GitHub's history with this one
 #                                  release, and delete every other branch, tag and refs/dolt/*
@@ -17,12 +20,12 @@ set -eu
 LIVE=${RELEASE_LIVE:-origin}
 PUBLIC=${RELEASE_PUBLIC:-https://github.com/gnomatix/gnomatix-oss-skills.git}
 # Left out of every public release.
-EXCLUDE=".beads .claude/python-authorizations dev"
+EXCLUDE=".beads .claude/python-authorizations dev TODO.md"
 WIPE=0
 for a in "$@"; do
   case "$a" in
     --wipe) WIPE=1 ;;
-    -h|--help) sed -n '2,15p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,17p' "$0"; exit 0 ;;
     *) echo "release: unknown option $a" >&2; exit 2 ;;
   esac
 done
@@ -44,6 +47,10 @@ if [ "$WIPE" -eq 0 ] && { [ -z "$parent" ] || ! git log -1 --format=%s "$parent"
   exit 1
 fi
 
+# Verify marketplace standalone/complementary architecture, released-plugin continuity,
+# and anti-pollution gates before releasing.
+node scripts/audit-marketplace-integrity.js
+
 # Versions: catch any plugin a commit made without the hook missed, and bump VERSION. A
 # version already released gets its patch bumped, so every release has its own tag.
 node scripts/version-bump.js --ci
@@ -61,16 +68,23 @@ if ! git rev-parse -q --verify "refs/tags/v$V" >/dev/null; then
   git push -q "$LIVE" "refs/tags/v$V"
 fi
 
-# The snapshot: this commit's tree without the excluded paths.
+# The snapshot: this commit's tree without the excluded paths, gated by YAML frontmatter
+# (holding back net-new PENDING plugins and pinning PENDING edits on released plugins to
+# their last approved parent tree) and verified with audit-marketplace-integrity + claude validate.
 idx="$(git rev-parse --git-dir)/release-index"
+rm -f "$idx"
 GIT_INDEX_FILE=$idx git read-tree HEAD
 # shellcheck disable=SC2086
-GIT_INDEX_FILE=$idx git rm -r -q --cached --ignore-unmatch -- $EXCLUDE
-tree=$(GIT_INDEX_FILE=$idx git write-tree)
+GIT_INDEX_FILE=$idx git ls-files -z -- $EXCLUDE | GIT_INDEX_FILE=$idx git update-index --force-remove -z --stdin
+if [ -n "$parent" ] && [ "$WIPE" -eq 0 ]; then
+  tree=$(node scripts/build-release-tree.js --index "$idx" --parent "$parent")
+else
+  tree=$(node scripts/build-release-tree.js --index "$idx")
+fi
 rm -f "$idx"
 
 if [ "$WIPE" -eq 0 ] && [ "$(git rev-parse "$parent^{tree}")" = "$tree" ]; then
-  echo "release: v$V is already published"
+  echo "release: v$V has no new approved public changes since parent; public repo unchanged"
   exit 0
 fi
 

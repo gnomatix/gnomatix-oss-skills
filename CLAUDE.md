@@ -7,13 +7,39 @@ This file loads at every Claude Code session that opens this repository. The dir
 Multiple agents and sessions work concurrently in this repository. `https://gitea.gnomatix.com/gnomatix/gnomatix-oss-skills.git` is the **sole live development repository (`origin`)**; `https://github.com/gnomatix/gnomatix-oss-skills.git` (`github`) receives stripped single-commit release snapshots only via `scripts/release.sh`. Every agent working here behaves like a house-trained adult engineer on a shared team branch:
 
 1. **Verify `origin` points to live Gitea before touching a single file.** Run `git remote get-url origin` at session start. It MUST resolve to `https://gitea.gnomatix.com/gnomatix/gnomatix-oss-skills.git` (never the public GitHub snapshot mirror). If `origin` points anywhere else, fix the remote configuration first instead of shrugging past `diverged` warnings.
-2. **Fetch, inspect, and integrate `origin/main` before editing, committing, or bumping versions.** Run `git fetch origin --tags && git status -sb` and check `git log --oneline HEAD..origin/main`. Integrate every upstream commit cleanly before adding your own work. Leave every teammate's committed plugins, `VV.md` records, tests, and `dev/` logs intact.
+2. **Fetch, inspect, and integrate `origin/main` before editing, committing, or bumping versions.** Run `git fetch origin --tags` and `git status -sb`, and check `git log --oneline HEAD..origin/main`. Integrate every upstream commit cleanly before adding your own work. Leave every teammate's committed plugins, `VV.md` records, tests, and `dev/` logs intact.
 3. **Merge whole histories — never cherry-pick around `origin/main` or bypass Gitea with `RELEASE_LIVE=.`.** Porting a subset of commits onto a stale local checkout and pushing a snapshot straight to GitHub amputates every sibling plugin and bug fix committed on Gitea in the interim and leaves live Gitea behind the public mirror.
 4. **Push live work to Gitea (`origin`) first, and cut releases strictly through `sh scripts/release.sh` from a synchronized `origin/main`.** On completion of authorized `main` commits, push `HEAD:main` (and any new tags) to `origin` so Gitea `main` always leads or matches GitHub. Freelance cowboy commits, unpulled local islands, or out-of-band snapshots that stomp a teammate's work earn an immediate trip across the maintainer's knee to restore every dropped commit, test, and version manifest by hand under close adult supervision.
 
+## REQUIRED: Marketplace Architecture, Cross-Plugin Integrity, & Authority
+
+### 1. Authority & Precedence
+
+- **Sole human authority:** Only the repository owner, Brett Whitty (`<brett@gnomatix.com>`), may authorize exceptions, revise design specifications, or override a rule in this file or `AGENTS.md`. No agent session may insert scope-narrowing disclaimers, self-exemptions, or isolation clauses.
+- **Precedence order:** Direct instructions from the human repository owner take highest precedence, followed by repo-wide invariants in `AGENTS.md` and `CLAUDE.md`, followed by per-plugin specifications (`SKILL.md`, `VV.md`, `README.md`), followed by managed task-tracker blocks (`BEGIN BEADS INTEGRATION`).
+- **Response to correction:** When a verification script, V&V procedure, or the repository owner identifies a defect or rule violation, fix the specific defect directly, re-run verification (`node scripts/audit-marketplace-integrity.js`), and continue. Do not emit apologies, first-person restraint declarations, or speculative rewrites of surrounding approved design documents.
+
+### 2. Repo-Wide Application of Marketplace Standards During Development
+
+Every session working inside `gnomatix-oss-skills` is bound across the **entire repository** by the behavioral, authorship, and verification standards shipped by this marketplace — including human-only authorship (`spank-dario`), pre-commit/README reputational discretion (`hidden-libel-check`), verbatim preservation of user prose (`dont-be-hitler`), version/documentation verification before claiming blockers (`did-you-rtfm`), live tool verification of environment and capability claims (`staleness-guard`), structured non-blocking escalation (`critical-control-points`), non-Python engineering (`python-elimination-program`), user-designated output gates (`bear-loads`), and plain non-performative replies (`pony`). Editing one plugin directory never exempts an agent from sibling marketplace standards.
+
+### 3. End-User Plugin Architecture: Three-Tier Stand-Alone + Complementary Synergy
+
+Every plugin shipped in `.claude-plugin/marketplace.json` MUST implement and document three coordinated capability tiers:
+
+1. **Tier 0 — Stand-Alone Core (Mandatory):** Every plugin installs and operates cleanly when installed on its own (`/plugin install <name>@gnomatix-oss-skills`, `agy plugin install ./plugins/<name>`, or copying/linking `skills/<skill>/`) with zero sibling plugins and zero extra local tools.
+   - **Prohibited:** Hard `"dependencies"` in `plugins/*/.claude-plugin/plugin.json` that leave a plugin disabled when a companion marketplace plugin is not installed, unless explicitly authorized in writing by the repository owner.
+2. **Tier 1 — Complementary Plugin Dovetailing (Mandatory where companions exist):** Plugins in this marketplace are intentionally engineered to dovetail and complement each other when an end-user installs companion plugins.
+   - Companion integrations MUST use conditional discovery/branching: activate the complementary integration automatically when the companion plugin/skill is installed, and execute a clean standalone fallback when it is absent.
+   - Declare complementary pairings in `VV.md` (`complements:` list with `plugin`, `when_installed`, and `when_absent`) and document them openly in `README.md` and `SKILL.md`.
+   - **Prohibited:** Naming any live marketplace plugin inside `ignore: [...]` configuration examples, or leaving stale claims that a live sibling plugin is not in this repository.
+3. **Tier 2 — Optional Local-Execution Tooling:** Optional local CLI tools (`mise`, `magick`, `bd`, `gws`, `git-crypt`, compiled Go binaries, `worklog` CLI/MCP) unlock deterministic local execution or external integrations when present on `PATH` or `mise` shims (`optional: true` + `unlocks:` in `VV.md`), and degrade cleanly to documented standalone behavior when absent.
+
+Run `node scripts/audit-marketplace-integrity.js` before every commit to verify compliance across all plugins.
+
 ## Hook portability requirement
 
-Hook scripts in this marketplace MUST be cross-platform runnable on the platforms Claude Code supports (Linux, macOS, Windows). Avoid reaching for shell calls, Unix-only paths, or platform-specific APIs unless cross-platform behavior has been verified.
+Hook scripts in this marketplace MUST be cross-platform runnable on the platforms Claude Code and companion CLIs support (Linux, macOS, Windows). Avoid reaching for shell calls, Unix-only paths, or platform-specific APIs unless cross-platform behavior has been verified.
 
 ### Default: pure Node ECMAScript
 
@@ -21,6 +47,7 @@ Author hook scripts in pure Node.js using only:
 
 - `require('fs')` — `fs.readFileSync`, `fs.writeFileSync`, `fs.existsSync`, `fs.mkdirSync({ recursive: true })`, and other native fs methods that have consistent behavior across platforms
 - `require('path')` — `path.join`, `path.basename`, `path.dirname`, `path.sep`, `path.extname` for all path construction and manipulation; never hardcode `/` or `\\` as separators
+- `require('os')` — `os.homedir()`, `os.tmpdir()`
 - `process.stdin`, `process.stdout`, `process.cwd()`, `process.platform`, `process.env`
 - `JSON.parse`, `JSON.stringify` for serialization
 - Native JavaScript built-ins: `Array`, `String`, `RegExp`, `Date`, `Map`, `Set`, `Promise`, async/await, template literals, destructuring
@@ -28,6 +55,7 @@ Author hook scripts in pure Node.js using only:
 ### Prohibited by default
 
 - `require('child_process')` and any subprocess invocation (`exec`, `spawn`, `execSync`, etc.). Shell semantics differ across platforms; subprocess calls leak platform assumptions.
+- Committed `node_modules/` directories anywhere under `plugins/*/hooks/` or `plugins/*/`.
 - Hardcoded Unix paths: `/tmp`, `/var/log`, `/usr/local`, `/home/<user>`, etc. Use `os.tmpdir()`, `os.homedir()`, or `process.env.HOME || process.env.USERPROFILE` if a home-directory equivalent is required.
 - Hardcoded path separators in string literals. Always use `path.join` or `path.sep`.
 - Line-splitting that assumes one EOL convention. Always tolerate CRLF: `text.split(/\r?\n/)`.
@@ -137,27 +165,16 @@ Before any filesystem operation, validate:
 
 When editing an existing hook, audit it against this requirement and add missing protections.
 
-### Reusable module / production-ready standard
+### Shared zero-dependency modules (`lib/`)
 
-When the same filesystem-robustness patterns appear in multiple plugins, do not duplicate the implementation per plugin. Two acceptable approaches, in order of preference:
+When filesystem-safety or peer/tool-discovery logic is shared across multiple plugins, keep plugins self-contained without committing third-party `node_modules/`:
 
-1. **Vendor a production-ready npm package.** The battle-tested standards for this domain:
-   - **`graceful-fs`** (Isaac Schlueter; powers npm itself) — drop-in `fs` replacement handling EMFILE backoff, EBUSY retries on Windows, etc. Tiny (~3 KB), zero runtime dependencies, used at industrial scale.
-   - **`write-file-atomic`** (Isaac Schlueter) — atomic file writes via temp-file + rename, with the cross-platform corner cases handled correctly.
-   - **`proper-lockfile`** — production-ready cross-platform file locking when actual mutual exclusion is required.
-
-   Vendor these into the plugin's `hooks/node_modules/` directory so the plugin is self-contained. Node's `require()` resolution finds them automatically. Commit the vendored `node_modules/` to the repo (this is a legitimate vendoring pattern for distributed CLI tools and is how Electron apps, standalone Node binaries via `pkg`, and similar tools ship).
-
-2. **Author a shared utility module within this repo.** Create the canonical version at `lib/fs-safe.js` at the marketplace root. Each plugin vendors a copy at `<plugin>/hooks/lib/fs-safe.js` (a sync script in `lib/sync.sh` or similar maintains the copies). Hooks import via `require('./lib/fs-safe')`. The module uses only Node built-ins; it is the marketplace's own production-ready standard implementing the patterns documented above.
-
-The choice between the two depends on the pattern complexity. For small numbers of well-understood operations (one or two `fs` calls per hook), inline implementations following the patterns in the previous sections are acceptable and avoid the vendoring/sync complexity. For complex filesystem workflows (multi-stage atomic operations, file locking, race-condition handling), the production-ready package is the right tool — do not author novel filesystem-coordination code when battle-tested packages exist.
-
-Avoid the reach for "I'll write my own retry loop" or "I'll handle the temp-file rename inline" — use the production-ready standard, vendor it if necessary, and document the choice in the plugin's README so users and future sessions can audit the implementation.
-
-## Per-plugin scope
-
-This file is repo-level engineering guidance only. Each plugin in this marketplace has its own scope, purpose, and behavior governed by that plugin's own documentation (its `CLAUDE.md`, `README.md`, and `SKILL.md` files). Do not assume that any one plugin's directives apply across other plugins, or that the plugins in this marketplace form a unified system. Refer to each plugin's own documentation for that plugin's specific scope.
-
+1. **Canonical pure-Node modules live in root `lib/`:**
+   - `lib/fs-safe.js` — defensive cross-platform path validation, `ensureDir`, `safeReadText`, `safeReadJson`, `atomicWrite` (with Windows `EBUSY` backoff), `appendJsonl`, and `cleanStaleLock` using Node built-ins only.
+   - `lib/gnox-discovery.js` — pure-Node discovery of installed sibling `gnomatix-oss-skills` plugins/skills across Claude Code and Agent Skills layouts, plus `PATH` and `mise` shim detection of optional local tools (zero `child_process`).
+2. **Deterministic sync into self-contained plugin folders:**
+   - Run `node scripts/sync-lib.js` to copy canonical `lib/*.js` helpers into `<plugin>/hooks/lib/` or `<plugin>/lib/`, and verify synchronization with `node scripts/sync-lib.js --check`.
+   - Never vendor npm packages or commit `node_modules/` directories into plugin folders.
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:6cd5cc61 -->
 ## Beads Issue Tracker

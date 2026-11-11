@@ -92,6 +92,12 @@
       "source": "./plugins/cui-bono"
     },
     {
+      "name": "citation-farm-audit",
+      "description": "Traces social-science and policy sources to their authors, funders, citation networks and primary data, and flags citation farms, closed citation loops and grey literature promoted to evidence. A companion command gives every source a provenance card of verifiable facts; dovetails automatically with cui-bono when installed.",
+      "category": "development",
+      "source": "./plugins/citation-farm-audit"
+    },
+    {
       "name": "gnox",
       "description": "One namespace for every skill in this marketplace (/gnox:<plugin>, /gnox:<plugin>:<skill>, /gnox:<plugin>:<group>:<cmd>), plus a SessionStart/PostCompact hook and companion skill that establish the GNOMATIX Namespacing Convention across the working session: hierarchical workspace_root:subdir:... scoping and config inheritance, CLI-safe [NS]{@target} callouts with 4-step namespace resolution, and inline «term» [CURIE] entity grounding.",
       "category": "development",

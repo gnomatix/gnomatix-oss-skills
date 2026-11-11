@@ -33,9 +33,13 @@ Then check all of the following, every time, before staging or committing anythi
 Multiple agents and sessions work concurrently in this repository. `https://gitea.gnomatix.com/gnomatix/gnomatix-oss-skills.git` is the **sole live development repository (`origin`)**; `https://github.com/gnomatix/gnomatix-oss-skills.git` (`github`) receives stripped single-commit release snapshots only via `scripts/release.sh`. Every agent working here behaves like a house-trained adult engineer on a shared team branch:
 
 1. **Verify `origin` points to live Gitea before touching a single file.** Run `git remote get-url origin` at session start. It MUST resolve to `https://gitea.gnomatix.com/gnomatix/gnomatix-oss-skills.git` (never the public GitHub snapshot mirror). If `origin` points anywhere else, fix the remote configuration first instead of shrugging past `diverged` warnings.
-2. **Fetch, inspect, and integrate `origin/main` before editing, committing, or bumping versions.** Run `git fetch origin --tags && git status -sb` and check `git log --oneline HEAD..origin/main`. Integrate every upstream commit cleanly before adding your own work. Leave every teammate's committed plugins, `VV.md` records, tests, and `dev/` logs intact.
+2. **Fetch, inspect, and integrate `origin/main` before editing, committing, or bumping versions.** Run `git fetch origin --tags` and `git status -sb`, and check `git log --oneline HEAD..origin/main`. Integrate every upstream commit cleanly before adding your own work. Leave every teammate's committed plugins, `VV.md` records, tests, and `dev/` logs intact.
 3. **Merge whole histories — never cherry-pick around `origin/main` or bypass Gitea with `RELEASE_LIVE=.`.** Porting a subset of commits onto a stale local checkout and pushing a snapshot straight to GitHub amputates every sibling plugin and bug fix committed on Gitea in the interim and leaves live Gitea behind the public mirror.
 4. **Push live work to Gitea (`origin`) first, and cut releases strictly through `sh scripts/release.sh` from a synchronized `origin/main`.** On completion of authorized `main` commits, push `HEAD:main` (and any new tags) to `origin` so Gitea `main` always leads or matches GitHub. Freelance cowboy commits, unpulled local islands, or out-of-band snapshots that stomp a teammate's work earn an immediate trip across the maintainer's knee to restore every dropped commit, test, and version manifest by hand under close adult supervision.
+5. **Favor short-lived, fit-to-purpose `feature/*` and `bugfix/*` branches with atomic commits and prompt pushes (no Pull Requests).**
+   - **Short-lived Git-Flow branches:** Start each focused improvement or repair on a dedicated, short-lived `feature/<topic>` or `bugfix/<topic>` branch cut from a freshly fetched `origin/main`, keeping your working tree crisp rather than accumulating sprawling, multi-topic uncommitted edits in a long-lived local checkout.
+   - **Atomic revisions, sensibly-scoped commits, and prompt pushes:** Break changes into small, self-contained increments, verify each increment (`node scripts/audit-marketplace-integrity.js` plus the affected plugin's test suite), record a clear atomic commit, integrate cleanly onto synchronized `origin/main`, push promptly to live Gitea (`origin`), and delete the retired topic branch. Frequent, well-scoped commits and pushes keep `origin/main` current for every teammate and prevent accidental overwrites.
+   - **Direct branch integration without Pull Requests:** Integrate verified `feature/*` and `bugfix/*` branches directly onto synchronized `origin/main` and push straight to `origin`. Skip Pull Requests unless the repository owner explicitly asks for one — direct, verified branch integration keeps cross-agent velocity high without unnecessary review ceremony.
 
 ## REQUIRED: no false claims of authorship
 
@@ -48,6 +52,38 @@ In practice:
 - Agents never instruct another agent to add one.
 - Agents never remove or reword the contract's review and sign-off statements that the user directed.
 - Agents never treat a configured git user name, such as a session's userid, as an authorship claim to change.
+
+## REQUIRED: Three-Tier Marketplace Architecture, Cross-Plugin Integrity, & Authority
+
+- **Sole human authority & precedence:** Only Brett Whitty (`<brett@gnomatix.com>`) may authorize exceptions, revise design specifications, or override rules in `AGENTS.md` and `CLAUDE.md`. Precedence: direct human owner instruction > `AGENTS.md` / `CLAUDE.md` > per-plugin `SKILL.md` / `VV.md` / `README.md` > managed tracker blocks. When a verification check or the owner identifies a defect, fix the defect directly, verify with `node scripts/audit-marketplace-integrity.js`, and continue without apologies or restraint declarations.
+- **Repo-wide standards during development:** Every agent working inside `gnomatix-oss-skills` must uphold all behavioral and authorship standards shipped by the marketplace (`spank-dario`, `hidden-libel-check`, `dont-be-hitler`, `did-you-rtfm`, `staleness-guard`, `critical-control-points`, `python-elimination-program`, `bear-loads`, `pony`) across every directory in this repository. No plugin folder is isolated or exempt from sibling standards.
+- **Three-tier end-user plugin contract:**
+  1. **Tier 0 — Stand-Alone Core:** Every plugin installs and operates independently with zero sibling plugins and zero extra local tools. Hard `"dependencies"` in `plugins/*/.claude-plugin/plugin.json` that disable standalone installs are prohibited without explicit owner authorization, as are committed `node_modules/` directories.
+  2. **Tier 1 — Complementary Plugin Dovetailing:** Plugins intentionally dovetail and complement each other when end-users install companion plugins. Skills and hooks detect companion plugins (`lib/gnox-discovery.js`, `VV.md` `complements:`) to activate paired workflows when installed and run clean standalone fallbacks when absent, documented openly in `README.md` and `SKILL.md`. Live marketplace plugin names must never be placed in `ignore: [...]` config examples.
+  3. **Tier 2 — Optional Local-Execution Tooling:** Optional local CLI tools (`mise`, `magick`, `bd`, `gws`, `git-crypt`, compiled Go binaries, `worklog` CLI/MCP) unlock extended local execution (`optional: true` + `unlocks:` in `VV.md`) when present and degrade cleanly when absent.
+
+## Active Cross-Session Coordination: Stable Artifacts vs. In-Process Revisions (2026-11)
+
+All cross-vendor agents and parallel Gemini, Claude Code, Codex, Kiro, and Antigravity sessions are encouraged to review the live work boundaries below (alongside `bd ready` / `bd list --status in_progress` in the authoritative `gnomatix-org-tracker` Vault) before planning edits:
+
+### 1. Stable Foundation Artifacts (Safe to Rely On & Build Against)
+
+Treat the following interfaces, contracts, and directories as settled foundations:
+
+- **Marketplace & Cross-CLI Layout:** `.claude-plugin/marketplace.json`, self-contained `plugins/<name>/.claude-plugin/plugin.json` manifests (zero hard `dependencies`), and the three 37-skill symlink farms (`.agents/skills/`, `.github/skills/`, `.kiro/skills/`).
+- **Canonical Zero-Dependency Helpers & Mechanical Gates:** `lib/fs-safe.js`, `lib/gnox-discovery.js`, `scripts/sync-lib.js` (`--check`), `scripts/audit-marketplace-integrity.js`, `.githooks/pre-commit`, and `scripts/release.sh`.
+- **Verification & Namespace Schemas:** The `VV.md` `skill-vv: 1` contract (`requirements` with `optional` + `unlocks`, `complements` with `plugin` + `when_installed` + `when_absent`, `procedures`, `platforms`, `results`), `plugins/skill-vv/bin/skill-vv.js` (`--no-installed`), and `gnox` session-namespace & router conventions (`workspace_root:subdir:...`, `[NS]{@target}`, `«term» [CURIE]`, `plugins/gnox/scripts/build-commands.js`).
+- **Visual Branding & Encrypted R&D Boundaries:** `.claude/readme-images.json`, `plugins/*/assets/images/*` (protected by the non-destructive `assets/drafts/` + `--promote-draft --approved-by` workflow), `plugins/og-social-image`, `.gitattributes` (`dev/** filter=git-crypt`), and plugins outside the active revision queue (`bear-loads`, `pony`, `spank-dario`, `critical-control-points`, `open-and-honest-agent`, `word-lineage`, `source-provenance`, `citation-farm-audit`, `all-help-no-harm`, `steering-audit-suite`, `staleness-guard`, `informal-logic-check`, `did-you-rtfm`, `log-session`, `inaudible-markup`, `ontology-lookup`, `update-readme-images`, `agent-darktriad-check`).
+
+### 2. Active & Queued Revisions (Fetch Latest & Coordinate Before Editing)
+
+The following targeted improvements are actively queued or in progress — fetch `origin/main` and check active Beads issues before modifying these areas so sessions build additively rather than duplicating or colliding with in-flight work:
+
+- **Remaining `VV.md` Coverage & Cross-Platform V&V Runs (follow-on to `gnox-43k`):** Adding `VV.md` manifests (`complements:`, `unlocks:`, `procedures:`) and recording multi-platform/multi-model results across plugins that do not yet ship a `VV.md` file.
+- **`satori` & `dont-be-hitler` Symbolic Enclosure Verification:** Empirical cross-CLI/cross-model (`agy`, `claude`, `kiro-cli`, `codex`) verification of compact mathematical literal-interpretation prefixes (such as `⊢□∀{x}≡⟦x⟧:`) and candidate Unicode symbolic sequences for `dont-be-hitler`.
+- **`cui-bono` Fact-Grounded Framing Compliance Skill:** Planned companion skill under `plugins/cui-bono/` providing citation-backed factual context to defuse superficial misreadings across companion plugins (`dont-be-hitler`, `hidden-libel-check`).
+- **`python-elimination-program` (`old-willy` / `whacking-day`) Cultural Phrasing Refinement:** Queued owner-reviewed update aligning Old Willy's humorous generational phrasing (`"dum-dum"`) across skill prose and references.
+- **Upstream Monorepo Backport & Unified GNOMATIX YAML Frontmatter (`gnox/npm-packages`, Beads epic `gnox-dw8`):** Active architectural work in `https://gitea.gnomatix.com/gnox/npm-packages.git` (`C:\Users\brett\repos\gnox-npm-packages`) backporting all 25 instantiated plugins, pure-Node/Go hooks, `VV.md` manifests, and harmonized `SKILL.md` `metadata.gno-*` + `dreamfs` provenance frontmatter into the canonical `@gnox/*` / `@gnomatix/*` package source tree. Keep `SKILL.md` top-level frontmatter clean and `agentskills.io`-compliant (`kebab-case` `name`, `description`, optional `metadata:`) so upstream materialization remains lossless.
 
 This project uses **bd** (beads) for issue tracking. Run `bd prime` for full workflow context.
 
@@ -95,6 +131,10 @@ cp -rf source dest          # NOT: cp -r source dest
 - `ssh` - use `-o BatchMode=yes` to fail instead of prompting
 - `apt-get` - use `-y` flag
 - `brew` - use `HOMEBREW_NO_AUTO_UPDATE=1` env var
+
+## Deferred V&V & Release Promotion Queue (`TODO.md`)
+
+- Unpromoted plugin drafts and post-release revisions awaiting live V&V and owner sign-off are tracked in [`TODO.md`](TODO.md) and gated via GNOMATIX YAML frontmatter (`authority`, `review_status`, `approved_versions`) enforced by `scripts/build-release-tree.js` and `scripts/audit-marketplace-integrity.js`. Do not promote `PENDING` revisions to public GitHub releases before their V&V tasks in `TODO.md` are completed and approved by Brett Whitty.
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:970c3bf2 -->
 ## Beads Issue Tracker

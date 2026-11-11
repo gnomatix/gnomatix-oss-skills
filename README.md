@@ -24,7 +24,7 @@
 -->
 <!-- END: gnomatix-promo-include -->
 
-A collection of [Agent Skills](https://agentskills.io) and Claude Code plugins from GNOMATIX. This repo doubles as a Claude Code marketplace, so a single `/plugin marketplace add` covers every plugin housed here.
+A collection of [Agent Skills](https://agentskills.io) and Claude Code plugins from GNOMATIX. This repo doubles as a Claude Code marketplace, so a single `/plugin marketplace add` covers every plugin housed here — install any single plugin stand-alone, or combine complementary plugins and optional local tools for coordinated workflows.
 
 ## Plugins
 
@@ -74,7 +74,23 @@ A collection of [Agent Skills](https://agentskills.io) and Claude Code plugins f
 - [`og-social-image`](plugins/og-social-image/): Makes the social-preview image for your repository or page from a hero, banner or logo: the exact pixel size for GitHub, Open Graph or X, cover-cropped with the important parts in frame, under the platform's file-size cap, and measured before it's called done.
 - [`update-readme-images`](plugins/update-readme-images/): Curates, generates, post-processes, embeds, and audits `README.md` and `SKILL.md` imagery across your repository from a single config file (`readme-images.json`) pairing GNOX-namespaced style guides (`workspace_root:subdir:...`) with glob-matched rules documents (`*`, `**`). Handles top-level titled hero banners, section/skills sub-panels, and transparent-corner oval inset window portraits (`PNG32` alpha); automatically builds `1280×640` `< 1 MB` OG social images in every `assets/images` directory unless opted out; and stages candidate replacements for existing images into `assets/drafts/` for your approval rather than overwriting live files.
 
-Each plugin is self-contained: its own manifest, its skills and/or hooks, and a README that goes into the detail (`satori` is hooks only; `skill-vv` checks requirements and V&V for every plugin that ships a `VV.md`). New plugins drop in as siblings under `plugins/`.
+## Stand-Alone Installability, Complementary Dovetailing, & Optional Local Tools
+
+Every plugin in `gnomatix-oss-skills` is engineered around a three-tier capability design:
+
+1. **Stand-Alone Baseline (Install One or Install Many):**
+   Each plugin is self-contained (`plugin.json`, `SKILL.md` files, optional hooks/scripts, `VV.md`, and `README.md`) and works out of the box when installed on its own, with zero lock-in to sibling plugins (`satori` is hooks-only; every other plugin ships Agent Skills).
+2. **Complementary Plugin Dovetailing (Automatic Synergy When Installed Together):**
+   Plugins in this marketplace are designed to dovetail and complement each other whenever you choose to install companion plugins:
+   - **`gnox` + any marketplace plugin:** unified `/gnox:<plugin>[:<skill>]` routing, session-wide `workspace_root:subdir:...` config inheritance, `[NS]{@target}` CLI-safe callouts, and automatic session topology discovery.
+   - **`skill-vv` + any plugin with `VV.md`:** pre-flight requirement checks, optional-tool prompts, complementary pairing status (`skill-vv status <plugin>`), and per-model/platform V&V tracking.
+   - **`update-readme-images` + `og-social-image` + `critical-control-points` + `hidden-libel-check`:** namespaced README/SKILL banner and oval-inset curation, automatic `1280×640` `< 1 MB` social-card generation, non-destructive `assets/drafts/` approval staging, and pre-commit caption/copy discretion checks.
+   - **`spank-dario` + `dont-be-hitler` + `hidden-libel-check`:** statutory human-only authorship protection, verbatim preservation of your prose and register, and R0–R14 reputational review on repo artifacts.
+   - **`inaudible-markup` + `ontology-lookup` + `word-lineage`:** voice-silent structured replies, verified Bioregistry `«term» [CURIE]` entity grounding, and phylogenetic literal word definitions.
+   - **`cui-bono` + `informal-logic-check` + `staleness-guard` + `word-lineage` + `hidden-libel-check`:** register/funder tracing combined with verbatim premise confirmation, live record checks, literal definitions, and factual attribution.
+   - **`did-you-rtfm` + `critical-control-points` + `staleness-guard`:** version-checked documentation and minimal-repro verification before surfacing a real decision point.
+3. **Optional Local-Execution Tooling:**
+   Core skills and pure-Node hooks run portably without third-party `node_modules/`. Installing optional local CLI tools unlocks extended local capabilities — including **`mise`** (safe-mode MCP tool inspection in `gnox` and one-command tool installs via [`deps/`](deps/)), **ImageMagick `magick`** (local pixel verification, `PNG32` oval alpha masks, and social-preview cards in `og-social-image` and `update-readme-images`), **`bd`** (Dolt-backed Beads/CCP issue tracking), **`gws`** (CLI Google Calendar logging in `log-session`), and **compiled Go hook binaries** (sub-10ms embedded KontentKop scoring in `agent-darktriad-check`). When an optional tool is absent, `skill-vv` surfaces its install command and each plugin falls back cleanly to its standalone path.
 
 ## Install
 
@@ -87,7 +103,7 @@ This repository is a Claude Code marketplace. Add it once, then install any plug
 /plugin install all-help-no-harm@gnomatix-oss-skills
 ```
 
-`gnomatix-oss-skills` is the marketplace's `name` in [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json). Updates flow via `/plugin update`. Hooks (the `hooks/` directories) apply to Claude Code only.
+`gnomatix-oss-skills` is the marketplace's `name` in [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json). Updates flow via `/plugin update`. Claude Code loads each plugin's `hooks/hooks.json` automatically; plugins with cross-CLI hook installers (such as [`spank-dario`](plugins/spank-dario/README.md) via `bin/register-hooks.js` and [`all-help-no-harm`](plugins/all-help-no-harm/platforms/README.md)) also register hooks directly on Codex, Antigravity (`agy`), Gemini CLI, and Kiro.
 
 ### Every other agent: the Agent Skills format
 
@@ -101,7 +117,7 @@ Each skill is a folder with a `SKILL.md` in the cross-agent [Agent Skills](https
 - **VS Code** ([docs](https://code.visualstudio.com/docs/copilot/customization/agent-skills)): project `.github/skills/` (Copilot); `.agents/skills/` and `.claude/skills/` (local harness); user `~/.copilot/skills/`, `~/.agents/skills/`, `~/.claude/skills/`; install: clone.
 - **Kiro** ([docs](https://kiro.dev/docs/skills/)): project `.kiro/skills/`; user `~/.kiro/skills/` (IDE); install: Kiro panel → Import a skill → the URL of a skill folder, e.g. `.../tree/main/plugins/did-you-rtfm/skills/did-you-rtfm`.
 
-The symlink farms are `.agents/skills/`, `.github/skills/` and `.kiro/skills/`; on Windows, check out with `core.symlinks=true` or copy the folders. The full list of agents that read the format is at [agentskills.io](https://agentskills.io/clients.md). The `all-help-no-harm` plugin additionally ships native integrations for Claude Code, Antigravity CLI (`agy`), Kiro CLI and app, and Antigravity IDE, indexed in [`plugins/all-help-no-harm/platforms/README.md`](plugins/all-help-no-harm/platforms/README.md), and a VS Code extension lives in [`vscode-extension/`](vscode-extension/).
+The symlink farms are `.agents/skills/`, `.github/skills/` and `.kiro/skills/`; on Windows, check out with `core.symlinks=true` or copy the folders. The full list of agents that read the format is at [agentskills.io](https://agentskills.io/clients.md). Cross-platform native hook integrations ship in [`plugins/spank-dario/bin/register-hooks.js`](plugins/spank-dario/README.md) and [`plugins/all-help-no-harm/platforms/README.md`](plugins/all-help-no-harm/platforms/README.md), and a VS Code extension lives in [`vscode-extension/`](vscode-extension/).
 
 ## Repo layout
 
@@ -116,17 +132,21 @@ The symlink farms are `.agents/skills/`, `.github/skills/` and `.kiro/skills/`; 
 ├── AGENTS.md, CLAUDE.md              # instructions for agents working in this repo
 ├── README.md
 ├── assets/                           # README boilerplate blocks and images
+├── deps/                             # cross-platform optional-tool bootstrap scripts (mise)
 ├── dev/                              # private, git-crypt encrypted (dev/README.md explains)
+├── lib/                              # canonical pure-Node helpers synced into plugins via scripts/sync-lib.js
+├── scripts/                          # version-bump.js, sync-lib.js, audit-marketplace-integrity.js, release.sh
 ├── vscode-extension/                 # GNOMATIX Skills VS Code extension
 └── plugins/                          # one self-contained directory per plugin
     └── <plugin>/
         ├── .claude-plugin/plugin.json
         ├── README.md
+        ├── VV.md                       # requirements, optional tools, complements, & V&V records
         ├── skills/<skill>/SKILL.md     # Agent Skills format
-        └── hooks/                      # Claude Code only, where the plugin has hooks
+        └── hooks/                      # Claude Code hooks.json (+ bin/register-hooks.js or platforms/ where multi-CLI)
 ```
 
-Plugins: all-help-no-harm, satori, skill-vv, steering-audit-suite, gnox, critical-control-points, did-you-rtfm, staleness-guard, informal-logic-check, bear-loads, pony, hidden-libel-check, spank-dario, open-and-honest-agent, agent-darktriad-check, log-session, cui-bono, python-elimination-program, word-lineage, ontology-lookup, inaudible-markup, og-social-image, update-readme-images, dont-be-hitler, goal-compliant-task-queue.
+Plugins: all-help-no-harm, satori, skill-vv, steering-audit-suite, gnox, critical-control-points, did-you-rtfm, staleness-guard, informal-logic-check, bear-loads, pony, hidden-libel-check, spank-dario, open-and-honest-agent, agent-darktriad-check, log-session, cui-bono, citation-farm-audit, python-elimination-program, word-lineage, ontology-lookup, inaudible-markup, og-social-image, update-readme-images, dont-be-hitler, goal-compliant-task-queue.
 
 ## Versions
 
@@ -135,9 +155,12 @@ Each plugin keeps its own version, and its patch number goes up when its content
 `scripts/version-bump.js` compares each plugin folder's git tree hash with the one recorded in
 `.VERSIONS.json`.
 
-- A pre-commit hook bumps changed plugins in the commit itself, on main. Enable it once per
-  clone: `git config core.hooksPath .githooks`
-- `scripts/release.sh` makes a release. It bumps any plugin a commit made without the hook
+- A pre-commit hook runs `scripts/audit-marketplace-integrity.js` and bumps changed plugins in the commit itself, on main. Enable it once per
+  clone: `git config core.hooksPath .githooks`. It reads the versions from the index being
+  committed, not the working tree. After a pathspec commit (`git commit -- <paths>`) a
+  post-commit hook brings the main index up to the bumped files. Tests:
+  `node scripts/test/version-bump.test.js`
+- `scripts/release.sh` makes a release. It verifies marketplace integrity, bumps any plugin a commit made without the hook
   missed and bumps `VERSION`, tags `v<VERSION>`, and publishes the release to this GitHub
   repo as one snapshot commit. So a commit made without the hook still ships correct versions.
 

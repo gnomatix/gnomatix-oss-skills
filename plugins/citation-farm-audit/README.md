@@ -1,0 +1,80 @@
+# citation-farm-audit
+
+![citation-farm-audit](assets/images/citation-farm-audit-banner.jpg)
+
+<!-- BEGIN: gnomatix-promo-include -->
+<p>
+  <a href="https://www.buymeacoffee.com/gnomatix">
+    <img src="https://img.buymeacoffee.com/button-api/?text=Buy+me+a+coffee&emoji=&slug=gnomatix&button_colour=BD5FFF&font_colour=ffffff&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00" alt="Buy Me A Coffee — gnomatix">
+  </a>
+</p>
+
+<!-- For JS-rendering contexts (the BMC-supplied script tag, preserved as authored):
+<script type="text/javascript"
+  src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js"
+  data-name="bmc-button"
+  data-slug="gnomatix"
+  data-color="#BD5FFF"
+  data-emoji=""
+  data-font="Cookie"
+  data-text="Buy me a coffee"
+  data-outline-color="#000000"
+  data-font-color="#ffffff"
+  data-coffee-color="#FFDD00"></script>
+-->
+<!-- END: gnomatix-promo-include -->
+
+Checks the social-science and policy sources behind your claims before you rely on them. When a journal paper, think-tank or NGO report, white paper, or government or UN report is about to back a claim, the agent traces who wrote it, who paid for it, who cites it, and whether its chain of citations ever reaches real data. Citation farms, closed citation loops and grey literature passed off as evidence get flagged with the evidence attached. Every side of a debate gets the same checks, and the results are facts you can verify, not labels.
+
+Installs and runs standalone (`/citation-farm-audit` and `/citation-farm-audit:source-provenance` plus `scripts/openalex-profile.mjs`), and dovetails automatically with [`cui-bono`](../cui-bono/) when both plugins are installed without duplicating skill registrations.
+
+## What you get
+
+- **A network card per claim** (`/citation-farm-audit`): the citation graph from the policy document down to its primary data, the people and the money in it (authors, funders, boards, committee seats), the flags raised, where the chain ends (objective data, self-report or opinion), and what was not verified.
+- **A person record per recurring name**: degree, thesis and repository link, appointment, funders, organizational roles and network position, each fact with its source. You decide what goes in the flag column.
+- **A provenance card per source** (`/citation-farm-audit:source-provenance`): funding traced to the funder's own stated mission, author affiliations and career incentives, self-citation counts, the data the claim rests on, whether the method could have come out against its premise, and the declared conflicts set against the record.
+
+## When it runs
+
+- `/citation-farm-audit`: whenever a social-science, psychology, criminology, gender-studies or policy source is used as evidence, and whenever an author's name turns up in three or more sources in your project.
+- `/citation-farm-audit:source-provenance`: whenever any paper, review, report, white paper or government document is pulled as a source. It hands network-level patterns to `/citation-farm-audit`.
+
+## How it checks
+
+- Public scholarly and funding records only: OpenAlex, Crossref, Europe PMC, NIH RePORTER, NSF and USAspending award search, ProPublica Nonprofit Explorer (US 990s) and the CRA charity listings (Canadian T3010s).
+- No private correspondence, no contact with anyone's employer, no personal details. Person records hold public, professional facts.
+- Funding is recorded as a fact and is never the verdict: the data and the method decide whether the work holds up.
+
+## What's inside
+
+- `commands/citation-farm-audit.md`: standalone 7-step network-card and person-record audit command, delegating seamlessly to `cui-bono:citation-farm-audit` when `cui-bono` is installed.
+- `commands/source-provenance.md`: standalone 6-check provenance-card command, delegating seamlessly to `cui-bono:source-provenance` when `cui-bono` is installed.
+- `scripts/openalex-profile.mjs`: one author's citation profile from OpenAlex in one run: top works, co-authors, top citers marked as co-authors or not, self-citations, citing fields, funders. Node 18 or later, no dependencies: `node scripts/openalex-profile.mjs <OpenAlex author id>`.
+- `VV.md`: standalone requirements, `cui-bono` / `gnox` complementary topology declarations, GNOMATIX release-lifecycle frontmatter, and V&V records.
+
+## Requirements
+
+Node 18 or later (built-in `fetch`) for the profile script; curl for the example queries. No API keys. OpenAlex requests without a key share a small daily budget per IP address, so queries stay narrow and cache results under `~/.local/share/claude/`.
+
+## Install
+
+```sh
+/plugin marketplace add github:gnomatix/gnomatix-oss-skills
+/plugin install citation-farm-audit@gnomatix-oss-skills
+```
+
+For the full five-skill *cui bono* suite (`cui-bono`, `logic-decomposer`, `logic-toolbox`, `citation-farm-audit`, `source-provenance`, and `missile-command`), you can also install `cui-bono@gnomatix-oss-skills`; both plugins coexist cleanly. For other agents, the Agent Skills folders are linked from `.agents/skills/`, `.github/skills/` and `.kiro/skills/` at the repo root; see the main README.
+
+<!-- BEGIN: gnomatix-license-include -->
+## License
+
+**[Business Source License 1.1](https://github.com/gnomatix/gnomatix-oss-skills/blob/main/LICENSE)** (`BUSL-1.1`). The source is available, but this is not OSI open source.
+
+**Commercial use is strictly prohibited without a paid commercial licensing / usage agreement with GNOMATIX.** Use by or for any government, government agency or charity is commercial use. Contact GNOMATIX first to arrange either of these:
+- an ongoing support & development agreement
+- a reasonable one-time usage fee, paid via [Buy Me a Coffee](https://www.buymeacoffee.com/gnomatix)
+
+Both support continued development work on GNOMATIX projects. Contact: [`sales@gnomatix.com`](mailto:sales@gnomatix.com) or [LinkedIn](https://www.linkedin.com/company/gnomatix). General product support: [`support@gnomatix.com`](mailto:support@gnomatix.com).
+
+The full terms, including the Additional Use Grant, the Change Date and the Change License, are in [`LICENSE`](https://github.com/gnomatix/gnomatix-oss-skills/blob/main/LICENSE).
+<!-- END: gnomatix-license-include -->
