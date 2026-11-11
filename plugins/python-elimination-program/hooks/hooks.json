@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/whacking-day-millenial-crybaby-spanking.js",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/whacking-day-millenial-crybaby-spanking.js\"",
             "timeout": 10
           }
         ]

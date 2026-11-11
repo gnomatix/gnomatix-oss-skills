@@ -1,6 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "gnomatix-oss-skills",
+  "version": "0.1.19",
   "description": "Cross-vendor Agent Skills and plugins from GNOMATIX across Claude Code, OpenAI Codex, Antigravity CLI (agy), GitHub Copilot, VS Code, Cursor, OpenCode, and Kiro.",
   "owner": {
     "name": "Brett Whitty",

@@ -20,6 +20,15 @@ Results are recorded. A failure is fixed on the spot, or explained to you direct
 
 Results from installed copies go to `~/.local/state/skill-vv/`. Results kept with a skill are written back into its source `VV.md` with `record result ... --into <VV.md>`.
 
+## Install
+
+```sh
+/plugin install skill-vv --marketplace gnomatix/gnomatix-oss-skills
+```
+
+- **Claude Code**: `/plugin install skill-vv@gnomatix-oss-skills`, then `/skill-vv` or `/gnox:skill-vv`.
+- **Every other agent**: the skill folders under [`plugins/skill-vv/skills/`](skills/) follow the cross-CLI [Agent Skills](https://agentskills.io) format (`mise skills sync --prune`, or per-CLI install paths in the root `README.md`).
+
 ## Stand-Alone & Complementary Plugins
 
 - **Stand-alone**: `skill-vv` installs and operates independently for any project or single installed skill that ships a `VV.md`.

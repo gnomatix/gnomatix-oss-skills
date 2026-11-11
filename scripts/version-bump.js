@@ -51,6 +51,7 @@ const { execFileSync } = require('child_process');
 const ROOT = path.resolve(__dirname, '..');
 const MANIFEST = '.VERSIONS.json';
 const VERSION_FILE = 'VERSION';
+const MARKETPLACE_FILE = '.claude-plugin/marketplace.json';
 const MARKET = '_marketplace';
 const PENDING = 'version-bump-pending.json';
 
@@ -168,6 +169,12 @@ function writeManifest() {
 function writeVersion(v) {
   const oldText = indexText(VERSION_FILE);
   write(VERSION_FILE, oldText, v + '\n', null);
+  const mpText = indexText(MARKETPLACE_FILE);
+  const mpObj = mpText && parseJson(mpText);
+  if (mpObj) {
+    mpObj.version = v;
+    write(MARKETPLACE_FILE, mpText, toJson(mpObj), (o) => { o.version = v; });
+  }
 }
 
 if (bumpVersion) {
@@ -235,6 +242,12 @@ if (ci || init) {
   if (init) {
     manifest[MARKET] = { version: current, plugins_fingerprint: fingerprint };
     changed[MARKET] = manifest[MARKET];
+    const mpText = indexText(MARKETPLACE_FILE);
+    const mpObj = mpText && parseJson(mpText);
+    if (mpObj && current && mpObj.version !== current) {
+      mpObj.version = current;
+      write(MARKETPLACE_FILE, mpText, toJson(mpObj), (o) => { o.version = current; });
+    }
   } else if (market.plugins_fingerprint !== fingerprint) {
     const v = bumpPatch(current);
     writeVersion(v);

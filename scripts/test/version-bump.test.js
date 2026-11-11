@@ -54,6 +54,7 @@ function makeRepo() {
     try { fs.chmodSync(path.join(dir, '.githooks', h), 0o755); } catch { /* Windows */ }
   }
   put(dir, 'VERSION', '0.1.0\n');
+  put(dir, '.claude-plugin/marketplace.json', json({ name: 'test-marketplace', version: '0.1.0', owner: { name: 'test' }, plugins: [] }));
   for (const p of ['alpha', 'beta']) {
     put(dir, PJ(p), json({ name: p, description: `${p} plugin`, version: '0.1.0' }));
     put(dir, `plugins/${p}/README.md`, `${p}\n`);
@@ -210,10 +211,11 @@ function cleanup(dir) {
     const r = spawnSync(process.execPath, [path.join('scripts', 'version-bump.js'), '--ci'], { cwd: dir, encoding: 'utf8', env: cleanEnv });
     check(r.status === 0, 'case 8: --ci exits 0', r.stderr);
     const staged = git(dir, 'diff', '--cached', '--name-only').trim().split(/\r?\n/).sort().join(',');
-    check(staged === `.VERSIONS.json,VERSION,${PJ('alpha')}`, 'case 8: --ci stages the manifest, VERSION and alpha plugin.json', staged);
+    check(staged === `.VERSIONS.json,.claude-plugin/marketplace.json,VERSION,${PJ('alpha')}`, 'case 8: --ci stages the manifest, marketplace.json, VERSION and alpha plugin.json', staged);
     const unstaged = git(dir, 'diff', '--name-only').trim();
     check(unstaged === '', 'case 8: working tree matches the index after --ci', unstaged);
     check(get(dir, 'VERSION') === '0.1.1\n', 'case 8: VERSION bumped to 0.1.1', get(dir, 'VERSION'));
+    check(JSON.parse(get(dir, '.claude-plugin/marketplace.json')).version === '0.1.1', 'case 8: marketplace.json version bumped to 0.1.1');
     check(JSON.parse(get(dir, PJ('alpha'))).version === '0.1.1', 'case 8: alpha bumped to 0.1.1');
   } finally { cleanup(dir); }
 }
@@ -250,6 +252,7 @@ function cleanup(dir) {
     const r = spawnSync(process.execPath, [path.join('scripts', 'version-bump.js'), '--bump-version'], { cwd: dir, encoding: 'utf8', env: cleanEnv });
     check(r.status === 0, 'case 10: --bump-version exits 0', r.stderr);
     check(get(dir, 'VERSION') === '0.1.1\n' && git(dir, 'show', ':VERSION') === '0.1.1\n', 'case 10: VERSION 0.1.1 in the working tree and the index');
+    check(JSON.parse(git(dir, 'show', ':.claude-plugin/marketplace.json')).version === '0.1.1', 'case 10: staged marketplace.json has version 0.1.1');
     check(JSON.parse(git(dir, 'show', ':.VERSIONS.json'))._marketplace.version === '0.1.1', 'case 10: staged manifest has _marketplace 0.1.1');
     const unstaged = git(dir, 'diff', '--name-only').trim();
     check(unstaged === '', 'case 10: working tree matches the index', unstaged);

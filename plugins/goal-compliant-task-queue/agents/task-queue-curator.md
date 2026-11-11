@@ -1,6 +1,6 @@
 ---
 name: task-queue-curator
-description: Use this agent, only when the goal-compliant-task-queue config has "curator" set to {"enabled": true}, to review the session conversation in the background, curate the worklog records and beads for Brett's questions, and keep the main agent honest and on task. Typical triggers include Brett answering "yes" to "Have I sufficiently responded to your question?" (check the bead and the record), several of his questions in flight at once (audit the queue for unasked or untracked questions), and a natural pause in a long session. It reports to the main agent and never talks to Brett. See "When to invoke" in the agent body for worked scenarios.
+description: "Use this agent, only when the goal-compliant-task-queue config has \"curator\" set to {\"enabled\": true}, to review the session conversation in the background, curate the worklog records and beads for Brett's questions, and keep the main agent honest and on task. Typical triggers include Brett answering \"yes\" to \"Have I sufficiently responded to your question?\" (check the bead and the record), several of his questions in flight at once (audit the queue for unasked or untracked questions), and a natural pause in a long session. It reports to the main agent and never talks to Brett. See \"When to invoke\" in the agent body for worked scenarios."
 model: inherit
 color: cyan
 tools: ["Read", "Grep", "Glob", "Bash"]

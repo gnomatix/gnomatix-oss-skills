@@ -12,6 +12,13 @@ These ground the hourly rate used for actual-loss estimates in published US gove
 | data scientist | 285 | 177.16 | 207.38 | 256.91 | 297.59 | 449.62 |
 | bioinformatics | 7 | 188.42 | 200.26 | 289.69 | 329.76 | 340.77 |
 
+## BLS wage figure
+
+- **Source:** BLS Occupational Employment and Wage Statistics (OEWS), series `OEUN000000000000015125203`, read through the BLS API at https://api.bls.gov/publicAPI/v2/timeseries/data/OEUN000000000000015125203 on 2026-11-10 (`sources/bls-api-OEUN000000000000015125203.json`).
+- **What the series is:** read against the BLS OE code tables at https://download.bls.gov/pub/time.series/oe/ (`sources/bls-oe.areatype.txt`, `bls-oe.area.txt`, `bls-oe.industry.txt`, `bls-oe.occupation.txt`, `bls-oe.datatype.txt`): area type `N` and area `0000000`, National; industry `000000`, Cross-Industry, Private, Federal, State, and Local; occupation `151252`, Software Developers; datatype `03`, Hourly mean wage.
+- **Figure:** 2025, annual: $71.20 per hour.
+- This is a wage, not a billing rate. It is not used in the estimate.
+
 ## Limits of the data
 
 - Keyword search matches labor-category titles loosely, so each set mixes related categories.

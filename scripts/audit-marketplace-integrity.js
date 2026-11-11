@@ -556,6 +556,17 @@ function auditMarketplace(repoRoot, opts) {
           'missing top-level "renames" object in .claude-plugin/marketplace.json'
         );
       }
+      const rootVersionPath = path.join(root, 'VERSION');
+      if (fs.existsSync(rootVersionPath)) {
+        const expectedMarketVersion = fs.readFileSync(rootVersionPath, 'utf8').trim();
+        if (expectedMarketVersion && mp.version !== expectedMarketVersion) {
+          fail(
+            'marketplace-renames-and-tags',
+            mpPath,
+            `expected top-level "version": "${expectedMarketVersion}" in .claude-plugin/marketplace.json to match VERSION (got ${JSON.stringify(mp.version)})`
+          );
+        }
+      }
     }
 
     const renamesMap = mp.renames && typeof mp.renames === 'object' && !Array.isArray(mp.renames) ? mp.renames : {};

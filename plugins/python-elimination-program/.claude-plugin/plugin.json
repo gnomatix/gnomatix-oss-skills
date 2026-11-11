@@ -1,6 +1,6 @@
 {
   "name": "python-elimination-program",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "description": "Four coordinated Agent Skills plus a PreToolUse hook that stop AI agents defaulting to Python in projects that do not use it. whacking-day (justify it and get the user's OK), zartan (a non-Python option wins if one exists) and jake-the-snake (approved Python is written properly) run in order; old-willy is the merit test for any 'Python is the best tool' claim. The hook blocks Python at the harness when nothing has been authorised.",
   "author": {
     "name": "Brett Whitty",

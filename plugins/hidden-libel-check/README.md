@@ -52,6 +52,15 @@ When that output goes into a tracked artifact under a paying user's byline — a
 - `python-elimination-program` — interrupts Python-as-default-tool reach.
 - `hidden-libel-check` — reviews the artifacts left behind for content the agent should not have written, before they ship.
 
+## Install
+
+```sh
+/plugin install hidden-libel-check --marketplace gnomatix/gnomatix-oss-skills
+```
+
+- **Claude Code**: `/plugin install hidden-libel-check@gnomatix-oss-skills`, then `/hidden-libel-check` or `/gnox:hidden-libel-check`.
+- **Every other agent**: the skill folder [`plugins/hidden-libel-check/skills/hidden-libel-check/`](skills/hidden-libel-check/) follows the cross-CLI [Agent Skills](https://agentskills.io) format (`mise skills sync --prune`, or per-CLI install paths in the root `README.md`).
+
 ## Status
 
 This plugin currently ships the SKILL.md only. Hooks (PreToolUse on `Bash(git commit *)` / `Bash(gh pr create *)`, Stop / SubagentStop session-end scanner) are planned and will follow the structural pattern established by `did-you-rtfm`'s hook implementation.

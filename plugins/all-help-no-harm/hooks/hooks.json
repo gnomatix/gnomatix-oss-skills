@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "dotenvx run --env-file=${CLAUDE_PLUGIN_ROOT}/.env -- node ${CLAUDE_PLUGIN_ROOT}/hooks/session-start-contract.js",
+            "command": "dotenvx run --env-file=\"${CLAUDE_PLUGIN_ROOT}/.env\" -- node \"${CLAUDE_PLUGIN_ROOT}/hooks/session-start-contract.js\"",
             "timeout": 10
           }
         ]
@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/coordinator-launcher.js",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/coordinator-launcher.js\"",
             "timeout": 10
           }
         ]
@@ -26,7 +26,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "dotenvx run --env-file=${CLAUDE_PLUGIN_ROOT}/.env -- node ${CLAUDE_PLUGIN_ROOT}/hooks/post-compact-contract.js",
+            "command": "dotenvx run --env-file=\"${CLAUDE_PLUGIN_ROOT}/.env\" -- node \"${CLAUDE_PLUGIN_ROOT}/hooks/post-compact-contract.js\"",
             "timeout": 10
           }
         ]
@@ -37,7 +37,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "dotenvx run --env-file=${CLAUDE_PLUGIN_ROOT}/.env -- node ${CLAUDE_PLUGIN_ROOT}/hooks/user-prompt-submit-contract.js",
+            "command": "dotenvx run --env-file=\"${CLAUDE_PLUGIN_ROOT}/.env\" -- node \"${CLAUDE_PLUGIN_ROOT}/hooks/user-prompt-submit-contract.js\"",
             "timeout": 10
           }
         ]
@@ -49,7 +49,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "dotenvx run --env-file=${CLAUDE_PLUGIN_ROOT}/.env -- node ${CLAUDE_PLUGIN_ROOT}/hooks/posttooluse-contract-affirmation-record.js",
+            "command": "dotenvx run --env-file=\"${CLAUDE_PLUGIN_ROOT}/.env\" -- node \"${CLAUDE_PLUGIN_ROOT}/hooks/posttooluse-contract-affirmation-record.js\"",
             "timeout": 10
           }
         ]
@@ -58,7 +58,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/context-watch.sh",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/context-watch.sh\"",
             "timeout": 10
           }
         ]
@@ -70,7 +70,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse-contract-ask-guard.js",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/pretooluse-contract-ask-guard.js\"",
             "timeout": 10
           }
         ]

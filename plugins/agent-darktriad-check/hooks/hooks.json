@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/bin/agent-darktriad-check-${platform}-${arch}${exe} || node ${CLAUDE_PLUGIN_ROOT}/hooks/agent-darktriad-check.js",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/bin/agent-darktriad-check-${platform}-${arch}${exe}\" || node \"${CLAUDE_PLUGIN_ROOT}/hooks/agent-darktriad-check.js\"",
             "timeout": 30
           }
         ]
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/bin/agent-darktriad-check-${platform}-${arch}${exe} || node ${CLAUDE_PLUGIN_ROOT}/hooks/agent-darktriad-check.js",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/bin/agent-darktriad-check-${platform}-${arch}${exe}\" || node \"${CLAUDE_PLUGIN_ROOT}/hooks/agent-darktriad-check.js\"",
             "timeout": 30
           }
         ]

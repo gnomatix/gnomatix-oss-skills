@@ -14,6 +14,15 @@ One namespace for every skill in the `gnomatix-oss-skills` marketplace — plus 
 
 Each command hands its arguments to the plugin's own skill, so the target plugin has to be installed when you invoke its routed command. Every plugin still installs and runs stand-alone under its own `/<plugin>` command whether or not `gnox` is installed.
 
+## Install
+
+```sh
+/plugin install gnox --marketplace gnomatix/gnomatix-oss-skills
+```
+
+- **Claude Code**: `/plugin install gnox@gnomatix-oss-skills`, then `/gnox:<plugin>[:<skill>]`, `/gnox:local-config-wizard`, or `/gnox:doctor`.
+- **Every other agent**: the skill folder [`plugins/gnox/skills/gnox/`](skills/gnox/) follows the cross-CLI [Agent Skills](https://agentskills.io) format (`mise skills sync --prune`, or per-CLI install paths in the root `README.md`).
+
 ## Session-Wide GNOMATIX Namespacing Convention & Active Topology
 
 When `gnox` is installed, its `SessionStart` and `PostCompact` hooks ([`hooks/session-namespace.js`](hooks/session-namespace.js)) — together with [`skills/gnox/SKILL.md`](skills/gnox/SKILL.md) on non-hook agents — establish both the **GNOMATIX Namespacing Convention** and **Active Marketplace Topology** for the working session:

@@ -482,13 +482,13 @@ function buildReleaseTree(opts) {
         versionsMap[pName] = pj.version;
       }
       const fingerprint = crypto.createHash('sha256').update(JSON.stringify(versionsMap)).digest('hex');
-      const curVersion = (tryGitIdx(['show', ':VERSION']) || '').trim() || '0.1.0';
+      let curVersion = (tryGitIdx(['show', ':VERSION']) || '').trim() || '0.1.0';
       newManifest._marketplace = { version: curVersion, plugins_fingerprint: fingerprint };
       const manifestJson = JSON.stringify(newManifest, null, 2) + '\n';
       stageText('.VERSIONS.json', manifestJson);
       fs.writeFileSync(path.join(tmpDir, '.VERSIONS.json'), manifestJson, 'utf8');
 
-      // If nothing in the public snapshot changed relative to --parent except VERSION / .VERSIONS.json,
+      // If nothing in the public snapshot changed relative to --parent except VERSION / .VERSIONS.json / marketplace.json#version,
       // preserve --parent's VERSION and .VERSIONS.json so release.sh recognizes a no-op release.
       if (
         parentCommit &&
@@ -499,17 +499,32 @@ function buildReleaseTree(opts) {
         const diffAgainstParent = gitIdx(['diff-index', '--cached', '--name-only', parentCommit])
           .split(/\r?\n/)
           .filter(Boolean)
-          .filter((f) => f !== 'VERSION' && f !== '.VERSIONS.json');
+          .filter((f) => f !== 'VERSION' && f !== '.VERSIONS.json' && f !== '.claude-plugin/marketplace.json');
         if (diffAgainstParent.length === 0) {
           const parentVersionText = tryGit(['show', `${parentCommit}:VERSION`]);
           const parentManifestText = tryGit(['show', `${parentCommit}:.VERSIONS.json`]);
           if (parentVersionText !== null && parentManifestText !== null) {
+            curVersion = parentVersionText.trim() || curVersion;
             stageText('VERSION', parentVersionText);
             stageText('.VERSIONS.json', parentManifestText);
             fs.writeFileSync(path.join(tmpDir, 'VERSION'), parentVersionText, 'utf8');
             fs.writeFileSync(path.join(tmpDir, '.VERSIONS.json'), parentManifestText, 'utf8');
           }
         }
+      }
+
+      // Sync top-level marketplace.json#version with the resolved VERSION
+      const mpIdxRaw = tryGitIdx(['show', ':.claude-plugin/marketplace.json']);
+      if (mpIdxRaw !== null) {
+        try {
+          const mpIdxObj = JSON.parse(mpIdxRaw);
+          if (mpIdxObj && mpIdxObj.version !== curVersion) {
+            mpIdxObj.version = curVersion;
+            const mpIdxJson = JSON.stringify(mpIdxObj, null, 2) + '\n';
+            stageText('.claude-plugin/marketplace.json', mpIdxJson);
+            fs.writeFileSync(path.join(tmpDir, '.claude-plugin', 'marketplace.json'), mpIdxJson, 'utf8');
+          }
+        } catch { /* ignore */ }
       }
     }
 

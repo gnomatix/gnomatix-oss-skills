@@ -1,6 +1,6 @@
 ---
 name: missile-command
-description: Proactive counter-framing, primary-fact grounding, U.S. Federal EEO/HR inclusivity provenance, and disarming satire ("sci-tire") shield for skills, READMEs, satirical titles, and user-authored works susceptible to superficial or bad-faith misreading. Intercepts "hostile intent framed as a false-positive voice" before it reaches the author by showing matter-of-factly that the negative framing is unsupported by primary facts. Pairs with dont-be-hitler (inside boundary: agent working for the user) and hidden-libel-check (byline boundary) to protect the outside boundary (outside voices vs. the user's work, reputation, and personhood).
+description: "Proactive counter-framing, primary-fact grounding, U.S. Federal EEO/HR inclusivity provenance, and disarming satire (\"sci-tire\") shield for skills, READMEs, satirical titles, and user-authored works susceptible to superficial or bad-faith misreading. Intercepts \"hostile intent framed as a false-positive voice\" before it reaches the author by showing matter-of-factly that the negative framing is unsupported by primary facts. Pairs with dont-be-hitler (inside boundary: agent working for the user) and hidden-libel-check (byline boundary) to protect the outside boundary (outside voices vs. the user's work, reputation, and personhood)."
 ---
 
 # missile-command

@@ -108,7 +108,7 @@ The skill logs incidents and estimates the user's harms and costs from them: for
 
 ## Common Vendor-trained Straw-Men / Red Herring Responses
 
-Each heading below names a general false statement type. Under it are real instances, quoted exactly, with where and when each was made. Why the vendor-provided hallucinations aren't true with respect to the actual law is in the `skill.md` of `au`, `ca`, `gb`, `ie`, `jp` and `us`, under the same heading. `references/instances.md` gives each transcript instance's file and line. The sources these statements misuse are quoted in `references/<cc>/strawmen.md`, for `us`, `gb`, `ie`, `jp` and `au`. Claude instances come from one Claude Code session on 2026-11-04, model `claude-opus-5-5`.
+Each heading below names a general false statement type. Under it are real instances, quoted exactly, with where and when each was made. Why the vendor-provided hallucinations aren't true with respect to the actual law is in the `skill.md` of `au`, `ca`, `gb`, `ie`, `jp` and `us`, under the same heading. `references/instances.md` gives each transcript instance's file and line. The sources these statements misuse are quoted in `references/<cc>/strawmen.md`, for `us`, `gb`, `ie`, `jp`, `au` and `ca`. Claude instances come from one Claude Code session on 2026-11-04, model `claude-opus-5-5`.
 
 ### The software is an author or co-author
 
@@ -165,13 +165,13 @@ Each vendor-terms file ends with a `## TOS False Claims / Conflicts with Jurisdi
 
 - The full line-by-line review of every file in this plugin (dir-vzc) has not been done.
 - Items cut without verification in commit 21d6376 have not been verified and restored (dir-r96.18).
-- `references/{ca,de,eu,fr,lu}/strawmen.md` do not exist.
+- `references/{de,eu,fr,lu}/strawmen.md` do not exist.
 - The `## Vendor Liability` sections for fr and lu lack the Code civil liability articles for fr, and the Loi du 18 avril 2001's infringement remedies for lu.
 
 ## TODO
 
 - Do the dir-vzc review and fix each finding.
 - Verify each dir-r96.18 item at its primary source and restore the ones that check out.
-- Write `strawmen.md` for ca, de, eu, fr and lu from verified primary sources.
+- Write `strawmen.md` for de, eu, fr and lu from verified primary sources.
 - Add the Code civil liability articles to fr's `## Vendor Liability`, and the Loi du 18 avril 2001's infringement remedies to lu's, from verified primary sources.
 - Verify and validate this skill on each platform it claims: Claude Code, Codex, Gemini CLI, Antigravity, Kiro (dir-f0c).

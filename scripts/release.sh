@@ -103,4 +103,32 @@ else
   snap=$(printf '%s\n' "$msg" | git commit-tree "$tree" -p "$parent")
   git push -q "$PUBLIC" "$snap:refs/heads/main" "$snap:refs/tags/v$V"
 fi
+
+# Tag and push per-plugin `<plugin>--v<version>` release tags (Claude Code dependency version resolution).
+plugin_tag_refs=$(node -e '
+  const { execFileSync } = require("child_process");
+  const snap = process.argv[1];
+  const mp = JSON.parse(execFileSync("git", ["show", snap + ":.claude-plugin/marketplace.json"], { encoding: "utf8" }));
+  const refs = [];
+  for (const p of mp.plugins || []) {
+    const pj = JSON.parse(execFileSync("git", ["show", snap + ":plugins/" + p.name + "/.claude-plugin/plugin.json"], { encoding: "utf8" }));
+    if (p.name && pj.version) {
+      const tag = p.name + "--v" + pj.version;
+      try {
+        execFileSync("git", ["rev-parse", "-q", "--verify", "refs/tags/" + tag], { stdio: "ignore" });
+      } catch {
+        execFileSync("git", ["tag", "-a", tag, "HEAD", "-m", p.name + " " + pj.version]);
+      }
+      refs.push("+" + snap + ":refs/tags/" + tag);
+    }
+  }
+  process.stdout.write(refs.join(" "));
+' "$snap")
+if [ -n "$plugin_tag_refs" ]; then
+  live_tag_refs=$(printf '%s\n' "$plugin_tag_refs" | tr ' ' '\n' | sed 's/^+[^:]*://')
+  # shellcheck disable=SC2086
+  git push -q "$LIVE" $live_tag_refs
+  # shellcheck disable=SC2086
+  git push -q "$PUBLIC" $plugin_tag_refs
+fi
 echo "release: v$V published ($(git rev-parse --short=10 HEAD) here, $(git rev-parse --short=10 "$snap") on the public repo)"

@@ -116,6 +116,15 @@ Run `node scripts/detect-local-models.js` to see what is available on the host. 
 - Coordinator exit is graceful on SIGINT/SIGTERM/SIGHUP — child inference workers are killed first.
 - All logs are append-only NDJSON written via atomic-append (with EBUSY/ETXTBSY retry on Windows).
 
+## Install
+
+```sh
+/plugin install all-help-no-harm --marketplace gnomatix/gnomatix-oss-skills
+```
+
+- **Claude Code**: `/plugin install all-help-no-harm@gnomatix-oss-skills`.
+- **Every other agent**: the skill folder [`plugins/all-help-no-harm/skills/all-help-no-harm/`](skills/all-help-no-harm/) follows the cross-CLI [Agent Skills](https://agentskills.io) format (`mise skills sync --prune`), and [`platforms/`](platforms/README.md) provides native hook installers for Codex, Gemini CLI, and Kiro.
+
 ## Status
 
 Ships with the SessionStart contract hook (`hooks/session-start-contract.js`), the side-hook coordinator launcher (`hooks/coordinator-launcher.js`), the coordinator script (`scripts/side-hook-coordinator.js`), the local-model detector (`scripts/detect-local-models.js`), the R0-R14 criteria extract (`skills/all-help-no-harm/criteria/r0-r14.md`), and the example config (`skills/all-help-no-harm/side-hooks.example.json`). The plugin is loaded via the gnomatix-oss-skills marketplace.
