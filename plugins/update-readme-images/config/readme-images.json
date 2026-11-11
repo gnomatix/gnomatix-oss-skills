@@ -35,6 +35,10 @@
   "style_guides": {
     "gnomatix-oss-skills": {
       "doc": "plugins/update-readme-images/config/style-guides/gnomatix-oss-skills.md",
+      "owning_docs": [
+        "${GNOX_PROJECT_VISUALS_DIR}/gnomatix-oss-skills/style-prompt.md",
+        "${GNOX_PROJECT_VISUALS_DIR}/gnomatix-oss-skills/PROMPTING_LESSONS_LEARNED.md"
+      ],
       "summary": "Root GNOMATIX OSS Skills visual style guide: Saturday-morning cel animation × Skottie Young comic linework hybrid, realistic warm human skin tones (never Simpsons-yellow), flat saturated colors, multi-axis reference layering SOP, native in-scene diegetic cartoon typography, and gold-standard realistic-skin-tone anchor reference images.",
       "inherit": true,
       "og_social_image": true,
@@ -146,7 +150,7 @@
           "required": true,
           "placement": "after-heading",
           "section_heading": "### Your work, done the way you asked",
-          "src_pattern": "assets/images/category-your-work-done-panel.jpg",
+          "src_pattern": "assets/images/category-your-work-done-v0.1.17-panel.jpg",
           "alt_pattern": "Your work, done the way you asked",
           "embed_style": "markdown",
           "dimensions": {
@@ -162,7 +166,7 @@
           "required": true,
           "placement": "after-heading",
           "section_heading": "### Your name and your record",
-          "src_pattern": "assets/images/category-your-name-and-record-panel.jpg",
+          "src_pattern": "assets/images/category-your-name-and-record-v0.1.17-panel.jpg",
           "alt_pattern": "Your name and your record",
           "embed_style": "markdown",
           "dimensions": {
@@ -178,7 +182,7 @@
           "required": true,
           "placement": "after-heading",
           "section_heading": "### The sources behind your claims",
-          "src_pattern": "assets/images/category-sources-behind-claims-panel.jpg",
+          "src_pattern": "assets/images/category-sources-behind-claims-v0.1.17-panel.jpg",
           "alt_pattern": "The sources behind your claims",
           "embed_style": "markdown",
           "dimensions": {
@@ -194,7 +198,7 @@
           "required": true,
           "placement": "after-heading",
           "section_heading": "### Skills you can rely on",
-          "src_pattern": "assets/images/category-skills-you-can-rely-on-panel.jpg",
+          "src_pattern": "assets/images/category-skills-you-can-rely-on-v0.1.17-panel.jpg",
           "alt_pattern": "Skills you can rely on",
           "embed_style": "markdown",
           "dimensions": {
@@ -210,7 +214,7 @@
           "required": true,
           "placement": "after-heading",
           "section_heading": "### Sound tool choices for your project",
-          "src_pattern": "assets/images/category-sound-tool-choices-panel.jpg",
+          "src_pattern": "assets/images/category-sound-tool-choices-v0.1.17-panel.jpg",
           "alt_pattern": "Sound tool choices for your project",
           "embed_style": "markdown",
           "dimensions": {
@@ -226,7 +230,7 @@
           "required": true,
           "placement": "after-heading",
           "section_heading": "### Words and writing",
-          "src_pattern": "assets/images/category-words-and-writing-panel.jpg",
+          "src_pattern": "assets/images/category-words-and-writing-v0.1.17-panel.jpg",
           "alt_pattern": "Words and writing",
           "embed_style": "markdown",
           "dimensions": {
@@ -242,7 +246,7 @@
           "required": true,
           "placement": "after-heading",
           "section_heading": "### Your project's images",
-          "src_pattern": "assets/images/category-your-projects-images-panel.jpg",
+          "src_pattern": "assets/images/category-your-projects-images-v0.1.17-panel.jpg",
           "alt_pattern": "Your project's images",
           "embed_style": "markdown",
           "dimensions": {
@@ -452,6 +456,36 @@
             "width": 1376,
             "height": 768,
             "format": "JPEG"
+          }
+        }
+      ]
+    },
+    {
+      "id": "release-notes-top-panel",
+      "description": "Versioned release notes under docs/releases/v*.md include a release-specific 16:9 PSA hero banner immediately after their H1 heading, paired with a 1280x640 companion OG image.",
+      "glob": "docs/releases/v*.md",
+      "doc": "plugins/update-readme-images/config/rules/release-notes-panels.md",
+      "panels": [
+        {
+          "id": "release-hero-psa-banner",
+          "type": "top-level-panel",
+          "required": true,
+          "placement": "after-h1",
+          "src_pattern": "../../assets/images/releases/release-{file_stem}-banner.jpg",
+          "alt_pattern": "Release {file_stem}",
+          "embed_style": "markdown",
+          "dimensions": {
+            "aspect_ratio": "16:9",
+            "width": 1376,
+            "height": 768,
+            "format": "JPEG"
+          },
+          "companion_og_image": {
+            "enabled": true,
+            "src_pattern": "../../assets/images/releases/release-{file_stem}-og-image.jpg",
+            "width": 1280,
+            "height": 640,
+            "max_bytes": 1048576
           }
         }
       ]

@@ -84,6 +84,135 @@ function runMagick(args) {
     ruleIds.includes('plugin-readme-top-panel') && ruleIds.includes('pep-readme-subpanel-and-oval-inset'),
     'glob rules match both plugins/*/README.md and plugins/python-elimination-program/README.md'
   );
+  check(
+    Boolean(
+      data.configured_reference_documents &&
+        data.configured_reference_documents.config &&
+        data.configured_reference_documents.config.origin === 'project-specific' &&
+        Array.isArray(data.configured_reference_documents.style_guide_docs) &&
+        data.configured_reference_documents.style_guide_docs.length === 2
+    ),
+    '--resolve --json reports configured_reference_documents with project-specific origin'
+  );
+  const textRes = runCli(['--resolve', 'README.md']);
+  check(
+    textRes.status === 0 && textRes.stdout.includes('Configured Reference Documents:'),
+    '--resolve human-readable output explicitly prints Configured Reference Documents block'
+  );
+}
+
+// 1b. Test external-user fallback confirmation gate + .gnox/readme-images.json priority + author-release-readme.mjs
+{
+  const extTmp = fs.mkdtempSync(path.join(os.tmpdir(), 'update-readme-images-ext-'));
+  try {
+    const extResFallback = runCli(['--repo', extTmp, '--resolve', 'README.md', '--json'], {
+      UPDATE_README_IMAGES_ASSUME_EXTERNAL_USER: '1',
+      GNOX_DISABLE_PROJECT_VISUALS_AUTODISCOVER: '1'
+    });
+    check(extResFallback.status === 0, '--resolve in unconfigured external repo falls back cleanly to bundled config');
+    const extData = JSON.parse(extResFallback.stdout);
+    check(
+      extData.config_origin === 'gnomatix-oss-skills-fallback' &&
+        extData.configured_reference_documents.external_fallback_gate.triggered === true &&
+        extData.configured_reference_documents.external_fallback_gate.slash_command === '/gnox:local-config-wizard',
+      'external non-GNOMATIX repo triggers confirmation_required gate and offers Interactive Design Mode (/gnox:local-config-wizard)'
+    );
+
+    // Add project-specific .gnox/readme-images.json -> must override fallback and clear gate
+    fs.mkdirSync(path.join(extTmp, '.gnox'), { recursive: true });
+    fs.writeFileSync(
+      path.join(extTmp, '.gnox', 'readme-images.json'),
+      JSON.stringify({
+        version: 1,
+        workspace_root: 'ext-custom',
+        style_guides: {
+          'ext-custom': {
+            doc: '.gnox/style.md',
+            summary: 'Custom project style'
+          }
+        },
+        rules: []
+      }),
+      'utf8'
+    );
+    fs.writeFileSync(path.join(extTmp, '.gnox', 'style.md'), '# Custom Style\n', 'utf8');
+
+    const extResProject = runCli(['--repo', extTmp, '--resolve', 'README.md', '--json'], {
+      UPDATE_README_IMAGES_ASSUME_EXTERNAL_USER: '1',
+      GNOX_DISABLE_PROJECT_VISUALS_AUTODISCOVER: '1'
+    });
+    const projData = JSON.parse(extResProject.stdout);
+    check(
+      projData.config_origin === 'project-specific' &&
+        projData.workspace_root === 'ext-custom' &&
+        projData.configured_reference_documents.external_fallback_gate.triggered === false,
+      '.gnox/readme-images.json takes priority over bundled fallback and clears external confirmation gate'
+    );
+
+    // Test author-release-readme.mjs markdown + GitHub Release raw image URL rendering
+    const releaseScript = path.join(
+      REPO_ROOT,
+      'plugins',
+      'update-readme-images',
+      'skills',
+      'author-release-readme',
+      'scripts',
+      'author-release-readme.mjs'
+    );
+    fs.writeFileSync(path.join(extTmp, 'VERSION'), '0.2.0\n', 'utf8');
+    fs.writeFileSync(
+      path.join(extTmp, '.VERSIONS.json'),
+      JSON.stringify({ 'sample-plugin': { version: '0.2.1' } }, null, 2),
+      'utf8'
+    );
+    const relOut = spawnSync(
+      process.execPath,
+      [releaseScript, '--repo', extTmp, '--version', '0.2.0', '--psa-noun', 'SYMLINKS', '--render-github-body'],
+      { encoding: 'utf8', windowsHide: true }
+    );
+    check(
+      relOut.status === 0 &&
+        relOut.stdout.includes('https://raw.githubusercontent.com/gnomatix/gnomatix-oss-skills/v0.2.0/assets/images/releases/release-v0.2.0-banner.jpg') &&
+        relOut.stdout.includes('# Just say NO to SYMLINKS!') &&
+        relOut.stdout.includes('## ... Knowing is half the battle.'),
+      'author-release-readme.mjs generates versioned PSA release note and rewrites relative banner path to tag-pinned raw GitHub URL'
+    );
+
+    const verPathRes = runCli(['--version-path', 'assets/images/category-your-work-done-panel.jpg', '--version', '0.1.17']);
+    check(
+      verPathRes.status === 0 &&
+        verPathRes.stdout.trim() === 'assets/images/category-your-work-done-v0.1.17-panel.jpg',
+      '--version-path appends release-version-specific suffix (-v0.1.17-panel.jpg) to prevent cross-release caching'
+    );
+
+    fs.mkdirSync(path.join(extTmp, 'assets', 'review'), { recursive: true });
+    fs.writeFileSync(
+      path.join(extTmp, 'assets', 'review', 'manifest.json'),
+      JSON.stringify({
+        version: 1,
+        workspace_root: 'ext-custom',
+        sections: [{
+          id: 's1',
+          num: 1,
+          title: 'Test Section',
+          items: [{ id: 'c1', variant: 'active', release_version: 'v0.2.0', review_status: 'PENDING_HUMAN_REVIEW', role: 'Active', target: 'README.md', img: '../images/test.jpg', desc: 'Test' }]
+        }]
+      }, null, 2),
+      'utf8'
+    );
+    const revRes = runCli(['--repo', extTmp, '--build-review', '--json']);
+    const revHtml = fs.readFileSync(path.join(extTmp, 'assets', 'review', 'preview.html'), 'utf8');
+    check(
+      revRes.status === 0 &&
+        revHtml.includes('12 — Beyond Spinal Tap') &&
+        revHtml.includes('Comments / Revision Notes:') &&
+        fs.existsSync(path.join(extTmp, 'assets', 'review', 'review-server.js')) &&
+        fs.existsSync(path.join(extTmp, 'assets', 'review', 'ratings.json')),
+      '--build-review generates formal 0-12 rating-scale & comments preview.html, review-server.js, and ratings.json'
+    );
+  } finally {
+    try { fs.rmSync(extTmp, { recursive: true, force: true }); } catch { /* ignore */ }
+  }
 }
 
 // 2. Test end-user repo scaffolding, oval inset window, automatic og-social-image, and non-destructive draft staging

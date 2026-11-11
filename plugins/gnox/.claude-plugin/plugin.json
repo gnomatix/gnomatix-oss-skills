@@ -1,6 +1,6 @@
 {
   "name": "gnox",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "description": "One namespace for every skill in the gnomatix-oss-skills marketplace (/gnox:<plugin> and /gnox:<plugin>:<skill>), plus session-start and post-compact hooks that establish the GNOMATIX Namespacing Convention (workspace_root:subdir:... hierarchical scoping, [NS]{@target} CLI-safe callouts, and «term» [CURIE] grounding) across the user's working session.",
   "author": {
     "name": "Brett Whitty",

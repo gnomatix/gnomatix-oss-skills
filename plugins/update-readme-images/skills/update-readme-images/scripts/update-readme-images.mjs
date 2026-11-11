@@ -20,6 +20,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { generateReviewSuite, versionedAssetPath } from './build-asset-review.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const PLUGIN_ROOT = path.resolve(SCRIPT_DIR, '..', '..', '..');
@@ -263,6 +264,7 @@ export function resolveStyleGuides(config, relPath) {
   const mergedPalette = {};
   const mergedTypography = {};
   const mergedReferenceImages = [];
+  const mergedOwningDocs = [];
   let effectiveOgSocial = undefined;
 
   for (const g of matched) {
@@ -271,6 +273,11 @@ export function resolveStyleGuides(config, relPath) {
     }
     if (g.typography && typeof g.typography === 'object') {
       Object.assign(mergedTypography, g.typography);
+    }
+    if (Array.isArray(g.owning_docs)) {
+      for (const od of g.owning_docs) {
+        if (od && !mergedOwningDocs.includes(od)) mergedOwningDocs.push(od);
+      }
     }
     if (Array.isArray(g.reference_images)) {
       for (const img of g.reference_images) {
@@ -289,7 +296,8 @@ export function resolveStyleGuides(config, relPath) {
     namespace_chain: nsInfo.chain,
     resolved_guides: matched,
     effective: {
-      style_docs: matched.map((g) => g.doc),
+      owning_docs: mergedOwningDocs,
+      style_docs: matched.map((g) => g.doc).filter(Boolean),
       reference_images: mergedReferenceImages,
       palette: mergedPalette,
       typography: mergedTypography,
@@ -393,36 +401,292 @@ export function resolveRulesForFile(repoRoot, config, relPath) {
   return matchedRules;
 }
 
-// ─── Config Discovery & Repo Enumeration ───────────────────────────────────
+// ─── Config Discovery, Reference Origin Tracking, & External-User Gate ─────
 
-export function findConfigPath(repoRoot, explicitConfig) {
+const BUNDLED_MARKETPLACE_ROOT = path.resolve(PLUGIN_ROOT, '..', '..');
+
+export function findConfigPathWithOrigin(repoRoot, explicitConfig) {
   if (explicitConfig) {
     const abs = path.isAbsolute(explicitConfig) ? explicitConfig : path.resolve(repoRoot, explicitConfig);
-    if (safeExists(abs)) return abs;
+    if (safeExists(abs)) {
+      return { configPath: abs, configOrigin: 'project-specific' };
+    }
   }
-  const candidates = [
+  const projectCandidates = [
+    path.join(repoRoot, '.gnox', 'readme-images.json'),
     path.join(repoRoot, '.claude', 'readme-images.json'),
     path.join(repoRoot, 'config', 'readme-images.json'),
     path.join(repoRoot, 'readme-images.json'),
-    path.join(repoRoot, 'plugins', 'update-readme-images', 'config', 'readme-images.json'),
-    DEFAULT_PLUGIN_CONFIG
+    path.join(repoRoot, 'plugins', 'update-readme-images', 'config', 'readme-images.json')
   ];
-  for (const c of candidates) {
-    if (safeExists(c)) return c;
+  for (const c of projectCandidates) {
+    if (safeExists(c)) {
+      return { configPath: c, configOrigin: 'project-specific' };
+    }
+  }
+  if (safeExists(DEFAULT_PLUGIN_CONFIG)) {
+    const isSameMarketplace = path.resolve(repoRoot) === BUNDLED_MARKETPLACE_ROOT;
+    return {
+      configPath: DEFAULT_PLUGIN_CONFIG,
+      configOrigin: isSameMarketplace ? 'project-specific' : 'gnomatix-oss-skills-fallback'
+    };
   }
   return null;
 }
 
+export function findConfigPath(repoRoot, explicitConfig) {
+  const found = findConfigPathWithOrigin(repoRoot, explicitConfig);
+  return found ? found.configPath : null;
+}
+
 export function loadConfig(repoRoot, explicitConfig) {
-  const cfgPath = findConfigPath(repoRoot, explicitConfig);
-  if (!cfgPath) {
+  const found = findConfigPathWithOrigin(repoRoot, explicitConfig);
+  if (!found) {
     throw new Error(`No readme-images.json config found in ${repoRoot}`);
   }
-  const raw = safeReadText(cfgPath);
+  const raw = safeReadText(found.configPath);
   if (!raw) {
-    throw new Error(`Could not read config at ${cfgPath}`);
+    throw new Error(`Could not read config at ${found.configPath}`);
   }
-  return { configPath: cfgPath, config: JSON.parse(raw) };
+  return {
+    configPath: found.configPath,
+    configOrigin: found.configOrigin,
+    config: JSON.parse(raw)
+  };
+}
+
+export function detectOrgContext(repoRoot) {
+  if (
+    process.env.UPDATE_README_IMAGES_ASSUME_EXTERNAL_USER === '1' ||
+    process.env.GNOX_ASSUME_EXTERNAL_USER === '1'
+  ) {
+    return {
+      isGnomatixInternal: false,
+      reason: 'forced-external-env',
+      user: 'external-user',
+      email: '',
+      remote: ''
+    };
+  }
+  let user = '';
+  try {
+    user = os.userInfo().username || '';
+  } catch {
+    user = process.env.USER || process.env.USERNAME || '';
+  }
+  let email = '';
+  let remote = '';
+  const rEmail = spawnSync('git', ['-C', repoRoot, 'config', 'user.email'], {
+    encoding: 'utf8',
+    timeout: 3000,
+    windowsHide: true
+  });
+  if (!rEmail.error && rEmail.status === 0) email = String(rEmail.stdout || '').trim();
+  const rRemote = spawnSync('git', ['-C', repoRoot, 'remote', 'get-url', 'origin'], {
+    encoding: 'utf8',
+    timeout: 3000,
+    windowsHide: true
+  });
+  if (!rRemote.error && rRemote.status === 0) remote = String(rRemote.stdout || '').trim();
+
+  const lu = user.toLowerCase();
+  const le = email.toLowerCase();
+  const lr = remote.toLowerCase();
+  const isInternal =
+    lu === 'brett' ||
+    le.endsWith('@gnomatix.com') ||
+    le === 'brettwhitty@gmail.com' ||
+    lr.includes('gnomatix/');
+
+  return {
+    isGnomatixInternal: isInternal,
+    reason: isInternal ? 'matched-gnomatix-identity-or-remote' : 'external-user-and-remote',
+    user,
+    email,
+    remote
+  };
+}
+
+function expandProjectVisualsPath(rawSpec) {
+  if (typeof rawSpec !== 'string') return '';
+  const pvRoot =
+    process.env.GNOX_PROJECT_VISUALS_DIR || path.join(os.homedir(), 'work', 'project-visuals');
+  return rawSpec
+    .replace(/\$\{GNOX_PROJECT_VISUALS_DIR\}/g, pvRoot)
+    .replace(/^~(?=[\\/])/, os.homedir());
+}
+
+function resolveDocAssetWithOrigin(repoRoot, rawRef, configOrigin) {
+  const expanded = expandProjectVisualsPath(rawRef);
+  if (path.isAbsolute(expanded)) {
+    if (safeExists(expanded)) {
+      return {
+        path: expanded.split(path.sep).join('/'),
+        resolved_path: expanded,
+        exists: true,
+        origin: 'project-specific'
+      };
+    }
+    return null;
+  }
+
+  const absInRepo = path.resolve(repoRoot, expanded);
+  if (safeExists(absInRepo)) {
+    return {
+      path: toPosixRel(repoRoot, absInRepo),
+      resolved_path: absInRepo,
+      exists: true,
+      origin: configOrigin === 'gnomatix-oss-skills-fallback' ? 'gnomatix-oss-skills-fallback' : 'project-specific'
+    };
+  }
+
+  const absInMarketplace = path.resolve(BUNDLED_MARKETPLACE_ROOT, expanded);
+  if (safeExists(absInMarketplace)) {
+    return {
+      path: expanded.replace(/\\/g, '/'),
+      resolved_path: absInMarketplace,
+      exists: true,
+      origin: 'gnomatix-oss-skills-fallback'
+    };
+  }
+
+  const strippedPluginPrefix = expanded.replace(/^plugins\/update-readme-images\//, '');
+  const absInPlugin = path.resolve(PLUGIN_ROOT, strippedPluginPrefix);
+  if (safeExists(absInPlugin)) {
+    return {
+      path: expanded.replace(/\\/g, '/'),
+      resolved_path: absInPlugin,
+      exists: true,
+      origin: 'gnomatix-oss-skills-fallback'
+    };
+  }
+
+  return {
+    path: expanded.replace(/\\/g, '/'),
+    resolved_path: absInRepo,
+    exists: false,
+    origin: configOrigin
+  };
+}
+
+export function buildConfiguredReferenceDocuments(
+  repoRoot,
+  config,
+  configPath,
+  configOrigin = 'project-specific',
+  styleInfo = null,
+  rulesInfo = []
+) {
+  const wsRoot = (config && config.workspace_root) || path.basename(repoRoot);
+  const org = detectOrgContext(repoRoot);
+
+  // 1. Owning project visual design docs (configured + auto-discovered in project-visuals/<wsRoot>/)
+  const owningCandidates = [];
+  if (styleInfo && styleInfo.effective && Array.isArray(styleInfo.effective.owning_docs)) {
+    owningCandidates.push(...styleInfo.effective.owning_docs);
+  }
+  if (process.env.GNOX_DISABLE_PROJECT_VISUALS_AUTODISCOVER !== '1') {
+    const pvDir = path.join(
+      process.env.GNOX_PROJECT_VISUALS_DIR || path.join(os.homedir(), 'work', 'project-visuals'),
+      wsRoot
+    );
+    for (const fn of ['style-prompt.md', 'PROMPTING_LESSONS_LEARNED.md']) {
+      const cand = path.join(pvDir, fn);
+      if (safeExists(cand) && !owningCandidates.includes(cand)) {
+        owningCandidates.push(cand);
+      }
+    }
+  }
+
+  const seenPaths = new Set();
+  const owningStyleDocs = [];
+  for (const oc of owningCandidates) {
+    const resolved = resolveDocAssetWithOrigin(repoRoot, oc, configOrigin);
+    if (resolved && resolved.exists) {
+      const key = path.resolve(resolved.resolved_path);
+      if (!seenPaths.has(key)) {
+        seenPaths.add(key);
+        owningStyleDocs.push(resolved);
+      }
+    }
+  }
+
+  // 2. Style guide markdown docs
+  const styleGuideDocs = [];
+  for (const docRef of (styleInfo && styleInfo.effective && styleInfo.effective.style_docs) || []) {
+    const resolved = resolveDocAssetWithOrigin(repoRoot, docRef, configOrigin);
+    if (resolved) styleGuideDocs.push(resolved);
+  }
+
+  // 3. Rules markdown docs
+  const rulesDocs = [];
+  const seenRuleDocs = new Set();
+  for (const r of rulesInfo || []) {
+    if (!r.doc || seenRuleDocs.has(r.doc)) continue;
+    seenRuleDocs.add(r.doc);
+    const resolved = resolveDocAssetWithOrigin(repoRoot, r.doc, configOrigin);
+    if (resolved) rulesDocs.push(resolved);
+  }
+
+  // 4. Reference anchor images
+  const refImages = [];
+  for (const imgRef of (styleInfo && styleInfo.effective && styleInfo.effective.reference_images) || []) {
+    const resolved = resolveDocAssetWithOrigin(repoRoot, imgRef, configOrigin);
+    if (resolved) refImages.push(resolved);
+  }
+
+  const isExternalFallback =
+    configOrigin === 'gnomatix-oss-skills-fallback' && !org.isGnomatixInternal;
+
+  return {
+    config: {
+      path: configPath ? configPath.split(path.sep).join('/') : null,
+      origin: configOrigin
+    },
+    owning_style_docs: owningStyleDocs,
+    style_guide_docs: styleGuideDocs,
+    rules_docs: rulesDocs,
+    reference_images: refImages,
+    org_context: org,
+    external_fallback_gate: {
+      triggered: isExternalFallback,
+      status: isExternalFallback ? 'confirmation_required' : 'not_applicable',
+      prompt: isExternalFallback
+        ? 'update-readme-images is currently falling back to GNOMATIX OSS Skills default style guides and placement rules in an external repository. Confirm whether you want to proceed with those defaults, or enter Interactive Design Mode (/gnox:local-config-wizard) to configure project-specific style guide and rules documents first.'
+        : null,
+      interactive_design_mode_command: 'node plugins/gnox/scripts/local-config-wizard.js run update-readme-images',
+      slash_command: '/gnox:local-config-wizard'
+    }
+  };
+}
+
+function formatConfiguredRefsBanner(refDocs) {
+  if (!refDocs) return '';
+  const lines = ['Configured Reference Documents:'];
+  if (refDocs.config && refDocs.config.path) {
+    lines.push(`  - config [${refDocs.config.origin}]: ${refDocs.config.path}`);
+  }
+  for (const d of refDocs.owning_style_docs || []) {
+    lines.push(`  - owning-style-doc [${d.origin}]: ${d.path}`);
+  }
+  for (const d of refDocs.style_guide_docs || []) {
+    lines.push(`  - style-guide [${d.origin}]: ${d.path}`);
+  }
+  for (const d of refDocs.rules_docs || []) {
+    lines.push(`  - rules-doc [${d.origin}]: ${d.path}`);
+  }
+  if (Array.isArray(refDocs.reference_images) && refDocs.reference_images.length > 0) {
+    lines.push(
+      `  - reference-images (${refDocs.reference_images.length}): ${refDocs.reference_images.map((i) => `${i.path} [${i.origin}]`).join(', ')}`
+    );
+  }
+  if (refDocs.external_fallback_gate && refDocs.external_fallback_gate.triggered) {
+    lines.push(
+      `  [CONFIRMATION REQUIRED — EXTERNAL FALLBACK]: ${refDocs.external_fallback_gate.prompt}`,
+      `  -> Interactive Design Mode: ${refDocs.external_fallback_gate.interactive_design_mode_command} (${refDocs.external_fallback_gate.slash_command})`
+    );
+  }
+  return lines.join('\n') + '\n';
 }
 
 const SKIP_WALK_DIRS = new Set(['.git', 'node_modules', 'dev', '.beads', 'dist', 'build', '.next']);
@@ -1195,6 +1459,38 @@ export function discoverOgSocialTargets(repoRoot, config) {
     });
   }
 
+  // Also discover explicit companion_og_image targets from matched Markdown rules (e.g., docs/releases/v*.md -> assets/images/releases/*-og-image.jpg)
+  const seenOgAbs = new Set(targets.map((t) => path.resolve(t.og_image_abs)));
+  for (const relMd of walkMarkdownFiles(repoRoot)) {
+    const styleRes = resolveStyleGuides(config, relMd);
+    if (styleRes.effective.og_social_image === false) continue;
+    const matchedRules = resolveRulesForFile(repoRoot, config, relMd);
+    const mdDir = path.dirname(path.join(repoRoot, relMd));
+    for (const r of matchedRules) {
+      for (const p of r.panels) {
+        if (!p.resolved_companion_og || !p.resolved_companion_og.enabled) continue;
+        const srcAbs = path.resolve(mdDir, p.resolved_src);
+        const outAbs = path.resolve(mdDir, p.resolved_companion_og.src);
+        if (!safeExists(srcAbs) || seenOgAbs.has(outAbs)) continue;
+        seenOgAbs.add(outAbs);
+        targets.push({
+          owner_dir: path.posix.dirname(relMd),
+          namespace: styleRes.namespace,
+          source_banner: toPosixRel(repoRoot, srcAbs),
+          source_banner_abs: srcAbs,
+          og_image: toPosixRel(repoRoot, outAbs),
+          og_image_abs: outAbs,
+          width: p.resolved_companion_og.width || autoCfg.width || 1280,
+          height: p.resolved_companion_og.height || autoCfg.height || 640,
+          max_bytes: p.resolved_companion_og.max_bytes || autoCfg.max_bytes || OG_MAX_BYTES_DEFAULT,
+          quality: autoCfg.quality || 92,
+          gravity: autoCfg.gravity || 'center',
+          crop_offset: null
+        });
+      }
+    }
+  }
+
   return { enabled: true, targets };
 }
 
@@ -1848,6 +2144,7 @@ function main() {
   }
   const config = loadedCfg ? loadedCfg.config : { workspace_root: path.basename(repoRoot) };
   const configPath = loadedCfg ? loadedCfg.configPath : null;
+  const configOrigin = loadedCfg ? loadedCfg.configOrigin : 'gnomatix-oss-skills-fallback';
 
   if (args['make-oval-inset']) {
     const src = args['make-oval-inset'];
@@ -1967,8 +2264,18 @@ function main() {
     const targetRel = toPosixRel(repoRoot, args.resolve);
     const styleInfo = resolveStyleGuides(config, targetRel);
     const rulesInfo = resolveRulesForFile(repoRoot, config, targetRel);
+    const configuredRefs = buildConfiguredReferenceDocuments(
+      repoRoot,
+      config,
+      configPath,
+      configOrigin,
+      styleInfo,
+      rulesInfo
+    );
     const payload = {
       config_path: configPath ? toPosixRel(repoRoot, configPath) : null,
+      config_origin: configOrigin,
+      configured_reference_documents: configuredRefs,
       ...styleInfo,
       matched_rules: rulesInfo
     };
@@ -1977,6 +2284,7 @@ function main() {
     } else {
       process.stdout.write(`File:       ${payload.target_file}\n`);
       process.stdout.write(`Namespace:  ${payload.namespace}\n`);
+      process.stdout.write(formatConfiguredRefsBanner(configuredRefs));
       process.stdout.write(`Style docs: ${payload.effective.style_docs.join(' -> ') || '(none)'}\n`);
       process.stdout.write(`Ref images: ${payload.effective.reference_images.join(', ') || '(none)'}\n`);
       process.stdout.write(`Rules (${payload.matched_rules.length}):\n`);
@@ -1991,21 +2299,89 @@ function main() {
   }
 
   if (args.apply) {
+    const targetRel = toPosixRel(repoRoot, args.apply);
+    const styleInfo = resolveStyleGuides(config, targetRel);
+    const rulesInfo = resolveRulesForFile(repoRoot, config, targetRel);
+    const configuredRefs = buildConfiguredReferenceDocuments(
+      repoRoot,
+      config,
+      configPath,
+      configOrigin,
+      styleInfo,
+      rulesInfo
+    );
     const res = applyPanelsToFile(repoRoot, config, args.apply);
+    const payload = {
+      ...res,
+      config_origin: configOrigin,
+      configured_reference_documents: configuredRefs
+    };
     if (asJson) {
-      process.stdout.write(JSON.stringify(res, null, 2) + '\n');
+      process.stdout.write(JSON.stringify(payload, null, 2) + '\n');
     } else {
+      process.stdout.write(formatConfiguredRefsBanner(configuredRefs));
       process.stdout.write(`${res.file}: applied ${res.applied.length} panel(s) (${res.applied.join(', ') || 'already up to date'})\n`);
+    }
+    return;
+  }
+
+  if (args['version-path'] && typeof args['version-path'] === 'string') {
+    const ver = (typeof args.version === 'string' && args.version)
+      || (safeReadText(path.join(repoRoot, 'VERSION')) || '').trim()
+      || '0.1.0';
+    const versioned = versionedAssetPath(args['version-path'], ver);
+    if (asJson) {
+      process.stdout.write(JSON.stringify({ input: args['version-path'], version: ver, versioned_path: versioned }, null, 2) + '\n');
+    } else {
+      process.stdout.write(versioned + '\n');
+    }
+    return;
+  }
+
+  if (args['build-review']) {
+    const summary = generateReviewSuite(repoRoot);
+    if (asJson) {
+      process.stdout.write(JSON.stringify(summary, null, 2) + '\n');
+    } else {
+      process.stdout.write(`Generated ${summary.preview_html} (${summary.total_cards} cards across ${summary.sections} section(s); ${summary.pending_human_review_cards} pending human review).\nRun: node ${summary.review_server}\n`);
     }
     return;
   }
 
   if (args.audit !== undefined) {
     const filter = typeof args.audit === 'string' ? args.audit : null;
-    const report = auditRepository(repoRoot, config, filter, Boolean(args['verify-images']));
+    const rootStyleInfo = resolveStyleGuides(config, filter || 'README.md');
+    const rootRulesInfo = resolveRulesForFile(repoRoot, config, filter || 'README.md');
+    const configuredRefs = buildConfiguredReferenceDocuments(
+      repoRoot,
+      config,
+      configPath,
+      configOrigin,
+      rootStyleInfo,
+      rootRulesInfo
+    );
+    let pendingHumanReviewCards = 0;
+    const reviewManifestRaw = safeReadText(path.join(repoRoot, 'assets', 'review', 'manifest.json'));
+    if (reviewManifestRaw) {
+      try {
+        const rm = JSON.parse(reviewManifestRaw);
+        for (const sec of rm.sections || []) {
+          for (const it of sec.items || []) {
+            if ((it.review_status || 'PENDING_HUMAN_REVIEW') === 'PENDING_HUMAN_REVIEW') pendingHumanReviewCards += 1;
+          }
+        }
+      } catch { /* ignore malformed review manifest */ }
+    }
+    const report = {
+      config_origin: configOrigin,
+      configured_reference_documents: configuredRefs,
+      pending_human_review_cards: pendingHumanReviewCards,
+      ...auditRepository(repoRoot, config, filter, Boolean(args['verify-images']))
+    };
     if (asJson) {
       process.stdout.write(JSON.stringify(report, null, 2) + '\n');
     } else {
+      process.stdout.write(formatConfiguredRefsBanner(configuredRefs));
       for (const fileRep of report.reports) {
         for (const p of fileRep.panels) {
           const status = p.passed ? 'ok  ' : 'FAIL';
@@ -2013,14 +2389,14 @@ function main() {
         }
       }
       process.stdout.write(
-        `${report.passed ? 'all passed' : `${report.failures} failed`} (${report.files_checked} files, ${report.panels_checked} panels checked, ${report.pending_draft_proposals} pending draft(s))\n`
+        `${report.passed ? 'all passed' : `${report.failures} failed`} (${report.files_checked} files, ${report.panels_checked} panels checked, ${report.pending_draft_proposals} pending draft(s), ${pendingHumanReviewCards} pending human review card(s))\n`
       );
     }
     process.exit(report.passed ? 0 : 1);
   }
 
   process.stderr.write(
-    'Usage: node update-readme-images.mjs <--resolve <file> | --audit [glob] [--verify-images] | --sync-og-images [--regenerate] | --apply <file> | --make-oval-inset <src> <out.png> | --stage-revision <src> <target> | --list-drafts | --promote-draft <draft> --approved-by "<approval>" | --discard-draft <draft> | --init [dir]>\n'
+    'Usage: node update-readme-images.mjs <--resolve <file> | --audit [glob] [--verify-images] | --sync-og-images [--regenerate] | --apply <file> | --version-path <rel-path> [--version <vX.Y.Z>] | --build-review | --make-oval-inset <src> <out.png> | --stage-revision <src> <target> | --list-drafts | --promote-draft <draft> --approved-by "<approval>" | --discard-draft <draft> | --init [dir]>\n'
   );
   process.exit(1);
 }

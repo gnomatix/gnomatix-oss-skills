@@ -40,8 +40,8 @@
     "path": "plugins/dont-be-hitler"
   },
   "gnox": {
-    "version": "0.1.15",
-    "git_hash": "2c1de2323e369e187202cda86117f007eecf4b84",
+    "version": "0.1.16",
+    "git_hash": "e438f32d7427cf58e870826c3f812774961e4bf8",
     "path": "plugins/gnox"
   },
   "goal-compliant-task-queue": {
@@ -100,8 +100,8 @@
     "path": "plugins/satori"
   },
   "skill-vv": {
-    "version": "0.2.13",
-    "git_hash": "43cc061f40ec92b1b21eff8251c00fd02428af08",
+    "version": "0.2.14",
+    "git_hash": "317222f8370a00f3f9627f76a617c1023817936e",
     "path": "plugins/skill-vv"
   },
   "spank-dario": {
@@ -120,8 +120,8 @@
     "path": "plugins/steering-audit-suite"
   },
   "update-readme-images": {
-    "version": "0.1.6",
-    "git_hash": "0601c1e36d885388e538b34e02c18c9d99cb51ea",
+    "version": "0.1.7",
+    "git_hash": "08a18af6888ad8154049845444724f76ccfcc1db",
     "path": "plugins/update-readme-images"
   },
   "word-lineage": {
@@ -130,7 +130,7 @@
     "path": "plugins/word-lineage"
   },
   "_marketplace": {
-    "version": "0.1.16",
-    "plugins_fingerprint": "6b334df31d5446b185fd41ffa8ddf43686267db99e3edc341312e594029f4a7b"
+    "version": "0.1.17",
+    "plugins_fingerprint": "9c86ba81fce769b4425bc1e10bfa3d82c148b1248a153bd518c3bcf04ad1c843"
   }
 }

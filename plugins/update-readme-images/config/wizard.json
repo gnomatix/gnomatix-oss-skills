@@ -1,0 +1,223 @@
+{
+  "schema": "gnox-wizard/v1",
+  "plugin": "update-readme-images",
+  "title": "update-readme-images — Interactive Style Guide & Rules Design Mode",
+  "description": "Configure project-specific README/SKILL visual style guides, glob-matched panel placement rules, OG social card sizing, and non-destructive draft staging (Charmbracelet huh/gum compatible).",
+  "doctor_checks": [
+    {
+      "id": "project-readme-images-config",
+      "type": "any_file_exists",
+      "candidates": [
+        ".gnox/readme-images.json",
+        ".claude/readme-images.json",
+        "config/readme-images.json",
+        "readme-images.json",
+        "plugins/update-readme-images/config/readme-images.json"
+      ],
+      "warn_when_external_fallback": true
+    }
+  ],
+  "groups": [
+    {
+      "id": "intro",
+      "title": "Project Visual Identity & Placement Setup",
+      "fields": [
+        {
+          "type": "note",
+          "title": "Interactive Design Mode (update-readme-images)",
+          "description": "This non-LLM wizard authors project-specific style guide, placement rules, and readme-images.json assets so update-readme-images uses your project's own visual identity rather than falling back to GNOMATIX OSS Skills defaults."
+        },
+        {
+          "type": "input",
+          "key": "workspace_root",
+          "title": "GNOX workspace root namespace identifier",
+          "default": "{{repo_name}}",
+          "placeholder": "my-project",
+          "validate": {
+            "required": true,
+            "regex": "^[a-zA-Z0-9._-]+$",
+            "message": "Workspace root must contain only letters, digits, dots, underscores, or hyphens."
+          }
+        },
+        {
+          "type": "select",
+          "key": "config_location",
+          "title": "Where should the project readme-images.json configuration live?",
+          "default": ".gnox/readme-images.json",
+          "options": [
+            { "label": ".gnox/readme-images.json (Recommended cross-CLI project config)", "value": ".gnox/readme-images.json" },
+            { "label": ".claude/readme-images.json (Claude Code project config)", "value": ".claude/readme-images.json" },
+            { "label": "config/readme-images.json (Repository config/ folder)", "value": "config/readme-images.json" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "visual_style",
+      "title": "Visual Style Language",
+      "fields": [
+        {
+          "type": "select",
+          "key": "art_direction",
+          "title": "Primary illustration / visual style direction",
+          "default": "saturday-morning-skottie-natural",
+          "options": [
+            {
+              "label": "Saturday-morning 2D cel × dynamic comic ink (natural human complexions)",
+              "value": "saturday-morning-skottie-natural"
+            },
+            {
+              "label": "Clean architectural & technical isometric diagram illustration",
+              "value": "technical-isometric"
+            },
+            {
+              "label": "Editorial woodcut / vintage printshop engraving",
+              "value": "editorial-engraving"
+            },
+            {
+              "label": "Custom prose art direction",
+              "value": "custom"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "key": "custom_art_direction",
+          "title": "Describe your custom illustration & character style rules",
+          "default": "Clean black ink linework, saturated daylight palette, realistic human complexions, diegetic in-scene title signage.",
+          "when": {
+            "field": "art_direction",
+            "equals": "custom"
+          }
+        },
+        {
+          "type": "input",
+          "key": "primary_palette",
+          "title": "Primary hex color palette (comma-separated)",
+          "default": "#0B1F4A, #D62828, #FFFFFF, #003F88, #D4AF37"
+        },
+        {
+          "type": "input",
+          "key": "in_scene_typography",
+          "title": "Diegetic in-scene title lettering guidance",
+          "default": "Render titles natively inside scene signage with generous top headroom; never obscure faces or heads."
+        }
+      ]
+    },
+    {
+      "id": "placement_and_og",
+      "title": "Panel Placement Rules & Social Previews",
+      "fields": [
+        {
+          "type": "confirm",
+          "key": "enable_section_subpanels",
+          "title": "Include 16:9 section sub-panels under categorized README headings?",
+          "default": true
+        },
+        {
+          "type": "confirm",
+          "key": "enable_og_social",
+          "title": "Automatically build 1280x640 (<1 MB) Open Graph social preview images?",
+          "default": true
+        },
+        {
+          "type": "confirm",
+          "key": "protect_existing_assets",
+          "title": "Stage revisions for existing images into assets/drafts/ for approval instead of overwriting?",
+          "default": true
+        }
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "path": "{{config_location}}",
+      "format": "json",
+      "json_template": {
+        "version": 1,
+        "workspace_root": "{{workspace_root}}",
+        "default_assets_dir": "assets/images",
+        "draft_assets_dir": "assets/drafts",
+        "draft_revision_policy": {
+          "protect_existing": true,
+          "callout_target": "user"
+        },
+        "auto_og_social_image": {
+          "enabled": true,
+          "assets_subdir": "assets/images",
+          "source_suffix": "-banner",
+          "output_suffix": "-og-image.jpg",
+          "width": 1280,
+          "height": 640,
+          "quality": 92,
+          "max_bytes": 1048576,
+          "gravity": "center"
+        },
+        "style_guides": {
+          "{{workspace_root}}": {
+            "doc": ".gnox/style-guides/{{workspace_root}}.md",
+            "summary": "Project-specific visual style guide ({{art_direction}}) authored via gnox:local-config-wizard.",
+            "inherit": true,
+            "og_social_image": true,
+            "reference_images": [],
+            "typography": {
+              "in_scene_titles": "{{in_scene_typography}}"
+            }
+          }
+        },
+        "rules": [
+          {
+            "id": "root-readme-top-panel",
+            "description": "Root README.md top-level hero banner immediately after H1.",
+            "glob": "README.md",
+            "doc": ".gnox/rules/readme-panels.md",
+            "panels": [
+              {
+                "id": "repo-hero-banner",
+                "type": "top-level-panel",
+                "required": true,
+                "placement": "after-h1",
+                "src_pattern": "assets/images/{repo}-banner.jpg",
+                "alt_pattern": "{repo}",
+                "embed_style": "markdown",
+                "dimensions": {
+                  "aspect_ratio": "16:9",
+                  "width": 1376,
+                  "height": 768,
+                  "format": "JPEG"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "path": ".gnox/style-guides/{{workspace_root}}.md",
+      "lines": [
+        "# Style Guide — `{{workspace_root}}`",
+        "",
+        "- **Namespace**: `{{workspace_root}}`",
+        "- **Art Direction Preset**: `{{art_direction}}`",
+        "- **Primary Palette**: `{{primary_palette}}`",
+        "",
+        "## Visual Rules",
+        "",
+        "- {{custom_art_direction}}",
+        "- **Typography & Headroom**: {{in_scene_typography}}",
+        "- **Non-Destructive Draft Policy**: `{{protect_existing_assets}}`"
+      ]
+    },
+    {
+      "path": ".gnox/rules/readme-panels.md",
+      "lines": [
+        "# Placement Rules — `{{workspace_root}}`",
+        "",
+        "- **Root Hero Banner (`top-level-panel`)**: Placed immediately after `# <Title>` in `README.md` at `assets/images/{repo}-banner.jpg` (`1376x768` `16:9` JPEG).",
+        "- **Section Sub-Panels Enabled**: `{{enable_section_subpanels}}`",
+        "- **Automatic 1280x640 OG Social Cards Enabled**: `{{enable_og_social}}`",
+        "- **Non-Destructive Draft Staging (`assets/drafts/`)**: `{{protect_existing_assets}}`"
+      ]
+    }
+  ]
+}

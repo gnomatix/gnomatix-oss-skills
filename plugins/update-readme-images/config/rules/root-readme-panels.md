@@ -22,14 +22,14 @@
 
 2. **Categorized Plugin Section Sub-Panels (`root-readme-category-subpanels`)**:
    - **Location**: Immediately following each `### <Category Heading>` under `## Plugins` (`placement: "after-heading"`), separated by a single blank line before the category's plugin bullet list:
-     - `### Your work, done the way you asked` -> `assets/images/category-your-work-done-panel.jpg`
-     - `### Your name and your record` -> `assets/images/category-your-name-and-record-panel.jpg`
-     - `### The sources behind your claims` -> `assets/images/category-sources-behind-claims-panel.jpg`
-     - `### Skills you can rely on` -> `assets/images/category-skills-you-can-rely-on-panel.jpg`
-     - `### Sound tool choices for your project` -> `assets/images/category-sound-tool-choices-panel.jpg`
-     - `### Words and writing` -> `assets/images/category-words-and-writing-panel.jpg`
-     - `### Your project's images` -> `assets/images/category-your-projects-images-panel.jpg`
-   - **Naming Convention**: Category section images use the `-panel.jpg` suffix (`assets/images/category-<slug>-panel.jpg`) so `discoverOgSocialTargets` unambiguously retains `assets/images/gnomatix-oss-skills-banner.jpg` as the sole `-banner` source for `gnomatix-oss-skills-og-image.jpg`.
+     - `### Your work, done the way you asked` -> `assets/images/category-your-work-done-v0.1.17-panel.jpg`
+     - `### Your name and your record` -> `assets/images/category-your-name-and-record-v0.1.17-panel.jpg`
+     - `### The sources behind your claims` -> `assets/images/category-sources-behind-claims-v0.1.17-panel.jpg`
+     - `### Skills you can rely on` -> `assets/images/category-skills-you-can-rely-on-v0.1.17-panel.jpg`
+     - `### Sound tool choices for your project` -> `assets/images/category-sound-tool-choices-v0.1.17-panel.jpg`
+     - `### Words and writing` -> `assets/images/category-words-and-writing-v0.1.17-panel.jpg`
+     - `### Your project's images` -> `assets/images/category-your-projects-images-v0.1.17-panel.jpg`
+   - **Release-Version Suffix & Naming Convention**: New and revised image assets carry a release-version-specific suffix (`-v<VERSION>`, e.g. `assets/images/category-<slug>-v0.1.17-panel.jpg`) so browsers, GitHub `/raw/main/...`, and Gitea `/media/branch/main/...` never serve cached assets from prior releases, and retain the `-panel.jpg` suffix so `discoverOgSocialTargets` unambiguously keeps `assets/images/gnomatix-oss-skills-banner.jpg` as the sole `-banner` source for `gnomatix-oss-skills-og-image.jpg`.
    - **Image Specifications**:
      - Aspect ratio: `16:9` (`1376×768`), `JPEG` (`-quality 90–92`).
      - In-scene typography: Render the exact `###` category heading natively in-scene per `gnomatix-oss-skills.md` with generous headroom and zero face/head obstruction.

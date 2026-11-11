@@ -178,7 +178,8 @@ function main() {
   const check = process.argv.includes('--check');
   const files = wanted();
   const changes = [];
-  for (const [rel, text] of files) if (readText(path.join(COMMANDS, rel)) !== text) changes.push(['write', rel, text]);
+  const normEol = (s) => (typeof s === 'string' ? s.replace(/\r\n/g, '\n') : null);
+  for (const [rel, text] of files) if (normEol(readText(path.join(COMMANDS, rel))) !== text) changes.push(['write', rel, text]);
   for (const rel of existingGenerated(COMMANDS)) if (!files.has(rel)) changes.push(['remove', rel]);
   if (check) {
     for (const [op, rel] of changes) process.stdout.write(`would ${op}: commands/${rel.split(path.sep).join('/')}\n`);

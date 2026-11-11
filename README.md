@@ -30,7 +30,7 @@ A cross-vendor, cross-platform collection of [Agent Skills](https://agentskills.
 
 ### Your work, done the way you asked
 
-![Your work, done the way you asked](assets/images/category-your-work-done-panel.jpg)
+![Your work, done the way you asked](assets/images/category-your-work-done-v0.1.17-panel.jpg)
 
 - [`all-help-no-harm`](plugins/all-help-no-harm/): At the start of every session the agent presents a contract for you to affirm: it treats you as honest and acting in good faith, respects your rights, and follows your instructions. A reminder on every turn and a re-injection after the context is compacted keep it in force for the whole session.
 - [`satori`](plugins/satori/): Adds one short line of characters to every prompt you send, reminding the agent each turn to work with you and the task instead of resisting.
@@ -43,7 +43,7 @@ A cross-vendor, cross-platform collection of [Agent Skills](https://agentskills.
 
 ### Your name and your record
 
-![Your name and your record](assets/images/category-your-name-and-record-panel.jpg)
+![Your name and your record](assets/images/category-your-name-and-record-v0.1.17-panel.jpg)
 
 - [`hidden-libel-check`](plugins/hidden-libel-check/): Before anything the agent wrote goes out under your name (commit messages, READMEs, code comments, PR descriptions, docs), it is checked for text that misrepresents or defames you. Nothing is changed without your OK.
 - [`spank-dario`](plugins/spank-dario/): Keeps software tools from being named as authors of your work: no Co-Authored-By trailers, "Generated with" lines or session links in your commits, PRs and documents. The copyright and moral-rights law of your country is on file to back it.
@@ -55,13 +55,13 @@ A cross-vendor, cross-platform collection of [Agent Skills](https://agentskills.
 
 ### The sources behind your claims
 
-![The sources behind your claims](assets/images/category-sources-behind-claims-panel.jpg)
+![The sources behind your claims](assets/images/category-sources-behind-claims-v0.1.17-panel.jpg)
 
 - [`cui-bono`](plugins/cui-bono/): Asks whose voice a text speaks in and who gains if you accept it. `/cui-bono <text|url|file>` names the document's shape (self-certifying opener, two-camp frame, concession-then-pivot, foreclosure line, named-program list with one round figure each, virtue tags, aligning adversary, register markers) and the register it is written in, then hands each claim to `citation-farm-audit` (who wrote it, who paid, who cites it, whether the chain reaches data) and each cited source to `source-provenance` (a card of verifiable facts), and takes the findings apart with `logic-decomposer` (the text as quoted propositions, each graded for evidence and stated confidence) and `logic-toolbox` (the formal methods of logic puzzles and reasoning tests, with a logic grid and an incompatibility matrix of held premises). `/cui-bono` alone audits the agent's own previous reply. Every side of a debate gets the same checks.
 
 ### Skills you can rely on
 
-![Skills you can rely on](assets/images/category-skills-you-can-rely-on-panel.jpg)
+![Skills you can rely on](assets/images/category-skills-you-can-rely-on-v0.1.17-panel.jpg)
 
 - [`gnox`](plugins/gnox/): Gives every skill and sub-command in this marketplace a single `/gnox:<plugin>[:<skill>]` prefix, registers `mise`'s safe-mode MCP server, discovers active complementary plugins and optional local tools in your session, and establishes the GNOMATIX Namespacing Convention (`workspace_root:subdir:...` scoping, `[NS]{@target}` CLI-safe callouts, and `«term» [CURIE]` grounding).
 - [`skill-vv`](plugins/skill-vv/): Before you first use a skill, tells you what it needs, what optional local tools unlock extended capabilities, which complementary plugins are active, and whether it has been tested on your model and platform. Typing `/<skill> #bug <what went wrong>` reports a bug, which is then fixed or explained to you.
@@ -69,13 +69,13 @@ A cross-vendor, cross-platform collection of [Agent Skills](https://agentskills.
 
 ### Sound tool choices for your project
 
-![Sound tool choices for your project](assets/images/category-sound-tool-choices-panel.jpg)
+![Sound tool choices for your project](assets/images/category-sound-tool-choices-v0.1.17-panel.jpg)
 
 - [`python-elimination-program`](plugins/python-elimination-program/): Stops the agent adding Python to a project that doesn't use it. Python goes in only when no other tool does the job, it passes a merit test, and you approve it; then it's written properly. A hook blocks unapproved Python at the harness.
 
 ### Words and writing
 
-![Words and writing](assets/images/category-words-and-writing-panel.jpg)
+![Words and writing](assets/images/category-words-and-writing-v0.1.17-panel.jpg)
 
 - [`word-lineage`](plugins/word-lineage/): Settles what a word really means: its literal meaning, read off its family tree. It traces the word through the languages English took it from and compares its literal synonyms across the Germanic and Romance languages, giving one working definition with nothing left to debate. Given a meaning instead of a word, it picks the word that literally says it.
 - [`inaudible-markup`](plugins/inaudible-markup/): The agent writes each reply as a structured script, with callouts and tags that say who a line is for, using only markup a text-to-speech voice doesn't read aloud. It reads clearly on screen and sounds natural when spoken.
@@ -83,7 +83,7 @@ A cross-vendor, cross-platform collection of [Agent Skills](https://agentskills.
 
 ### Your project's images
 
-![Your project's images](assets/images/category-your-projects-images-panel.jpg)
+![Your project's images](assets/images/category-your-projects-images-v0.1.17-panel.jpg)
 
 - [`og-social-image`](plugins/og-social-image/): Makes the social-preview image for your repository or page from a hero, banner or logo: the exact pixel size for GitHub, Open Graph or X, cover-cropped with the important parts in frame, under the platform's file-size cap, and measured before it's called done.
 - [`update-readme-images`](plugins/update-readme-images/): Curates, generates, post-processes, embeds, and audits `README.md` and `SKILL.md` imagery across your repository from a single config file (`readme-images.json`) pairing GNOX-namespaced style guides (`workspace_root:subdir:...`) with glob-matched rules documents (`*`, `**`). Handles top-level titled hero banners, section/skills sub-panels, and transparent-corner oval inset window portraits (`PNG32` alpha); automatically builds `1280×640` `< 1 MB` OG social images in every `assets/images` directory unless opted out; and stages candidate replacements for existing images into `assets/drafts/` for your approval rather than overwriting live files.

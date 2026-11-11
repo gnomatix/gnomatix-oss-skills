@@ -21,7 +21,7 @@ set -eu
 LIVE=${RELEASE_LIVE:-origin}
 PUBLIC=${RELEASE_PUBLIC:-https://github.com/gnomatix/gnomatix-oss-skills.git}
 # Left out of every public release.
-EXCLUDE=".beads .claude/python-authorizations dev"
+EXCLUDE=".beads .claude/python-authorizations dev assets/drafts assets/review"
 WIPE=0
 for a in "$@"; do
   case "$a" in
