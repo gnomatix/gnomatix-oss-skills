@@ -1,6 +1,6 @@
 {
   "name": "agent-darktriad-check",
-  "version": "0.3.11",
+  "version": "0.3.12",
   "description": "Runs Brett Whitty's KontentKop psycholinguistic scorer over the agent's own replies instead of only over user prompts. A Stop / SubagentStop hook (a Go binary per platform that embeds the scorer, with a pure-Node fallback that runs a separately built KontentKop binary) scores the agent's last reply and logs the per-metric scores, Body Count and CriticMarkup annotation; it passes through by default and, when AGENT_DARKTRIAD_CHECK_BLOCK_AT is set, blocks at that Body Count and hands the annotated reply back to the agent. A companion skill names nine evasion patterns (unasked-for hedging about third parties, intent attribution, reframing, paraphrase drift, vague admission, acknowledging instead of executing, premise injection, proposal-as-permission, appeal to a rule not shown) so the agent avoids them before the hook sees them, and says which ones KontentKop's metrics can and cannot catch.",
   "author": {
     "name": "Brett Whitty",

@@ -62,7 +62,7 @@ Per the task brief, these sibling-owned files were left untouched:
 
 - `skills/all-help-no-harm/SKILL.md` — owned by other work.
 - `hooks/*` — owned by other workers.
-- `contract.md` — pending refactor.
+- `CONTRACT.txt` and `hooks/contract-text.js` — canonical contract text and hook loader.
 - `vscode-extension/*` — owned by separate worker (UI polish task #44).
 - `scripts/contract-active-indicator.js` — reference implementation;
   not modified, only documented as the Claude Code template.

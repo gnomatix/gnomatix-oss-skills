@@ -1,12 +1,12 @@
 {
   "agent-darktriad-check": {
-    "version": "0.3.11",
-    "git_hash": "0f9ea90f4782a3b20c3aadf9caf0260b9d3ddafa",
+    "version": "0.3.12",
+    "git_hash": "47e6d7af8a33d898346a5247cea38650afcd0992",
     "path": "plugins/agent-darktriad-check"
   },
   "all-help-no-harm": {
-    "version": "0.2.12",
-    "git_hash": "472cc8fb56a05662eeb5e9dcc92cb6e4386a5183",
+    "version": "0.2.13",
+    "git_hash": "1dc2cab879877c27758fbdc291703cec791b1984",
     "path": "plugins/all-help-no-harm"
   },
   "bear-loads": {
@@ -20,13 +20,13 @@
     "path": "plugins/citation-farm-audit"
   },
   "critical-control-points": {
-    "version": "0.2.10",
-    "git_hash": "81fd835d1ead5950a6d969ed6ee43ff5b126c3b1",
+    "version": "0.2.11",
+    "git_hash": "0caa33155f02b763d9eb417a8cd6c211efcd0af5",
     "path": "plugins/critical-control-points"
   },
   "cui-bono": {
-    "version": "0.1.35",
-    "git_hash": "a04fee945bdf16728b06e4732170305679b06dfb",
+    "version": "0.1.36",
+    "git_hash": "8f9af7a375777c645c3cf0c4b6e11f1135681c23",
     "path": "plugins/cui-bono"
   },
   "did-you-rtfm": {
@@ -130,7 +130,7 @@
     "path": "plugins/word-lineage"
   },
   "_marketplace": {
-    "version": "0.1.19",
-    "plugins_fingerprint": "60ee93cdba6a370a2231b850caf6cf67736322b45d988bf063e877568473b221"
+    "version": "0.1.20",
+    "plugins_fingerprint": "1dd888488f4c1646d7f29b1aeb723d631d978d86ddaebb210415642e2284161e"
   }
 }

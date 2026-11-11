@@ -148,4 +148,4 @@ Every agent dispatched by an agent running this skill gets this line in its prom
 
 ## TODO
 
-- Write `VV.md` (none exists) with the procedures and the platforms the README claims: Claude Code and every agent that reads the Agent Skills format from `.agents/skills/`, `.github/skills/` or `.kiro/skills/`, named one by one: claude-code/win32, claude-code/linux-wsl, claude-code/linux, claude-code/darwin, codex/win32, codex/linux-wsl, antigravity/win32, antigravity/linux-wsl, kiro/win32. Then run V&V on each; this entry stays until each has passed and is recorded there.
+- Run V&V (`VV.md`) on every claimed platform (`claude-code/win32`, `claude-code/linux-wsl`, `claude-code/linux`, `claude-code/darwin`, `codex/win32`, `codex/linux-wsl`, `antigravity/win32`, `antigravity/linux-wsl`, `kiro/win32`); this entry stays until each has passed and is recorded in `VV.md`.

@@ -211,4 +211,3 @@ Directed by the author on 2026-11-08 (directions store dir-yls; `dev/cui-bono/or
 
 - Verification and validation on every platform the plugin claims (claude-code/win32, claude-code/linux-wsl, claude-code/linux, claude-code/darwin, codex/win32, codex/linux-wsl, antigravity/win32, antigravity/linux-wsl, kiro/win32): the `decompose-and-validate` procedure in `VV.md`, once per platform; the entry stays until each is recorded.
 - Clear the remaining **[unchecked]** marks (Hurley's *unless* rule; the quantifier chaining rules; Scriven's own numbering; the agency confidence-level definitions; Hyland 2005's table; Brier's DOI) by reading the primary texts.
-- Extend `skeleton.mjs` to pre-fill the quantifier list and the hedge/booster markers per sentence.

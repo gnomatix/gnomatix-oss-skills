@@ -149,23 +149,125 @@ export function findIndicators(sentence) {
   return found.sort((a, b) => a.at - b.at).map((f) => f.name);
 }
 
+// ---- quantifiers (logic-decomposer step 5) & hedge/booster markers (step 6) ------------
+
+const QUANTIFIERS = [
+  ['a small number', 'proportion, unquantified', /\ba\s+small\s+number\b/gi],
+  ['not all', 'existential (negated universal)', /\bnot\s+all\b/gi],
+  ['the one', 'universal (unique)', /\bthe\s+one\b/gi],
+  ['a share', 'proportion, unquantified', /\ba\s+share\b/gi],
+  ['every', 'universal', /\bevery\b/gi],
+  ['none', 'universal (negative)', /\bnone\b/gi],
+  ['some', 'existential', /\bsome\b/gi],
+  ['most', 'proportion (>50%)', /\bmost\b/gi],
+  ['many', 'proportion, unquantified', /\bmany\b/gi],
+  ['each', 'universal', /\beach\b/gi],
+  ['all', 'universal', /\ball\b/gi],
+  ['few', 'proportion, unquantified', /\bfew\b/gi],
+  ['any', 'universal', /\bany\b/gi],
+  ['no', 'universal (negative)', /\bno\b/gi],
+];
+
+export function findQuantifiers(sentence) {
+  let s = String(sentence);
+  const found = [];
+  for (const [quantifier, kind, re] of QUANTIFIERS) {
+    re.lastIndex = 0;
+    let m;
+    while ((m = re.exec(s)) !== null) {
+      found.push({ quantifier, kind, at: m.index });
+      s = s.slice(0, m.index) + ' '.repeat(m[0].length) + s.slice(m.index + m[0].length);
+    }
+  }
+  return found.sort((a, b) => a.at - b.at).map(({ quantifier, kind }) => ({ quantifier, kind }));
+}
+
+const MARKERS = [
+  ['almost no chance', 'hedge', 'S1', /\balmost\s+no\s+chance\b/gi],
+  ['highly improbable', 'hedge', 'S2', /\bhighly\s+improbable\b/gi],
+  ['very unlikely', 'hedge', 'S2', /\bvery\s+unlikely\b/gi],
+  ['may or may not', 'hedge', 'S4', /\bmay\s+or\s+may\s+not\b/gi],
+  ['roughly even', 'hedge', 'S4', /\broughly\s+even\b/gi],
+  ['some evidence', 'hedge', 'S?', /\bsome\s+evidence\b/gi],
+  ['we believe', 'hedge', 'S5', /\bwe\s+believe\b/gi],
+  ['very likely', 'booster', 'S6', /\bvery\s+likely\b/gi],
+  ['highly probable', 'booster', 'S6', /\bhighly\s+probable\b/gi],
+  ['well established', 'booster', 'S6', /\bwell\s+established\b/gi],
+  ['almost certain', 'booster', 'S7', /\balmost\s+certain\b/gi],
+  ['it is clear that', 'booster', 'S7', /\bit\s+is\s+clear\s+that\b/gi],
+  ['the evidence shows', 'booster', 'S7', /\bthe\s+evidence\s+shows\b/gi],
+  ['everyone knows', 'booster', 'S7', /\beveryone\s+knows\b/gi],
+  ['in fact', 'booster', 'S7', /\bin\s+fact\b/gi],
+  ['at all', 'booster', 'S7', /\bat\s+all\b/gi],
+  ['definitely', 'booster', 'S7', /\bdefinitely\b/gi],
+  ['certain', 'booster', 'S7', /\bcertain\b/gi],
+  ['halved', 'booster', 'S7', /\bhalved\b/gi],
+  ['unlikely', 'hedge', 'S3', /\bunlikely\b/gi],
+  ['doubtful', 'hedge', 'S3', /\bdoubtful\b/gi],
+  ['probably', 'hedge', 'S5', /\bprobably\b/gi],
+  ['roughly', 'hedge', 'S5', /\broughly\b/gi],
+  ['possible', 'hedge', 'S?', /\bpossible\b/gi],
+  ['perhaps', 'hedge', 'S?', /\bperhaps\b/gi],
+  ['suggests', 'hedge', 'S?', /\bsuggests\b/gi],
+  ['likely', 'hedge', 'S5', /\blikely\b/gi],
+  ['about', 'hedge', 'S5', /\babout\b/gi],
+  ['might', 'hedge', 'S?', /\bmight\b/gi],
+  ['could', 'hedge', 'S?', /\bcould\b/gi],
+  ['mixed', 'hedge', 'S4', /\bmixed\b/gi],
+  ['remote', 'hedge', 'S1', /\bremote\b/gi],
+];
+
+export function findMarkers(sentence) {
+  let s = String(sentence);
+  const found = [];
+  for (const [marker, kind, band, re] of MARKERS) {
+    re.lastIndex = 0;
+    let m;
+    while ((m = re.exec(s)) !== null) {
+      found.push({ marker, kind, band, at: m.index });
+      s = s.slice(0, m.index) + ' '.repeat(m[0].length) + s.slice(m.index + m[0].length);
+    }
+  }
+  return found.sort((a, b) => a.at - b.at).map(({ marker, kind, band }) => ({ marker, kind, band }));
+}
+
 // ---- the skeleton -----------------------------------------------------------------------
 
 export const CHECKS = ['coverage', 'traceability', 'nothing added', 'conditional direction', 'quantifier scope', 'entity consistency', 'round trip', 'grades complete'];
 
 export function skeleton(text) {
-  const sentences = splitSentences(text).map((t, i) => ({ id: `S${i + 1}`, text: t }));
+  const sentences = splitSentences(text).map((t, i) => ({
+    id: `S${i + 1}`,
+    text: t,
+    quantifiers: findQuantifiers(t),
+    markers: findMarkers(t),
+  }));
   const quoted = (t) => `"${t}"`;
   const ptable = sentences.map((s) => ({ id: '', sentence: s.id, role: '', proposition: quoted(s.text), formal: '', supports: '', cites: '', k: '', h: '' }));
   const conditionals = [];
+  const quantifiers = [];
   for (const s of sentences) {
     const ind = findIndicators(s.text);
     if (ind.length) conditionals.push({ id: '', sentence: s.id, quoted: quoted(s.text), indicators: ind, form: '', contrapositive: '', kind: '' });
+    for (const q of s.quantifiers) {
+      quantifiers.push({ sentence: s.id, quantifier: q.quantifier, kind: q.kind, scope: '' });
+    }
   }
-  const grades = sentences.map((s) => ({ id: '', proposition: quoted(s.text), evidence: '', certainty: '', basisCited: '', stated: '', markers: '', licensed: '', gradeDifference: '', verdict: '' }));
+  const grades = sentences.map((s) => ({
+    id: '',
+    proposition: quoted(s.text),
+    evidence: '',
+    certainty: '',
+    basisCited: '',
+    stated: '',
+    markers: s.markers.map((m) => `"${m.marker}"`).join(', '),
+    licensed: '',
+    gradeDifference: '',
+    verdict: '',
+  }));
   const coverage = `${sentences.length} sentence${sentences.length === 1 ? '' : 's'}, 0 dispositions`;
   const checks = CHECKS.map((name) => ({ name, value: name === 'coverage' ? coverage : '' }));
-  return { sentences, ptable, conditionals, grades, validity: { coverage, checks } };
+  return { sentences, ptable, conditionals, quantifiers, grades, validity: { coverage, checks } };
 }
 
 // ---- rendering ------------------------------------------------------------------------------

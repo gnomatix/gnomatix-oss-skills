@@ -48,22 +48,22 @@ KontentKop was built to score incoming prompts for manipulation, coercion and ev
 `hooks.json` runs:
 
 ```
-${CLAUDE_PLUGIN_ROOT}/hooks/bin/agent-darktriad-check-${platform}-${arch}${exe} || node ${CLAUDE_PLUGIN_ROOT}/hooks/agent-darktriad-check.js
+"${CLAUDE_PLUGIN_ROOT}/hooks/bin/agent-darktriad-check-${platform}-${arch}${exe}" || node "${CLAUDE_PLUGIN_ROOT}/hooks/agent-darktriad-check.js" --prefer-embedded-go
 ```
 
 This is the binary-with-Node-fallback layout the repository `CLAUDE.md` prescribes. Both implementations read the same hook input, write the same log record (the Go one adds `impl: "go"`), and make the same block decision. They differ in how scoring happens:
 
 | | Go hook (`hooks/bin/*`) | Node hook (`hooks/*.js`) |
 |---|---|---|
-| Scorer | KontentKop's `src` and `src/pipeline` packages, compiled in | A KontentKop binary you build, run as a subprocess |
-| Needs | nothing | `KONTENTKOP_BIN` |
-| Scores logged | every reply, all 15 metrics | only replies above KontentKop's threshold (below it the binary prints no scores) |
+| Scorer | KontentKop's `src` and `src/pipeline` packages, compiled in | Delegates to `hooks/bin/agent-darktriad-check-<os>-<arch>` under `--prefer-embedded-go`, or runs a standalone `KONTENTKOP_BIN` binary as a subprocess |
+| Needs | nothing | nothing on the six built targets; `KONTENTKOP_BIN` on other targets |
+| Scores logged | every reply, all 15 metrics | every reply via embedded Go binary, or replies above KontentKop's threshold when using `KONTENTKOP_BIN` |
 | Cold start | ~7 ms (Linux, measured) | Node start + scorer start |
 | Config | `KONTENTKOP_CONFIG` file, else `config/config.yaml`, else KontentKop's built-in defaults | `KONTENTKOP_CONFIG_DIR`, else `config/`, else the binary's directory (KontentKop reads `config.yaml` from its cwd) |
 
 Binaries: `linux-amd64`, `linux-arm64`, `darwin-amd64`, `darwin-arm64`, `windows-amd64.exe`, `windows-arm64.exe`, built with `CGO_ENABLED=0 -trimpath -ldflags="-s -w"`, about 3 MB each, committed to the repository per `CLAUDE.md`.
 
-**Unverified:** whether Claude Code expands `${platform}`, `${arch}` and `${exe}` in hook commands. `CLAUDE.md` specifies this form. If they are not expanded, the first command fails to resolve and the shell `||` runs the Node fallback, which then needs `KONTENTKOP_BIN`. Only the Linux amd64 binary was executed end to end.
+When the harness sets `CLAUDE_PLUGIN_ROOT` without setting `platform`, `arch`, and `exe` in the shell environment, the first command fails to resolve and the shell `||` runs `node "${CLAUDE_PLUGIN_ROOT}/hooks/agent-darktriad-check.js" --prefer-embedded-go`, which maps `process.platform` and `process.arch` to the matching binary in `hooks/bin/` and runs it in-process before falling back to `KONTENTKOP_BIN`. Both `linux-amd64` and `windows-amd64.exe` have been executed end to end.
 
 ### Environment
 

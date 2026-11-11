@@ -423,6 +423,19 @@ function safeHomedir() {
   try { return os.homedir(); } catch { return ''; }
 }
 
+function resolveEmbeddedGoHookBin(platform, arch, binDir) {
+  const p = platform || process.platform;
+  const a = arch || process.arch;
+  const goos = p === 'win32' ? 'windows' : (p === 'darwin' || p === 'linux' ? p : null);
+  const goarch = a === 'x64' ? 'amd64' : (a === 'arm64' ? 'arm64' : null);
+  if (!goos || !goarch) return null;
+  const exe = p === 'win32' ? '.exe' : '';
+  const dir = binDir || path.join(__dirname, 'bin');
+  const candidate = path.join(dir, `${HOOK}-${goos}-${goarch}${exe}`);
+  const st = safeStat(candidate);
+  return st && st.isFile() ? candidate : null;
+}
+
 function readStdin() {
   return new Promise((resolve) => {
     let data = '';
@@ -440,8 +453,25 @@ function readStdin() {
 async function main() {
   let decision = {};
   try {
+    const raw = await readStdin();
+    if (process.argv.includes('--prefer-embedded-go') && !process.env.KONTENTKOP_BIN) {
+      const goBin = resolveEmbeddedGoHookBin();
+      if (goBin) {
+        const res = childProcess.spawnSync(goBin, [], {
+          input: raw,
+          encoding: 'utf8',
+          timeout: 25000,
+          shell: false,
+          windowsHide: true,
+        });
+        if (!res.error && res.status === 0 && typeof res.stdout === 'string' && res.stdout.trim()) {
+          try { process.stdout.write(res.stdout.trim()); } catch { /* ignore */ }
+          return;
+        }
+      }
+    }
     let payload;
-    try { payload = JSON.parse(await readStdin()); } catch { payload = null; }
+    try { payload = JSON.parse(raw); } catch { payload = null; }
     if (payload && typeof payload === 'object') decision = run(payload, process.env).decision;
   } catch (err) {
     warn(`unexpected error, passing through: ${err && err.stack || err}`);
@@ -459,6 +489,7 @@ if (require.main === module) {
     extractReply,
     lastAssistantTextFromTranscript,
     resolveScorer,
+    resolveEmbeddedGoHookBin,
     runScorer,
     parseScorerOutput,
     blockThreshold,

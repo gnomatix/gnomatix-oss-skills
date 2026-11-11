@@ -342,6 +342,8 @@ async function main() {
       check(JSON.stringify(cond.S6) === '["no","without"]', `S6 indicators are "no" and "without" (${JSON.stringify(cond.S6)})`);
       check(JSON.stringify(cond.S9) === '["either","or"]', `S9 indicators are "either" and "or" (${JSON.stringify(cond.S9)})`);
       check(j.grades.length === 9 && j.grades.every((g) => 'basisCited' in g && 'markers' in g && 'licensed' in g && 'gradeDifference' in g &&'verdict' in g), 'GRADES has one row per sentence with the step-6 columns');
+      check(j.grades[1].markers === '"about"' && j.grades[6].markers === '"roughly", "halved"', `GRADES pre-fills hedge/booster markers per sentence (S2=${j.grades[1].markers}, S7=${j.grades[6].markers})`);
+      check(Array.isArray(j.quantifiers) && j.quantifiers.some((q) => q.sentence === 'S4' && q.quantifier === 'every') && j.quantifiers.some((q) => q.sentence === 'S6' && q.quantifier === 'no'), 'skeleton pre-fills quantifier list per sentence');
       check(j.validity.coverage === '9 sentences, 0 dispositions', `coverage pre-computed (${j.validity.coverage})`);
       check(Array.isArray(j.validity.checks) && j.validity.checks.length === 8, 'eight validity checks listed');
     }

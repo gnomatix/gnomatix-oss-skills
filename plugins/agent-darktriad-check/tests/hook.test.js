@@ -296,3 +296,27 @@ test('scorer runs from the plugin config dir when CLAUDE_PLUGIN_ROOT is set and 
   const r = withFakeEnv({ FAKE_KK_MODE: 'cwd' }, () => hook.run({ last_assistant_message: 'x' }, envFor(d, { CLAUDE_PLUGIN_ROOT: root }), { runScorer: fakeRunner() }));
   assert.equal(fs.realpathSync(r.record.annotated), fs.realpathSync(path.join(root, 'config')));
 });
+
+test('--prefer-embedded-go delegates to the prebuilt Go binary in hooks/bin when KONTENTKOP_BIN is unset', (t) => {
+  const goBin = hook.resolveEmbeddedGoHookBin();
+  assert.ok(goBin && fs.existsSync(goBin), `expected prebuilt Go binary at ${goBin}`);
+  const d = tmpDir(t);
+  const root = path.resolve(__dirname, '..');
+  const env = Object.assign({}, process.env, {
+    AGENT_DARKTRIAD_CHECK_LOG_DIR: d,
+    CLAUDE_PLUGIN_ROOT: root,
+  });
+  delete env.KONTENTKOP_BIN;
+  const res = childProcess.spawnSync(process.execPath, [HOOK_PATH, '--prefer-embedded-go'], {
+    input: JSON.stringify({ hook_event_name: 'Stop', session_id: 's-go', last_assistant_message: 'Done.' }),
+    encoding: 'utf8',
+    env,
+    timeout: 15000,
+  });
+  assert.equal(res.status, 0, res.stderr);
+  assert.equal(res.stdout, '{}');
+  const [rec] = readLog(d);
+  assert.equal(rec.impl, 'go');
+  assert.equal(rec.session_id, 's-go');
+  assert.equal(rec.scorer.status, 'ran');
+});

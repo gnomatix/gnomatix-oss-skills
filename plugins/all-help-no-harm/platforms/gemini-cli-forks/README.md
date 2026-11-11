@@ -25,10 +25,7 @@ is the config-directory name.
 
 ## Visual surfaces (inherited from Gemini CLI)
 
-Same as `platforms/gemini-cli/README.md`. The forks' fidelity to upstream
-`ui.*` settings is **[unverified — confirm via `qwen-code --help` /
-`llxprt --help` on your installed version]**, but the upstream surfaces
-are stable v0.43+.
+Same as `platforms/gemini-cli/README.md`. Both forks preserve the upstream `ui.*` settings schema (`userSettings.ui.theme`, `workspaceSettings.ui.theme`, `ui.footer.*`, `ui.dynamicWindowTitle`, `ui.showStatusInTitle`), verified in `packages/cli/src/config/settings.ts` of `QwenLM/qwen-code` and `acoliver/llxprt-code`.
 
 ## Config directory conventions
 
@@ -37,11 +34,7 @@ are stable v0.43+.
 | qwen-code | `~/.qwen/settings.json` | `~/.qwen/extensions/<extension-name>/` |
 | llxprt-code | `~/.llxprt/settings.json` | `~/.llxprt/extensions/<extension-name>/` |
 
-Both paths follow the upstream `~/.gemini/...` convention with the
-`gemini` segment replaced by the fork's brand. **[unverified — needs
-platform access to confirm directory name exactly]** If the fork uses a
-different name on your installation, override with `--extensions-dir`
-and `--settings` flags.
+Both paths follow the upstream `~/.gemini/...` convention with the `gemini` segment replaced by the fork's brand (`QWEN_DIR = '.qwen'` and `LLXPRT_DIR = '.llxprt'`, verified in each fork's `packages/cli/src/config/settings.ts`). If a custom installation overrides the directory name, pass `--extensions-dir` and `--settings` flags.
 
 ## Integration enabled here
 

@@ -48,26 +48,9 @@ npm run package               # vsce package -> gnomatix-skills-<ver>.vsix
 Then install the resulting `.vsix` via VS Code's
 *Extensions: Install from VSIX...* command.
 
-## Configuration TODO (placeholders to fill in)
+## Repository & Licensing
 
-The scaffold uses placeholders that need real values before the extension
-is published to the VS Code Marketplace:
-
-| Placeholder | Where | Resolution |
-|---|---|---|
-| `{{GH_OWNER}}` | `package.json` `repository.url` and `bugs.url` | GitHub org / user that owns the repo. |
-| `{{LINKEDIN_URL}}` | `src/webviews/about.html` | GNOMATIX company LinkedIn URL. |
-| `{{BMAC_USERNAME}}` | `src/webviews/about.html` | Buy Me A Coffee handle for the BMAC widget. |
-| `publisher: "gnomatix"` | `package.json` | Real VS Code Marketplace publisher ID. |
-| `LICENSE` | extension root + repo root | See below. |
-
-### License
-
-Done. `LICENSE` here holds the same Business Source License 1.1 text as the marketplace root's
-`LICENSE`, and every plugin manifest declares `"license": "BUSL-1.1"`. The webview's About panel
-reads the license text from the marketplace root (`LICENSE`, `LICENSE.md`, or `LICENSE.txt`). The
-`package.json` `license` field is `SEE LICENSE IN LICENSE`, which defers to that file. The terms
-are summarized in the License section at the end of this README.
+`package.json` and `src/webviews/about.html` point to `https://github.com/gnomatix/gnomatix-oss-skills`, [GNOMATIX on LinkedIn](https://www.linkedin.com/company/gnomatix), and [Buy Me A Coffee (`gnomatix`)](https://www.buymeacoffee.com/gnomatix). `LICENSE` holds the same Business Source License 1.1 text as the marketplace root's `LICENSE`, and every plugin manifest declares `"license": "BUSL-1.1"`. The webview's About panel reads the license text from the marketplace root (`LICENSE`, `LICENSE.md`, or `LICENSE.txt`). The `package.json` `license` field is `SEE LICENSE IN LICENSE`, which defers to that file. The terms are summarized in the License section at the end of this README.
 
 ## Cross-platform notes
 

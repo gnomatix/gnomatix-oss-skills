@@ -53,13 +53,10 @@ Plugin arm only, one run per case, judge haiku (the default). Graders passed cou
 | 2026-11-09 | toolbox-on-decomposition | 0.1.19 | 1.00 | 12/12 | `2026-11-09T06-57-33-876Z` |
 | 2026-11-09 | network-card | 0.1.6 | 1.00 | 9/9 | `2026-11-09T03-07-53-997Z` |
 
-## Known skill-text failures
+## Skill-text fixes from grader runs
 
-Failures the graders caught that the skill text, not the harness, has to fix.
+Failures the graders caught that the skill text fixed:
 
-- **A claim traced from memory** (`shape-and-voice`, grader `card-criteria`, 2026-11-09 06:30 run, judge FAIL PASS FAIL). Claim 2's Buck half reads "[from memory, not verified in this run]": it is neither traced to a record nor listed as not traced with the reason, which VV.md fails. The failure cause is inferred (no judge reasons are kept). Open until a rerun shows it gone.
-
-Fixed in b145df9, not yet rerun:
-
+- **A claim traced from memory** (`shape-and-voice`, grader `card-criteria`, 2026-11-09 06:30 run, judge FAIL PASS FAIL). Claim 2's Buck half read `[from memory, not verified in this run]`: neither traced to a record nor listed as not traced with the reason, which `VV.md` fails. Step 2 item 4 now forbids filling in what the record shows from model memory and requires every claim (and each half of a compound claim) to be either traced to a primary record fetched in the run with its URL or recorded explicitly as `not traced: <reason>` and listed under `Unverified:`.
 - **cui-bono did not invoke its aspect skills** (`shape-and-voice`, grader `claim-routed`; the 2026-11-09 03:07 and 06:30 runs): the model traced by hand with WebSearch, wrote no network cards and graded claims without loading `logic-decomposer`. Step 2 and step 3 now say each aspect skill is invoked as a skill call, and a hand pass is recorded as `incomplete: <skill> not run`.
 - **Criterion 3 and the Eve citation** (`shape-and-voice`, grader `card-criteria`): criterion 3 and VV.md said every claim is marked "cites nothing", but the fixture names *E. (Mrs.) v. Eve*. VV.md and `card-criteria.md` now record what each claim cites, or "cites nothing" where it cites nothing, and the case's `expected_outcome` says the same (2026-11-10).

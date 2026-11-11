@@ -84,8 +84,6 @@ function renderHtml(
   }
 
   const cspSource = webview.cspSource;
-  // {{LINKEDIN_URL}} and {{BMAC_USERNAME}} are intentional placeholders
-  // documented in the README's "Configuration TODO" section.
   return html
     .replace(/\{\{CSP_SOURCE\}\}/g, cspSource)
     .replace(/\{\{WORDMARK_URI\}\}/g, wordmarkUri.toString())
@@ -167,14 +165,12 @@ const INLINE_FALLBACK_HTML = `<!DOCTYPE html>
 
   <section class="actions">
     <h1>Connect</h1>
-    <!-- {{LINKEDIN_URL}} is a placeholder; user fills in the GNOMATIX company LinkedIn URL. -->
-    <a href="{{LINKEDIN_URL}}">GNOMATIX on LinkedIn</a>
+    <a href="https://www.linkedin.com/company/gnomatix">GNOMATIX on LinkedIn</a>
   </section>
 
   <section>
     <h1>Support</h1>
-    <!-- {{BMAC_USERNAME}} is a placeholder; user fills in the Buy Me A Coffee handle. -->
-    <iframe src="https://www.buymeacoffee.com/widget/page/{{BMAC_USERNAME}}"
+    <iframe src="https://www.buymeacoffee.com/widget/page/gnomatix"
             title="Buy Me A Coffee"
             style="width:100%;height:520px;border:0;"></iframe>
   </section>

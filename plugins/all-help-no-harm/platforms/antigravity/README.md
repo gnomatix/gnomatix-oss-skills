@@ -55,16 +55,15 @@ The marketplace ships the theme files; users install via either path.
 
 ### Path B — package into a `.vsix` and install via CLI
 
-Per the community guide, Antigravity CLI accepts the standard VS Code
-`.vsix` packaging format. Once packaged, install with:
+Antigravity IDE accepts the standard VS Code `.vsix` packaging format (`--install-extension <ext-id | path>`, `--uninstall-extension <ext-id>`, `--extensions-dir <dir>`). Once packaged, install with:
 
 ```sh
+antigravity-ide --install-extension gnomatix-helix-theme-0.1.0.vsix
+# or, when the IDE launcher is on PATH as `antigravity`:
 antigravity --install-extension gnomatix-helix-theme-0.1.0.vsix
 ```
 
-(The exact CLI flag name is documented as community-confirmed; verify
-with `antigravity --help` on your installed version.
-**[unverified — needs platform access to confirm flag spelling]**)
+(Verified against `antigravity-ide --help` on Windows; on machines where `antigravity` resolves to `antigravity-cli` / `agy`, use `antigravity-ide --install-extension` for the IDE color theme and `agy plugin install ./plugins/all-help-no-harm` for the agent plugin.)
 
 ## How to disable
 
