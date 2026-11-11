@@ -317,7 +317,7 @@ Symbols (Montgomery summarising Twining's teaching materials): "a circle represe
         {h1,h2,h3} under A1:            X   (h1,h3 |- forall x (M(x) -> /A(x)), contradicting h2)
         {h1,h5} under A2:               X   (already shown pairwise)
  Verdict: H is consistent as worded; it becomes inconsistent under A1 (minimal subset {h1,h2,h3}) and
-          under A2 (minimal subset {h1,h5}). Both assumptions are load-bearing and must be reported.
+          under A2 (minimal subset {h1,h5}). Both assumptions change satisfiability, so the verdict depends on both and both must be reported.
 ```
 Pairwise cells never cite a held premise: a conflict that needs three held premises is a property of the triad and appears only in the joint section (step 4). `X|A` cites only a declared assumption.
 
@@ -326,7 +326,7 @@ Pairwise cells never cite a held premise: a conflict that needs three held premi
 2. For each pair (i,j): test {hi, hj} by indirect table / propagation. Record `o`, `X` or `=`.
 3. For each `o` pair, re-test with each declared assumption A in turn; record `X|A` where it fails.
 4. Joint check: run the indirect table / CSP search on all of H. If a model exists, record it (the witness assignment). If not, extract minimal inconsistent subsets by deleting one premise at a time and re-testing.
-5. Report: matrix, key, witness model or minimal inconsistent subsets, and every assumption that was load-bearing.
+5. Report: matrix, key, witness model or minimal inconsistent subsets, and every assumption the verdict depends on (one whose addition changes satisfiability).
 
 **Why the joint step is mandatory.** {P, Q, /(P^Q)} has every pair `o` and the triple `X`; an all-`o` matrix does not prove consistency. The matrix shows *where* conflicts localise; the joint check decides *whether* the set is consistent.
 

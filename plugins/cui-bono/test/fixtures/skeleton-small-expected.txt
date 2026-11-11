@@ -3,18 +3,18 @@ S1  All of it is voluntary.
 S2  Pause works.
 
 P-TABLE
-id  | sentence | role        | proposition (quoted)                  | formal (optional)            | supports | cites
-    | S1       |             | "All of it is voluntary."             |                              |          |
-    | S2       |             | "Pause works."                        |                              |          |
+id  | sentence | role        | proposition (quoted)                  | formal                       | supports | cites   | K  | h
+    | S1       |             | "All of it is voluntary."             |                              |          |         |    |
+    | S2       |             | "Pause works."                        |                              |          |         |    |
 
 CONDITIONALS
 id  | sentence | quoted                                   | indicator | form          | contrapositive  | kind
     | S1       | "All of it is voluntary."                | all       |               |                 |
 
 GRADES
-id  | proposition (quoted)              | evidence | basis cited          | stated | markers           | licensed | gap  | verdict
-    | "All of it is voluntary."         |          |                      |        |                   |          |      |
-    | "Pause works."                    |          |                      |        |                   |          |      |
+id  | proposition (quoted)              | evidence | certainty              | basis cited          | stated | markers           | licensed | gap  | verdict
+    | "All of it is voluntary."         |          |                        |                      |        |                   |          |      |
+    | "Pause works."                    |          |                        |                      |        |                   |          |      |
 
 VALIDITY
 coverage: 2 sentences, 0 dispositions

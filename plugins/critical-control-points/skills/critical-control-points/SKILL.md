@@ -37,11 +37,12 @@ gate. A CCP is never reported as a blocker. The one exception is the big red but
   told immediately, as one item, with what changed. A deferred instruction still stands after
   the state changes.
 - **No silent CCPs.** Every CCP ends in a question or a notification to the user.
-- **The user's words stay in the conversation.** Nothing the user says or writes in chat is
-  copied into a record, a memory, a commit message or any other artifact. Where the user's
-  direction bears on the point, the record states the direction as the agent understood it,
-  with the date, and names it as the agent's account; it never presents the agent's wording as
-  a quotation.
+- **The user's words go in records, not in authored files.** Where the user's direction bears
+  on the point, the issue-tracker record and the log carry it verbatim, with its date, and the
+  agent's own account sits beside it, marked as the agent's. Authored files (rules, skills,
+  memories, docs, code comments, agent prompts) never quote the user's words;
+  they state the rule plainly and point to the record. The agent's wording is never presented
+  as the user's.
 
 ## The procedure
 
@@ -68,7 +69,7 @@ it applies.
      - **Decision needed:** one sentence.
      - **Provenance:** the records it gates or relates to (linked), commits, files and lines, the
        agent and session that raised it, and the user's direction where it bears on the point,
-       stated in the agent's words with its date (no quotations from chat).
+       quoted verbatim with its date, with the agent's account beside it marked as the agent's.
      - **What I already checked:** each tool from step 1 and what it returned.
      - **Situation (facts only):** what happened and what is affected, without options or a
        preferred answer. The reviewer in step 6 rewrites this neutrally.
@@ -79,8 +80,8 @@ it applies.
 
 4. **Keep working.** Continue on everything the CCP does not gate. Never idle on it.
 
-5. **Verify.** Re-read the record: every heading filled, links resolve, nothing quoted from the
-   conversation, and nothing of the agent's wording presented as the user's.
+5. **Verify.** Re-read the record: every heading filled, links resolve, the user's words quoted
+   exactly where they are quoted, and nothing of the agent's wording presented as the user's.
 
 6. **Review and neutral write-up.** Give the record id to one reviewer subagent that did not
    raise it:
@@ -139,8 +140,8 @@ Every agent dispatched by an agent running this skill gets this line in its prom
 
 ## BUGS
 
-- The rule "The user's words stay in the conversation" (Rules, and step 2 "no quotations from chat") reaches issue-tracker records and so narrows the author's direction dir-km4 of 2026-11-08, which requires each direction recorded in the tracker with his words allowed verbatim in records and logs and barred only from authored files (rules, skills, memories, docs, code comments, agent prompts). Found 2026-11-08; bead persistint-game-218l.
+- Closed 2026-11-10: the rule that kept the user's words out of records narrowed the author's direction dir-km4; Rules, step 2 and step 5 now put his words verbatim in records and logs and keep them out of authored files only, with dir-km4's list of authored files. Bead persistint-game-218l.
 
 ## TODO
 
-- Narrow the rule to authored files: records in the issue tracker and logs carry the user's direction verbatim with its date; the agent's own account is marked as its own beside it. Fix bead persistint-game-218l.
+- Write `VV.md` (none exists) with the procedures and the platforms the README claims: Claude Code and every agent that reads the Agent Skills format from `.agents/skills/`, `.github/skills/` or `.kiro/skills/`, named one by one: claude-code/win32, claude-code/linux-wsl, claude-code/linux, claude-code/darwin, codex/win32, codex/linux-wsl, antigravity/win32, antigravity/linux-wsl, kiro/win32. Then run V&V on each; this entry stays until each has passed and is recorded there.

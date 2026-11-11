@@ -7,7 +7,7 @@
 ## What you get
 
 - **A cui-bono card per text** (`cui-bono`): the shape score with the triggering quotes, the register and who publishes in it, who gains, every claim with what it cites and what the record shows, the deconstruction (fallacies, stale figures, loaded words), a logic grid of premises against claims, an incompatibility matrix of the held premises, and for the agent's own reply, which voice it reproduced and why.
-- **A decomposition per text** (`logic-decomposer`): every sentence numbered and classified, every proposition quoted with its sentence id, conditionals written with their direction and contrapositive, quantifiers with scope, entities and constraints, two grades per proposition (evidence from the record E0–E6, GRADE-adjusted; confidence as stated S1–S7 or S?) with the overclaim/underclaim gap, and a validity report on the decomposition itself.
+- **A decomposition per text** (`logic-decomposer`): every sentence numbered and classified, every proposition quoted with its sentence id, conditionals written with their direction and contrapositive, quantifiers with scope, entities and constraints, two grades per proposition (evidence from the record E0–E6, with the GRADE starting certainty in its own column; confidence as stated S1–S7 or S?) with the overclaim/underclaim gap, and a validity report on the decomposition itself.
 - **The formal methods, with their working** (`logic-toolbox`): conditional chains, sequencing and grouping setups, the cross-elimination grid, constraint propagation, syllogisms and Venn diagrams, truth tables, indirect proof, the premise logic grid, the incompatibility matrix of held premises with a joint-satisfiability check, assumption and flaw tests, Toulmin maps and Wigmore charts.
 - **A network card per claim** (`citation-farm-audit`): the citation graph from the policy document down to its primary data, the people and the money in it (authors, funders, boards, committee seats), the flags raised, where the chain ends (objective data, self-report or opinion), and what was not verified.
 
@@ -40,15 +40,14 @@
 - `skills/logic-toolbox/SKILL.md`: fifteen methods, each with the problem it solves, steps, notation, the test it supports, a micro-example and its source.
 - `skills/logic-toolbox/references/methods-research-2026-11-08.md`: the research record behind the toolbox and the decomposer, with quotations, and the list of what is still unchecked.
 - `skills/logic-toolbox/scripts/grids.mjs`, `truth-table.mjs`, `conditionals.mjs`: print the LOGIC GRID, INCOMPATIBILITY MATRIX and cross-elimination grids (empty or filled), a full truth table with its validity or consistency verdict, and conditional rules with contrapositives, chains and forced values. Node 18+, no dependencies.
-- `test/run.js`: runs the four scripts from the command line and compares their output with `test/fixtures/`: `node plugins/cui-bono/test/run.js`.
+- `test/run.js`: runs the five scripts from the command line (the profile script against a local stand-in server, so no network is used) and compares their output with `test/fixtures/`: `node plugins/cui-bono/test/run.js`.
 - `skills/citation-farm-audit/SKILL.md`: the procedure (citation graph, people and money, flags, primary-data reach, fairness, co-authorship network, forward motion), the person-record fields, the network-card format, the API queries, and a worked example.
 - `skills/citation-farm-audit/scripts/openalex-profile.mjs`: one author's citation profile from OpenAlex in one run: top works, co-authors, top citers marked as co-authors or not, self-citations, citing fields, funders. Node 18 or later, no dependencies: `node openalex-profile.mjs <OpenAlex author id>`.
 - `skills/source-provenance/SKILL.md`: the six checks, the provenance-card format, the fairness rules, the references, and a worked example.
 
 ## Requirements
 
-Node 18 or later (built-in `fetch`) for the profile script; curl for the example queries.
-Node 18 or later is needed for all the scripts, not only the profile script: `grids.mjs`, `truth-table.mjs`, `conditionals.mjs`, `skeleton.mjs` and `test/run.js` run on plain Node with no dependencies. No API keys. OpenAlex requests without a key share a small daily budget per IP address, so the skill keeps queries narrow and caches results under `~/.local/share/claude/`.
+Node 18 or later for every script: `openalex-profile.mjs` (built-in `fetch`), `grids.mjs`, `truth-table.mjs`, `conditionals.mjs`, `skeleton.mjs` and `test/run.js`, all plain Node with no dependencies. curl for the example API queries. The `cui-bono` skill's step 3 also requires the `informal-logic-check`, `staleness-guard`, `word-lineage` and `hidden-libel-check` skills (from this marketplace). No API keys. OpenAlex requests without a key share a small daily budget per IP address, so the skill keeps queries narrow and caches results under `~/.local/share/claude/`.
 
 ## Install
 

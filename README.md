@@ -43,6 +43,8 @@ A collection of [Agent Skills](https://agentskills.io) and Claude Code plugins f
 
 - [`hidden-libel-check`](plugins/hidden-libel-check/): Before anything the agent wrote goes out under your name (commit messages, READMEs, code comments, PR descriptions, docs), it is checked for text that misrepresents or defames you. Nothing is changed without your OK.
 - [`spank-dario`](plugins/spank-dario/): Keeps software tools from being named as authors of your work: no Co-Authored-By trailers, "Generated with" lines or session links in your commits, PRs and documents. The copyright and moral-rights law of your country is on file to back it.
+- [`dont-be-hitler`](plugins/dont-be-hitler/): Your prose is your art. The agent never censors, sanitises, nags or tone-polices your words, quotes you verbatim, and uses your literal-translation dictionary in its own voice instead. Pairs with `spank-dario`.
+- [`goal-compliant-task-queue`](plugins/goal-compliant-task-queue/): Your questions are tracked the way you specified: each gets a session task and one working document where only you tick and you comment, shown in a claude.ai hub and a Claude Code pane; the agent asks "Have I sufficiently responded to your question?", and a bead is created only after your "yes". A tested CLI and MCP server do the record-keeping; no hooks.
 - [`open-and-honest-agent`](plugins/open-and-honest-agent/): The agent writes down its built-in assumptions about you, your goals and itself at the start of the work, and logs each time it acts on one, so you can correct them early.
 - [`agent-darktriad-check`](plugins/agent-darktriad-check/): Scores every reply the agent gives you for evasion, gaslighting, sycophancy, false authority and similar tactics with Brett Whitty's KontentKop scorer, and logs the scores. A companion skill names nine evasion patterns so the agent avoids them. Set a threshold, and a reply that scores at or above it goes back to the agent, marked up, instead of reaching you. Ships as a Go binary per platform that embeds the scorer, with a pure-Node fallback.
 - [`log-session`](plugins/log-session/): `/log-session` writes the session to a work-journal calendar in your Google Calendar as a meeting with the agent: topic, start and end, the session link and terse notes, so any day's work traces back to its session. Through the Claude app's calendar tools, a Google Calendar connector, or the `gws` CLI; never your primary calendar.
@@ -53,6 +55,7 @@ A collection of [Agent Skills](https://agentskills.io) and Claude Code plugins f
 
 ### Skills you can rely on
 
+- [`gnox`](plugins/gnox/): Gives every skill and sub-command in this marketplace a single `/gnox:<plugin>[:<skill>]` prefix, registers `mise`'s safe-mode MCP server, and establishes the GNOMATIX Namespacing Convention (`workspace_root:subdir:...` scoping, `[NS]{@target}` CLI-safe callouts, and `«term» [CURIE]` grounding) across your working session.
 - [`skill-vv`](plugins/skill-vv/): Before you first use a skill, tells you what it needs and whether it has been tested on your model and platform. Typing `/<skill> #bug <what went wrong>` reports a bug, which is then fixed or explained to you.
 - [`steering-audit-suite`](plugins/steering-audit-suite/): Audits the documents that tell agents how to behave (CLAUDE.md and steering files, skills, runbooks and specs, or a whole directory of them) for the ways a rule can be followed to the letter and violated in intent, plus portability gaps and documents in the wrong format, and reports findings for you to decide on. Five skills: `audit-rule`, `audit-skill`, `audit-workflow`, `audit-collection` and the standalone `rule-audit`.
 
@@ -69,6 +72,7 @@ A collection of [Agent Skills](https://agentskills.io) and Claude Code plugins f
 ### Your project's images
 
 - [`og-social-image`](plugins/og-social-image/): Makes the social-preview image for your repository or page from a hero, banner or logo: the exact pixel size for GitHub, Open Graph or X, cover-cropped with the important parts in frame, under the platform's file-size cap, and measured before it's called done.
+- [`update-readme-images`](plugins/update-readme-images/): Curates, generates, post-processes, embeds, and audits `README.md` and `SKILL.md` imagery across your repository from a single config file (`readme-images.json`) pairing GNOX-namespaced style guides (`workspace_root:subdir:...`) with glob-matched rules documents (`*`, `**`). Handles top-level titled hero banners, section/skills sub-panels, and transparent-corner oval inset window portraits (`PNG32` alpha); automatically builds `1280×640` `< 1 MB` OG social images in every `assets/images` directory unless opted out; and stages candidate replacements for existing images into `assets/drafts/` for your approval rather than overwriting live files.
 
 Each plugin is self-contained: its own manifest, its skills and/or hooks, and a README that goes into the detail (`satori` is hooks only; `skill-vv` checks requirements and V&V for every plugin that ships a `VV.md`). New plugins drop in as siblings under `plugins/`.
 
@@ -90,21 +94,21 @@ This repository is a Claude Code marketplace. Add it once, then install any plug
 Each skill is a folder with a `SKILL.md` in the cross-agent [Agent Skills](https://agentskills.io) format ([specification](https://agentskills.io/specification.md)), at `plugins/<plugin>/skills/<skill>/`. The same folders are also exposed, as relative symlinks, at the paths the agents below read when this repository is cloned or added as a workspace:
 
 - **OpenAI Codex** ([docs](https://learn.chatgpt.com/docs/build-skills)): project `.agents/skills/`; user `~/.agents/skills/`; install: clone, or `$skill-installer` from the repo.
-- **Gemini CLI / Antigravity CLI** ([docs](https://geminicli.com/docs/cli/skills/)): project `.agents/skills/` or `.gemini/skills/`; user `~/.agents/skills/` or `~/.gemini/skills/`; install: `gemini skills install https://github.com/gnomatix/gnomatix-oss-skills.git --path plugins/<plugin>/skills/<skill>`.
+- **Antigravity CLI (`agy`)**: project `.agents/skills/` or `.gemini/skills/`; user `~/.agents/skills/`, `~/.gemini/skills/`, or `~/.gemini/config/plugins/`; install from a clone with `agy plugin install ./plugins/<plugin>` (supersedes the obsoleted `gemini` CLI).
 - **Cursor** ([docs](https://cursor.com/docs/context/skills)): project `.agents/skills/` or `.cursor/skills/`; user `~/.agents/skills/` or `~/.cursor/skills/`; install: clone; a Cursor plugin marketplace manifest is not yet provided.
 - **OpenCode** ([docs](https://opencode.ai/docs/skills/)): project `.agents/skills/`, `.opencode/skills/` or `.claude/skills/`; user `~/.agents/skills/`, `~/.config/opencode/skills/` or `~/.claude/skills/`; install: clone or copy a skill folder.
 - **GitHub Copilot** ([docs](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills)): project `.github/skills/`, `.agents/skills/` or `.claude/skills/`; user `~/.copilot/skills/` or `~/.agents/skills/`; install: clone.
 - **VS Code** ([docs](https://code.visualstudio.com/docs/copilot/customization/agent-skills)): project `.github/skills/` (Copilot); `.agents/skills/` and `.claude/skills/` (local harness); user `~/.copilot/skills/`, `~/.agents/skills/`, `~/.claude/skills/`; install: clone.
 - **Kiro** ([docs](https://kiro.dev/docs/skills/)): project `.kiro/skills/`; user `~/.kiro/skills/` (IDE); install: Kiro panel → Import a skill → the URL of a skill folder, e.g. `.../tree/main/plugins/did-you-rtfm/skills/did-you-rtfm`.
 
-The symlink farms are `.agents/skills/`, `.github/skills/` and `.kiro/skills/`; on Windows, check out with `core.symlinks=true` or copy the folders. The full list of agents that read the format is at [agentskills.io](https://agentskills.io/clients.md). The `all-help-no-harm` plugin additionally ships native integrations for Claude Code, Gemini CLI and its forks, Kiro CLI and app, and Antigravity, indexed in [`plugins/all-help-no-harm/platforms/README.md`](plugins/all-help-no-harm/platforms/README.md), and a VS Code extension lives in [`vscode-extension/`](vscode-extension/).
+The symlink farms are `.agents/skills/`, `.github/skills/` and `.kiro/skills/`; on Windows, check out with `core.symlinks=true` or copy the folders. The full list of agents that read the format is at [agentskills.io](https://agentskills.io/clients.md). The `all-help-no-harm` plugin additionally ships native integrations for Claude Code, Antigravity CLI (`agy`), Kiro CLI and app, and Antigravity IDE, indexed in [`plugins/all-help-no-harm/platforms/README.md`](plugins/all-help-no-harm/platforms/README.md), and a VS Code extension lives in [`vscode-extension/`](vscode-extension/).
 
 ## Repo layout
 
 ```
 .
 ├── .claude-plugin/marketplace.json   # Claude Code marketplace manifest (every plugin below)
-├── .agents/skills/                   # symlinks to every skill: Codex, Gemini/Antigravity CLI, Cursor, OpenCode, Copilot, VS Code
+├── .agents/skills/                   # symlinks to every skill: Codex, Antigravity CLI (agy), Cursor, OpenCode, Copilot, VS Code
 ├── .github/skills/                   # symlinks to every skill: GitHub Copilot, VS Code
 ├── .kiro/skills/                     # symlinks to every skill: Kiro
 ├── .codex/                           # Codex hooks for agents working in this repo (beads)
@@ -122,7 +126,7 @@ The symlink farms are `.agents/skills/`, `.github/skills/` and `.kiro/skills/`; 
         └── hooks/                      # Claude Code only, where the plugin has hooks
 ```
 
-Plugins: all-help-no-harm, satori, skill-vv, critical-control-points, did-you-rtfm, hidden-libel-check, open-and-honest-agent, python-elimination-program, word-lineage, ontology-lookup, inaudible-markup, agent-darktriad-check, spank-dario.
+Plugins: all-help-no-harm, satori, skill-vv, steering-audit-suite, gnox, critical-control-points, did-you-rtfm, staleness-guard, informal-logic-check, bear-loads, pony, hidden-libel-check, spank-dario, open-and-honest-agent, agent-darktriad-check, log-session, cui-bono, python-elimination-program, word-lineage, ontology-lookup, inaudible-markup, og-social-image, update-readme-images, dont-be-hitler, goal-compliant-task-queue.
 
 ## Versions
 

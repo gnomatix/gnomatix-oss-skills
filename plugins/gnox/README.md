@@ -2,8 +2,7 @@
 
 ![gnox](assets/images/gnox-banner.jpg)
 
-One namespace for every skill in the gnomatix-oss-skills marketplace. Type `/gnox:` to
-see them all.
+One namespace for every skill in the `gnomatix-oss-skills` marketplace — plus a session-wide **GNOMATIX Namespacing Convention** hook so every `gnox`-related skill uses the same scoping, callout, and routing rules automatically. Type `/gnox:` to see every routed command.
 
 | Command | Runs |
 |---|---|
@@ -13,6 +12,19 @@ see them all.
 
 Each command hands its arguments to the plugin's own skill, so the plugin has to be
 installed too. The plugins' own commands (`/<plugin>:<skill>`) keep working.
+
+## Session-Wide GNOMATIX Namespacing Convention
+
+When `gnox` is installed, its `SessionStart` and `PostCompact` hooks ([`hooks/session-namespace.js`](hooks/session-namespace.js)) — together with [`skills/gnox/SKILL.md`](skills/gnox/SKILL.md) on non-hook agents — establish the **GNOMATIX Namespacing Convention** for the working session:
+
+1. **Hierarchical Path & Config Scoping (`workspace_root:subdir:...`)**:
+   - Detects `workspace_root` from the active repository (`.claude/readme-images.json`, `.claude-plugin/marketplace.json`, `package.json`, or directory name).
+   - Scopes subdirectory configurations, style guides (`update-readme-images`), and rules along colon-delimited chains (`<workspace_root>:plugins:<name>`, `<workspace_root>:packages:<pkg>`) with top-down inheritance from `<workspace_root>`.
+2. **CLI-Safe Callouts & 4-Step Namespace Resolution (`[NS]{@target}`)**:
+   - Standardizes asynchronous notifications, proposed-revision alerts, and action items as `[NS]{@target} <message> #domain #urgency #action` (avoiding bare `@person` tokens that trigger CLI file-attachment parsers).
+   - Enforces the 4-step resolution rule: explicit `[NS]` → active task/Bead namespace → directory/`up:` chain → `[UNRESOLVED] #needs-namespace` (never guessing silently).
+3. **Inline Entity Grounding (`«term» [CURIE]`)**:
+   - Grounds specific named entities on first mention using silent guillemets and Bioregistry CURIEs (`ontology-lookup` + `inaudible-markup`).
 
 ## Install
 
@@ -73,6 +85,7 @@ each plugin's `commands/**/*.md`:
 ```
 node plugins/gnox/scripts/build-commands.js           # write plugins/gnox/commands/
 node plugins/gnox/scripts/build-commands.js --check   # exit 1 if anything is out of date
+node plugins/gnox/test/run.js                         # run full router + hook V&V suite
 ```
 
 Run it after adding, renaming or removing a plugin or a skill. A file under `commands/`

@@ -8,10 +8,10 @@ INCOMPATIBILITY MATRIX
   A1  a condition of entry is not voluntary
 
         P1    P2    P3    P4
-  P1    =     X|A1  X     (board needed)  o
+  P1    =     X|A1  X     o  (P3: board needed)
   P2          =     o     o
   P3                =     o
   P4                      =
  Joint: H as stated: not satisfiable — minimal inconsistent subsets {P1, P3} (from the pairwise X cells)
         H under A1: X (minimal subset {P1, P2})
- Verdict: inconsistent; load-bearing assumptions: A1
+ Verdict: inconsistent; depends on: none

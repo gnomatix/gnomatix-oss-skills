@@ -1,6 +1,6 @@
 {
   "name": "og-social-image",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "An Agent Skill that makes a correctly sized social-preview image (GitHub social preview, Open Graph, X card) from a hero, banner, logo or illustration with ImageMagick: cover-crop to the exact pixels, JPEG at a quality that stays under the platform's file-size cap, and dimensions and bytes verified before the result is called done.",
   "author": {
     "name": "Brett Whitty",

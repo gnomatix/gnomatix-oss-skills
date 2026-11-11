@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "worklog": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/lib/mcp-server.mjs"]
+    }
+  }
+}

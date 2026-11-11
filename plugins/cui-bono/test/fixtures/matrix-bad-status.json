@@ -1,0 +1,4 @@
+{
+  "premises": { "h1": "all of it is voluntary", "h2": "Pause has LARC as the condition" },
+  "cells": { "h1|h2": { "status": "incompatable", "reason": "misspelt status" } }
+}

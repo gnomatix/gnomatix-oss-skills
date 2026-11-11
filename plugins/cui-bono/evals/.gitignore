@@ -1,0 +1,4 @@
+results/
+
+# raw session logs written by eval runs; never commit
+*-0000-4000-8000-*.jsonl

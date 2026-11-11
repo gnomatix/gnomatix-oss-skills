@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+// worklog: the goal-compliant-task-queue CLI. Run it as: node "${CLAUDE_PLUGIN_ROOT}/bin/worklog" <command> …
+// This file stays CommonJS so it runs without a package.json; the work is in lib/cli.mjs.
+const { pathToFileURL } = require('url')
+const { join } = require('path')
+import(pathToFileURL(join(__dirname, '..', 'lib', 'cli.mjs')).href)
+  .then(m => m.main(process.argv.slice(2)))
+  .then(code => { process.exitCode = code })
+  .catch(e => { process.stderr.write(`worklog: ${(e && e.stack) || e}\n`); process.exitCode = 1 })

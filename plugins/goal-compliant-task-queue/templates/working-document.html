@@ -1,0 +1,368 @@
+<title>Working document</title>
+<meta name="color-scheme" content="light dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+/* goal-compliant-task-queue: one template for the hub (mode "hub") and each question's document (mode "doc").
+   The look is a lab notebook kept by two hands: the agent's entries in serif on ruled paper,
+   Brett's marks (tick, USER COMMENT) in a distinct ink with a margin rule. */
+:root{
+  --paper:#f6f3ea; --sheet:#fffdf7; --ink:#1f2328; --muted:#5b616b; --rule:#d9d3c3; --fence:#efeadc;
+  --agent:#24527a; --brett:#8a3b12; --brett-wash:#fbeee3; --ok:#2f6b3a; --warn:#8a5a00; --warn-wash:#fff4d6;
+  --focus:#0b5cad;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --serif:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#15171a; --sheet:#1c1f23; --ink:#e7e3d8; --muted:#a3a9b2; --rule:#343a42; --fence:#23272c;
+  --agent:#8cbcec; --brett:#f0a37a; --brett-wash:#2c211b; --ok:#8fd19a; --warn:#f0c05a; --warn-wash:#2b2615;
+  --focus:#9cc8ff; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#15171a; --sheet:#1c1f23; --ink:#e7e3d8; --muted:#a3a9b2; --rule:#343a42; --fence:#23272c;
+  --agent:#8cbcec; --brett:#f0a37a; --brett-wash:#2c211b; --ok:#8fd19a; --warn:#f0c05a; --warn-wash:#2b2615;
+  --focus:#9cc8ff; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:16px;line-height:1.55}
+main{max-width:880px;margin:0 auto;padding:20px max(16px,env(safe-area-inset-right,0px)) 72px max(16px,env(safe-area-inset-left,0px))}
+.mono,h1,h2,h3,.tabs button,.pill,.meta,button,label.tick{font-family:var(--mono)}
+h1{font-size:20px;margin:0 0 4px;font-weight:600;text-wrap:balance}
+h1 .hash,h2 .hash{color:var(--agent)}
+.meta{color:var(--muted);font-size:12.5px;display:flex;flex-wrap:wrap;gap:6px 14px;margin-bottom:18px}
+.meta a{color:var(--agent)}
+.pill{display:inline-block;font-size:11.5px;padding:1px 7px;border:1px solid currentColor;border-radius:2px;letter-spacing:.03em;text-transform:uppercase}
+.pill.open{color:var(--agent)} .pill.answered{color:var(--ok)} .pill.resolved{color:var(--muted)} .pill.ask{color:var(--warn);background:var(--warn-wash)}
+.tabs{display:flex;flex-wrap:wrap;gap:0;border-bottom:2px solid var(--ink);margin:6px 0 0}
+.tabs button{background:transparent;color:var(--muted);border:1px solid transparent;border-bottom:0;padding:8px 12px;font-size:13px;cursor:pointer;margin-bottom:-2px;max-width:100%;text-align:left}
+.tabs button[aria-selected="true"]{background:var(--sheet);color:var(--ink);border-color:var(--ink);border-bottom:2px solid var(--sheet);font-weight:600}
+.tabs .flag{color:var(--warn);margin-left:6px}
+.sheet{background:var(--sheet);border:1px solid var(--rule);border-top:0;padding:4px 18px 18px}
+.single .sheet{border-top:1px solid var(--rule)}
+section.item{padding:18px 0;border-bottom:1px dashed var(--rule);display:grid;gap:8px;min-width:0}
+section.item:last-child{border-bottom:0}
+h2{font-size:15px;margin:0;font-weight:600}
+h3{font-size:12px;margin:8px 0 0;color:var(--muted);font-weight:600;letter-spacing:.04em}
+.body{white-space:pre-wrap;overflow-wrap:anywhere}
+.body code{font-family:var(--mono);font-size:.88em;background:var(--fence);padding:0 4px}
+.body blockquote{margin:0;padding-left:12px;border-left:3px solid var(--rule);color:var(--muted);font-style:italic}
+.empty{color:var(--muted);font-style:italic}
+label.tick{display:inline-flex;gap:10px;align-items:center;font-size:13px;color:var(--brett);font-weight:600;width:max-content;max-width:100%}
+label.tick input{width:18px;height:18px;accent-color:var(--brett);margin:0}
+label.tick .who{color:var(--muted);font-weight:400}
+.brett{border-left:3px solid var(--brett);background:var(--brett-wash);padding:8px 10px}
+.brett h3{color:var(--brett);margin-top:0}
+textarea{width:100%;min-height:76px;resize:vertical;font:15px/1.5 var(--serif);color:var(--ink);background:var(--sheet);border:1px solid var(--rule);padding:6px 8px}
+textarea[readonly]{background:transparent;border-style:dashed}
+.fence{background:var(--fence);padding:8px 10px;overflow-x:auto;min-width:0}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:6px}
+button.act{font-size:12.5px;background:var(--ink);color:var(--sheet);border:1px solid var(--ink);padding:5px 10px;cursor:pointer}
+button.ghost{font-size:12.5px;background:transparent;color:var(--agent);border:1px solid var(--agent);padding:4px 9px;cursor:pointer}
+button:disabled{opacity:.55;cursor:default}
+.status{font-size:12px;color:var(--muted);font-family:var(--mono)}
+ul.mats{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+ul.mats a,ul.mats span.mat{color:var(--agent);text-decoration:none;overflow-wrap:anywhere}
+ul.mats a:hover{text-decoration:underline}
+ul.mats .emo{display:inline-block;width:1.6em}
+ul.mats code{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+ol.replies{margin:0;padding-left:20px} ol.replies li{margin:4px 0}
+ol.replies .t{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.notice{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin:10px 0}
+.banner{font-family:var(--mono);font-size:13px;color:var(--warn);background:var(--warn-wash);border-left:3px solid var(--warn);padding:8px 10px;margin:10px 0}
+.banner.archived{color:var(--muted);background:var(--fence);border-left-color:var(--muted)}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+@media (max-width:520px){.sheet{padding:2px 12px 12px}.tabs button{padding:7px 9px;font-size:12px}}
+</style>
+
+<main id="app"></main>
+<div id="announce" class="sr" role="status" aria-live="polite"></div>
+
+<script type="application/json" id="gctq-data">{"mode":"doc","doc":{"slug":"example","title":"Example question","url":"","status":"open","task_id":null,"opened_at":"","asked":0,"ready_not_asked":false,"answers":[],"sections":[],"review":{}}}</script>
+<script>
+(function () {
+  'use strict';
+  var DATA = JSON.parse(document.getElementById('gctq-data').textContent);
+  var HUB = DATA.mode === 'hub';
+  var docs = HUB ? (DATA.docs || []) : [DATA.doc];
+  var live = {};            // review rows from the page store, keyed by review doc id
+  var drafts = {};          // unsaved USER COMMENT text, keyed by review doc id
+  var db = null, owner = false, comments = null;
+  var lock = null;          // review/_lock while Brett's updates wait for Claude's review (A58)
+  var canSend = 'off', sending = false, sendNote = '';
+  var SEND_LIMIT = 3900;    // bytes of UTF-8 in one sendToClaude comment
+  function archived(doc) { return doc.status === 'resolved' }
+  function writable(doc) { return !!(db && owner && !lock && !sending && !archived(doc)) }
+  function why(doc, who) { return archived(doc) ? ' (archived, read-only)' : lock ? ' (locked: sent to Claude, read-only)' : who }
+  function lockText() { return 'Sent to Claude at ' + (lock && lock.at ? String(lock.at).slice(0, 16).replace('T', ' ') + ' UTC' : 'an unknown time') + ': read-only until Claude has reviewed it.' }
+  var selected = 0;
+  try { var saved = sessionStorage.getItem('gctq-tab'); if (saved) docs.forEach(function (d, i) { if (d.slug === saved) selected = i }) } catch (e) {}
+
+  function el(tag, attrs, kids) {
+    var n = document.createElement(tag);
+    if (attrs) Object.keys(attrs).forEach(function (k) {
+      var v = attrs[k];
+      if (v === null || v === undefined || v === false) return;
+      if (k === 'text') n.textContent = v;
+      else if (k.slice(0, 2) === 'on') n.addEventListener(k.slice(2), v);
+      else n.setAttribute(k, v === true ? '' : v);
+    });
+    (kids || []).forEach(function (c) { if (c) n.appendChild(typeof c === 'string' ? document.createTextNode(c) : c) });
+    return n;
+  }
+
+  // Light markdown: `code`, **bold**, "> " quote lines. Built with DOM nodes, never innerHTML.
+  function body(text, empty) {
+    var box = el('div', { 'class': 'body' });
+    if (!text || !String(text).trim()) { box.appendChild(el('span', { 'class': 'empty', text: empty || 'not written yet' })); return box }
+    var prevQuote = false;
+    String(text).split(/\r?\n/).forEach(function (line, i) {
+      var quote = /^> ?/.test(line);
+      if (i && !quote && !prevQuote) box.appendChild(document.createTextNode('\n'));
+      prevQuote = quote;
+      var host = quote ? el('blockquote') : box;
+      var rest = quote ? line.replace(/^> ?/, '') : line;
+      var re = /(`[^`]+`|\*\*[^*]+\*\*)/g, last = 0, m;
+      while ((m = re.exec(rest))) {
+        if (m.index > last) host.appendChild(document.createTextNode(rest.slice(last, m.index)));
+        var t = m[0];
+        host.appendChild(t[0] === '`' ? el('code', { text: t.slice(1, -1) }) : el('strong', { text: t.slice(2, -2) }));
+        last = m.index + t.length;
+      }
+      if (last < rest.length) host.appendChild(document.createTextNode(rest.slice(last)));
+      if (quote) box.appendChild(host);
+    });
+    return box;
+  }
+
+  function reviewId(doc, s) { return HUB ? doc.slug + '~' + s.id : s.id }
+  function review(doc, s) { return live[reviewId(doc, s)] || (doc.review || {})[s.id] || {} }
+
+  function material(m) {
+    var name = (m.label ? m.label + ': ' : '') + m.uri;
+    var emo = el('span', { 'class': 'emo', 'aria-hidden': 'true', text: m.emoji || '🔗' });
+    if (/^https?:\/\//.test(m.uri)) {
+      return el('li', null, [el('a', { href: m.uri, target: '_blank', rel: 'noopener', title: m.title || name, 'aria-label': name + ' (opens in a new tab)' }, [emo, m.label || m.uri])]);
+    }
+    return el('li', null, [el('span', { 'class': 'mat', title: m.title || name }, [emo, (m.label ? m.label + ' ' : ''), el('code', { text: m.uri })])]);
+  }
+
+  async function saveReview(id, patch, statusEl, ctl) {
+    if (!db || !owner || lock) return false;
+    var next = Object.assign({}, live[id] || {}, patch, { updated: new Date().toISOString() });
+    var saved = false;
+    if (ctl) ctl.disabled = true;
+    statusEl.textContent = 'saving…';
+    var say = function (t) { var a = document.getElementById('announce'); if (a) a.textContent = t };
+    try { await db.doc('review/' + id).set(next); live[id] = next; saved = true; statusEl.textContent = 'saved ' + next.updated.slice(0, 16).replace('T', ' ') + ' UTC'; say(patch.comment !== undefined ? 'Comment saved' : (patch.checked ? 'Confirmed' : 'Confirmation removed')) }
+    catch (err) { statusEl.textContent = 'not saved: ' + (err && (err.message || err.code)); say(statusEl.textContent) }
+    if (ctl) ctl.disabled = false;
+    return saved;
+  }
+
+  function sectionView(doc, s) {
+    var w = writable(doc);
+    var id = reviewId(doc, s), r = review(doc, s), secId = 'sec-' + doc.slug + '-' + s.id;
+    var status = el('span', { 'class': 'status', id: 'st-' + id, text: r.updated ? 'saved ' + String(r.updated).slice(0, 16).replace('T', ' ') + ' UTC' : '' });
+    var box = el('input', { type: 'checkbox', id: 'tick-' + id, checked: !!r.checked, disabled: !(w),
+      'aria-label': 'Brett confirms section ' + s.order + ', ' + s.title + (w ? '' : why(doc, ' (only Brett can tick this)')),
+      onchange: function (e) { saveReview(id, { checked: e.target.checked }, status) } });
+    var ta = el('textarea', { id: 'c-' + id, readonly: !(w), 'aria-describedby': 'st-' + id,
+      'aria-label': 'USER COMMENT on section ' + s.order + ', ' + s.title + (w ? '' : why(doc, ' (read-only)')),
+      placeholder: w ? 'Correct or comment on this section' : 'Brett writes here',
+      oninput: function (e) { drafts[id] = e.target.value } });
+    ta.value = drafts[id] !== undefined ? drafts[id] : (r.comment || '');
+    var save = w ? el('button', { 'class': 'act', type: 'button', text: 'Save comment',
+      onclick: function (e) { var b = e.currentTarget, text = ta.value; saveReview(id, { comment: text }, status, b).then(function (saved) { if (saved && drafts[id] === text) delete drafts[id] }) } }) : null;
+    var sec = el('section', { 'class': 'item', id: secId, 'aria-labelledby': secId + '-h' }, [
+      el('h2', { id: secId + '-h' }, [el('span', { 'class': 'hash', 'aria-hidden': 'true', text: '## ' }), s.order + '. ' + s.title]),
+      el('label', { 'class': 'tick', 'for': 'tick-' + id }, [box, el('span', { 'aria-hidden': 'true', text: '[' + (r.checked ? 'x' : ' ') + '] Brett confirms' }),
+        el('span', { 'class': 'who', 'aria-hidden': 'true', text: '(only Brett ticks this)' })]),
+      body(s.body),
+      el('div', { 'class': 'brett' }, [
+        el('h3', null, [el('label', { 'for': 'c-' + id, text: '``` USER COMMENT' })]),
+        ta, el('div', { 'class': 'row' }, [save, status]),
+      ]),
+      el('h3', { text: '# FULL CONTEXT' }),
+      el('div', { 'class': 'fence' }, [body(s.context, 'none yet')]),
+      el('h3', { text: '# SUPPORTING MATERIALS' }),
+      el('div', { 'class': 'fence' }, [(s.materials && s.materials.length) ? el('ul', { 'class': 'mats' }, s.materials.map(material)) : el('span', { 'class': 'empty', text: 'none yet' })]),
+    ]);
+    if (comments) sec.appendChild(el('div', { 'class': 'row' }, [el('button', { 'class': 'ghost', type: 'button', text: 'Comment on this section',
+      'aria-label': 'Comment on section ' + s.order + ', ' + s.title,
+      disabled: !!lock || archived(doc), onclick: function () { comments.openComposer({ element: sec }).catch(function () {}) } })]));
+    return sec;
+  }
+
+  function docView(doc) {
+    var wrap = el('div');
+    var meta = el('div', { 'class': 'meta' }, [
+      el('span', { 'class': 'pill ' + doc.status, text: doc.status }),
+      doc.ready_not_asked ? el('span', { 'class': 'pill ask', text: 'answer ready, not asked' }) : null,
+      doc.task_id != null ? el('span', { text: 'task #' + doc.task_id }) : null,
+      doc.opened_at ? el('span', { text: 'opened ' + String(doc.opened_at).slice(0, 16).replace('T', ' ') + ' UTC' }) : null,
+      el('span', { text: 'asked ' + (doc.asked || 0) + '×' }),
+      HUB && doc.url ? el('a', { href: doc.url, target: '_blank', rel: 'noopener', title: 'Open the working document for ' + doc.title, 'aria-label': 'Open the working document for ' + doc.title + ' (opens in a new tab)' }, ['🧩 working document']) : null,
+      !HUB && DATA.hub_url ? el('a', { href: DATA.hub_url, target: '_blank', rel: 'noopener', 'aria-label': 'Open all open questions (opens in a new tab)' }, ['🗂️ all open questions']) : null,
+    ]);
+    wrap.appendChild(meta);
+    if (archived(doc)) wrap.appendChild(el('p', { 'class': 'banner archived', role: 'note', text: 'Archived work log: this question is resolved; the page is read-only.' }));
+    var sheet = el('div', { 'class': 'sheet' }, (doc.sections || []).map(function (s) { return sectionView(doc, s) }));
+    if (doc.answers && doc.answers.length) {
+      sheet.appendChild(el('section', { 'class': 'item', 'aria-label': "Brett's replies" }, [
+        el('h2', null, [el('span', { 'class': 'hash', 'aria-hidden': 'true', text: '## ' }), "Brett's replies (verbatim)"]),
+        el('ol', { 'class': 'replies' }, doc.answers.map(function (a) {
+          return el('li', null, [el('span', { 'class': 't', text: String(a.at).slice(0, 16).replace('T', ' ') + ' UTC ' }), body(a.text)]);
+        })),
+      ]));
+    }
+    wrap.appendChild(sheet);
+    return wrap;
+  }
+
+  function render() {
+    var app = document.getElementById('app');
+    var focus = document.activeElement && document.activeElement.id;
+    var caret = focus && document.activeElement.selectionStart;
+    app.textContent = '';
+    if (!HUB) {
+      var d = docs[0];
+      app.className = 'single';
+      app.appendChild(el('h1', null, [el('span', { 'class': 'hash', 'aria-hidden': 'true', text: '# ' }), d.title]));
+      header(app);
+      app.appendChild(docView(d));
+    } else {
+      app.appendChild(el('h1', null, [el('span', { 'class': 'hash', 'aria-hidden': 'true', text: '# ' }), 'Open questions']));
+      header(app);
+      app.appendChild(el('p', { 'class': 'notice', text: docs.length ? 'One tab per open question, oldest first: the first is the active one. Synced ' + (DATA.synced ? String(DATA.synced).slice(0, 16).replace('T', ' ') + ' UTC' : 'never') + '.' : 'No open questions. claude-cli opens a document for each one before asking you.' }));
+      if (docs.length) {
+        if (selected >= docs.length) selected = 0;
+        var tabs = el('div', { 'class': 'tabs', role: 'tablist', 'aria-label': 'Open questions' }, docs.map(function (d, i) {
+          return el('button', { role: 'tab', type: 'button', id: 'tab-' + d.slug, 'aria-selected': String(i === selected), 'aria-controls': 'panel',
+            tabindex: i === selected ? '0' : '-1',
+            onclick: function () { pick(i) },
+            onkeydown: function (e) {
+              var k = e.key, n = docs.length;
+              if (k === 'ArrowRight' || k === 'ArrowLeft' || k === 'Home' || k === 'End') {
+                e.preventDefault();
+                pick(k === 'Home' ? 0 : k === 'End' ? n - 1 : (selected + (k === 'ArrowRight' ? 1 : n - 1)) % n, true);
+              }
+            } }, [i === 0 ? el('span', { 'aria-hidden': 'true', text: '▸ ' }) : null, d.title, i === 0 ? el('span', { 'class': 'sr', text: ' (active question)' }) : null, d.ready_not_asked ? el('span', { 'class': 'flag' }, [el('span', { 'aria-hidden': 'true', text: '●' }), el('span', { 'class': 'sr', text: ' (answer ready, not asked)' })]) : null]);
+        }));
+        app.appendChild(tabs);
+        var panel = el('div', { role: 'tabpanel', id: 'panel', 'aria-labelledby': 'tab-' + docs[selected].slug, tabindex: '0' }, [docView(docs[selected])]);
+        app.appendChild(panel);
+      }
+    }
+    if (!db) app.appendChild(el('p', { 'class': 'notice', text: 'Ticks and comments need a signed-in claude.ai view; what is shown above is the content as last synced.' }));
+    else if (!owner) app.appendChild(el('p', { 'class': 'notice', text: 'Read-only: only Brett (the owner) ticks and comments here.' }));
+    if (focus) { var f = document.getElementById(focus); if (f) { f.focus(); if (caret != null && f.setSelectionRange) try { f.setSelectionRange(caret, caret) } catch (e) {} } }
+  }
+
+  // The lock banner and "Send my updates to Claude" (A58): owner only, enabled only when canSendToClaude says "available".
+  function header(app) {
+    if (lock) app.appendChild(el('p', { 'class': 'banner', id: 'lock-banner', role: 'status', text: lockText() }));
+    if (!comments) return;
+    var open = docs.some(function (d) { return !archived(d) });
+    var reason = !owner ? 'only Brett sends his updates' : lock ? 'sent; waiting for Claude' : !open ? 'archived' : canSend !== 'available' ? 'can\u2019t send right now (' + canSend + ')' : '';
+    app.appendChild(el('div', { 'class': 'row', id: 'sendrow' }, [
+      el('button', { 'class': 'act', type: 'button', id: 'send', disabled: sending || !!reason, 'aria-describedby': 'sendst', text: 'Send my updates to Claude', onclick: send }),
+      el('span', { 'class': 'status', id: 'sendst', text: sendNote || reason }),
+    ]));
+  }
+
+  // What the send posts: Brett's ticks and USER COMMENTs (unsaved drafts included) as one comment, at most SEND_LIMIT bytes.
+  function updatesText() {
+    var sections = [];
+    docs.forEach(function (d) { (d.sections || []).forEach(function (s) {
+      var id = reviewId(d, s), r = review(d, s);
+      sections.push({ id: id, title: s.title, brett_confirms: !!r.checked, user_comment: drafts[id] !== undefined ? drafts[id] : (r.comment || '') });
+    }) });
+    var j = { document: document.title, sent: new Date().toISOString(), sections: sections };
+    var size = function (t) { return new TextEncoder().encode(t).length };
+    var txt = 'BRETT-UPDATES ' + JSON.stringify(j);
+    [300, 120, 40, 0].forEach(function (cut) {
+      if (size(txt) <= SEND_LIMIT) return;
+      j.sections = sections.map(function (x) { return Object.assign({}, x, { user_comment: x.user_comment.slice(0, cut) }) });
+      j.truncated = 'comments cut to ' + cut + ' chars; full text is in the page store';
+      txt = 'BRETT-UPDATES ' + JSON.stringify(j);
+    });
+    if (size(txt) > SEND_LIMIT) {
+      j.sections = j.sections.filter(function (x) { return x.brett_confirms || x.user_comment });
+      j.truncated = 'comments cut to 0 chars and sections with no tick or comment left out; full text is in the page store';
+      txt = 'BRETT-UPDATES ' + JSON.stringify(j);
+    }
+    return txt;
+  }
+
+  // Persist full drafts before the bounded message can truncate them or the page becomes read-only.
+  async function persistDrafts() {
+    for (var d of docs) for (var s of (d.sections || [])) {
+      var id = reviewId(d, s);
+      if (drafts[id] === undefined) continue;
+      var text = drafts[id];
+      var next = Object.assign({}, review(d, s), { comment: text, updated: new Date().toISOString() });
+      await db.doc('review/' + id).set(next);
+      live[id] = next;
+      if (drafts[id] === text) delete drafts[id];
+    }
+  }
+
+  // Save drafts, then lock and send. A failed save leaves the page unlocked and its draft intact.
+  // If the send fails after locking, remove the lock again.
+  async function send() {
+    if (!comments || !owner || !db || lock || sending) return;
+    var say = function (t) { sendNote = t; var a = document.getElementById('announce'); if (a) a.textContent = t; render() };
+    sending = true; render();
+    var locked = false;
+    try {
+      var can = comments.canSendToClaude ? await comments.canSendToClaude().catch(function () { return 'off' }) : 'off';
+      canSend = String(can);
+      if (can !== 'available' || !comments.sendToClaude) { sending = false; say('Can\u2019t send right now (' + can + ').'); return }
+      await persistDrafts();
+      var txt = updatesText();
+      var mark = { locked: true, at: new Date().toISOString() };
+      await db.doc('review/_lock').set(mark);
+      locked = true; lock = mark;
+      say('Sending\u2026');
+      var h1 = document.querySelector('h1');
+      var a = await comments.anchorFor(h1);
+      await comments.sendToClaude({ anchor: a, text: txt });
+      sending = false; say('Sent to Claude ' + new Date().toLocaleTimeString());
+    } catch (err) {
+      if (locked) { try { await db.doc('review/_lock').delete(); lock = null } catch (e) {} }
+      sending = false; say('Not sent: ' + (err && (err.code || err.message)));
+    }
+  }
+
+  function pick(i, focusTab) {
+    selected = i;
+    try { sessionStorage.setItem('gctq-tab', docs[i].slug) } catch (e) {}
+    render();
+    if (focusTab) { var t = document.getElementById('tab-' + docs[i].slug); if (t) t.focus() }
+  }
+
+  render();
+
+  (async function () {
+    if (!window.claude || !window.claude.use) return;
+    try { var user = await window.claude.use('user'); owner = user ? await user.isOwner() : false } catch (e) { owner = false }
+    try { comments = await window.claude.use('comments') } catch (e) { comments = null }
+    try { db = await window.claude.use('db') } catch (e) { db = null }
+    render();
+    if (!db) return;
+    if (comments && comments.canSendToClaude) { try { canSend = String(await comments.canSendToClaude()) } catch (e) { canSend = 'off' } render() }
+    db.collection('review').onSnapshot(function (snap) {
+      live = {};
+      snap.docs.forEach(function (d) { if (d.id !== '_lock') live[d.id] = d.data() });
+      render();
+    }, function () {});
+    // The agent unlocks by deleting review/_lock; the page follows live.
+    db.doc('review/_lock').onSnapshot(function (d) {
+      var v = d && d.exists ? d.data() : null;
+      lock = v && v.locked === true ? v : null;
+      if (!lock && sendNote.indexOf('Sent to Claude') === 0) sendNote = '';
+      render();
+    }, function () {});
+  })();
+})();
+</script>

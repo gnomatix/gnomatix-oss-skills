@@ -70,7 +70,9 @@ export function chains(rules) {
   const hasIncoming = new Set(rules.map((r) => lit(r.n)));
   const starts = rules.filter((r) => !hasIncoming.has(lit(r.s)));
   const out = [];
+  const visited = new Set();
   const walk = (pathLits) => {
+    pathLits.forEach((l) => visited.add(l));
     const last = pathLits[pathLits.length - 1];
     const next = (bySuff.get(last) || []).filter((r) => !pathLits.includes(lit(r.n)));
     if (next.length === 0) {
@@ -87,6 +89,14 @@ export function chains(rules) {
     if (seen.has(k)) continue;
     seen.add(k);
     walk([k]);
+  }
+  // A cycle in a component with no head is not reached from the heads: walk it from the
+  // first of its rules whose sufficient term no walk has visited.
+  if (starts.length) {
+    for (const r of rules) {
+      const k = lit(r.s);
+      if (!visited.has(k)) walk([k]);
+    }
   }
   return out;
 }

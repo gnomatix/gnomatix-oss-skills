@@ -1,0 +1,343 @@
+{
+  "$schema": "./readme-images.schema.json",
+  "version": 1,
+  "workspace_root": "gnomatix-oss-skills",
+  "default_assets_dir": "assets/images",
+  "draft_assets_dir": "assets/drafts",
+  "draft_revision_policy": {
+    "protect_existing": true,
+    "approval_workflow_skills": [
+      "critical-control-points",
+      "inaudible-markup",
+      "hidden-libel-check",
+      "spank-dario"
+    ],
+    "callout_target": "user"
+  },
+  "auto_og_social_image": {
+    "enabled": true,
+    "assets_subdir": "assets/images",
+    "source_suffix": "-banner",
+    "output_suffix": "-og-image.jpg",
+    "width": 1280,
+    "height": 640,
+    "quality": 92,
+    "max_bytes": 1048576,
+    "gravity": "center",
+    "exclude_dirs": [],
+    "overrides": {
+      ".": {
+        "gravity": "north",
+        "crop_offset": "+0+10"
+      }
+    }
+  },
+  "style_guides": {
+    "gnomatix-oss-skills": {
+      "doc": "plugins/update-readme-images/config/style-guides/gnomatix-oss-skills.md",
+      "summary": "Root GNOMATIX OSS Skills visual style guide: Simpsons animation × Skottie Young comic linework hybrid, flat saturated colors, multi-axis reference layering SOP, native in-scene diegetic cartoon typography, and gold-standard anchor reference images.",
+      "inherit": true,
+      "og_social_image": true,
+      "reference_images": [
+        "plugins/did-you-rtfm/assets/images/did-you-rtfm-banner.jpg",
+        "plugins/all-help-no-harm/assets/images/all-help-no-harm-banner.jpg",
+        "plugins/satori/assets/images/satori-banner.jpg"
+      ],
+      "palette": {
+        "navy": "#0B1F4A",
+        "red": "#D62828",
+        "white": "#FFFFFF",
+        "blue": "#003F88",
+        "gold": "#D4AF37"
+      },
+      "typography": {
+        "in_scene_titles": "Diegetic cartoon signage, heraldic scrolls, brass plaques, or 1980s G.I. Joe slanted stencil rendered natively in-scene without obscuring character heads",
+        "speech_bubbles": "Bangers / Comic Neue Bold",
+        "department_seals": "Cinzel Bold / Trajan Pro"
+      }
+    },
+    "gnomatix-oss-skills:plugins:python-elimination-program": {
+      "doc": "plugins/update-readme-images/config/style-guides/python-elimination-program.md",
+      "summary": "Florida Everglades & 1990s Sir Winston Churchill SS computer lab style guide for python-elimination-program: Stanley 'Old Willy' Wilson (1941–2022) with his wooden meter stick / goalie stick, Zartan, Jake 'The Snake' Roberts, Destro, Saint Patrick, realistic human skin tones for recognizable cast, and 1990s faculty yearbook vertical oval portrait inset with transparent corners.",
+      "inherit": true,
+      "reference_images": [
+        "plugins/python-elimination-program/assets/images/python-elimination-program-banner.jpg",
+        "plugins/python-elimination-program/assets/images/old-willy-computer-lab-panel.jpg",
+        "plugins/python-elimination-program/assets/images/old-willy-tribute-oval.png"
+      ],
+      "palette": {
+        "oval_outer_ring": "#0B1F4A",
+        "oval_inner_ring": "#D4AF37",
+        "oval_backdrop": "#5B6E82"
+      }
+    },
+    "gnomatix-oss-skills:plugins:cui-bono": {
+      "doc": "plugins/update-readme-images/config/style-guides/cui-bono.md",
+      "summary": "Star Trek: TNG 'Justice' (Rubicun III) + Q + Bono (U2) + forensic conspiracy board and provenance card sub-panel style guide for cui-bono.",
+      "inherit": true,
+      "reference_images": [
+        "plugins/cui-bono/assets/images/cui-bono-banner.jpg",
+        "plugins/cui-bono/assets/images/citation-farm-audit-banner.jpg",
+        "plugins/cui-bono/assets/images/source-provenance-banner.jpg"
+      ]
+    },
+    "gnomatix-oss-skills:plugins:agent-darktriad-check": {
+      "doc": "plugins/update-readme-images/config/style-guides/agent-darktriad-check.md",
+      "summary": "KontentKop forensic polygraph, 1950s badge-and-magnifying-glass inspection desk, and vacuum-tube gaslighting meter sub-panel style guide for agent-darktriad-check.",
+      "inherit": true,
+      "reference_images": [
+        "plugins/agent-darktriad-check/assets/images/agent-darktriad-check-banner.jpg",
+        "plugins/agent-darktriad-check/assets/images/kontentkop-badge-banner.jpg",
+        "plugins/agent-darktriad-check/assets/images/gaslighting-meter-banner.jpg"
+      ]
+    },
+    "gnomatix-oss-skills:plugins:steering-audit-suite": {
+      "doc": "plugins/update-readme-images/config/style-guides/steering-audit-suite.md",
+      "summary": "Compliance inspector, rainbow-gorilla runaway convertible, and architectural CLAUDE.md blueprint gremlin-hunt sub-panel style guide for steering-audit-suite.",
+      "inherit": true,
+      "reference_images": [
+        "plugins/steering-audit-suite/assets/images/steering-audit-suite-banner.jpg",
+        "plugins/steering-audit-suite/assets/images/steering-audit-suite-blueprint-banner.jpg"
+      ]
+    }
+  },
+  "rules": [
+    {
+      "id": "root-readme-top-panel",
+      "description": "Root repository README.md must include a top-level titled hero banner immediately after the H1 heading, plus a companion 1280x640 GitHub social-preview OG image under 1 MB.",
+      "glob": "README.md",
+      "doc": "plugins/update-readme-images/config/rules/root-readme-panels.md",
+      "panels": [
+        {
+          "id": "repo-hero-banner",
+          "type": "top-level-panel",
+          "required": true,
+          "placement": "after-h1",
+          "src_pattern": "assets/images/{repo}-banner.jpg",
+          "alt_pattern": "GNOMATIX — OSS SKILLS",
+          "title_pattern": "GNOMATIX — OSS SKILLS — Artificial Teams ][ Real Intelligence",
+          "embed_style": "markdown",
+          "dimensions": {
+            "aspect_ratio": "16:9",
+            "width": 1376,
+            "height": 768,
+            "format": "JPEG"
+          },
+          "companion_og_image": {
+            "enabled": true,
+            "src_pattern": "assets/images/{repo}-og-image.jpg",
+            "width": 1280,
+            "height": 640,
+            "max_bytes": 1048576
+          }
+        }
+      ]
+    },
+    {
+      "id": "plugin-readme-top-panel",
+      "description": "Every plugin README.md under plugins/*/README.md must include a top-level titled banner immediately after its H1 heading, paired with an automatic 1280x640 OG social image in its assets/images directory.",
+      "glob": "plugins/*/README.md",
+      "exclude": [
+        "plugins/dont-be-hitler/README.md",
+        "plugins/goal-compliant-task-queue/README.md"
+      ],
+      "doc": "plugins/update-readme-images/config/rules/plugin-readme-panels.md",
+      "panels": [
+        {
+          "id": "plugin-top-banner",
+          "type": "top-level-panel",
+          "required": true,
+          "placement": "after-h1",
+          "src_pattern": "assets/images/{plugin}-banner.jpg",
+          "alt_pattern": "{plugin}",
+          "embed_style": "markdown",
+          "dimensions": {
+            "aspect_ratio": "16:9",
+            "width": 1376,
+            "height": 768,
+            "format": "JPEG"
+          },
+          "companion_og_image": {
+            "enabled": true,
+            "src_pattern": "assets/images/{plugin}-og-image.jpg",
+            "width": 1280,
+            "height": 640,
+            "max_bytes": 1048576
+          }
+        }
+      ]
+    },
+    {
+      "id": "pep-readme-subpanel-and-oval-inset",
+      "description": "python-elimination-program README.md includes the old-willy 1990s computer lab sub-panel under ## Skills and the transparent-corner yearbook oval inset window under ## Credits.",
+      "glob": "plugins/python-elimination-program/README.md",
+      "doc": "plugins/update-readme-images/config/rules/oval-inset-windows.md",
+      "panels": [
+        {
+          "id": "old-willy-skills-subpanel",
+          "type": "sub-panel",
+          "required": true,
+          "placement": "after-table-in-section",
+          "section_heading": "## Skills",
+          "src_pattern": "assets/images/old-willy-computer-lab-panel.jpg",
+          "alt_pattern": "old-willy",
+          "embed_style": "markdown",
+          "dimensions": {
+            "aspect_ratio": "16:9",
+            "width": 1376,
+            "height": 768,
+            "format": "JPEG"
+          }
+        },
+        {
+          "id": "old-willy-tribute-oval-inset",
+          "type": "inset-oval",
+          "required": true,
+          "placement": "end-of-section",
+          "section_heading": "## Credits",
+          "src_pattern": "assets/images/old-willy-tribute-oval.png",
+          "alt_pattern": "In Memoriam: Stanley 'Old Willy' Wilson (March 22, 1941 – December 3, 2022)",
+          "embed_style": "html-center-tribute",
+          "width": 260,
+          "dimensions": {
+            "format": "PNG",
+            "require_alpha_corners_transparent": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "cui-bono-readme-subpanels",
+      "description": "cui-bono README.md includes sub-panels under ## What you get for the citation-farm-audit and source-provenance skills.",
+      "glob": "plugins/cui-bono/README.md",
+      "doc": "plugins/update-readme-images/config/rules/section-subpanels.md",
+      "panels": [
+        {
+          "id": "citation-farm-audit-subpanel",
+          "type": "sub-panel",
+          "required": true,
+          "placement": "after-bullet-matching",
+          "section_heading": "## What you get",
+          "bullet_match": "citation-farm-audit",
+          "src_pattern": "assets/images/citation-farm-audit-banner.jpg",
+          "alt_pattern": "citation-farm-audit",
+          "embed_style": "markdown",
+          "dimensions": {
+            "aspect_ratio": "16:9",
+            "width": 1376,
+            "height": 768,
+            "format": "JPEG"
+          }
+        },
+        {
+          "id": "source-provenance-subpanel",
+          "type": "sub-panel",
+          "required": true,
+          "placement": "after-bullet-matching",
+          "section_heading": "## What you get",
+          "bullet_match": "source-provenance",
+          "src_pattern": "assets/images/source-provenance-banner.jpg",
+          "alt_pattern": "source-provenance",
+          "embed_style": "markdown",
+          "dimensions": {
+            "aspect_ratio": "16:9",
+            "width": 1376,
+            "height": 768,
+            "format": "JPEG"
+          }
+        }
+      ]
+    },
+    {
+      "id": "agent-darktriad-check-readme-subpanels",
+      "description": "agent-darktriad-check README.md includes the KontentKop badge sub-panel under ## Contents and the gaslighting-meter sub-panel under ## Config.",
+      "glob": "plugins/agent-darktriad-check/README.md",
+      "doc": "plugins/update-readme-images/config/rules/section-subpanels.md",
+      "panels": [
+        {
+          "id": "kontentkop-badge-subpanel",
+          "type": "sub-panel",
+          "required": true,
+          "placement": "after-table-in-section",
+          "section_heading": "## Contents",
+          "src_pattern": "assets/images/kontentkop-badge-banner.jpg",
+          "alt_pattern": "kontentkop-badge",
+          "embed_style": "markdown",
+          "dimensions": {
+            "aspect_ratio": "16:9",
+            "width": 1376,
+            "height": 768,
+            "format": "JPEG"
+          }
+        },
+        {
+          "id": "gaslighting-meter-subpanel",
+          "type": "sub-panel",
+          "required": true,
+          "placement": "end-of-section",
+          "section_heading": "## Config",
+          "src_pattern": "assets/images/gaslighting-meter-banner.jpg",
+          "alt_pattern": "gaslighting-meter",
+          "embed_style": "markdown",
+          "dimensions": {
+            "aspect_ratio": "16:9",
+            "width": 1376,
+            "height": 768,
+            "format": "JPEG"
+          }
+        }
+      ]
+    },
+    {
+      "id": "steering-audit-suite-readme-subpanel",
+      "description": "steering-audit-suite README.md includes the blueprint gremlin-hunt sub-panel immediately under ## Skills.",
+      "glob": "plugins/steering-audit-suite/README.md",
+      "doc": "plugins/update-readme-images/config/rules/section-subpanels.md",
+      "panels": [
+        {
+          "id": "steering-audit-suite-blueprint-subpanel",
+          "type": "sub-panel",
+          "required": true,
+          "placement": "after-heading",
+          "section_heading": "## Skills",
+          "src_pattern": "assets/images/steering-audit-suite-blueprint-banner.jpg",
+          "alt_pattern": "steering-audit-suite-blueprint",
+          "embed_style": "markdown",
+          "dimensions": {
+            "aspect_ratio": "16:9",
+            "width": 1376,
+            "height": 768,
+            "format": "JPEG"
+          }
+        }
+      ]
+    },
+    {
+      "id": "skill-markdown-dedicated-subpanels",
+      "description": "Individual SKILL.md files that have a dedicated sub-panel image in their parent plugin's assets/images/ directory embed it immediately after their H1 heading.",
+      "glob": [
+        "plugins/python-elimination-program/skills/old-willy/SKILL.md",
+        "plugins/cui-bono/skills/citation-farm-audit/SKILL.md",
+        "plugins/cui-bono/skills/source-provenance/SKILL.md"
+      ],
+      "doc": "plugins/update-readme-images/config/rules/section-subpanels.md",
+      "panels": [
+        {
+          "id": "skill-doc-banner",
+          "type": "sub-panel",
+          "required": true,
+          "placement": "after-h1",
+          "src_pattern": "../../assets/images/{skill_panel_file}",
+          "alt_pattern": "{skill}",
+          "embed_style": "markdown",
+          "dimensions": {
+            "aspect_ratio": "16:9",
+            "width": 1376,
+            "height": 768,
+            "format": "JPEG"
+          }
+        }
+      ]
+    }
+  ]
+}

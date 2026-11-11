@@ -1,6 +1,6 @@
 ---
 name: logic-decomposer
-description: Run before any formal check of an argument, a policy text, a report or the agent's own reply, and as step 3 of cui-bono. Converts natural language into the discrete objects the logic-toolbox methods consume: propositions, premises, conclusions and sub-conclusions, stated and unstated assumptions, conditionals with their direction (sufficient and necessary), quantifiers with their scope, definitions, entities, relations, constraints, and the Toulmin fields, each tied to the exact quote it came from. Grades every proposition twice, for the evidence under it (E0–E6, GRADE-adjusted) and for the confidence the text states (S1–S7 on the ICD 203 likelihood row, or S? for Kent's unmodified "possible"), and reports the gap as overclaim or underclaim. Runs eight internal validity checks on the decomposition itself before anything is handed on.
+description: Run before any formal check of an argument, a policy text, a report or the agent's own reply, and as step 3 of cui-bono. Converts natural language into the discrete objects the logic-toolbox methods consume: propositions, premises, conclusions and sub-conclusions, stated and unstated assumptions, conditionals with their direction (sufficient and necessary), quantifiers with their scope, definitions, entities, relations, constraints, and the Toulmin fields, each tied to the exact quote it came from. Grades every proposition twice, for the evidence under it (E0–E6, with the GRADE starting certainty in its own column) and for the confidence the text states (S1–S7 on the ICD 203 likelihood row, or S? for Kent's unmodified "possible"), and reports the gap as overclaim or underclaim. Runs eight internal validity checks on the decomposition itself before anything is handed on.
 ---
 
 # logic-decomposer
@@ -69,8 +69,9 @@ Every conditional is written as `sufficient -> necessary` with its contrapositiv
 
 | Indicator | Sufficient | Necessary | Example | Form |
 |---|---|---|---|---|
-| if A, B / B if A / when, whenever | A | B | "if the trial was randomized, the result stands" | A -> B |
+| if A, B / if A then B / B if A / when, whenever / people who A, B / in order to A, B | A | B | "if the trial was randomized, the result stands" | A -> B |
 | A only if B / only when | A | B | "it works only if it is voluntary" | A -> B |
+| only A are B / only A may B | B | A | "only members may vote" | Vote -> Member |
 | A unless B / except when B / until B / without B | /B | A | "repeat removals fall unless support stops" | /B -> A |
 | A requires B / depends on B / must | A | B | "a causal claim requires a control group" | A -> B |
 | no A without B / none but B are A / no A except B | A | B | "no cars except SUVs can safely travel this road" | SafeTravel -> SUV |
@@ -117,7 +118,7 @@ Every proposition in the P-table gets two independent grades, a starting certain
 | E6 | recall, anecdote or uncited assertion |
 | E0 | not found: searched and absent, places searched listed |
 
-**Starting certainty** (from GRADE, in its own column). The evidence grade says what kind of record was reached; the certainty says how far that record's design can be trusted. It follows the source: a randomized trial starts **high**; an observational study (cohort, registry, before/after, case series) starts **low**; a proposition whose evidence is not a study (E4–E6 self-report, recall or assertion; E0 not found) has no starting certainty (`—`) and its licensed grade is the cap alone. Modifiers, from GRADE: down one level for risk of bias, inconsistency, indirectness, imprecision or publication bias; up one for a large effect (RR > 2 or < 0.5; two levels for RR > 5 or < 0.2) or a dose-response gradient. The certainty column records the start and each modifier applied (`low, +2 (RR 14.9)`).
+**Starting certainty** (from GRADE, in its own column). The evidence grade says what kind of record was reached; the certainty says how far that record's design can be trusted. It follows the source: a randomized trial starts **high**; an observational study (cohort, registry, before/after, case series) starts **low**; a proposition whose evidence is not a study (E4–E6 self-report, recall or assertion; E0 not found) has no starting certainty (`—`) and its licensed grade is the cap alone. Modifiers, from GRADE: down one level for risk of bias, inconsistency, indirectness, imprecision or publication bias; up one for a large effect (RR > 2 or < 0.5; two levels for RR > 5 or < 0.2), a dose-response gradient, or residual confounding that would reduce the effect. The certainty column records the start and each modifier applied (`low, +2 (RR 14.9)`).
 
 **Stated-confidence grade** (from the text's own hedges and boosters, mapped to the seven-band likelihood row of ICD 203; for a claim about validity rather than occurrence, to the IPCC's five confidence qualifiers):
 
@@ -134,7 +135,7 @@ Every proposition in the P-table gets two independent grades, a starting certain
 
 A flat declarative is S7: it is a statement of fact asserted without qualification. Hedges lower the grade; boosters raise it (Hyland's interactional metadiscourse: hedges *might, perhaps, possible, about*; boosters *in fact, definitely, it is clear that*).
 
-**Licensed grade and gap.** The evidence grade sets a cap on the stated grade: E1–E2 up to S7; E3 up to S6; E4 up to S5; E5–E6 up to S4; E0 only S?. The starting certainty feeds the licensed grade under that cap: **high** licenses up to the cap; **low** licenses two bands below the cap; then each down modifier lowers the licensed grade one band and each up modifier raises it one band, never above the cap; `—` (no study) leaves the cap as the licensed grade. Gap = stated − licensed. Positive is **overclaim**; negative is **underclaim**; zero is calibrated. Across a document the gap distribution is its overclaim profile; the overclaims are the woozle candidates for `citation-farm-audit`.
+**Licensed grade and gap.** The evidence grade sets a cap on the stated grade: E1–E2 up to S7; E3 up to S6; E4 up to S5; E5–E6 up to S4; E0 only S?. The starting certainty feeds the licensed grade under that cap: **high** licenses up to the cap; **low** licenses two bands below the cap; then each down modifier lowers the licensed grade one band and each up modifier raises it one band, never above the cap; `—` (no study) leaves the cap as the licensed grade. Gap = stated − licensed. Positive is **overclaim**; negative is **underclaim**; zero is calibrated. S? has no band, so where either side is S? there is no numeric gap and the gap column reads `n/a`: a stated band (S1–S7) on an E0 row is an **overclaim**, because E0 licenses only S?; a stated S? on an E0 row is **calibrated**, because S? is what E0 licenses; a stated S? on any other row is `n/a` in the verdict column as well. Across a document the gap distribution is its overclaim profile; the overclaims are the woozle candidates for `citation-farm-audit`.
 
 ```
 GRADES
@@ -150,7 +151,7 @@ P1: observational registry, low, cap S7, two bands below is S5, up two for the l
 
 ## Step 7: internal validity checks
 
-Run every check and record pass or fail with the item that failed. A failed check is fixed before the decomposition is used. Consistency checks (toolbox method 12) run only after checks 1–7 pass, so that an incompatibility is a property of the text and not of the translation.
+Run every check and record pass or fail with the item that failed. A failed check is fixed before the decomposition is used. Consistency checks (toolbox method 12) run only after checks 1–8 pass, so that an incompatibility is a property of the text and not of the translation.
 
 1. **Coverage.** Every sentence S1…Sn has exactly one disposition; none missing, none twice.
 2. **Traceability.** Every proposition, conditional, entity and constraint carries a sentence id and a quote that appears verbatim in the text; the only rows without a quote are marked `[unstated]`.
@@ -159,7 +160,7 @@ Run every check and record pass or fail with the item that failed. A failed chec
 5. **Quantifier scope.** Each quantifier names its set; proportions without a number are marked; negation placement and existential import checked.
 6. **Entity consistency.** One canonical name per entity; merges, splits and resolved pronouns listed.
 7. **Round trip.** Read the P-table and conditionals back as prose, in order, beside the text. Every difference in meaning is listed and is a defect in the decomposition, not in the text.
-8. **Grades complete.** Every P-table row has an evidence grade, a starting certainty (or `—` where the evidence is not a study), a stated grade, a licensed grade and a gap, in separate columns; every P row with an `h` id, or that enters method 7 or 8, has a formal column, and any row excluded from those methods for lacking one is listed.
+8. **Grades complete.** Every premise, conclusion, sub-conclusion and claim row of the P-table has an evidence grade, a starting certainty (or `—` where the evidence is not a study), a stated grade, a licensed grade and a gap, in separate columns; every P row with an `h` id, or that enters method 7 or 8, has a formal column, and any row excluded from those methods for lacking one is listed. Rows marked `[unstated]`, `rhetorical` or `quote` take `n/a` in each grade column; the attribution claim of a `quote` row is graded as a claim.
 
 ```
 VALIDITY
@@ -204,9 +205,10 @@ Directed by the author on 2026-11-08 (directions store dir-yls; `dev/cui-bono/or
 - B3 (inconsistency). Nothing assigned `h` ids. Closed 2026-11-08: the `h` ids are defined in step 3 (new `h` column: the P ids selected as held premises for method 12, the asserted rows numbered h1…hn) and in **Output**.
 - B4 (departure from the cited source). Observational studies were said to start at E2 "from GRADE". Closed 2026-11-08: a separate starting-certainty column follows GRADE (randomized trials high, observational studies low, `—` where the evidence is not a study) and feeds the licensed grade under the E cap (high → up to the cap; low → two bands lower; then the modifiers), stated in step 6 with the mapping and example rows.
 - B5 (record). Three source lines cited a DOI "record checked" that the research reference did not cover (Govier 2018 WSIA, Guyatt 2008 BMJ, Hyland 1998 J. Pragmatics). Closed 2026-11-08: each confirmed against Crossref and noted in the reference's "Review pass 2026-11-08" section.
+- B6 (inconsistency). `scripts/skeleton.mjs` still printed the P-table's `formal` column as "(optional)" with no `K` or `h` columns, and the grades table without the `certainty` column, so B1–B4 were closed in the text while the shipped script contradicted them; the gap for a stated S? was undefined. Closed 2026-11-10: the script prints the step 3 and step 6 headers (`formal`, `K`, `h`; `certainty`), `test/fixtures/skeleton-small-expected.txt` matches, and step 6 states the S? rule. The method 12 gate now names checks 1–8 (check 8 holds the formal-column rule the matrix needs); bare *only*, *people who*, *in order to* and *then* (toolbox method 2) are in the step 4 table and the script; the residual-confounding upgrade from the GRADE source is in step 6.
 
 ## TODO
 
 - Verification and validation on every platform the plugin claims (claude-code/win32, claude-code/linux-wsl, claude-code/linux, claude-code/darwin, codex/win32, codex/linux-wsl, antigravity/win32, antigravity/linux-wsl, kiro/win32): the `decompose-and-validate` procedure in `VV.md`, once per platform; the entry stays until each is recorded.
 - Clear the remaining **[unchecked]** marks (Hurley's *unless* rule; the quantifier chaining rules; Scriven's own numbering; the agency confidence-level definitions; Hyland 2005's table; Brier's DOI) by reading the primary texts.
-- Extend `skeleton.mjs` to pre-fill the quantifier list and the hedge/booster markers per sentence, and to print the P-table header as step 3 now has it (`formal` without "(optional)", plus the `K` and `h` columns) and the `certainty` column of the grades table, with `test/fixtures/skeleton-small-expected.txt` updated to match.
+- Extend `skeleton.mjs` to pre-fill the quantifier list and the hedge/booster markers per sentence.

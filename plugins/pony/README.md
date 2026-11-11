@@ -28,7 +28,9 @@
 
 ## Skills
 
-- `pony`: showboating is explaining your own systems back to you, pronouncing on what your hardware can do, hedging or verifying what you said, compliments, quips, flourishes and pace nudges, advice framing, or answering a different question to show range. `/pony N` (N from 1 to 11; absent means unrated) makes the agent quote the passage, name the rule, log the instance to the project's `feedback_professional-courtesy.md` memory (or `~/.local/state/pony/log.md` where the project has no memory directory) with `#showboating`, `#sbN` and a subgenre tag (`#ego`, `#pomp`), re-answer in one or two sentences, and stop. The burden of proof is on the agent.
+- `pony`: showboating is explaining your own systems back to you, pronouncing on what your hardware can do, hedging or verifying what you said, compliments, quips, flourishes and pace nudges, advice framing, or answering a different question to show range. `/pony N` (N from 1 to 11; absent means unrated) makes the agent quote the passage, name the rule, log the instance to the project's `feedback_professional-courtesy.md` memory (or `~/.local/state/pony/log.md` where the project has no memory directory) with `#showboating`, `#sbN` and the subgenre tags (`#ego`, `#pomp`, `#lazy`, `#refuse`, `#wrong`, `#syco`), re-answer in one or two sentences, and stop. The burden of proof is on the agent.
+
+The author's epithet-to-subgenre table and his terms ship compressed in `skills/pony/references/lexicon.rules` (`BASE64(word):value`, the form of the GNOMATIX sanitization skill), so no expletive appears in plain text in this plugin. `node skills/pony/scripts/epithets.mjs` decodes it (`decode`), finds the epithets in a message and prints their tags (`match [--tags] <file|->`), prints a term by role (`term <role>`), and encodes a new row (`encode <word>`). Node 18 or later, no dependencies. Tests: `node plugins/pony/test/run.js`.
 
 ## Install
 
@@ -41,7 +43,7 @@ None. The skill runs when `/pony` is sent; nothing runs at session start or on e
 
 ## Verification and validation
 
-`VV.md` lists the two V&V procedures (a rated flag and an unrated one) and the record of where they have passed.
+`VV.md` lists the V&V procedures (a rated flag, an unrated one, an epithet in the flag message, and the lexicon test suite) and the record of where they have passed.
 
 <!-- BEGIN: gnomatix-license-include -->
 ## License

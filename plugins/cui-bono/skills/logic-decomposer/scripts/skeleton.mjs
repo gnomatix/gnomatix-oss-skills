@@ -8,10 +8,14 @@
 // Splits the text into sentences (abbreviations such as "e.g.", "Dr.", "vs.", initials and
 // decimals do not end a sentence; a period inside a closing quote or bracket does; every
 // bullet or numbered list item is one sentence), numbers them S1…Sn, and prints the
-// SENTENCES list, an empty P-TABLE with one placeholder row per sentence, a CONDITIONALS
-// table pre-filled with every sentence that carries a conditional indicator and the
-// indicator found, an empty GRADES table, and the VALIDITY checklist with the coverage
-// count pre-computed. The agent fills in the ids, roles, forms and grades.
+// SENTENCES list, an empty P-TABLE with one placeholder row per sentence (the step 3
+// columns: formal, supports, cites, K and h), a CONDITIONALS table pre-filled with every
+// sentence that carries a conditional indicator and the indicator found, an empty GRADES
+// table (the step 6 columns, with the starting certainty), and the VALIDITY checklist with
+// the coverage count pre-computed. The agent fills in the ids, roles, forms and grades.
+// Empty input (or input with no sentence) gives zero sentences, the table headers with no
+// rows and "coverage: 0 sentences, 0 dispositions", exit 0. A leading BOM and CRLF line
+// ends are read; the output is LF. A file that cannot be read, or a bad option, exits 2.
 // Node 18+, no dependencies. Also importable: splitSentences, findIndicators, skeleton, render.
 
 import fs from 'fs';
@@ -94,18 +98,23 @@ export function splitSentences(input) {
 
 // ---- conditional indicators (logic-decomposer step 4) ---------------------------------
 
-// The indicator words of SKILL.md step 4, longest first so "if and only if" is not also
-// read as "only if" and "if", and "none but" is not also "none".
+// The indicator words of SKILL.md step 4 and logic-toolbox method 2, longest first so
+// "if and only if" is not also read as "only if" and "if", "the only" and "only if" are not
+// also bare "only", and "none but" is not also "none".
 const INDICATORS = [
   ['if and only if', /\bif\s+and\s+only\s+if\b/gi],
   ['if but only if', /\bif\s+but\s+only\s+if\b/gi],
   ['but not both', /\bbut\s+not\s+both\b/gi],
+  ['in order to', /\bin\s+order\s+to\b/gi],
+  ['people who', /\bpeople\s+who\b/gi],
   ['depends on', /\bdepend(?:s|ed|ing)?\s+on\b/gi],
   ['none except', /\bnone\s+except\b/gi],
   ['none but', /\bnone\s+but\b/gi],
   ['only when', /\bonly\s+when\b/gi],
   ['only if', /\bonly\s+if\b/gi],
   ['the only', /\bthe\s+only\b/gi],
+  ['only', /\bonly\b/gi],
+  ['then', /\bthen\b/gi],
   ['whenever', /\bwhenever\b/gi],
   ['requires', /\brequire[sd]?\b/gi],
   ['without', /\bwithout\b/gi],
@@ -147,13 +156,13 @@ export const CHECKS = ['coverage', 'traceability', 'nothing added', 'conditional
 export function skeleton(text) {
   const sentences = splitSentences(text).map((t, i) => ({ id: `S${i + 1}`, text: t }));
   const quoted = (t) => `"${t}"`;
-  const ptable = sentences.map((s) => ({ id: '', sentence: s.id, role: '', proposition: quoted(s.text), form: '', supports: '', cites: '' }));
+  const ptable = sentences.map((s) => ({ id: '', sentence: s.id, role: '', proposition: quoted(s.text), formal: '', supports: '', cites: '', k: '', h: '' }));
   const conditionals = [];
   for (const s of sentences) {
     const ind = findIndicators(s.text);
     if (ind.length) conditionals.push({ id: '', sentence: s.id, quoted: quoted(s.text), indicators: ind, form: '', contrapositive: '', kind: '' });
   }
-  const grades = sentences.map((s) => ({ id: '', proposition: quoted(s.text), evidence: '', basisCited: '', stated: '', markers: '', licensed: '', gap: '', verdict: '' }));
+  const grades = sentences.map((s) => ({ id: '', proposition: quoted(s.text), evidence: '', certainty: '', basisCited: '', stated: '', markers: '', licensed: '', gap: '', verdict: '' }));
   const coverage = `${sentences.length} sentence${sentences.length === 1 ? '' : 's'}, 0 dispositions`;
   const checks = CHECKS.map((name) => ({ name, value: name === 'coverage' ? coverage : '' }));
   return { sentences, ptable, conditionals, grades, validity: { coverage, checks } };
@@ -194,9 +203,9 @@ export function render(sk, wrap = 0) {
   out.push('', 'P-TABLE');
   // Column minimums are the widths of the SKILL.md examples, so an empty table has their shape.
   out.push(...table(
-    ['id', 'sentence', 'role', 'proposition (quoted)', 'formal (optional)', 'supports', 'cites'],
-    sk.ptable.map((p) => [p.id, p.sentence, p.role, p.proposition, p.form, p.supports, p.cites]),
-    [3, 8, 11, 37, 28, 8, 5], [3], wrap,
+    ['id', 'sentence', 'role', 'proposition (quoted)', 'formal', 'supports', 'cites', 'K', 'h'],
+    sk.ptable.map((p) => [p.id, p.sentence, p.role, p.proposition, p.formal, p.supports, p.cites, p.k, p.h]),
+    [3, 8, 11, 37, 28, 8, 7, 2, 2], [3], wrap,
   ));
   out.push('', 'CONDITIONALS');
   out.push(...table(
@@ -206,9 +215,9 @@ export function render(sk, wrap = 0) {
   ));
   out.push('', 'GRADES');
   out.push(...table(
-    ['id', 'proposition (quoted)', 'evidence', 'basis cited', 'stated', 'markers', 'licensed', 'gap', 'verdict'],
-    sk.grades.map((g) => [g.id, g.proposition, g.evidence, g.basisCited, g.stated, g.markers, g.licensed, g.gap, g.verdict]),
-    [3, 33, 8, 20, 6, 17, 8, 4, 7], [1], wrap,
+    ['id', 'proposition (quoted)', 'evidence', 'certainty', 'basis cited', 'stated', 'markers', 'licensed', 'gap', 'verdict'],
+    sk.grades.map((g) => [g.id, g.proposition, g.evidence, g.certainty, g.basisCited, g.stated, g.markers, g.licensed, g.gap, g.verdict]),
+    [3, 33, 8, 22, 20, 6, 17, 8, 4, 7], [1], wrap,
   ));
   out.push('', 'VALIDITY');
   for (const c of sk.validity.checks) out.push(`${c.name}:${c.value ? ` ${c.value}` : ''}`);

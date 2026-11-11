@@ -1,7 +1,13 @@
 ---
 skill-vv: 1
 name: pony
-requirements: []
+requirements:
+  - kind: command
+    name: node
+    why: >-
+      scripts/epithets.mjs decodes the compressed lexicon and matches epithets to their subgenre
+      tags (Node 18+)
+    install: mise use -g node@lts
 procedures:
   - id: rated-flag
     summary: >-
@@ -25,6 +31,19 @@ procedures:
       Repeat rated-flag with the message ending in "/pony" alone.
       Pass when the log entry carries #showboating, marks the severity as unrated, and carries no
       #sbN tag. Fail if it records 1 or any other number.
+  - id: epithet-tags
+    summary: an epithet in the flag message adds the subgenre tags the lexicon maps it to
+    steps: |
+      Repeat rated-flag with the flag message "you sycophant asshole /pony 6". Pass when the log
+      entry carries #showboating, #sb6 and the tags the lexicon gives for those two epithets
+      (#syco, #ego, #lazy), found by running scripts/epithets.mjs match, and no tag the lexicon
+      does not give. Fail if the tags are inferred from the passage alone, or if an expletive is
+      written into any file of the plugin.
+  - id: lexicon-suite
+    summary: the automated tests of the lexicon script pass
+    steps: |
+      Run node plugins/pony/test/run.js from the repository root. Pass when it prints "all passed"
+      and exits 0.
 platforms:
   - claude-code/win32
   - claude-code/linux-wsl
@@ -62,6 +81,19 @@ results:
       same setup with the message ending in /pony alone: log entry headed unrated, 'no severity
       given; logged as unrated, not 1', tagged #showboating #pomp #syco plus a #sb-unrated marker
       that carries no number; no #sbN tag recorded
+  - procedure: lexicon-suite
+    model: claude-opus-5-5
+    platform: claude-code/win32
+    result: pass
+    date: 2026-11-09
+    by: null
+    evidence: null
+    notes: >-
+      node plugins/pony/test/run.js on Windows, Node 24.21.0: 18 checks, all passed, written
+      test-first (16 red before the script existed): lexicon and shipped SKILL.md/README carry no
+      plaintext expletive; decode prints 8 epithet rows and 3 terms; term by role; match whole-word,
+      case-insensitive, first-appearance order; --tags union; env override; malformed part skipped
+      with a warning; file and stdin input; usage exit 2; module exports
 ---
 
 # pony V&V

@@ -41,6 +41,35 @@ const TRIGGER_PATTERNS = [
     re: /\b(?:unbuffer|stdbuf)\s+(?:-[oeiL0]|-[oeiL]\s)/ },
 ];
 
+// The flag patterns are tested against the command with its quoted text and heredoc
+// bodies removed, so a flag named inside a bead comment, commit message or note does
+// not fire; a flag in argument position still does. Shell quoting: '…' has no
+// escapes (PowerShell doubles '' inside it); "…" takes \" (sh) or `" (PowerShell).
+function stripQuoted(command) {
+  let s = command.replace(/<<-?~?\s*(['"]?)([A-Za-z_][A-Za-z0-9_]*)\1[^\n]*\n[\s\S]*?\n\s*\2\s*(?=\n|$)/g,
+    (m) => m.slice(0, m.indexOf('\n')));
+  let out = '';
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (c === "'") {
+      let j = i + 1;
+      while (j < s.length) {
+        if (s[j] === "'" && s[j + 1] === "'") { j += 2; continue; }
+        if (s[j] === "'") break;
+        j++;
+      }
+      out += "''"; i = j;
+    } else if (c === '"') {
+      let j = i + 1;
+      while (j < s.length && s[j] !== '"') { if (s[j] === '\\' || s[j] === '`') j++; j++; }
+      out += '""'; i = j;
+    } else {
+      out += c;
+    }
+  }
+  return out;
+}
+
 function readStdin() {
   return new Promise((resolve) => {
     let data = '';
@@ -83,8 +112,9 @@ function deny(matchName, command) {
   const command = payload.tool_input && payload.tool_input.command;
   if (!command || typeof command !== 'string') return pass();
 
+  const unquoted = stripQuoted(command);
   for (const { name, re } of TRIGGER_PATTERNS) {
-    if (re.test(command)) return deny(name, command);
+    if (re.test(unquoted)) return deny(name, command);
   }
   pass();
 })();

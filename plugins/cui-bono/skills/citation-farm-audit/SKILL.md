@@ -50,7 +50,7 @@ For every author and organization in the graph:
 
 ### 3. Flag patterns (each flag needs a link to the evidence)
 
-A flag line is `[FLAG] <type>: <one-line fact>  <evidence url>`, the URL on the same line. A line without its URL is not a flag and is not written; where the evidence was not retrieved, the line reads `[FLAG candidate] <type>: <fact>  evidence not retrieved: <what was tried>`. The URLs under Graph or People do not stand in for the flag's own. The primary-data reach line carries the end node's URL the same way.
+Every flag type in the table is assessed on every card: raised, not met (with the evidence and its URL), or not checked, and a check not run goes to the Unverified line with the reason it was not run. A flag is `[FLAG] <type>: <one-line fact>  <evidence url>`. Its evidence is a URL a reader can open: an identifier is written as its resolvable URL (an OpenAlex source `S45897893` as `https://api.openalex.org/sources/S45897893`, a DOI as `https://doi.org/<doi>`), never as a bare ID. A long flag may wrap onto indented continuation lines; its URL stays inside that flag's block. A flag without its URL is not a flag and is not written; where the evidence was not retrieved, it reads `[FLAG candidate] <type>: <fact>  evidence not retrieved: <what was tried>`. The URLs under Graph or People do not stand in for the flag's own. The primary-data reach line carries the end node's URL the same way.
 
 | Flag | What counts | How to check |
 |---|---|---|
@@ -70,6 +70,14 @@ For each claim, say where the chain ends, with the link:
 - **Objective or official data**: .gov or agency statistics, registries, court or police records, measured outcomes (biomarker, device, administrative record).
 - **Self-report only**: surveys, questionnaires, interviews. Record which instrument (for IPV: CTS, CTS2, NVAWS, NISVS, GSS). If an objective comparison exists, link it.
 - **Opinion only**: the chain ends in an argument, a review that cites no data for this claim, or an uncited figure.
+
+The end node's URL goes on the reach line. Where the chain ends in a meta-analysis or review whose pooled studies were not each opened, the end node is that paper and its URL is the paper's (`https://doi.org/<doi>`), with the pooled studies' instruments named as the paper reports them.
+
+**Which evidence leads.** Current primary data comes first: national registries, linked administrative records, prospective and unselected cohorts, sequencing, and trials, read in full. Pre-registry work (hand-counted, small or selected samples, no record linkage, nothing a computer recomputed) is reported as the history of a claim, labelled as such, and supports no rate. Where a claim's chain runs through both, the card leads with the current data and gives the older work its own line.
+
+**Adjustment on mediators.** When a cited result shrinks after adjusting for variables the exposure itself produces (schooling, employment, cohabitation, income that follow from the condition under study), that is over-adjustment, not a rival explanation: the card says so and reports the unadjusted and adjusted figures side by side, with the cited authors' own caveat where they give one.
+
+**Supplied facts are researched.** A fact the user states is researched to its primary record and the result written on the card; it is never set aside as "noted". Advocacy groups' statements are recorded as the group's position (grey literature at best), never as evidence for the claim.
 
 ### 5. Fairness
 
@@ -235,3 +243,16 @@ Unverified: none.
 ## Hand-offs
 
 - One paper's provenance (funding to mission, a method that could return a result against its premise, declared vs actual conflicts): `source-provenance`.
+
+## Origin
+
+Directed by the author on 2026-10-27 and migrated into this repository on 2026-11-04 (directions store `dir-emv`, `dir-f1w`); the reach-line, evidence-era, mediator and supplied-fact rules follow his corrections of 2026-11-08 to a research brief run beside this skill's test (`dir-smj`, project bead persistint-game-h9lj), and the flag-line rule follows the V&V runs of the same day (bead persistint-game-k6ka). His words are kept verbatim in those records and in `dev/cui-bono/origins.md`.
+
+## BUGS
+
+- The network-card V&V procedure failed on claude-code/win32 (three runs) and codex/win32 (one run): flags written without their evidence URL, then a reach line without the end node's URL. Bead persistint-game-k6ka. Closed on claude-code/win32 2026-11-09: the fourth run, after the rules of 61252c5, passed (`VV.md` results; recorded in bc55a2c). Open on codex/win32 until its rerun passes.
+
+## TODO
+
+- Rerun network-card on codex/win32 with the rules above after its usage limit resets (2026-11-15), with network access, and record the result. Bead persistint-game-k6ka. (The claude-code/win32 rerun was done and passed on 2026-11-09.)
+- Verification and validation on every platform the plugin claims, named here until each has passed and is recorded in `VV.md`: claude-code/win32, claude-code/linux-wsl, claude-code/linux, claude-code/darwin, codex/win32, codex/linux-wsl, antigravity/win32, antigravity/linux-wsl, kiro/win32.

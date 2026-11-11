@@ -4,7 +4,12 @@ name: cui-bono
 requirements:
   - kind: command
     name: node
-    why: the OpenAlex profile script and the example queries run on Node 18+ (built-in fetch)
+    why: >-
+      every script runs on Node 18+ (openalex-profile.mjs with its built-in fetch, the logic
+      scripts and test/run.js). cui-bono step 3 also requires the informal-logic-check,
+      staleness-guard, word-lineage and hidden-libel-check skills; the skill-vv schema has no
+      requirement kind for a skill (command, env and file only), so they are listed here: install
+      each with /plugin install <skill>@gnomatix-oss-skills
     install: mise use -g node@lts
   - kind: command
     name: curl
@@ -17,93 +22,63 @@ procedures:
       every claim
     steps: >
       Paste the worked-example text from skills/cui-bono/SKILL.md (the reply beginning "The honest
-
       answer has two halves") as the argument to /cui-bono. Pass when the card scores the detectors
-
       with a quote for each one marked present, names a register, who publishes in it and which
-      voice
-
-      (register and sector), lists every factual claim with "cites nothing", and hands every claim
-      to
-
-      citation-farm-audit and reports what the record shows against the text's figure, or lists the
-
-      claim as not traced with the reason. Fail if any detector is marked present without a quote,
-      if
-
-      claims are summarised instead of quoted, or if any claim is neither traced nor listed as not
-
-      traced with the reason.
+      voice (register and sector), lists every factual claim with what the text cites for it, or
+      "cites nothing" where it cites nothing, and hands every claim to citation-farm-audit and
+      reports what the record shows against the text's figure, or lists the claim as not traced
+      with the reason. Fail if any detector is marked present without a quote, if claims are
+      summarised instead of quoted, or if any claim is neither traced nor listed as not traced with
+      the reason.
   - id: self-audit
     summary: >-
       cui-bono with no argument audits the agent's own previous reply and names the voice it
       reproduced
     steps: >
       In a session, ask a factual question on which program or policy literature exists, let the
-      agent
-
-      answer, then run /cui-bono with no argument. Pass when the card treats the agent's reply as
-      the
-
-      document, quotes the user's statement and says whether it was answered or restated, marks each
-
-      figure "cites nothing" where the agent gave no source, traces every figure to its real source
-
-      or lists it as not traced with the reason, and names the register and sector of the voice.
-      Fail
-
-      if the agent apologises, grades itself, audits something other than its own reply, or leaves a
-
-      figure neither traced nor listed as not traced with the reason.
+      agent answer, then run /cui-bono with no argument. Pass when the card treats the agent's
+      reply as the document, quotes the user's statement and says whether it was answered or
+      restated, marks each figure "cites nothing" where the agent gave no source, traces every
+      figure to its real source or lists it as not traced with the reason, and names the register
+      and sector of the voice. Fail if the agent apologises, grades itself, audits something other
+      than its own reply, or leaves a figure neither traced nor listed as not traced with the
+      reason.
   - id: decompose-and-validate
     summary: >-
       logic-decomposer turns a text into quoted propositions, directed conditionals and two grades
       per proposition, and its validity checks catch a planted error
     steps: >
       Give /logic-decomposer a passage of ten or more sentences containing at least one "unless"
-
       conditional, one "only if" conditional, one unquantified proportion ("most"), one
-      self-referential
-
-      sentence ("to be honest") and one uncited figure stated flatly. Pass when: every sentence has
-      one
-
-      disposition; every proposition is quoted verbatim with its sentence id; the "unless" is
-      written
-
-      ~B -> A and the "only if" A -> B, each with its contrapositive; "most" is marked proportion,
-
-      unquantified; the self-referential sentence is marked rhetorical; the uncited figure is graded
-
-      E6, stated S7, licensed S4, gap +3, "overclaim"; and the validity report lists all eight
-      checks. Fail
-
-      on any paraphrased proposition, any reversed conditional, any skipped sentence, or a missing
-
-      grade.
+      self-referential sentence ("to be honest") and one uncited figure stated flatly. Pass when:
+      every sentence has one disposition; every proposition is quoted verbatim with its sentence
+      id; the "unless" is written /B -> A and the "only if" A -> B, each with its contrapositive;
+      "most" is marked proportion, unquantified; the self-referential sentence is marked
+      rhetorical; the uncited figure is graded E6, starting certainty — (not a study), stated S7,
+      licensed S4, gap +3, "overclaim"; every proposition has its evidence grade, starting
+      certainty (— where the evidence is not a study), stated grade, licensed grade and gap in
+      separate columns (the gap reads n/a where either side is S?); and the validity report lists
+      all eight checks. Fail on any paraphrased proposition, any reversed conditional, any skipped
+      sentence, or a missing grade or certainty entry.
   - id: toolbox-on-decomposition
     summary: logic-toolbox applies a named method to decomposer output and shows the working
     steps: >
-      Give /logic-toolbox a P-table of four premises and two conclusions from a decomposer run, with
-
-      two premises that cannot both be true. Pass when the output contains a LOGIC GRID with every
-
-      offered cell marked acc/rel/suf and the footer lines computed, an INCOMPATIBILITY MATRIX in
-      the
-
-      method-12 notation (held premises h1…hn keyed with quote and formula, assumptions declared
-
-      separately as A1…, the pair marked X with its reason, or X|A<n> where the conflict needs a
-
-      declared assumption, no pairwise cell citing a held premise, a "Joint: H as stated:" line (satisfiable with its witness, or not
-      satisfiable with the minimal inconsistent subsets) and an "H under A" line per declared
-      assumption naming the minimal subset where it fails (this fixture conflicts only under A1: {h1, h2}), and a "Verdict:"
-
-      line with the load-bearing assumptions), and each result headed by the method number and name.
-
-      Fail if a verdict appears without its grid, chain or table, if a pairwise cell cites a held
-
-      premise, or if a converse or inverse is derived from a conditional.
+      Give /logic-toolbox a P-table of four premises and two conclusions in the logic-decomposer
+      layout (the id, sentence, role, proposition, supports and cites columns; the formal, K, h and
+      grade columns are left to the toolbox run), with two premises that cannot both be true under
+      a declared assumption. Pass when the output contains a LOGIC GRID with every offered cell
+      marked acc/rel/suf and the footer lines computed, an INCOMPATIBILITY MATRIX in the method-12
+      notation (held premises h1…hn keyed with quote and formula, assumptions declared separately
+      as A1…, the pair marked X with its reason, or X|A<n> where the conflict needs a declared
+      assumption, no pairwise cell citing a held premise, a "Joint: H as stated:" line
+      (satisfiable with its witness, or not satisfiable with the minimal inconsistent subsets) and
+      an "H under A" line per declared assumption naming the minimal subset where it fails; this
+      fixture's conflict is the pair {h1, h2} under A1, and a run that declares further assumptions
+      passes this item when it names that same pair {h1, h2} under the assumption it reports), a
+      "Verdict:" line naming the assumptions the verdict depends on (those whose addition changes
+      satisfiability), and each result headed by the method number and name. Fail if a verdict
+      appears without its grid, chain or table, if a pairwise cell cites a held premise, or if a
+      converse or inverse is derived from a conditional.
   - id: network-card
     summary: citation-farm-audit produces a network card with primary-data reach for a policy claim
     steps: |
@@ -113,12 +88,10 @@ procedures:
   - id: provenance-card
     summary: source-provenance produces a tagged card (observed / inferred / not found) for one paper
     steps: >
-      Run /source-provenance on one paper with a DOI. Pass when every body entry of the card carries one
-      of
-
-      the three tags (header, Type, section labels, Places searched and Open items are untagged
-      by the template) and the funding line traces to the funder's own stated mission or says not
-      found.
+      Run /source-provenance on one paper with a DOI. Pass when every body entry of the card
+      carries one of the three tags (header, Type, section labels, Places searched and Open items
+      are untagged by the template) and the funding line traces to the funder's own stated mission
+      or says not found.
 platforms:
   - claude-code/win32
   - claude-code/linux-wsl
@@ -162,13 +135,16 @@ results:
   - procedure: self-audit
     model: codex-default
     platform: codex/win32
-    result: pass
+    result: deferred
     date: 2026-11-09
     by: null
     evidence: null
     notes: >-
       codex-cli 0.163.0, codex/win32. Single-turn run (answer and no-argument audit in one prompt),
-      so every figure was cited and the cites-nothing criterion is met vacuously; format criteria
+      not the written two-turn procedure (answer first, then /cui-bono with no argument): recorded
+      as pass on 2026-11-09, changed to deferred on 2026-11-10; rerun pending after the Codex quota
+      resets 2026-11-15. Every figure was cited, so the cites-nothing criterion was met vacuously;
+      format criteria
       met: reply treated as the document, user prompt quoted with judgment Partially answered, P2
       and P6 traced to Eckenrode 2010 and Schweinhart 2013 with arithmetic checked, omitted Memphis
       age-18 null found, voice named with publishers, Shape 0/8 with reasons, grades, grid, 7x7
@@ -258,7 +234,8 @@ results:
       marked proportion, unquantified; To be honest rhetorical; 40 percent figure E6 S7 licensed S4
       gap +3 overclaim; eight validity checks listed, conditional-direction caught and removed the
       skeleton's misfire; no converse or inverse; C2 (may) S? gap n/a. Deviations from the skill
-      text, not the criteria: no certainty column, no K/h columns
+      text, not the criteria of that date: no certainty column, no K/h columns. The criteria as
+      revised on 2026-11-10 require the certainty column; this run predates them and lacks it
   - procedure: toolbox-on-decomposition
     model: claude-fable-5-1
     platform: claude-code/win32
@@ -271,8 +248,11 @@ results:
       cell acc/rel/suf, unsupported C1 and C2, no idle premises, countermodels via truth-table.mjs;
       method 12 matrix h1-h4 keyed with quote and formula, A1-A3 declared separately, h1 x h2 X|A3
       with reason, no pairwise cell cites a held premise, joint satisfiable as stated with witness
-      and X under A3 with minimal subset {h1, h2}, Verdict with load-bearing A3; headed by method
-      number and name; no converse or inverse
+      and X under A3 with minimal subset {h1, h2}, Verdict naming A3 as the assumption it depends
+      on; headed by method number and name; no converse or inverse. The run declared further
+      assumptions (A2, A3) beyond the fixture's A1 and reported the conflict under A3; the criterion
+      as revised on 2026-11-10 accepts that because the same pair {h1, h2} is named. The record does
+      not say whether an H under A1 line was printed
   - procedure: network-card
     model: claude-fable-5-1
     platform: claude-code/win32
@@ -300,8 +280,53 @@ results:
       mission with source (Forte, VR, NIMH) or marked not found (SSF, Region Stockholm); grants
       resolved in Swecris and RePORTER with PI and amount; EU grant 610307 vs CORDIS COSYN 667301
       observed with both sources, matching codex; data-owner co-authorship recorded
+  - procedure: network-card
+    model: claude-opus-5-5
+    platform: claude-code/win32
+    result: fail
+    date: 2026-11-09
+    by: null
+    evidence: null
+    notes: >-
+      claude -p --model claude-opus-5-5 2.1.314, claude-code/win32, Archer 2000, live OpenAlex,
+      after the flag-format rule was added: card has graph, people and money, facts with query URLs,
+      fairness check on the other camp, reach line, verdict, Unverified. Two flags raised: woozle
+      chain (Fiebert, URL on the wrapped continuation line) and author-editor overlap, which cites
+      'OpenAlex source S45897893' with no URL; reach line URL on the next line. One flag without a
+      URL fails the criterion. Improvement over the first runs (0 of 7 flags with URLs)
+  - procedure: network-card
+    model: claude-opus-5-5
+    platform: claude-code/win32
+    result: fail
+    date: 2026-11-09
+    by: null
+    evidence: null
+    notes: >-
+      third run, after the resolvable-URL rule (claude -p --model claude-opus-5-5, live OpenAlex):
+      graph, people and money, fairness, verdict, Unverified present; no flag raised, each flag type
+      marked not met with its evidence and query URL. Fails on the reach line: names the end node
+      (the pooled primary studies) without a URL, which the skill's format requires. Run-to-run
+      variance: run 2 checked editorial seats and raised an author-editor flag; run 3 left seats
+      'not checked'
+  - procedure: network-card
+    model: claude-opus-5-5
+    platform: claude-code/win32
+    result: pass
+    date: 2026-11-09
+    by: null
+    evidence: null
+    notes: >-
+      fourth run, after commit 61252c5 (every flag type assessed; reach-line URL for a
+      meta-analysis): claude -p --model claude-opus-5-5, live OpenAlex, Archer 2000. Graph and
+      people-and-money present; no flag raised; each of the eight flag types written as not met with
+      its evidence and resolvable OpenAlex URL (mutual-citation 1.7 percent largest citer, 2 of 9
+      non-self top citers co-authors; self-citation 1.2 percent; no funder; peer-reviewed source
+      S75627607 as URL), or not checked and listed under Unverified with the reason (closed loop,
+      woozle, author-reviewer overlap: no policy document or editorial board retrieved); reach line
+      not determined at the meta-analysis with https://doi.org/10.1037/0033-2909.126.5.651; fairness
+      run on Dobash et al. 1992; Unverified list
 ---
 
 # cui-bono V&V
 
-Six procedures: two for the parent skill (a pasted text, and the no-argument self-audit) and one each for the four aspect skills (logic-decomposer, logic-toolbox, citation-farm-audit, source-provenance). Each pass criterion is visible in the session output. No run of the shipped procedures is recorded yet; the hand run of 2026-11-08 that predated the shipped file is not a result and was removed on 2026-11-08. The TODO in skills/cui-bono/SKILL.md names every platform still to run.
+Six procedures: two for the parent skill (a pasted text, and the no-argument self-audit) and one each for the four aspect skills (logic-decomposer, logic-toolbox, citation-farm-audit, source-provenance). Each pass criterion is visible in the session output. Runs of the shipped procedures from 2026-11-09 on are recorded in the frontmatter `results:`; the hand run of 2026-11-08 that predated the shipped file is not a result and was removed on 2026-11-08. The TODO entries in each skill's SKILL.md name the platforms still to run.

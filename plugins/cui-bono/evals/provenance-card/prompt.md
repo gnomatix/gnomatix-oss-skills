@@ -1,0 +1,10 @@
+---
+description: VV.md procedure provenance-card. source-provenance produces a tagged card (observed / inferred / not found) for one paper with a DOI. NEEDS NETWORK ACCESS, granted with --allow-tools WebFetch WebSearch (Bash cannot be granted on native Windows, so the skill's curl queries are unavailable; WebFetch against api.crossref.org, europepmc.org, api.openalex.org and reporter.nih.gov stands in).
+expected_outcome: A provenance card with sections (a) to (f), every body entry under (a) to (f) carrying one of the tags [observed], [inferred] or [not found] (the header, Type, section labels, Places searched and Open items are untagged, as in the skill template), the (a) Funding line tracing each funder to the funder's own stated mission (quoted, with URL) or saying not found with the places searched, plus Places searched and Open items.
+tags: [source-provenance, network]
+max_turns: 80
+timeout_seconds: 3600
+allowed_tools: [Read, Glob, Grep, Skill, WebFetch, WebSearch]
+---
+
+Run the source-provenance skill (`/source-provenance`) on this paper: Olds DL, Eckenrode J, Henderson CR Jr, et al. "Long-term effects of home visitation on maternal life course and child abuse and neglect: fifteen-year follow-up of a randomized trial." JAMA 1997;278(8):637-643. doi:10.1001/jama.1997.03550080047038. Write the full provenance card in your reply in the skill's output format: the short cite and DOI, Type, then (a) Funding, (b) Affiliations, (c) Self-citation, (d) Primary data, (e) Against-premise, (f) COI, Places searched and Open items. Every body entry under (a) to (f) carries exactly one of the tags [observed], [inferred] or [not found]; the header, Type, the section labels, Places searched and Open items stay untagged, as in the skill template. The funding line traces each funder to the funder's own stated mission, quoted from the funder's site with the URL, or says [not found] and lists where you searched. This session has no Bash; query Crossref (https://api.crossref.org/works/10.1001/jama.1997.03550080047038), Europe PMC, OpenAlex and NIH RePORTER with WebFetch, and funder sites with WebFetch or WebSearch.

@@ -44,9 +44,21 @@ platforms:
 results: []
 `;
 
+// The sibling plugin sits at ../<name> in the source tree and at
+// ../../<name>/<version> in an installed marketplace cache.
+function siblingVv(name) {
+  const src = path.join(ROOT, '..', name, 'VV.md');
+  if (fs.existsSync(src)) return src;
+  const cacheDir = path.join(ROOT, '..', '..', name);
+  let versions = [];
+  try { versions = fs.readdirSync(cacheDir).filter((v) => fs.existsSync(path.join(cacheDir, v, 'VV.md'))).sort(); } catch { /* not a cache layout */ }
+  if (versions.length) return path.join(cacheDir, versions[versions.length - 1], 'VV.md');
+  throw new Error(`no ${name} VV.md in the source-tree or cache layout; tried ${src} and ${path.join(cacheDir, '<version>', 'VV.md')}`);
+}
+
 test('shipped VV.md files parse and validate', () => {
   const vv = require('../lib/vv');
-  for (const f of [path.join(ROOT, 'VV.md'), path.join(ROOT, '..', 'satori', 'VV.md')]) {
+  for (const f of [path.join(ROOT, 'VV.md'), siblingVv('satori')]) {
     const r = vv.loadVv(f);
     assert.ok(r && r.data.name, f);
   }
@@ -54,13 +66,13 @@ test('shipped VV.md files parse and validate', () => {
 
 test('dates stay plain strings: no timestamp conversion on load or dump', () => {
   const vv = require('../lib/vv');
-  const satori = vv.loadVv(path.join(ROOT, '..', 'satori', 'VV.md'));
+  const satori = vv.loadVv(siblingVv('satori'));
   for (const r of satori.data.results) assert.strictEqual(typeof r.date, 'string', JSON.stringify(r));
   assert.strictEqual(satori.data.results[0].date, '2026-11-03');
 
   const { home, env } = tmpHome();
   const dir = path.join(home, 'd', 'probe');
-  writeSkill(dir, PROBE.replace('results: []', 'results:\n  - procedure: probe\n    model: m\n    platform: claude-code/win32\n    result: fail\n    date: 2026-11-03\n    notes: x'));
+  writeSkill(dir, PROBE.replace('results: []', 'results:\n  - procedure: probe\n    model: m\n    platform: ' + require('../lib/vv').platformKey('claude-code') + '\n    result: fail\n    date: 2026-11-03\n    notes: x'));
   const r = run(['check', '--model', 'm', '--agent', 'claude-code', '--root', path.join(home, 'd')], env);
   assert.match(r.stdout, /Last result: fail on 2026-11-03: x/, r.stdout);
   run(['record', 'result', 'vv-probe', 'probe', 'pass', '--model', 'm2', '--agent', 'claude-code', '--into', path.join(dir, 'VV.md')], env);

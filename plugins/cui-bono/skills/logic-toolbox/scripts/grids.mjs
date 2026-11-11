@@ -20,13 +20,19 @@
 //     assumptions: {A1: "text" | {text: "...", formula: "Pause -> /Voluntary"}},
 //     cells: {"h1|h3": {status: "ok"|"incompatible"|"under"|"entailed"|"undecidable",
 //                       under: "A1", reason: "..."}} }
-//   Cells print as o, X, X|A1, =, ?. The `under` value of an X|A cell must be a declared
-//   assumption id (listed under assumptions, or A-prefixed), never a held-premise id: a
-//   pairwise cell never cites a held premise (method 12), and a conflict that needs three
-//   held premises belongs in the Joint section. A held-premise id there is an error (exit 2).
+//   Cells print as o, X, X|A1, =, ?; `status` may also be written as the mark (o, X, =, ?).
+//   Any other status, and a cell key whose two ids are not both held premises, is an error
+//   (exit 2). The `under` value of an X|A cell must be an id listed under assumptions, never
+//   a held-premise id: a pairwise cell never cites a held premise (method 12), and a
+//   conflict that needs three held premises belongs in the Joint section. Anything else
+//   there is an error (exit 2). A reason prints after the row: as `(reason)` when its cell
+//   is the row's last, otherwise as `(<column id>: reason)`, so the columns stay aligned.
 //   The Joint lines come from the formulas when every held premise has one (a model search;
-//   method 8), because pairwise cells cannot prove joint satisfiability; without formulas
-//   only the pairwise X cells are reported there.
+//   method 8, at most 16 atoms), because pairwise cells cannot prove joint satisfiability;
+//   without formulas, or when a formula does not parse or is past 16 atoms, only the
+//   pairwise X cells are reported there. The Verdict line names the assumptions the
+//   verdict depends on: those whose addition changes satisfiability (H satisfiable as
+//   stated, not with the assumption added); none when H is already not satisfiable.
 // JSON for cross-grid (method 1):
 //   { items: ["A","B"], attributes: {evaluator: ["X","Y"]}, cells: {"A|X": "•", "A|Y": "X"} }
 //   ("O" or "•" is the dot; "X" is the exclusion.)
@@ -115,6 +121,7 @@ export function renderLogicGrid(premises, conclusions, cells = null, width = DEF
 // ---- method 12: incompatibility matrix ---------------------------------------------
 
 const STATUS_MARK = { ok: 'o', incompatible: 'X', entailed: '=', undecidable: '?', o: 'o', X: 'X', '=': '=', '?': '?' };
+const VALID_STATUS = ['ok', 'incompatible', 'under', 'entailed', 'undecidable', 'o', 'X', '=', '?'];
 
 function pairCell(cells, a, b) {
   if (!cells) return null;
@@ -183,16 +190,26 @@ export function renderMatrix(premises, assumptions = {}, cells = null) {
   const assumed = aIds.map((id) => ({ id, ...entry(assumptions[id], 'text') }));
   const filled = cells !== null && cells !== undefined;
 
-  // Method 12: an X|A cell cites a declared assumption, never a held premise.
+  // Every cell is a pair of held premises with a known status; an X|A cell cites a declared
+  // assumption, never a held premise (method 12).
   if (filled) {
     for (const [key, cell] of Object.entries(cells)) {
-      if (!cell || cell.status !== 'under') continue;
+      const pair = key.split('|');
+      if (pair.length !== 2 || pair[0] === pair[1] || !pair.every((id) => ids.includes(id))) {
+        const stray = pair.filter((id) => !ids.includes(id));
+        throw new Error(`matrix cell ${key}: a cell is keyed by two different held-premise ids (${ids.join(', ')})${stray.length ? `; not a held premise: ${stray.join(', ')}` : ''}`);
+      }
+      const status = cell && cell.status != null ? String(cell.status) : '';
+      if (!VALID_STATUS.includes(status)) {
+        throw new Error(`matrix cell ${key}: status ${JSON.stringify(status)} is not one of ${VALID_STATUS.join(', ')}`);
+      }
+      if (status !== 'under') continue;
       const under = cell.under == null ? '' : String(cell.under);
       if (ids.includes(under)) {
         throw new Error(`matrix cell ${key}: "under" names held premise ${under}; a pairwise cell never cites a held premise (method 12). Declare the assumption separately (A1, A2, …) or report the conflict in the Joint section.`);
       }
-      if (!aIds.includes(under) && !/^A\d*$/.test(under)) {
-        throw new Error(`matrix cell ${key}: "under" must be a declared assumption id (listed under assumptions, or A-prefixed), got ${JSON.stringify(under)}`);
+      if (!aIds.includes(under)) {
+        throw new Error(`matrix cell ${key}: "under" must be a declared assumption id (one listed under assumptions${aIds.length ? `: ${aIds.join(', ')}` : '; none is declared'}), got ${JSON.stringify(under)}`);
       }
     }
   }
@@ -214,16 +231,20 @@ export function renderMatrix(premises, assumptions = {}, cells = null) {
   lines.push(rtrim(`${' '.repeat(2 + colW)}${ids.map((id) => pad(id, colW)).join('')}`));
   ids.forEach((row, i) => {
     let out = `  ${pad(row, colW)}`;
+    const reasons = [];
     ids.forEach((col, j) => {
       let text = '';
       if (i === j) text = '=';
       else if (j > i && filled) {
         const cell = pairCell(cells, row, col);
         text = matrixMark(cell);
-        if (cell && cell.reason) text = `${pad(text, colW)}(${cell.reason})`;
+        if (cell && cell.reason) reasons.push({ col, reason: cell.reason, last: j === ids.length - 1 });
       }
       out += text.length >= colW ? `${text}  ` : pad(text, colW);
     });
+    // Reasons go after the row's last cell, so they never push a later column right.
+    if (reasons.length === 1 && reasons[0].last) out = `${rtrim(out)}  (${reasons[0].reason})`;
+    else if (reasons.length) out = `${rtrim(out)}  (${reasons.map((r) => `${r.col}: ${r.reason}`).join('; ')})`;
     lines.push(rtrim(out));
   });
 
@@ -247,57 +268,74 @@ export function renderMatrix(premises, assumptions = {}, cells = null) {
     }
   }
   const allFormulas = held.length > 0 && held.every((h) => h.formula);
-  const loadBearing = new Set(Object.keys(underPairs));
-  let inconsistent = false;
-  let decided = false;
+  const heldItems = held.map((h) => ({ id: h.id, formula: h.formula }));
+  // Satisfiability of H as stated: true, false, or null (not decided).
+  let hSat = null;
+  let formulaNote = '';
 
   if (allFormulas) {
-    const r = jointCheck(held.map((h) => ({ id: h.id, formula: h.formula })));
+    const r = jointCheck(heldItems);
     if (r.ran) {
-      decided = true;
+      hSat = r.satisfiable;
       if (r.satisfiable) {
         let s = ` Joint: H as stated: satisfiable (witness: ${r.witness})`;
         if (xPairs.length) s += ` ${DASH} the pairwise X cells ${xPairs.join(', ')} are not reproduced by the formulas`;
         lines.push(s);
       } else {
-        inconsistent = true;
         lines.push(` Joint: H as stated: not satisfiable ${DASH} minimal inconsistent subsets ${r.minimal.join(', ')}`);
       }
     } else {
-      lines.push(` Joint: H as stated: ${r.note}`);
+      formulaNote = `formula check not run: ${r.note}`;
     }
-  } else if (xPairs.length) {
-    inconsistent = true;
-    lines.push(` Joint: H as stated: not satisfiable ${DASH} minimal inconsistent subsets ${xPairs.join(', ')} (from the pairwise X cells)`);
-  } else {
-    lines.push(` Joint: H as stated: not decided ${DASH} no pairwise X, and pairwise is not joint; give every held premise a formula, or run method 8`);
+  }
+  if (hSat === null) {
+    // No formulas, or a formula check that could not run: the pairwise X cells decide.
+    if (xPairs.length) {
+      hSat = false;
+      lines.push(` Joint: H as stated: not satisfiable ${DASH} minimal inconsistent subsets ${xPairs.join(', ')} (from the pairwise X cells${formulaNote ? `; ${formulaNote}` : ''})`);
+    } else if (formulaNote) {
+      lines.push(` Joint: H as stated: not decided ${DASH} ${formulaNote}; no pairwise X, and pairwise is not joint`);
+    } else {
+      lines.push(` Joint: H as stated: not decided ${DASH} no pairwise X, and pairwise is not joint; give every held premise a formula, or run method 8`);
+    }
   }
 
+  // An assumption the verdict depends on is one whose addition changes satisfiability:
+  // H satisfiable as stated, not satisfiable with the assumption added. When H as stated is
+  // already not satisfiable, no addition changes that, and none is reported.
+  const dependsOn = new Set();
+  const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   for (const a of assumed) {
-    let s;
+    let s = null;
+    let note = '';
     if (allFormulas && a.formula) {
-      const r = jointCheck([...held.map((h) => ({ id: h.id, formula: h.formula })), { id: a.id, formula: a.formula }]);
-      if (!r.ran) s = r.note;
+      const r = jointCheck([...heldItems, { id: a.id, formula: a.formula }]);
+      if (!r.ran) note = `formula check not run: ${r.note}`;
       else if (r.satisfiable) s = `satisfiable (witness: ${r.witness})`;
       else {
-        loadBearing.add(a.id);
-        const sets = r.minimal.map((m) => m.replace(new RegExp(`,? ?${a.id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?=[,}])`), ''));
-        s = `X (minimal subset${sets.length > 1 ? 's' : ''} ${sets.join(', ')})`;
+        const withA = new RegExp(`[{ ]${esc(a.id)}(?=[,}])`);
+        const own = r.minimal.filter((m) => withA.test(m)).map((m) => m.replace(new RegExp(`,? ?${esc(a.id)}(?=[,}])`), ''));
+        if (hSat === true) dependsOn.add(a.id);
+        s = own.length
+          ? `X (minimal subset${own.length > 1 ? 's' : ''} ${own.join(', ')})`
+          : `X (H is already not satisfiable as stated; ${a.id} adds no inconsistent subset)`;
       }
-    } else if (underPairs[a.id]) {
-      s = `X (minimal subset${underPairs[a.id].length > 1 ? 's' : ''} ${underPairs[a.id].join(', ')})`;
-    } else {
-      s = `not decided ${DASH} no X|${a.id} cell, and pairwise is not joint`;
     }
+    if (s === null && underPairs[a.id]) {
+      // The X|A cells: each pair is satisfiable without A and not with it.
+      if (hSat !== false) dependsOn.add(a.id);
+      s = `X (minimal subset${underPairs[a.id].length > 1 ? 's' : ''} ${underPairs[a.id].join(', ')})${note ? ` (from the X|${a.id} cells; ${note})` : ''}`;
+    }
+    if (s === null) s = note ? `not decided ${DASH} ${note}` : `not decided ${DASH} no X|${a.id} cell, and pairwise is not joint`;
     lines.push(`        H under ${a.id}: ${s}`);
   }
 
   let verdict;
-  if (inconsistent) verdict = 'inconsistent';
-  else if (decided) verdict = 'consistent as worded';
+  if (hSat === false) verdict = 'inconsistent';
+  else if (hSat === true) verdict = 'consistent as worded';
   else verdict = 'pairwise cells only; joint check pending';
-  const lb = aIds.filter((id) => loadBearing.has(id));
-  lines.push(` Verdict: ${verdict}; load-bearing assumptions: ${lb.length ? lb.join(', ') : 'none'}`);
+  const dep = aIds.filter((id) => dependsOn.has(id));
+  lines.push(` Verdict: ${verdict}; depends on: ${dep.length ? dep.join(', ') : 'none'}`);
   return lines.join('\n');
 }
 

@@ -15,12 +15,12 @@ When a paper is pulled as a source, apply to it the scrutiny that critics of ind
 
 Run on every source pulled, every time, before the source supports any claim. The same six checks apply to every funder class: industry, government agency, private foundation, NGO, advocacy group, think tank, university centre. No funder class is exempt and no funder class gets a heavier audit than another.
 
-Every line on the card carries one tag:
+Every body entry on the card (each fact, inference or absence it records) carries one tag; the template's header, Type, section labels, Places searched and Open items lines are structure and carry none:
 - `observed`: read in a named document, with URL or DOI.
 - `inferred`: reasoned from observed facts; the reasoning is stated.
 - `not found`: searched for and absent; the places searched are listed.
 
-Nothing goes on the card untagged. A `not found` is a finding, not a gap to fill with a guess.
+No body entry goes on the card untagged. A `not found` is a finding, not a gap to fill with a guess.
 
 ### (a) Funding
 
@@ -39,7 +39,7 @@ Nothing goes on the card untagged. A `not found` is a finding, not a gap to fill
 ### (c) Citation check (per source)
 
 - Count references co-authored by each author of the source. Report the counts per author.
-- Check whether the load-bearing claims trace to primary data or only to other secondary sources by the same group.
+- Check whether the claims the source's conclusion depends on trace to primary data or only to other secondary sources by the same group.
 - For network-level patterns (citation farms, circular citation across groups, policy laundering of grey literature), run citation-farm-audit.
 
 ### (d) Primary data
@@ -170,3 +170,15 @@ Places searched: PMC10039964 full text (NCBI E-utilities); Europe PMC core recor
               reference list; NIH RePORTER; Crossref; niaaa.nih.gov.
 Open items:   none.
 ```
+
+## Origin
+
+Written on 2026-10-27 as the companion of `citation-farm-audit`, and migrated into this repository with it on 2026-11-04 (directions store dir-emv). Facts that are not in dispute are not re-checked, and fact checks use primary sources, never suspect secondary ones (dir-f1w). The records hold the author's words; this file states the rules.
+
+## BUGS
+
+None open.
+
+## TODO
+
+- Verification and validation on every platform the plugin claims: claude-code/win32, claude-code/linux-wsl, claude-code/linux, claude-code/darwin, codex/win32, codex/linux-wsl, antigravity/win32, antigravity/linux-wsl, kiro/win32. One pass of the `provenance-card` procedure in `VV.md` per platform; the entry stays until each is recorded. Passes are recorded on codex/win32 and claude-code/win32 (2026-11-09).

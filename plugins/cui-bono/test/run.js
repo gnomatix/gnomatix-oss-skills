@@ -3,8 +3,10 @@
 //   node plugins/cui-bono/test/run.js
 //
 // Runs the grid printer (grids.mjs), the truth-table generator, the conditionals
-// chainer and the decomposer skeleton as a user would, from the command line, and
-// compares the grids byte for byte against the fixtures in test/fixtures/. Plain
+// chainer, the decomposer skeleton and the OpenAlex profile script (against a local
+// stand-in server, no network) as a user would, from the command line, and compares
+// the grids line for line against the fixtures in test/fixtures/, after normalising
+// CRLF to LF and removing a leading BOM and trailing newlines on both sides. Plain
 // Node 18+, no dependencies. child_process is used here because this is a test
 // harness, not a hook.
 
@@ -12,7 +14,8 @@
 
 const fs = require('fs');
 const path = require('path');
-const { spawnSync } = require('child_process');
+const http = require('http');
+const { spawnSync, spawn } = require('child_process');
 const { pathToFileURL } = require('url');
 
 const ROOT = path.join(__dirname, '..');
@@ -21,6 +24,7 @@ const GRIDS = path.join(ROOT, 'skills', 'logic-toolbox', 'scripts', 'grids.mjs')
 const TRUTH = path.join(ROOT, 'skills', 'logic-toolbox', 'scripts', 'truth-table.mjs');
 const COND = path.join(ROOT, 'skills', 'logic-toolbox', 'scripts', 'conditionals.mjs');
 const SKEL = path.join(ROOT, 'skills', 'logic-decomposer', 'scripts', 'skeleton.mjs');
+const PROFILE = path.join(ROOT, 'skills', 'citation-farm-audit', 'scripts', 'openalex-profile.mjs');
 
 let failures = 0;
 
@@ -42,10 +46,33 @@ function fixture(name) {
   }
 }
 
-function run(script, args) {
-  const r = spawnSync(process.execPath, [script, ...args], { encoding: 'utf8' });
+function run(script, args, input) {
+  const opts = { encoding: 'utf8' };
+  if (input !== undefined) opts.input = input;
+  const r = spawnSync(process.execPath, [script, ...args], opts);
   if (r.error) return { status: -1, stdout: '', stderr: String(r.error.message) };
   return { status: r.status, stdout: r.stdout || '', stderr: r.stderr || '' };
+}
+
+// Asynchronous run, for a script that talks to a server in this process.
+function runAsync(script, args, env) {
+  return new Promise((resolve) => {
+    const child = spawn(process.execPath, [script, ...args], { env: { ...process.env, ...env } });
+    let stdout = '';
+    let stderr = '';
+    child.stdout.on('data', (d) => { stdout += d; });
+    child.stderr.on('data', (d) => { stderr += d; });
+    child.on('error', (err) => resolve({ status: -1, stdout, stderr: String(err.message) }));
+    child.on('close', (status) => resolve({ status, stdout, stderr }));
+  });
+}
+
+// Lines of `text` from the line `start` up to (not including) the line `stop`.
+function section(text, start, stop) {
+  const lines = norm(text).split('\n');
+  const a = lines.indexOf(start);
+  const b = stop === undefined ? lines.length : lines.indexOf(stop, a + 1);
+  return a < 0 ? [] : lines.slice(a + 1, b < 0 ? lines.length : b);
 }
 
 function firstDiff(a, b) {
@@ -117,6 +144,22 @@ async function main() {
     check(r.stdout === '', 'matrix: no grid is printed when "under" cites a held premise');
   }
   {
+    // Input errors exit 2 with a message and no grid.
+    const bad = run(GRIDS, ['matrix', '--json', path.join(FIX, 'not-json.json')]);
+    check(bad.status === 2 && /is not JSON/.test(bad.stderr) && bad.stdout === '', `malformed JSON exits 2 (exit ${bad.status}: ${bad.stderr.trim().split('\n')[0]})`);
+    const missing = run(GRIDS, ['logic-grid', '--json', path.join(FIX, 'no-such-file.json')]);
+    check(missing.status === 2 && /cannot read/.test(missing.stderr) && missing.stdout === '', `a missing --json file exits 2 (exit ${missing.status}: ${missing.stderr.trim().split('\n')[0]})`);
+    const status = run(GRIDS, ['matrix', '--json', path.join(FIX, 'matrix-bad-status.json')]);
+    check(status.status === 2 && /incompatable/.test(status.stderr) && status.stdout === '', `an unknown cell status exits 2 naming the value (exit ${status.status}: ${status.stderr.trim().split('\n')[0]})`);
+  }
+  {
+    // --width cuts long labels with … and lists them in full under the grid.
+    const r = run(GRIDS, ['logic-grid', '--width', '20', '--premises', 'P1=all of it is voluntary', '--conclusions', 'C1=Pause is voluntary']);
+    check(r.status === 0 && /^P1 "all of it is v…"/m.test(r.stdout) && /^Legend:$/m.test(r.stdout) && /^P1 "all of it is voluntary"$/m.test(r.stdout), `--width 20 cuts the label and adds the legend (${JSON.stringify(norm(r.stdout).split('\n')[2])})`);
+    const tooSmall = run(GRIDS, ['logic-grid', '--width', '3', '--premises', 'P1=a', '--conclusions', 'C1=b']);
+    check(tooSmall.status === 2 && /--width/.test(tooSmall.stderr), '--width below 8 exits 2');
+  }
+  {
     const r = run(GRIDS, ['cross-grid', '--items', 'A,B,C', '--attributes', 'evaluator=X,Y,Z', 'funder=P,Q,R']);
     check(r.status === 0, `cross-grid exits 0${r.status === 0 ? '' : `: ${r.stderr.trim()}`}`);
     checkExact('cross-grid (crosshatch staircase, three sub-grids)', r.stdout, 'cross-grid.txt');
@@ -136,9 +179,39 @@ async function main() {
       check(/held premise h3/.test(threw), `renderMatrix throws when "under" names a held premise (${threw.split('.')[0]})`);
       threw = '';
       try { m.renderMatrix({ h1: 'a', h2: 'b' }, {}, { 'h1|h2': { status: 'under', under: 'Z9' } }); } catch (err) { threw = err.message; }
-      check(/declared assumption id/.test(threw), 'renderMatrix throws when "under" is neither declared nor A-prefixed');
-      const aPrefixed = m.renderMatrix({ h1: 'a', h2: 'b' }, {}, { 'h1|h2': { status: 'under', under: 'A2' } });
-      check(/X\|A2/.test(aPrefixed), 'an A-prefixed "under" not listed under assumptions is accepted');
+      check(/declared assumption id/.test(threw), 'renderMatrix throws when "under" is not a declared assumption');
+      threw = '';
+      try { m.renderMatrix({ h1: 'a', h2: 'b' }, { A1: 'x' }, { 'h1|h2': { status: 'under', under: 'A2' } }); } catch (err) { threw = err.message; }
+      check(/declared assumption id/.test(threw) && /A2/.test(threw), `an A-prefixed "under" not listed under assumptions is refused (${threw.split('.')[0]})`);
+      threw = '';
+      try { m.renderMatrix({ h1: 'a', h2: 'b' }, {}, { 'h1|h2': { status: 'under', under: 'A' } }); } catch (err) { threw = err.message; }
+      check(/declared assumption id/.test(threw), 'a bare "A" as "under" is refused');
+      threw = '';
+      try { m.renderMatrix({ h1: 'a', h2: 'b' }, {}, { 'h1|h2': { status: 'incompatable' } }); } catch (err) { threw = err.message; }
+      check(/incompatable/.test(threw), `an unknown status is refused (${threw.split('.')[0]})`);
+      threw = '';
+      try { m.renderMatrix({ h1: 'a', h2: 'b' }, {}, { 'h1|h9': { status: 'ok' } }); } catch (err) { threw = err.message; }
+      check(/h9/.test(threw), `a cell keyed to an id that is not a held premise is refused (${threw.split('.')[0]})`);
+      for (const s of ['ok', 'incompatible', 'entailed', 'undecidable', 'o', 'X', '=', '?']) {
+        let t = '';
+        try { m.renderMatrix({ h1: 'a', h2: 'b' }, {}, { 'h1|h2': { status: s } }); } catch (err) { t = err.message; }
+        check(t === '', `status ${JSON.stringify(s)} is accepted${t ? `: ${t}` : ''}`);
+      }
+      // I2: a formula that does not parse falls back to the pairwise X cells.
+      const unparsed = m.renderMatrix({ h1: { quote: 'a', formula: 'P &' }, h2: { quote: 'b', formula: 'Q' } }, {}, { 'h1|h2': { status: 'incompatible' } });
+      check(/^ Joint: H as stated: not satisfiable — minimal inconsistent subsets \{h1, h2\} \(from the pairwise X cells; formula check not run: formula not readable/m.test(unparsed) && /^ Verdict: inconsistent; depends on: none$/m.test(unparsed), `an unreadable formula does not hide an X cell (${JSON.stringify(unparsed.split('\n').slice(-2))})`);
+      // I4: an assumption is reported only when adding it changes satisfiability.
+      const already = m.renderMatrix({ h1: { quote: 'a', formula: 'P' }, h2: { quote: 'b', formula: '/P' } }, { A1: { text: 'unrelated', formula: 'R' } }, { 'h1|h2': { status: 'incompatible' } });
+      check(/^ Verdict: inconsistent; depends on: none$/m.test(already) && !/H under A1: X \(minimal subset \{h1, h2\}\)/.test(already), `an unrelated assumption on an already inconsistent H is not reported (${JSON.stringify(already.split('\n').slice(-2))})`);
+      const changes = m.renderMatrix({ h1: { quote: 'a', formula: 'P' }, h2: { quote: 'b', formula: 'Q' } }, { A1: { text: 'not both', formula: '/(P & Q)' }, A2: { text: 'unrelated', formula: 'R' } }, { 'h1|h2': { status: 'under', under: 'A1' } });
+      check(/^ Verdict: consistent as worded; depends on: A1$/m.test(changes) && /^        H under A1: X \(minimal subset \{h1, h2\}\)$/m.test(changes) && /^        H under A2: satisfiable/m.test(changes), `only the assumption whose addition changes satisfiability is reported (${JSON.stringify(changes.split('\n').slice(-3))})`);
+      const manyAtoms = Array.from({ length: 17 }, (_, i) => `Q${i + 1}`).join(' & ');
+      const past = m.jointCheck([{ id: 'h1', formula: manyAtoms }]);
+      check(past.ran === false && /17 atoms is past the 16-atom/.test(past.note), `jointCheck refuses past 16 atoms (${past.note})`);
+      const unreadable = m.jointCheck([{ id: 'h1', formula: 'P &' }]);
+      check(unreadable.ran === false && /formula not readable/.test(unreadable.note), `jointCheck reports an unparsable formula (${unreadable.note})`);
+      const orSet = m.jointCheck([{ id: 'h1', formula: 'P∨Q' }, { id: 'h2', formula: '/P' }, { id: 'h3', formula: '/Q' }]);
+      check(orSet.ran && !orSet.satisfiable, 'jointCheck reads P∨Q as a disjunction (with /P and /Q it is unsatisfiable)');
       const marks = m.renderCrossGrid(['A', 'B'], { evaluator: ['X', 'Y', 'Z'] }, { 'A|X': 'O', 'A|Y': 'X' });
       check(/^   A   \| • X$/m.test(marks) && /^   B   \|$/m.test(marks), `crosshatch marks: dot for O, X for X (${JSON.stringify(marks.split('\n')[2])})`);
       const wide = m.renderCrossGrid(['Anne', 'Cathy'], { men: ['Paul', 'Rob', 'Stan'] }, { 'Anne|Paul': '•', 'Anne|Rob': 'X', 'Anne|Stan': 'X' });
@@ -181,6 +254,14 @@ async function main() {
     check(r.status !== 0, 'unbalanced parenthesis is a parse error');
   }
   {
+    // The other spellings of the connectives, written without spaces.
+    for (const f of ['A∨B', 'A||B', 'A∧B', 'A&&B']) {
+      const r = run(TRUTH, [f]);
+      const rows = (r.stdout.match(/^[TF] \| [TF] \|/gm) || []).length;
+      check(r.status === 0 && rows === 4 && /^Verdict: contingent$/m.test(r.stdout), `${f} is read as two atoms and a connective (exit ${r.status}, ${rows} rows, ${(r.stdout.match(/^Verdict:.*$/m) || [''])[0]})`);
+    }
+  }
+  {
     // SKILL.md's own notation: `/` for not, lowercase atoms.
     const r = run(TRUTH, ['p -> q', '/q', '/p']);
     check(/^Verdict: valid$/m.test(r.stdout) && /^p \| q \| p -> q \| \/q \| \/p$/m.test(r.stdout), 'slash negation and lowercase atoms are read; the header keeps the input spelling');
@@ -198,7 +279,16 @@ async function main() {
     check(/forced true: A, B, C$/m.test(out), 'query A forces A, B, C true');
     check(!hasRule(out, 'B -> A') && !hasRule(out, 'C -> B') && !hasRule(out, 'A -> C -> B'), 'no converse is derived');
     check(!hasRule(out, '~A -> ~B') && !hasRule(out, '~B -> ~C'), 'no inverse is derived');
-    check(hasRule(out, 'A -> C') === false || /^Chains:/m.test(out), 'A -> C appears only as the chain');
+    check(!/^R\d+\s+A -> C\b/m.test(out), 'A -> C is not printed as a rule; it appears only inside the chain');
+  }
+  {
+    // A cycle in its own component is walked even when another component has a head.
+    const r = run(COND, ['A -> B', 'B -> C', 'C -> A', 'D -> E', 'E -> F']);
+    check(/^Chains: D -> E -> F; A -> B -> C$/m.test(r.stdout), `a headless cycle beside a headed chain is reported (${(r.stdout.match(/^Chains:.*$/m) || [''])[0]})`);
+  }
+  {
+    const r = run(COND, ['A -> B', '--query']);
+    check(r.status === 2 && /usage/.test(r.stderr) && r.stdout === '', `--query with no value exits 2 with the usage (exit ${r.status})`);
   }
   {
     const r = run(COND, ['A -> B', 'B -> C', '--query', '~C']);
@@ -242,6 +332,8 @@ async function main() {
       check(texts[8] === 'Either the figure is causal or it is before/after.', `S9 (${JSON.stringify(texts[8])})`);
       check(j.sentences.every((s, i) => s.id === `S${i + 1}`), 'sentences numbered S1..Sn');
       check(j.ptable.length === 9 && j.ptable.every((p, i) => p.id === '' && p.sentence === `S${i + 1}` && p.role === '' && p.proposition === `"${texts[i]}"`), 'P-TABLE has one placeholder row per sentence, proposition quoted');
+      check(j.ptable.every((p) => 'formal' in p && 'k' in p && 'h' in p), 'P-TABLE rows carry the formal, K and h columns of step 3');
+      check(j.grades.every((g) => 'certainty' in g), 'GRADES rows carry the starting-certainty column of step 6');
       const cond = Object.fromEntries(j.conditionals.map((c) => [c.sentence, c.indicators]));
       check(Object.keys(cond).join(',') === 'S3,S4,S6,S9', `conditionals pre-filled for S3, S4, S6, S9 (got ${Object.keys(cond).join(',')})`);
       check(JSON.stringify(cond.S3) === '["only if"]', `S3 indicator is "only if", not also "if" (${JSON.stringify(cond.S3)})`);
@@ -259,6 +351,29 @@ async function main() {
     checkExact('skeleton text output', r.stdout, 'skeleton-small-expected.txt');
   }
   {
+    // stdin, with a BOM and CRLF line ends: the same skeleton, and none of either in the output.
+    const r = run(SKEL, ['-'], '﻿All of it is voluntary.\r\nPause works.\r\n');
+    check(r.status === 0 && !/\r/.test(r.stdout) && !r.stdout.startsWith('﻿'), `skeleton from stdin with BOM and CRLF exits 0 with LF output (exit ${r.status})`);
+    checkExact('skeleton from stdin (BOM, CRLF)', r.stdout, 'skeleton-small-expected.txt');
+  }
+  {
+    // Empty input: zero sentences, empty tables, exit 0.
+    const r = run(SKEL, ['-'], '');
+    check(r.status === 0 && /^coverage: 0 sentences, 0 dispositions$/m.test(r.stdout) && section(r.stdout, 'SENTENCES', '')[0] === undefined, `empty input exits 0 with 0 sentences (exit ${r.status})`);
+    check(section(r.stdout, 'P-TABLE', '').length === 1, 'empty input: the P-TABLE has its header and no rows');
+  }
+  {
+    // --wrap N wraps the quoted columns; a value under 10 is refused.
+    const long = 'This sentence is long enough that the proposition column has to wrap over several lines.';
+    const r = run(SKEL, ['-', '--wrap', '20'], long);
+    const ptable = section(r.stdout, 'P-TABLE', '');
+    check(r.status === 0 && ptable.length > 2 && ptable.slice(1).every((l) => l.split(' | ')[3].trim().length <= 20), `--wrap 20 wraps the proposition over ${ptable.length - 1} lines`);
+    const small = run(SKEL, ['-', '--wrap', '5'], long);
+    check(small.status === 2 && /--wrap/.test(small.stderr), '--wrap below 10 exits 2');
+    const missing = run(SKEL, [path.join(FIX, 'no-such-file.txt')]);
+    check(missing.status === 2 && /cannot read/.test(missing.stderr), 'a missing text file exits 2');
+  }
+  {
     try {
       const m = await import(pathToFileURL(SKEL).href);
       const s = m.splitSentences('See Fig. 2 and p. 3 of Smith et al. (2019). It says "yes." Then it stops! Why? Because.');
@@ -268,9 +383,46 @@ async function main() {
       const ind = m.findIndicators('It holds if and only if the board agrees, and any member may object.');
       check(JSON.stringify(ind) === '["if and only if","any"]', `"if and only if" wins over "only if"/"if" (${JSON.stringify(ind)})`);
       check(JSON.stringify(m.findIndicators('Nothing here, nor there, for now.')) === '[]', 'no false positive on "nor", "for", "not", "now"');
+      const m2 = m.findIndicators('Only members may vote, and people who vote then leave in order to eat.');
+      check(JSON.stringify(m2) === '["only","people who","then","in order to"]', `method-2 indicators bare "only", "people who", "then", "in order to" (${JSON.stringify(m2)})`);
+      const m3 = m.findIndicators('It works only if it is voluntary; the only road is this one.');
+      check(JSON.stringify(m3) === '["only if","the only"]', `bare "only" is not also read inside "only if" or "the only" (${JSON.stringify(m3)})`);
       check(JSON.stringify(m.findIndicators('None but the brave deserve the fair; the only road is this one, until it closes.')) === '["none but","the only","until"]', `step-4 indicators "none but", "the only", "until" (${JSON.stringify(m.findIndicators('None but the brave deserve the fair; the only road is this one, until it closes.'))})`);
     } catch (err) {
       check(false, `skeleton.mjs imports as a module: ${err.message}`);
+    }
+  }
+
+  // ---- 5. openalex-profile.mjs (local stand-in server; no network) ---------------
+  {
+    const usage = run(PROFILE, ['not-an-id']);
+    check(usage.status === 2 && /usage/.test(usage.stderr), 'openalex-profile: a bad author id exits 2 with the usage');
+    // A port that was free a moment ago and is closed now: a connection error, not a stack trace.
+    const probe = http.createServer();
+    await new Promise((resolve) => probe.listen(0, '127.0.0.1', resolve));
+    const closedPort = probe.address().port;
+    await new Promise((resolve) => probe.close(resolve));
+    const down = await runAsync(PROFILE, ['A1'], { OPENALEX_BASE: `http://127.0.0.1:${closedPort}/` });
+    check(down.status === 2 && /OpenAlex/.test(down.stderr) && !/\n\s+at /.test(down.stderr) && down.stdout === '', `openalex-profile: a network error exits 2 with one message (exit ${down.status}: ${down.stderr.trim().split('\n')[0]})`);
+    const seen = [];
+    const server = http.createServer((req, res) => {
+      seen.push(req.url);
+      const status = /\/fail\//.test(req.url) ? 503 : 200;
+      res.writeHead(status, { 'content-type': 'application/json' });
+      res.end(JSON.stringify({ meta: { count: 0 }, results: [], group_by: [] }));
+    });
+    await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+    const port = server.address().port;
+    try {
+      const empty = await runAsync(PROFILE, ['A1'], { OPENALEX_BASE: `http://127.0.0.1:${port}/` });
+      let j = null;
+      try { j = JSON.parse(empty.stdout); } catch { /* checked below */ }
+      check(empty.status === 0 && j && Array.isArray(j.top) && j.top.length === 0 && /no works/.test(j.note || ''), `openalex-profile: an author with no works exits 0 with an empty profile (exit ${empty.status}: ${empty.stderr.trim().split('\n')[0] || (j && j.note)})`);
+      check(!seen.some((u) => /cites:(?:&|,|$)/.test(decodeURIComponent(u))), `openalex-profile: no query with an empty cites: filter is sent (${seen.length} requests)`);
+      const fail = await runAsync(PROFILE, ['A1'], { OPENALEX_BASE: `http://127.0.0.1:${port}/fail/` });
+      check(fail.status === 2 && /OpenAlex 503/.test(fail.stderr) && !/\n\s+at /.test(fail.stderr), `openalex-profile: an HTTP error exits 2 with the status (exit ${fail.status}: ${fail.stderr.trim().split('\n')[0]})`);
+    } finally {
+      server.close();
     }
   }
 

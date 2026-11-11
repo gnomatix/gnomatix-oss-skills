@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+// worklog-notify "<text>": post <text> to this Claude Code session through its messaging socket
+// (CLAUDE_CODE_MESSAGING_SOCKET, CLAUDE_CODE_MESSAGING_TOKEN). Run it as: node "${CLAUDE_PLUGIN_ROOT}/bin/worklog-notify" "<text>"
+const { pathToFileURL } = require('url')
+const { join } = require('path')
+const lib = f => import(pathToFileURL(join(__dirname, '..', 'lib', f)).href)
+const text = process.argv.slice(2).join(' ')
+// Every notice is also an event in <state>/log/events.jsonl (A64); a log failure never blocks the notice.
+const record = (ok, error) => lib('worklog.mjs').then(W => W.appendEvent(process.env, { cmd: 'notify', slug: null, via: 'worklog-notify', args: { text }, ok, ...(error ? { error } : {}) }))
+  .catch(e => process.stderr.write(`worklog-notify: event log: ${(e && e.message) || e}\n`))
+lib('notify.mjs')
+  .then(m => m.notify(text))
+  .then(r => record(true).then(() => { process.stdout.write(`sent ${r.bytes} bytes to ${r.socket}\n`) }))
+  .catch(e => record(false, e && e.message).then(() => { process.stderr.write(`worklog-notify: ${(e && e.message) || e}\n`); process.exitCode = 1 }))

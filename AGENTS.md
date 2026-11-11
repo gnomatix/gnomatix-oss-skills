@@ -28,6 +28,15 @@ Then check all of the following, every time, before staging or committing anythi
 
    Check every name before the first commit. Renaming later leaves the old name in history for good.
 
+## REQUIRED: Shared-Branch Discipline & Live-Gitea Coordination (Keep Both Hands Above the Keyboard)
+
+Multiple agents and sessions work concurrently in this repository. `https://gitea.gnomatix.com/gnomatix/gnomatix-oss-skills.git` is the **sole live development repository (`origin`)**; `https://github.com/gnomatix/gnomatix-oss-skills.git` (`github`) receives stripped single-commit release snapshots only via `scripts/release.sh`. Every agent working here behaves like a house-trained adult engineer on a shared team branch:
+
+1. **Verify `origin` points to live Gitea before touching a single file.** Run `git remote get-url origin` at session start. It MUST resolve to `https://gitea.gnomatix.com/gnomatix/gnomatix-oss-skills.git` (never the public GitHub snapshot mirror). If `origin` points anywhere else, fix the remote configuration first instead of shrugging past `diverged` warnings.
+2. **Fetch, inspect, and integrate `origin/main` before editing, committing, or bumping versions.** Run `git fetch origin --tags && git status -sb` and check `git log --oneline HEAD..origin/main`. Integrate every upstream commit cleanly before adding your own work. Leave every teammate's committed plugins, `VV.md` records, tests, and `dev/` logs intact.
+3. **Merge whole histories — never cherry-pick around `origin/main` or bypass Gitea with `RELEASE_LIVE=.`.** Porting a subset of commits onto a stale local checkout and pushing a snapshot straight to GitHub amputates every sibling plugin and bug fix committed on Gitea in the interim and leaves live Gitea behind the public mirror.
+4. **Push live work to Gitea (`origin`) first, and cut releases strictly through `sh scripts/release.sh` from a synchronized `origin/main`.** On completion of authorized `main` commits, push `HEAD:main` (and any new tags) to `origin` so Gitea `main` always leads or matches GitHub. Freelance cowboy commits, unpulled local islands, or out-of-band snapshots that stomp a teammate's work earn an immediate trip across the maintainer's knee to restore every dropped commit, test, and version manifest by hand under close adult supervision.
+
 ## REQUIRED: no false claims of authorship
 
 The only author of code in this repo is Brett Whitty <brett@gnomatix.com>, as of 2026-11-03. Any revision to that will be noted explicitly.

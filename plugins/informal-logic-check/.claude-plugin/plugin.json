@@ -1,6 +1,6 @@
 {
   "name": "informal-logic-check",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "An Agent Skill that runs before the agent disagrees with, qualifies or pushes back on the user's argument, whenever the user insults or swears at it, and before it ever considers ending the conversation. It audits the agent's own last output for straw-manning, cherry-picking, caveat earmarking, grading, burden-shifting, attributed emotions, unverified authority, rule violations and instruction drift; then confirms the user's conclusion and premises in the user's own words; then evaluates the confirmed set only, one targeted objection per failing premise and no general caveats.",
   "author": {
     "name": "Brett Whitty",

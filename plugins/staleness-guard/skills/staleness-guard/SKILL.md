@@ -125,7 +125,7 @@ user's objective. Verify what is being asserted; do not manufacture work.
 
 ### Tool selection (use the one that fits the claim)
 - Present-world fact, price, role, law, version, status → **web search**, then
-  **fetch** the primary source for anything load-bearing
+  **fetch** the primary source for anything the answer depends on
 - Local files / source material → **read the file** (properly — Part Three),
   never grep-and-guess
 - User infra / repo / data / auth'd services → the **relevant connector / MCP**,

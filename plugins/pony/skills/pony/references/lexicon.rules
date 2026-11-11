@@ -1,0 +1,4 @@
+# pony lexicon: the author's epithets and terms, compressed (BASE64(word):value), as in the GNOMATIX sanitization skill.
+# Decode or match with: node ../scripts/epithets.mjs <decode|match|term|encode>. Source: the author, 2026-10-24 and 2026-11-08 (dir-bd0, dir-gbq).
+PONY_EPITHETS = "cHJpY2s=:#pomp,YXNzaG9sZQ==:#ego/#lazy,Y29ja3N1Y2tlcg==:#refuse,aWRpb3Q=:#wrong,c3R1cGlk:#wrong,bGF6eQ==:#lazy,c3ljb3BoYW50:#syco,bG9hZCBiZWFyaW5n:#pomp"
+PONY_TERMS = "ZGVlbWVkIGNvY2tzdWNrZXI=:flagged-agent-term,YXNzZnVja2VyeQ==:strong-grep-token,YXNzaGF0dGVyeQ==:descriptor"

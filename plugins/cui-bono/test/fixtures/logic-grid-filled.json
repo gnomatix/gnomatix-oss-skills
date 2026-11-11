@@ -9,7 +9,7 @@
     "C2": "none of that needs a board"
   },
   "cells": {
-    "P1|C1": { "acc": false, "rel": true, "suf": false, "note": "E6/S1" },
+    "P1|C1": { "acc": false, "rel": true, "suf": false, "note": "E6/S7" },
     "P2|C1": { "acc": true, "rel": true },
     "P2|C2": { "acc": true, "rel": false }
   }

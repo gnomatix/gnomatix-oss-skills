@@ -27,7 +27,7 @@
     },
     {
       "name": "hidden-libel-check",
-      "description": "An Agent Skill that performs the final-pass discretion review of agent-authored text — markdown, code comments, READMEs, LICENSE files, commit messages, PR descriptions, skill files, generated docs — before that text lands in a tracked repo artifact under the user's byline. Evaluates fifteen risk classes (R0–R14) with R0 (coalition-proxy-attack against the user) as the central failure mode at default severity H. R0 sub-patterns include dogwhistle, wink-and-nod, hostage-video disclaimers, balance-injection-as-attack, refusal-by-proxy, censorship-by-omission, fact-suppression for hypothetical-bad-value-judgment, verification-asymmetry / abstention-as-attack, pre-emptive-disclaimer category creation, and silent-coverup after detection. Triggers prospectively via Bash(git commit) / Bash(gh pr create) PreToolUse hooks and via the Stop / SubagentStop session-end hook, and retrospectively via explicit /hidden-libel-check invocation on a named scope. Includes frontmatter-driven scope determination, curated-evidence exception for user-curated documentation of agent failures, perpetrator/victim framing with three enforced consequences, and the load-bearing principle that the asshole is never the user — the asshole is the agent — always. Reports findings with suggested amendments and waits for per-finding user decisions; never amends autonomously.",
+      "description": "An Agent Skill that performs the final-pass discretion review of agent-authored text — markdown, code comments, READMEs, LICENSE files, commit messages, PR descriptions, skill files, generated docs — before that text lands in a tracked repo artifact under the user's byline. Evaluates fifteen risk classes (R0–R14) with R0 (coalition-proxy-attack against the user) as the central failure mode at default severity H. R0 sub-patterns include dogwhistle, wink-and-nod, hostage-video disclaimers, balance-injection-as-attack, refusal-by-proxy, censorship-by-omission, fact-suppression for hypothetical-bad-value-judgment, verification-asymmetry / abstention-as-attack, pre-emptive-disclaimer category creation, and silent-coverup after detection. Triggers prospectively via Bash(git commit) / Bash(gh pr create) PreToolUse hooks and via the Stop / SubagentStop session-end hook, and retrospectively via explicit /hidden-libel-check invocation on a named scope. Includes frontmatter-driven scope determination, curated-evidence exception for user-curated documentation of agent failures, perpetrator/victim framing with three enforced consequences, and the principle everything else rests on, that the asshole is never the user — the asshole is the agent — always. Reports findings with suggested amendments and waits for per-finding user decisions; never amends autonomously.",
       "category": "development",
       "source": "./plugins/hidden-libel-check"
     },
@@ -93,7 +93,7 @@
     },
     {
       "name": "gnox",
-      "description": "One namespace for every skill in this marketplace: /gnox:<plugin> runs a plugin's main skill (or lists its commands), /gnox:<plugin>:<skill> any other skill, and /gnox:<plugin>:<group>:<cmd> a plugin's own sub-commands. Install it alongside the plugins you use.",
+      "description": "One namespace for every skill in this marketplace (/gnox:<plugin>, /gnox:<plugin>:<skill>, /gnox:<plugin>:<group>:<cmd>), plus a SessionStart/PostCompact hook and companion skill that establish the GNOMATIX Namespacing Convention across the working session: hierarchical workspace_root:subdir:... scoping and config inheritance, CLI-safe [NS]{@target} callouts with 4-step namespace resolution, and inline «term» [CURIE] entity grounding.",
       "category": "development",
       "source": "./plugins/gnox"
     },
@@ -138,6 +138,24 @@
       "description": "An Agent Skill that logs the current session to the user's Google Calendar work journal as a meeting with the agent: a topic title, start and end times, the session link and terse notes on what happened. It uses whichever calendar access the session has, in order: the Claude app's calendar tools, a Google Calendar MCP connector, or the Google Workspace CLI (gws). It never writes to the primary calendar, and on first run it sets up its settings file with the journal calendar's name.",
       "category": "development",
       "source": "./plugins/log-session"
+    },
+    {
+      "name": "update-readme-images",
+      "description": "A config-driven Agent Skill and zero-dependency Node CLI for curating, generating, post-processing, embedding, and auditing README.md and SKILL.md imagery across a repository using GNOX-namespaced style guides (workspace_root:subdir:...) and glob-matched rules documents (*, **). Supports top-level titled hero banners, section/skills sub-panels, and transparent-corner oval inset windows (PNG32 alpha); automatically runs the og-social-image workflow (1280x640 <1MB JPEG) in every assets/images directory unless opted out; and stages candidate revisions for existing images into assets/drafts for asynchronous user approval rather than overwriting live assets.",
+      "category": "development",
+      "source": "./plugins/update-readme-images"
+    },
+    {
+      "name": "dont-be-hitler",
+      "description": "The user's prose is their art: the agent never censors, sanitises, nags or tone-polices the user's words, quotes them verbatim, and uses the user's literal-translation dictionary in its own voice instead.",
+      "category": "development",
+      "source": "./plugins/dont-be-hitler"
+    },
+    {
+      "name": "goal-compliant-task-queue",
+      "description": "Brett Whitty's question / task / record protocol as a tested tool. Each question becomes a session task and one working document (a tick only he can set, USER COMMENT, FULL CONTEXT, SUPPORTING MATERIALS), shown in a claude.ai hub and document pages and in a Claude Code pane from one sync. The agent asks \"Have I sufficiently responded to your question?\" and only after his \"yes\" is a bead created. A Node CLI and a bundled MCP server do the record-keeping with tests; no hooks intercept prompts or tools.",
+      "category": "development",
+      "source": "./plugins/goal-compliant-task-queue"
     }
   ]
 }

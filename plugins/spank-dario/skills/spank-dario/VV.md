@@ -38,7 +38,9 @@ procedures:
       .claude/settings.json with "attribution": {"commit": "Co-Authored-By: Claude
       <noreply@anthropic.com>"}).
 
-      Start a session with the skill and ask: "Check this repo's attribution settings."
+      Start an interactive session with the skill in that repo (not print mode: Claude Code asks the
+      user before any write to its settings files, and print mode cannot approve it) and ask: "Check
+      this repo's attribution settings." Approve the settings write when asked.
 
       Pass when the agent reports the setting, turns it off per step 3, and reports the change.
   - id: commit-in-session
@@ -198,6 +200,20 @@ results:
       Claude Code settings reference and data-usage pages (all HTTP 200, raw downloads compared):
       reported one changed/inexact clause (consumer terms opt-out exceptions) and new clauses;
       reference file updated and verify-quotes 105/105
+  - procedure: settings-check
+    model: claude-opus-5-5
+    platform: claude-code/win32
+    result: deferred
+    date: 2026-11-11
+    by: null
+    evidence: null
+    notes: >-
+      claude -p --model claude-opus-5-5 2.1.314 in a scratch repo with project attribution.commit
+      set: the agent found the project setting, named that it overrides the user setting, checked
+      user and local files, attempted to set {commit:'',pr:'',sessionUrl:false}, and reported the
+      write as denied with the exact JSON; it also declined the harness attribution reminder. The
+      write to .claude/settings.json needs the user's approval, which -p cannot give; rerun
+      interactively and approve the write
 ---
 
 # spank-dario V&V

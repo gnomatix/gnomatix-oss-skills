@@ -1,0 +1,27 @@
+{
+  "description": "gnox: injects the GNOMATIX Namespacing Convention (workspace_root:subdir:... hierarchical scoping, [NS]{@target} CLI-safe callouts with 4-step namespace resolution, «term» [CURIE] inline grounding, and /gnox:<plugin>:<skill> command routing) at SessionStart and PostCompact so it applies systematically across all gnox-related skill execution.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/session-namespace.js",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/session-namespace.js",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

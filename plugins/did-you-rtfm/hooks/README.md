@@ -35,7 +35,9 @@ Before tool invocation, denies commands that contain bypass-flag or signal-suppr
 | Password piping into sudo | `echo … \| sudo -S` | Bypasses interactive password prompt; rarely correct in agent code. |
 | `unbuffer` / `stdbuf` TTY workarounds | `unbuffer -…`, `stdbuf -…` | Same agent failure pattern — masking output buffering / TTY-detection issues rather than addressing them. |
 
-**Behaviour:** if any pattern matches, the hook returns `permissionDecision:"deny"` with a routing message. The user can authorize the bypass explicitly (and then re-run the command) — the hook never overrides explicit user authorization.
+**Behaviour:** if any pattern matches, the hook returns `permissionDecision:"ask"` with a routing message, so the call goes to the user for review. The user can authorize the bypass explicitly — the hook never overrides explicit user authorization.
+
+**What is matched:** the command with its quoted text and heredoc bodies removed. A flag named inside a bead comment, commit message or note (`"… passed --force …"`, `'…'`, `<<'EOF' … EOF`) does not fire; a flag in argument position does. Tests: `node plugins/did-you-rtfm/test/run.js`. Run one command per call: a chained string buries a flag among other text, out of the reviewer's sight.
 
 ### Patterns intentionally NOT enforced
 

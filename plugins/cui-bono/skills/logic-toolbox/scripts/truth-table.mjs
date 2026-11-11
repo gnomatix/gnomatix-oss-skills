@@ -19,7 +19,9 @@ export const MAX_ATOMS = 6;
 
 function tokenize(src) {
   const s = String(src)
-    .replace(/¬|!|\//g, '~').replace(/∧|&&/g, '&').replace(/∨|\|\|/g, 'v')
+    // The other spellings become the ASCII connective with spaces round it, so "A||B" and
+    // "A∨B" are two atoms and an or, not the one atom "AvB".
+    .replace(/¬|!|\//g, '~').replace(/∧|&&/g, ' & ').replace(/∨|\|\|/g, ' v ')
     .replace(/↔|≡|<=>/g, '<->').replace(/→|=>/g, '->');
   const tokens = [];
   let i = 0;

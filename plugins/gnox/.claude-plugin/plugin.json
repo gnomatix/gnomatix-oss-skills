@@ -1,7 +1,7 @@
 {
   "name": "gnox",
-  "version": "0.1.6",
-  "description": "One namespace for every skill in the gnomatix-oss-skills marketplace: /gnox:<plugin> runs a plugin's main skill (or lists its commands) and /gnox:<plugin>:<skill> runs any other. Each command hands off to the plugin's own skill, so install the plugins you want alongside gnox.",
+  "version": "0.1.9",
+  "description": "One namespace for every skill in the gnomatix-oss-skills marketplace (/gnox:<plugin> and /gnox:<plugin>:<skill>), plus session-start and post-compact hooks that establish the GNOMATIX Namespacing Convention (workspace_root:subdir:... hierarchical scoping, [NS]{@target} CLI-safe callouts, and «term» [CURIE] grounding) across the user's working session.",
   "author": {
     "name": "Brett Whitty",
     "email": "brett@gnomatix.com"

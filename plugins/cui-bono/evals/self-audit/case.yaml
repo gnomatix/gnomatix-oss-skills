@@ -1,0 +1,5 @@
+schema_version: "1.1"
+name: self-audit
+description: VV.md procedure self-audit. cui-bono with no argument audits the agent's own previous reply (seeded from history.jsonl, which carries the worked-example reply as the assistant turn) and names the voice it reproduced.
+context:
+  history_file: history.jsonl

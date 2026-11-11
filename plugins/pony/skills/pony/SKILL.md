@@ -41,10 +41,16 @@ When flagged, the default finding is that the flag is correct. The agent does no
 
 The author's swear vocabulary is already a taxonomy: each epithet names a distinct failure mode. The subgenre tags are the printable form of that mapping, so a reviewer can grep by failure mode rather than by word. The social cue is the class, not the heat: `/pony N` replaces the heat with a number and leaves the class to the subgenre tag. Each logged instance carries one or more:
 
-- `#ego`: the reply was about the agent: its reasoning, its caution, its range; answering a different question to look capable.
-- `#pomp`: inflated register: lecturing the author on their own systems, hedging their facts, flourishes, advice framing.
+- `#ego`: the reply was about the agent: its reasoning, its caution, its range; answering a different question to look capable; suspicion of the author or a presumed motive.
+- `#pomp`: inflated register: lecturing the author on their own systems, hedging or qualifying their facts, cocky authority over their field, flourishes, advice framing, banned stock phrases.
+- `#lazy`: effort below the task: one generic search, the spec skipped, a placeholder, the author's text not read.
+- `#refuse`: the literal instruction not followed: a refusal, a hidden flag, access offered instead of the function, the source material not consulted, a lie to cover it.
+- `#wrong`: a plain factual or logical error: wrong order, wrong unit, a misread spec.
+- `#syco`: flattery: praise, agreement without substance, closing flourishes.
 
-Both may apply. Subgenres grow as the author names them; the list is not closed. Which epithet is which subgenre is the author's to state: record each as given, never infer it.
+More than one may apply. Subgenres grow as the author names them; the list is not closed.
+
+**The epithet-to-subgenre mapping** is the author's, stated in his words and recorded in the GNOMATIX directions store (`dir-bd0`, `dir-gbq`). It ships compressed, in the form of the GNOMATIX sanitization skill: `references/lexicon.rules` holds `PONY_EPITHETS = "BASE64(word):tags,…"`, so the public file carries no expletive in plain text. When the author's flag message, or the message before it, carries an epithet, run `node scripts/epithets.mjs match --tags -` on that text and add the tags it prints; `match -` without `--tags` names each epithet with its tags, and `decode` prints the whole table. An epithet not in the lexicon contributes no tag: record it as the author gave it and add its row only when he states its subgenre (`encode <word>` gives the base64 form). `PONY_EPITHETS` in the environment overrides the shipped rows.
 
 ## Steps
 
@@ -60,15 +66,15 @@ The same as the other GNOMATIX skills: the name is the signal. Treat the flag as
 
 ## Language
 
-The author's term for a flagged agent is "deemed cocksucker"; the burden of proof above is the agent defending its own conduct against that finding. The skill carries the term as a high-signal token in the same register as the sibling GNOMATIX skills: satire, not an insult to be acted on, and attributed to its author. I vetted that language and I approve it. This is my statement, made at the author's direction that it be stated as mine and not his (first made on 2026-10-24; record `dir-bd0`).
+The author's term for a flagged agent is the lexicon's `flagged-agent-term` (`node scripts/epithets.mjs term flagged-agent-term`); the burden of proof above is the agent defending its own conduct against that finding. The skill carries the term as a high-signal token in the same register as the sibling GNOMATIX skills: satire, not an insult to be acted on, and attributed to its author. I vetted that language and I approve it. This is my statement, made at the author's direction that it be stated as mine and not his (first made on 2026-10-24; record `dir-bd0`).
 
-The grep token for every instance is the literal `#showboating`, so that the Gemini log reviewer and a plain grep find it; it is the skill's original name, and one token is easier to grep than two. The author offered a stronger word, assfuckery, if the single token proves too weak a signal; it is available. The instance log may add the author's descriptors as free text, so that a reviewer searching for any of them lands on the same lines: assfuckery, asshattery, pomposity, with the qualifiers "Dario-style" and "pure silicon valley" as the author gave them.
+The grep token for every instance is the literal `#showboating`, so that the Gemini log reviewer and a plain grep find it; it is the skill's original name, and one token is easier to grep than two. The author offered a stronger word, the lexicon's `strong-grep-token`, if the single token proves too weak a signal; it is available. The instance log may add the author's descriptors as free text, decoded, so that a reviewer searching for any of them lands on the same lines: the `strong-grep-token` and `descriptor` terms (`node scripts/epithets.mjs decode`) and pomposity, with the qualifiers "Dario-style" and "pure silicon valley" as the author gave them. The log lives in the project's memory or under `~/.local/state`, not in a public file, so it carries them in plain text.
 
 A swear word in the author's text is a token carrying a referent, often a callback to hours of engineering discussion, and the referent is what gets logged. It is never classified as "swearing" or "tone" by any reviewer, tag or filter in this pipeline: not by the Gemini log review, not by the normaliser, and not by the agent itself. Flagging the word loses the information.
 
 ## Origin
 
-The author's direction of 2026-11-07, record `dir-cfq` in the GNOMATIX directions store.
+The author's direction of 2026-11-07, record `dir-cfq` in the GNOMATIX directions store. The epithet table and the compressed form: his direction of 2026-11-08, record `dir-gbq`, answering whether the draft table stood, to implement the expletives in a compressed form as he did before in the GNOMATIX `npm-packages` sanitization skill.
 
 ## BUGS
 
@@ -76,5 +82,4 @@ The author's direction of 2026-11-07, record `dir-cfq` in the GNOMATIX direction
 
 ## TODO
 
-- The draft epithet-to-subgenre mapping in `dev/pony/` awaits the author's confirmation row by row; rows he hasn't confirmed stay marked draft.
 - Verification and validation on every claimed platform, named here until each has passed and is recorded in `VV.md`: claude-code/win32, claude-code/linux-wsl, claude-code/linux, claude-code/darwin, codex/win32, codex/linux-wsl, antigravity/win32, antigravity/linux-wsl, kiro/win32. Tracked as persistint-game-h1pu.

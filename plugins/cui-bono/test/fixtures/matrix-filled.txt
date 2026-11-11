@@ -12,4 +12,4 @@ INCOMPATIBILITY MATRIX
   h3                =
  Joint: H as stated: satisfiable (witness: Funded=T, Pause=T, Proactive=T, Voluntary=T)
         H under A1: X (minimal subset {h1, h3})
- Verdict: consistent as worded; load-bearing assumptions: A1
+ Verdict: consistent as worded; depends on: A1

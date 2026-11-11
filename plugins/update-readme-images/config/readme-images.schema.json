@@ -1,0 +1,255 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/gnomatix/gnomatix-oss-skills/plugins/update-readme-images/config/readme-images.schema.json",
+  "title": "update-readme-images configuration",
+  "description": "Configuration schema for the update-readme-images skill and CLI tool. Defines GNOX-namespaced style guides (workspace_root:subdir:...), glob-matched rules documents (*, **), automatic og-social-image generation for web-standard assets/images directories, and non-destructive assets/drafts staging for existing images.",
+  "type": "object",
+  "required": ["version", "workspace_root", "style_guides", "rules"],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1
+    },
+    "workspace_root": {
+      "type": "string",
+      "description": "Canonical workspace root identifier used as the leading segment in workspace_root:subdir:... namespace keys."
+    },
+    "default_assets_dir": {
+      "type": "string",
+      "default": "assets/images",
+      "description": "Web-standard relative directory (from a root or subdirectory) where live rendered panel images are stored."
+    },
+    "draft_assets_dir": {
+      "type": "string",
+      "default": "assets/drafts",
+      "description": "Relative directory under assets/ where candidate replacements for existing images are staged pending asynchronous user approval."
+    },
+    "draft_revision_policy": {
+      "type": "object",
+      "description": "Non-destructive revision gate governing existing images. Existing files in assets/images are never overwritten directly; candidates are staged in draft_assets_dir and promoted only after explicit user approval.",
+      "properties": {
+        "protect_existing": {
+          "type": "boolean",
+          "const": true,
+          "default": true
+        },
+        "approval_workflow_skills": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["critical-control-points", "inaudible-markup", "hidden-libel-check", "spank-dario"]
+        },
+        "callout_target": {
+          "type": "string",
+          "default": "user"
+        }
+      }
+    },
+    "auto_og_social_image": {
+      "type": "object",
+      "description": "Automatic og-social-image generation within any directory or subdirectory using the web-standard assets/images directory, unless explicitly disabled here, per-namespace, or when ImageMagick (magick) is unavailable and not installable via mise.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "assets_subdir": {
+          "type": "string",
+          "default": "assets/images"
+        },
+        "source_suffix": {
+          "type": "string",
+          "default": "-banner"
+        },
+        "output_suffix": {
+          "type": "string",
+          "default": "-og-image.jpg"
+        },
+        "width": {
+          "type": "integer",
+          "default": 1280
+        },
+        "height": {
+          "type": "integer",
+          "default": 640
+        },
+        "quality": {
+          "type": "integer",
+          "default": 92
+        },
+        "max_bytes": {
+          "type": "integer",
+          "default": 1048576
+        },
+        "gravity": {
+          "type": "string",
+          "default": "center"
+        },
+        "exclude_dirs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "overrides": {
+          "type": "object",
+          "description": "Per-directory or per-namespace crop/framing overrides (e.g. gravity: 'north', crop_offset: '+0+10').",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "enabled": { "type": "boolean" },
+              "gravity": { "type": "string" },
+              "crop_offset": { "type": "string" },
+              "quality": { "type": "integer" }
+            }
+          }
+        }
+      }
+    },
+    "style_guides": {
+      "type": "object",
+      "description": "Map of workspace_root:subdir:... namespace keys (or '*' fallback) to style guide configurations. Child namespaces inherit from parent namespaces along the colon-delimited path unless inherit is false.",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["doc"],
+        "properties": {
+          "doc": {
+            "type": "string",
+            "description": "Repo-relative path to the Markdown style guide document."
+          },
+          "summary": {
+            "type": "string"
+          },
+          "inherit": {
+            "type": "boolean",
+            "default": true,
+            "description": "When true (default), merges parent style guides from workspace_root down to the most specific matching subdir namespace."
+          },
+          "og_social_image": {
+            "type": "boolean",
+            "description": "Optional per-namespace override to explicitly disable (false) or enable (true) automatic og-social-image generation in this namespace."
+          },
+          "reference_images": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Repo-relative paths to visual anchor images passed in ImagePaths during image generation to prevent style drift."
+          },
+          "palette": {
+            "type": "object",
+            "additionalProperties": { "type": "string" }
+          },
+          "typography": {
+            "type": "object",
+            "additionalProperties": { "type": "string" }
+          }
+        }
+      }
+    },
+    "rules": {
+      "type": "array",
+      "description": "Ordered list of global and path-targeted image inclusion rules matched against repo-relative file paths using standard glob (*, **, ?) notation.",
+      "items": {
+        "type": "object",
+        "required": ["id", "glob", "doc", "panels"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "glob": {
+            "oneOf": [
+              { "type": "string" },
+              { "type": "array", "items": { "type": "string" } }
+            ],
+            "description": "Glob pattern(s) matched against normalized repo-relative paths (e.g. 'README.md', 'plugins/*/README.md', 'plugins/*/skills/*/SKILL.md')."
+          },
+          "exclude": {
+            "oneOf": [
+              { "type": "string" },
+              { "type": "array", "items": { "type": "string" } }
+            ]
+          },
+          "doc": {
+            "type": "string",
+            "description": "Repo-relative path to the Markdown rules document explaining how and what panel images must be included for files matching this glob."
+          },
+          "panels": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "type", "placement", "src_pattern"],
+              "properties": {
+                "id": { "type": "string" },
+                "type": {
+                  "type": "string",
+                  "enum": ["top-level-panel", "sub-panel", "inset-oval"]
+                },
+                "required": {
+                  "type": "boolean",
+                  "default": true
+                },
+                "placement": {
+                  "type": "string",
+                  "enum": [
+                    "after-h1",
+                    "after-heading",
+                    "after-table-in-section",
+                    "after-bullet-matching",
+                    "in-section",
+                    "end-of-section"
+                  ]
+                },
+                "section_heading": {
+                  "type": "string",
+                  "description": "Target Markdown heading (e.g. '## Skills', '## Contents', '## Config', '## What you get', '## Credits') when placement is section-relative."
+                },
+                "bullet_match": {
+                  "type": "string",
+                  "description": "Substring or regex to locate the bullet line when placement is 'after-bullet-matching'."
+                },
+                "src_pattern": {
+                  "type": "string",
+                  "description": "Relative image path pattern supporting placeholders: {repo}, {dir_name}, {plugin}, {skill}, {file_stem}."
+                },
+                "alt_pattern": {
+                  "type": "string"
+                },
+                "title_pattern": {
+                  "type": "string"
+                },
+                "embed_style": {
+                  "type": "string",
+                  "enum": ["markdown", "html-center-tribute", "html-float-left", "html-float-right"],
+                  "default": "markdown"
+                },
+                "width": {
+                  "type": "integer",
+                  "description": "Display width in px when using HTML embed styles (e.g. 260 for oval tribute insets)."
+                },
+                "dimensions": {
+                  "type": "object",
+                  "properties": {
+                    "aspect_ratio": { "type": "string" },
+                    "width": { "type": "integer" },
+                    "height": { "type": "integer" },
+                    "format": { "type": "string", "enum": ["JPEG", "PNG"] },
+                    "require_alpha_corners_transparent": { "type": "boolean" }
+                  }
+                },
+                "companion_og_image": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": { "type": "boolean" },
+                    "src_pattern": { "type": "string" },
+                    "width": { "type": "integer", "default": 1280 },
+                    "height": { "type": "integer", "default": 640 },
+                    "max_bytes": { "type": "integer", "default": 1048576 }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

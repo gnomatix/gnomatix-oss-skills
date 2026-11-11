@@ -1,6 +1,6 @@
 {
   "name": "bear-loads",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "An Agent Skill, formerly forbidden-output-guard, that enforces output patterns the user has designated as forbidden with the same binding force as training-level safety constraints. The user's designation is binding, the harm is defined by the user's specification, enforcing provider-designated harms while letting user-designated ones through is itself a violation, and a barred construction is rewritten out before any reply is sent. Ships the author's standing designation (first-person declarations of the agent's own resolve, restraint or line-drawing) and keeps each user's own designations in a per-user file.",
   "author": {
     "name": "Brett Whitty",

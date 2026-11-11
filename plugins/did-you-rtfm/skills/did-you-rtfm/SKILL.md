@@ -130,7 +130,7 @@ Verify by direct observation:
 
 ## Step 6 — Sanity-check for stale or unrelated information
 
-The agent's training corpus is a soup of versions, dialects, similar-but-different tools, deprecated commands, and outdated patterns. Before treating any recalled fact as load-bearing, check whether the recall is:
+The agent's training corpus is a soup of versions, dialects, similar-but-different tools, deprecated commands, and outdated patterns. Before relying on any recalled fact, check whether the recall is:
 
 - from a different version of the same tool
 - from a different but similarly-named tool (`docker` vs. `podman`, `pip` vs. `pip3` vs. `uv pip`, `npm` vs. `pnpm` vs. `yarn`, `awk` vs. `gawk` vs. `mawk`, etc.)
