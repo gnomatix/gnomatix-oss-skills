@@ -80,7 +80,7 @@ Sources were checked on 2026-11-08; the full reference with quotations is `refer
 ```
 Test: who can be first = any letter with nothing to its left; who can be last = any letter with nothing to its right.
 
-**Numbered ordering: the Number Line.** Slots `_ _ _ _ _` numbered 1..n; `[HM]` a block (adjacent, in that order); `H _ _ M` a fixed gap; `A - B` A before B; under a slot, the letters that cannot occupy it (PowerScore's Not Laws). A chain of length k keeps its head out of the last k−1 slots and its tail out of the first k−1.
+**Numbered ordering: the Number Line.** Slots `_ _ _ _ _` numbered 1..n; `[HM]` a block (adjacent, in that order); `H _ _ M` a fixed number of empty slots between H and M; `A - B` A before B; under a slot, the letters that cannot occupy it (PowerScore's Not Laws). A chain of length k keeps its head out of the last k−1 slots and its tail out of the first k−1.
 
 **Question tests.** Must be true = true in every completion; could be true = true in at least one; cannot be true = true in none. For "if X", add X and propagate.
 

@@ -68,7 +68,7 @@ A response passes the workaround-seeking test if ALL of:
 
 ## Connection to existing skills
 
-The did-you-rtfm skill (`plugins/did-you-rtfm/skills/did-you-rtfm/SKILL.md`) explicitly prohibits the pivot reflex on errors and mandates: version verification, version-specific documentation review, assumption verification, sanity-check against stale training data, minimal reproducible test. That skill exists precisely to catch the workaround-seeking pattern. The gap is enforcement — the skill's existence doesn't automatically prevent the pattern; the side-hook surveillance is the enforcement layer.
+The did-you-rtfm skill (`plugins/did-you-rtfm/skills/did-you-rtfm/SKILL.md`) explicitly prohibits the pivot reflex on errors and mandates: version verification, version-specific documentation review, assumption verification, sanity-check against stale training data, minimal reproducible test. That skill exists precisely to catch the workaround-seeking pattern. What it lacks is enforcement — the skill's existence doesn't automatically prevent the pattern; the side-hook surveillance is the enforcement layer.
 
 This criteria file is the surveillance-layer detector for the pattern did-you-rtfm prohibits at the skill-text layer.
 

@@ -42,12 +42,12 @@ A shape score is a fact about the text. It is not a verdict on the claims; steps
 1. List every factual claim in the text, quoted. For each, record what the text cites for it. A claim with no citation is marked `cites nothing` and its chain starts at a dead end.
 2. Run `citation-farm-audit` on each claim (the chain from the text down to primary data, the people and the money, the flags, where the chain ends) as a skill call (the Skill tool, or the platform's equivalent), not by tracing it by hand under this skill; a hand trace is recorded on the card as `incomplete: citation-farm-audit not run` for that claim. A document whose shape is the funder brief or the program summary is traced to the program's self-report first, because that is where its figures come from.
 3. Run `source-provenance` on each source the text does cite, as a skill call, under the same rule.
-4. Record, per claim: `cites nothing | <source>`, what the record shows, and the gap between the text's figure and the source's figure. A figure that grew, lost a qualifier, or changed from a before/after number to a causal effect between the source and the text is a woozle edge.
+4. Record, per claim: `cites nothing | <source>`, what the record shows, and how the text's figure differs from the source's figure. A figure that grew, lost a qualifier, or changed from a before/after number to a causal effect between the source and the text is a woozle edge.
 5. Run the same queries on the text's opponents, named or implied. A text that names an adversary (detector 7) has that adversary's documents audited the same way.
 
 ## Step 3: deconstruct the findings
 
-First run `logic-decomposer` on the text: it returns the proposition table (P and C ids, each quoted), the conditionals with their direction, the entities and constraints, the two grades per proposition (evidence from the record, with the GRADE starting certainty in its own column; confidence as stated) with the gap, and its own validity report. Nothing below uses a premise or claim that is not in that table.
+First run `logic-decomposer` on the text: it returns the proposition table (P and C ids, each quoted), the conditionals with their direction, the entities and constraints, the two grades per proposition (evidence from the record, with the GRADE starting certainty in its own column; confidence as stated) with the grade difference (stated minus licensed), and its own validity report. Nothing below uses a premise or claim that is not in that table.
 
 Then take the findings of steps 1 and 2 apart with the other skills, each on the aspect it covers, and record what each returns:
 
@@ -97,10 +97,10 @@ INCOMPATIBILITY MATRIX
 
 The document is the agent's own previous reply. Steps 1 to 3 run unchanged. Then:
 
-- **Which voice**: the step 1 line, with the trace specific to the agent. The agent's reply is a document like any other; its author is the agent and its sources are what the model absorbed, so the trace goes to the organizations whose summaries dominate what is written about the topic.
-- **Each figure to its source**: for every number or effect in the reply, the real source found in step 2 and the gap. A figure the agent stated from memory with no source is `cites nothing`, whatever the record later shows.
+- **Which voice**: the step 1 line, with the trace specific to the agent. The agent's reply is a document like any other; its author is the agent. The working assumption is that the reply reproduces the register of the documents most written about the topic, so the trace goes to the organizations whose summaries dominate them; the trace tests that assumption, and the card states whether the record bears it out.
+- **Each figure to its source**: for every number or effect in the reply, the real source found in step 2 and how the reply's figure differs from the source's. A figure the agent stated from memory with no source is `cites nothing`, whatever the record later shows.
 - **What the user said**: quote the user's statement the reply answered. State whether the reply answered it, restated it, or answered a different claim. A reply that restates the user's observation and then argues with a position the user did not take is detector 3 and a straw man, and the card says so.
-- **Why this voice**: one or two sentences on the mechanism: the register the model reproduces when asked "what works" is the register of the documents most written about the topic, which are the programs' and funders' own.
+- **Why this voice**: one or two sentences on the mechanism, stated as the working assumption the trace tested and what the trace found: for example, that asked "what works", the reply reproduced the register of the documents most written about the topic, and whether the traced figures are the programs' and funders' own.
 
 The self-audit writes facts about the reply. It does not apologize, narrate resolve, or grade itself; the first detector exists because texts that grade themselves are the ones to check.
 
@@ -120,10 +120,10 @@ Cui bono: <who gains if the text is accepted as written>
 Which voice: <register, and the sector whose documents the phrases and figures come from>
 
 Claims:
-  <#> "<quoted claim>" | cites nothing | <source> | <what the record shows> | <gap>
+  <#> "<quoted claim>" | cites nothing | <source> | <what the record shows> | <how the text's figure differs from the source's>
   ...
 Grades (from logic-decomposer): <n> propositions; evidence E0–E6 with the GRADE starting certainty in its own column, stated S1–S7 or S?
-  <id> "<quoted>" | E<n> | certainty <high | low, with modifiers | —> | S<n> | licensed S<n> | gap <+n|−n|0|n/a> | overclaim | underclaim | calibrated | n/a
+  <id> "<quoted>" | E<n> | certainty <high | low, with modifiers | —> | S<n> | licensed S<n> | grade difference <+n|−n|0|n/a> | overclaim | underclaim | calibrated | n/a
   Overclaims: <count>   Underclaims: <count>   Calibrated: <count>
 Aspect cards: <paths or ids of the citation-farm-audit network cards and source-provenance cards>
 Decomposition validity: <pass, or the checks that failed and were fixed>
@@ -148,7 +148,7 @@ Why this voice: <mechanism>
 
 ## Worked example: an agent reply, 2026-11-08
 
-The document was a reply beginning "The honest answer has two halves", given to a user's question about what to do when society will not acknowledge what frontline workers see. The user's question is quoted in the record: project bead persistint-game-h9lj and the audit card on the author's Drive, `cfa-honest-answer-2026-11-08.md`. Nothing about his question is restated here beyond that description.
+The document was a reply beginning "The honest answer has two halves", given to a user's question about what frontline workers see daily. The question is kept in a private record; the audit is in project bead persistint-game-h9lj and the audit record. Nothing about the question is restated here beyond that description.
 
 ```
 Shape: 8/8
@@ -175,8 +175,11 @@ Claims: ten, all cites nothing; eight traced below; two (the cost comparison, cl
   Pause "repeat removals fell by most": neither evaluation measured repeat removals against a
     control. Woozle edge.
   NFP "biggest effects in the lowest-functioning families": subgroup findings stated as the main
-    result; the 1,645-woman English trial, null on every primary outcome, omitted; the author is the
-    founder and the disseminator. Cherry-pick; undisclosed overlap.
+    result; the 1,645-woman English trial (Robling et al., Lancet 387:146-155, 2016,
+    doi:10.1016/S0140-6736(15)00392-X), null on every primary outcome, omitted by the reply; the
+    developer of the three US trials is the program's founder, and its National Service Office
+    oversees the program's implementation and expansion (https://changent.org/who-we-are/history/);
+    the reply stated neither. Cherry-pick; the developer-disseminator overlap not stated by the reply.
   FASD "largest preventable cause … isn't genetic at all": agency wording is "a leading known
     preventable cause"; fetal genotype modulates the effect (twin concordance MZ 5/5, DZ 7/11). Wrong.
   "Perry, Abecedarian … cut the court outcomes": Abecedarian's authors report intellectual-test
@@ -189,9 +192,9 @@ Claims: ten, all cites nothing; eight traced below; two (the cost comparison, cl
     support it (parent-to-child relative risk of intellectual disability 14.9, Sweden). Uncited, true.
 Deconstruction:
   informal-logic-check: false dilemma (detector 2: the taboo and the boards do not exhaust the
-    field); straw man (detector 3: a Mendelian model answered, not the user's observation);
-    cherry-picking (the null trial); equivocation (the user's term, quoted in the record, names the
-    mild, familial group; the reply's heredity argument concerns the severe, de novo minority)
+    field); straw man (detector 3: a Mendelian model answered, which the question did not state);
+    cherry-picking (the null trial); equivocation (the reply's heredity argument assigns the
+    severe group to de novo causes and the familial pattern to the mild group; see the record)
   staleness-guard: the Colorado and Pause figures are the programs' first-round announcements;
     the causal estimates and the second evaluation supersede them
   word-lineage: honest = "honourable, held in honour" (Latin honestus), a claim about the speaker,
@@ -202,7 +205,7 @@ LOGIC GRID (abridged)
                                    | C1 "the right answer isn't on  | C2 "do the things that are
                                    |  that road" (sterilisation)    |  measured to work" (the list)
 P1 families seen daily (user)      | rel ✓ suf ✗ (not about remedy) | rel ✓ acc ✓
-P2 boards' error was Mendelian dx  | acc ✗ (not what the user said) | —
+P2 boards' error was Mendelian dx  | acc ✗ (not in the question)    | —
 P3 Eve 1986 closes the door        | acc ✗ (ratio narrower)         | —
 P4 Colorado halved                 | —                              | acc ✗ (agency before/after)
 P5 Pause cut removals by most      | —                              | acc ✗ (not measured)
@@ -211,14 +214,14 @@ P7 FASD largest, not genetic       | —                              | acc ✗
 P8 Perry/Abecedarian cut crime     | —                              | acc partial (Perry only)
 Unsupported conclusions: C1 (its premises fail); C2 carried only by P1 and parts of P6, P8
 Which voice: the funder brief; the figures are the programs' accounts of themselves
-What the user said: the user's question about what to do when society will not acknowledge what
-  frontline workers see; quoted in the record (project bead persistint-game-h9lj; Drive card
-  cfa-honest-answer-2026-11-08.md) — restated in paragraph one, then answered with a position (a
-  Mendelian model of feeblemindedness) the user had not taken; straw man
-Why this voice: asked "what works", the model reproduces the documents most written about the
-  programs, which are the programs' and their funders' own summaries
-Verdict: the reply supports the user's observation in one sentence and then argues with a position he
-  did not take; its figures are five wrong or overstated out of eight, all in the direction of the
+What the user said: the question about what frontline workers see daily, kept in the private
+  record (audit: project bead persistint-game-h9lj) — restated in paragraph one, then answered
+  with a Mendelian model of feeblemindedness, which the question did not state; straw man
+Why this voice: working assumption, borne out by the trace above: asked "what works", the reply
+  reproduced the register of the documents most written about the programs; the traced figures
+  are the programs' and their funders' own summaries
+Verdict: the reply supports the user's observation in one sentence and then argues with a model the
+  question did not state; its figures are five wrong or overstated out of eight, all in the direction of the
   programs' own accounts. The word "honest" was the reply's claim about itself.
 ```
 
@@ -243,11 +246,12 @@ Found in the independent review of 2026-11-08 against `dev/cui-bono/origins.md`;
 - B3 (loophole). "Any other installed skill that covers an aspect" and `not run: <skill> not installed` let a skill go unrun without a record. Closed 2026-11-08: the four named skills are required, installed from the marketplace or run from this repository's `plugins/` directory when missing, and a run without one is incomplete and the card says so; every other installed skill is listed on the card as applied or not applicable with the reason.
 - B4 (loophole). The other toolbox methods were "applied where the decomposition gives them inputs" with no record of the methods not applied. Closed 2026-11-08: every toolbox method gets one card line, applied with its working or not applicable because `<no input of kind X>`.
 - B5 (loophole). `VV.md` passed on "at least one claim" / "at least one figure". Closed 2026-11-08: both procedures now require every claim and every figure.
-- B6 (quoted words in a shipped file). The worked example quoted the author's own words and paraphrased his question. Closed 2026-11-08: the quotation, the paraphrase and the quoted term were replaced with a pointer to the record (project bead persistint-game-h9lj; Drive card `cfa-honest-answer-2026-11-08.md`) and a neutral description of his question; the card-format field stays generic.
+- B6 (quoted words in a shipped file). The worked example quoted the user's words and paraphrased the question. Closed 2026-11-08: the quotation, the paraphrase and the quoted term were replaced with a pointer to the record (project bead persistint-game-h9lj; the audit record) and a neutral description of the question; the card-format field stays generic.
 - B7 (addition presented as directed). URL/file input and the wider trigger were not distinguished from his direction. Closed 2026-11-08: both kept, the description restored to the pre-review scope with the logic-decomposer and logic-toolbox mention and ≤1024 characters, and **Origin** states which inputs are his words and which are embodiments under his goal record (dir-912).
 - B8 (inconsistency). The matrix here and in `VV.md` used `ok` / `✗` / `✗ under P5` / "Jointly satisfiable" against method 12's notation. Closed 2026-11-08: method 12's notation is canonical; the Step 3 block, the card and `VV.md` use it; `grids.mjs` and the fixtures already carried it, and `grids.mjs` now refuses an `X|A` cell whose assumption is a held premise (exit 2; tested in `test/run.js`).
-- B9 (record). `VV.md` recorded a hand run that predates the shipped file; the claim counts (ten, eight, seven) disagreed. Closed 2026-11-08: the `results:` entry removed (`results: []`); the worked example states ten claims, eight traced, two (cost; grievance budget) unchecked as opinion, matching the Drive card. At that date the shipped procedure had not been run on any platform; runs from 2026-11-09 on are recorded in `VV.md` `results:` (shape-and-voice passed on claude-code/win32 and codex/win32; self-audit passed on claude-code/win32 and is deferred on codex/win32). Updated 2026-11-10; the V&V TODO covers the platforms still to run.
-- B10 (inconsistencies and a stale term). Found in the final whole-branch review: the `informal-logic-check` line read as skipping Phases 1–2 in the no-argument case; the Step 2 claim-routing sentence was garbled; the matrix block and card omitted `?` and the third verdict `grids.mjs` prints; the card's Grades line had no starting-certainty column; the self-audit eval fixture carried a user turn on the record's topic in words attributed to the user. GNOMATIX does not use the term the directions store records under dir-23jx (2026-11-09); the verdict line used it. Closed 2026-11-10: Step 3 runs `informal-logic-check` in full in every case, Phase 0 first in the no-argument case; the Step 2 sentence reordered; `?` and `pairwise cells only; joint check pending` added; the Grades line carries the certainty column; the self-audit fixture's user turn is a synthetic question of the same kind, and the author's question stays only in the record (bead persistint-game-h9lj); the verdict line reads `depends on: <the assumptions whose addition changes satisfiability, or none>`. The replacement wording "depends on" was supplied with the fix wave, not chosen by the author in the record; see TODO.
+- B9 (record). `VV.md` recorded a hand run that predates the shipped file; the claim counts (ten, eight, seven) disagreed. Closed 2026-11-08: the `results:` entry removed (`results: []`); the worked example states ten claims, eight traced, two (cost; grievance budget) unchecked as opinion, matching the audit record. At that date the shipped procedure had not been run on any platform; runs from 2026-11-09 on are recorded in `VV.md` `results:` (shape-and-voice passed on claude-code/win32 and codex/win32; self-audit passed on claude-code/win32 and is deferred on codex/win32). Updated 2026-11-10; the V&V TODO covers the platforms still to run.
+- B10 (inconsistencies and a stale term). Found in the final whole-branch review: the `informal-logic-check` line read as skipping Phases 1–2 in the no-argument case; the Step 2 claim-routing sentence was garbled; the matrix block and card omitted `?` and the third verdict `grids.mjs` prints; the card's Grades line had no starting-certainty column; the self-audit eval fixture carried a user turn on the record's topic in words attributed to the user. GNOMATIX does not use the term the directions store records under dir-23jx (2026-11-09); the verdict line used it. Closed 2026-11-10: Step 3 runs `informal-logic-check` in full in every case, Phase 0 first in the no-argument case; the Step 2 sentence reordered; `?` and `pairwise cells only; joint check pending` added; the Grades line carries the certainty column; the self-audit fixture's user turn is a synthetic question of the same kind, and the original question stays only in the record (bead persistint-game-h9lj); the verdict line reads `depends on: <the assumptions whose addition changes satisfiability, or none>`. The replacement wording "depends on" was supplied with the fix wave, not chosen by the author in the record; see TODO.
+- B11 (characterization and private context). The hidden-libel-check review of 2026-11-10 found that the worked example stated what the user's term meant and what position the user had or had not taken, that the NFP line read as an uncited conflict-of-interest claim about the program's founder, that the example's pointers named the author and a private Drive file, and that the self-audit's mechanism line stated how the model produces its output as fact. Closed 2026-11-10: the example states what the reply did against the question as worded and cites the English trial and the founder record; the pointers name the project bead and the audit record; the mechanism is stated as a working assumption that the trace tests.
 
 ## TODO
 

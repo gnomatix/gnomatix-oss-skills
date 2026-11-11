@@ -1,6 +1,6 @@
 # AI-attribution defaults and session-start context injection: Codex CLI, Gemini CLI, Antigravity, Kiro
 
-Research date: 2026-11-04. Sources are each vendor's own docs site or source repository, plus the copies installed on this machine. Downloaded doc copies are in `C:\Users\brett\.claude\jobs\bcd67d53\tmp\dl\`.
+Research date: 2026-11-04. Sources are each vendor's own docs site or source repository, plus the copies installed on this machine.
 
 How each fact is marked:
 - read: read on the official source, or observed directly on this machine. The quote is exact.
@@ -13,17 +13,16 @@ How each fact is marked:
 
 | Tool | Path | Version | Evidence |
 |---|---|---|---|
-| OpenAI Codex CLI | `C:\Users\brett\AppData\Local\OpenAI\Codex\bin\22cfb1d302613eae\codex.exe` (bundled with the Codex desktop app) | `codex-cli 0.166.0-alpha.5.1` | read: `codex.exe --version`. `codex` is not on PATH (`Get-Command codex` found nothing). `~/.codex/version.json` gives `"latest_version":"0.166.0"`. |
-| Google Gemini CLI | npm package `@google/gemini-cli` at `C:\Users\brett\.local\share\mise\installs\node\25.7.0\node_modules\@google\gemini-cli` | `0.33.0-nightly.20260228.1ca5c05d0` (from its package.json) | read. The `gemini` mise shim is broken: `mise ERROR No version is set for shim: gemini` (no global node version is set). Latest upstream release is `v0.66.0`, published 2026-10-27 (from `gh api repos/google-gemini/gemini-cli/releases/latest`). |
-| Antigravity CLI (`agy`) | `C:\Users\brett\AppData\Local\agy\bin\agy.exe` | `1.4.12` | read: `agy.exe --version`. No `antigravity` command is on PATH. |
-| Antigravity App | `C:\Users\brett\AppData\Local\Programs\Antigravity\` | the `version` file reads `44.5.1` | read |
-| Antigravity IDE | `C:\Users\brett\AppData\Local\Programs\Antigravity IDE\` | product.json `"ideVersion": "2.6.0"`, `"version": "1.107.0"` | read |
-| Kiro CLI | `C:\Users\brett\AppData\Local\Kiro-Cli\kiro-cli.exe` | `kiro-cli 2.37.0` | read. Its `--help` offers `--v3  Launch the next generation Kiro agent` and `--v2  Use the V2 agent engine (the pre-3.0 default)`. |
-| Kiro IDE | `C:\Users\brett\AppData\Local\Programs\Kiro\bin\kiro.cmd` | `1.4.62` (commit 8afe855...) | read: `kiro --version` |
+| OpenAI Codex CLI | `codex.exe` bundled with the Codex desktop app | `codex-cli 0.166.0-alpha.5.1` | read: `codex.exe --version`. `codex` is not on PATH (`Get-Command codex` found nothing). `~/.codex/version.json` gives `"latest_version":"0.166.0"`. |
+| Google Gemini CLI | npm package `@google/gemini-cli`, installed under mise node 25.7.0 | `0.33.0-nightly.20260228.1ca5c05d0` (from its package.json) | read. The `gemini` mise shim is broken: `mise ERROR No version is set for shim: gemini` (no global node version is set). Latest upstream release is `v0.66.0`, published 2026-10-27 (from `gh api repos/google-gemini/gemini-cli/releases/latest`). |
+| Antigravity CLI (`agy`) | `agy.exe`, per-user install | `1.4.12` | read: `agy.exe --version`. No `antigravity` command is on PATH. |
+| Antigravity App | per-user install | the `version` file reads `44.5.1` | read |
+| Antigravity IDE | per-user install | product.json `"ideVersion": "2.6.0"`, `"version": "1.107.0"` | read |
+| Kiro CLI | `kiro-cli.exe`, per-user install | `kiro-cli 2.37.0` | read. Its `--help` offers `--v3  Launch the next generation Kiro agent` and `--v2  Use the V2 agent engine (the pre-3.0 default)`. |
+| Kiro IDE | `kiro.cmd`, per-user install | `1.4.62` (commit 8afe855...) | read: `kiro --version` |
 
 Config directories present: `~/.codex`, `~/.gemini`, `~/.kiro` and `~/.antigravity`.
 - `~/.gemini` is shared by Gemini CLI and Antigravity. It holds `antigravity/`, `antigravity-cli/`, `antigravity-ide/`, `config/`, `GEMINI.md`, `settings.json` and `hooks/`.
-- `~/.codex/hooks.json` already registers `PreCompact` and `SessionEnd`, both running `archive-transcript-to-drive.ps1`.
 - `~/.codex/config.toml` lists the `gnomatix-oss-skills` and `claude-plugins-official` marketplaces under `[marketplaces.*]`. Codex already loads Claude-format plugins from this repo.
 
 ### WSL `agent-sandbox`
@@ -358,7 +357,7 @@ CLI 2.x legacy form, read from /docs/cli/2x-reference/. Hooks are embedded in th
 
 ## 4b. Live checks, 2026-11-04
 
-Run headless on Windows in a scratch workspace with workspace-level hooks, using a probe script that logs each call and prints a marker line. Logs are in the session job folder (vv-ws).
+Run headless on Windows in a scratch workspace with workspace-level hooks, using a probe script that logs each call and prints a marker line.
 
 - **Antigravity CLI** (agy 1.4.12, `agy -p`). read: `.agents/hooks.json` loads, and the SessionStart hook runs with its working directory set to `.agents`. It receives camelCase stdin (`conversationId`, `artifactDirectoryPath`). Output `{"injectSteps":[{"systemMessage":{"systemMessage":"..."}}]}` reaches the model: it quoted the marker line back. On Windows the command is split on spaces without a shell, and quote marks are passed through to the program. `node "C:/path/probe.js"` failed with "Cannot find module '...\\.agents\\"C:\\...probe.js"'". `node C:/path/probe.js` works.
 - **Kiro CLI** (kiro-cli 2.37.0, `kiro-cli chat --no-interactive --trust-workspace`). read: `.kiro/hooks/<id>.json` loads, and the SessionStart hook runs with snake_case stdin (`session_id`, `hook_event_name`, `cwd`). Plain stdout reaches the model: it quoted the marker line back. A quoted path in `command` works.

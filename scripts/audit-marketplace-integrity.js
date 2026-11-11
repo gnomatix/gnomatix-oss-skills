@@ -11,16 +11,20 @@
 //    unapproved child_process imports inside plugins/*/hooks/*.js.
 // 5. Canonical lib/ Synchronization: synced copies of lib/fs-safe.js and lib/gnox-discovery.js match root lib/.
 // 6. gnox Router Synchronization: plugins/gnox/scripts/build-commands.js --check passes (when present).
-// 7. Cross-CLI Symlink Farms: every skill under plugins/*/skills/*/SKILL.md is exposed in .agents/skills/,
-//    .github/skills/, and .kiro/skills/.
-// 8. VV.md Complementary Topology & Lifecycle Frontmatter Integrity: every `complements:` entry in
+// 7. Zero Git Symlinks (`no-git-symlinks`): zero mode-120000 Git symlink entries in the Git index and zero
+//    filesystem symlinks/junctions anywhere in the repository tree (all cross-CLI installs use static copies
+//    via scripts/install-skills.js).
+// 8. Rename/Consolidation Migration Manifest & Tag Coverage (`migrations-manifest-and-tags`): validates
+//    .claude-plugin/migrations.json and verifies across all `v*` Git release tags that every historically
+//    shipped plugin and skill either still exists at its original path or has an explicit migration entry.
+// 9. VV.md Complementary Topology & Lifecycle Frontmatter Integrity: every `complements:` entry in
 //    plugins/*/VV.md names a real marketplace plugin (never itself) and provides both `when_installed`
 //    and `when_absent` behaviors; optional GNOMATIX release-gating fields (`authority`, `review_status`,
 //    `approved_versions`) follow valid schema values.
-// 9. Anti-Context-Pollution Scanner: blocks re-introduction of unauthorized isolationist disclaimers,
-//    npm hooks/node_modules vendoring instructions, live sibling plugin names inside `ignore: [...]`
-//    config examples, stale "not yet in this repository" notices on live plugins, and blanket
-//    "Hooks ... apply to Claude Code only" siloing claims.
+// 10. Anti-Context-Pollution Scanner: blocks re-introduction of unauthorized isolationist disclaimers,
+//     npm hooks/node_modules vendoring instructions, live sibling plugin names inside `ignore: [...]`
+//     config examples, stale "not yet in this repository" notices on live plugins, and Claude-Code-only
+//     siloing claims across READMEs and manifests.
 //
 // Usage:
 //   node scripts/audit-marketplace-integrity.js [--root <dir>] [--json]
@@ -257,6 +261,30 @@ function walkForNodeModules(dir, found) {
   }
 }
 
+function walkForSymlinks(dir, found) {
+  let entries;
+  try {
+    entries = fs.readdirSync(dir, { withFileTypes: true });
+  } catch {
+    return;
+  }
+  for (const e of entries) {
+    if (e.name === '.git' || e.name === '.beads' || e.name === 'node_modules') continue;
+    const full = path.join(dir, e.name);
+    let lst = null;
+    try {
+      lst = fs.lstatSync(full);
+    } catch {
+      continue;
+    }
+    if (lst.isSymbolicLink()) {
+      found.push(full);
+    } else if (lst.isDirectory()) {
+      walkForSymlinks(full, found);
+    }
+  }
+}
+
 function auditMarketplace(repoRoot, opts) {
   const options = opts || {};
   const root = path.resolve(repoRoot || DEFAULT_ROOT);
@@ -280,6 +308,7 @@ function auditMarketplace(repoRoot, opts) {
   let mp = null;
   const pluginNames = new Set();
   const expectedSkills = [];
+  const skillKeySet = new Set();
 
   if (!fs.existsSync(mpPath)) {
     fail('marketplace-manifest', mpPath, 'missing .claude-plugin/marketplace.json');
@@ -339,6 +368,7 @@ function auditMarketplace(repoRoot, opts) {
         const skillMd = path.join(skillsDir, sName, 'SKILL.md');
         if (fs.existsSync(skillMd)) {
           expectedSkills.push({ plugin: entry.name, skill: sName, skillMd });
+          skillKeySet.add(`${entry.name}/${sName}`);
         }
       }
     }
@@ -459,20 +489,152 @@ function auditMarketplace(repoRoot, opts) {
     recordCheck('gnox-router-in-sync', r.status === 0, (r.stdout || '').trim() || 'checked');
   }
 
-  // 6. Symlink farms (.agents/skills, .github/skills, .kiro/skills)
-  if (options.checkSymlinkFarms !== false) {
-    const farms = ['.agents/skills', '.github/skills', '.kiro/skills'];
-    const presentFarms = farms.filter((f) => fs.existsSync(path.join(root, f)));
-    const beforeFarms = findings.length;
-    for (const farm of presentFarms) {
-      for (const s of expectedSkills) {
-        const linkedSkillMd = path.join(root, farm, s.skill, 'SKILL.md');
-        if (!fs.existsSync(linkedSkillMd)) {
-          fail('symlink-farms-complete', path.join(root, farm, s.skill), `skill "${s.skill}" (${s.plugin}) missing from ${farm}/`);
+  // 6. Zero Git symlinks & zero filesystem symlinks (`no-git-symlinks`)
+  if (options.checkNoSymlinks !== false) {
+    const beforeSymlinks = findings.length;
+    const fsSymlinks = [];
+    walkForSymlinks(root, fsSymlinks);
+    for (const sym of fsSymlinks) {
+      fail(
+        'no-git-symlinks',
+        sym,
+        'filesystem symlink/junction is prohibited in repository; use scripts/install-skills.js static copies instead'
+      );
+    }
+    if (fs.existsSync(path.join(root, '.git')) && options.checkGitIndexSymlinks !== false) {
+      const rLs = spawnSync('git', ['-C', root, 'ls-files', '-s', '-z'], {
+        encoding: 'utf8',
+        shell: false,
+        windowsHide: true,
+      });
+      if (rLs.status === 0 && rLs.stdout) {
+        const entries = rLs.stdout.split('\0').filter(Boolean);
+        for (const line of entries) {
+          const m = /^120000\s+[0-9a-f]{40}\s+\d+\t(.+)$/.exec(line);
+          if (m) {
+            fail(
+              'no-git-symlinks',
+              path.join(root, ...m[1].split('/')),
+              `mode-120000 Git symlink "${m[1]}" is prohibited (breaks Windows core.symlinks=false checkouts)`
+            );
+          }
         }
       }
     }
-    recordCheck('symlink-farms-complete', findings.length === beforeFarms, `${presentFarms.length} symlink farm(s) checked`);
+    recordCheck(
+      'no-git-symlinks',
+      findings.length === beforeSymlinks,
+      findings.length === beforeSymlinks ? '0 symlinks in working tree and Git index' : 'symlinks detected'
+    );
+  }
+
+  // 6b. Migration manifest & Git release-tag rename/move coverage (`migrations-manifest-and-tags`)
+  const migPath = path.join(root, '.claude-plugin', 'migrations.json');
+  const enforceMigrations =
+    options.checkMigrations === true ||
+    (options.checkMigrations !== false && (fs.existsSync(migPath) || (mp && mp.name === 'gnomatix-oss-skills')));
+  if (enforceMigrations) {
+    const beforeMig = findings.length;
+    if (!fs.existsSync(migPath)) {
+      fail('migrations-manifest-and-tags', migPath, 'missing .claude-plugin/migrations.json');
+    } else {
+      let mig = null;
+      try {
+        mig = JSON.parse(fs.readFileSync(migPath, 'utf8'));
+      } catch (err) {
+        fail('migrations-manifest-and-tags', migPath, `invalid JSON: ${err.message}`);
+      }
+      if (mig) {
+        if (mig.schema_version !== 1) {
+          fail('migrations-manifest-and-tags', migPath, `expected schema_version 1, got ${JSON.stringify(mig.schema_version)}`);
+        }
+        const pluginMigratedFrom = new Set();
+        const skillMigratedFrom = new Set();
+
+        for (const pm of mig.plugin_migrations || []) {
+          if (!pm || !pm.from || !pm.to || !pm.since || !pm.reason || typeof pm.bridge_retained !== 'boolean') {
+            fail('migrations-manifest-and-tags', migPath, `incomplete plugin_migrations entry: ${JSON.stringify(pm)}`);
+            continue;
+          }
+          pluginMigratedFrom.add(pm.from);
+          if (!pluginNames.has(pm.to)) {
+            fail('migrations-manifest-and-tags', migPath, `plugin migration target "${pm.to}" (from "${pm.from}") does not exist in marketplace.json`);
+          }
+          if (pm.bridge_retained && !pluginNames.has(pm.from)) {
+            fail('migrations-manifest-and-tags', migPath, `plugin migration "${pm.from}" declares bridge_retained: true, so "${pm.from}" must remain in marketplace.json`);
+          }
+        }
+
+        for (const sm of mig.skill_migrations || []) {
+          if (!sm || !sm.from_plugin || !sm.from_skill || !sm.to_plugin || !sm.to_skill || !sm.since || !sm.reason) {
+            fail('migrations-manifest-and-tags', migPath, `incomplete skill_migrations entry: ${JSON.stringify(sm)}`);
+            continue;
+          }
+          skillMigratedFrom.add(`${sm.from_plugin}/${sm.from_skill}`);
+          if (!skillKeySet.has(`${sm.to_plugin}/${sm.to_skill}`)) {
+            fail(
+              'migrations-manifest-and-tags',
+              migPath,
+              `skill migration target "${sm.to_plugin}/${sm.to_skill}" (from "${sm.from_plugin}/${sm.from_skill}") does not exist in plugins/`
+            );
+          }
+        }
+
+        if (fs.existsSync(path.join(root, '.git')) && options.checkTagCoverage !== false) {
+          const rTags = spawnSync('git', ['-C', root, 'tag', '-l', 'v*'], {
+            encoding: 'utf8',
+            shell: false,
+            windowsHide: true,
+          });
+          if (rTags.status === 0 && rTags.stdout) {
+            const tags = rTags.stdout.split(/\r?\n/).map((t) => t.trim()).filter(Boolean);
+            const seenMissingPlugins = new Set();
+            const seenMissingSkills = new Set();
+            for (const tag of tags) {
+              const rTree = spawnSync('git', ['-C', root, 'ls-tree', '-r', '--name-only', tag, '--', 'plugins/'], {
+                encoding: 'utf8',
+                shell: false,
+                windowsHide: true,
+                maxBuffer: 20 * 1024 * 1024,
+              });
+              if (rTree.status !== 0 || !rTree.stdout) continue;
+              for (const p of rTree.stdout.split(/\r?\n/)) {
+                const pm = /^plugins\/([^/]+)\/\.claude-plugin\/plugin\.json$/.exec(p);
+                if (pm) {
+                  const oldPlugin = pm[1];
+                  if (!pluginNames.has(oldPlugin) && !pluginMigratedFrom.has(oldPlugin) && !seenMissingPlugins.has(oldPlugin)) {
+                    seenMissingPlugins.add(oldPlugin);
+                    fail(
+                      'migrations-manifest-and-tags',
+                      migPath,
+                      `plugin "${oldPlugin}" shipped in tag ${tag} is absent from marketplace.json without an entry in .claude-plugin/migrations.json`
+                    );
+                  }
+                  continue;
+                }
+                const sm = /^plugins\/([^/]+)\/skills\/([^/]+)\/SKILL\.md$/.exec(p);
+                if (sm) {
+                  const key = `${sm[1]}/${sm[2]}`;
+                  if (!skillKeySet.has(key) && !skillMigratedFrom.has(key) && !seenMissingSkills.has(key)) {
+                    seenMissingSkills.add(key);
+                    fail(
+                      'migrations-manifest-and-tags',
+                      migPath,
+                      `skill "${key}" shipped in tag ${tag} moved or was renamed without an entry in .claude-plugin/migrations.json`
+                    );
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    recordCheck(
+      'migrations-manifest-and-tags',
+      findings.length === beforeMig,
+      findings.length === beforeMig ? 'migrations.json and release-tag coverage verified' : 'migration coverage issues found'
+    );
   }
 
   // 7. VV.md `complements:` & GNOMATIX lifecycle frontmatter integrity
@@ -519,10 +681,10 @@ function auditMarketplace(repoRoot, opts) {
   }
   recordCheck('vv-complements-valid', findings.length === beforeVv, 'VV.md complements and lifecycle frontmatter checked');
 
-  // 8. Anti-context-pollution scan across steering, READMEs, VV.md, and SKILL.md
+  // 8. Anti-context-pollution scan across steering, READMEs, hooks/README.md, platforms/*/README.md, VV.md, and SKILL.md
   const docsToScan = [];
-  for (const topDoc of ['CLAUDE.md', 'AGENTS.md', 'README.md']) {
-    const fp = path.join(root, topDoc);
+  for (const topDoc of ['CLAUDE.md', 'AGENTS.md', 'README.md', '.claude-plugin/marketplace.json']) {
+    const fp = path.join(root, ...topDoc.split('/'));
     if (fs.existsSync(fp)) docsToScan.push(fp);
   }
   if (fs.existsSync(pluginsRoot)) {
@@ -532,6 +694,15 @@ function auditMarketplace(repoRoot, opts) {
       for (const f of ['README.md', 'CLAUDE.md', 'AGENTS.md', 'VV.md']) {
         const fp = path.join(pDir, f);
         if (fs.existsSync(fp)) docsToScan.push(fp);
+      }
+      const hooksReadme = path.join(pDir, 'hooks', 'README.md');
+      if (fs.existsSync(hooksReadme)) docsToScan.push(hooksReadme);
+      const platformsDir = path.join(pDir, 'platforms');
+      if (fs.existsSync(platformsDir)) {
+        for (const plat of fs.readdirSync(platformsDir)) {
+          const platReadme = path.join(platformsDir, plat, 'README.md');
+          if (fs.existsSync(platReadme)) docsToScan.push(platReadme);
+        }
       }
       const libVv = path.join(pDir, 'lib', 'vv.js');
       if (fs.existsSync(libVv)) docsToScan.push(libVv);
@@ -564,20 +735,22 @@ function auditMarketplace(repoRoot, opts) {
     }
 
     // 8c. Live sibling plugin planted inside `ignore: [...]` config examples
-    const ignoreRegex = /\bignore:\s*\[([^\]]+)\]/g;
-    let m;
-    while ((m = ignoreRegex.exec(content)) !== null) {
-      const items = m[1]
-        .split(',')
-        .map((x) => x.trim().replace(/^['"]|['"]$/g, ''))
-        .filter(Boolean);
-      for (const item of items) {
-        if (pluginNames.has(item)) {
-          fail(
-            'context-pollution-sibling-ignore-example',
-            docPath,
-            `config example places live marketplace plugin "${item}" inside ignore: [...]`
-          );
+    if (!rel.endsWith('.json')) {
+      const ignoreRegex = /\bignore:\s*\[([^\]]+)\]/g;
+      let m;
+      while ((m = ignoreRegex.exec(content)) !== null) {
+        const items = m[1]
+          .split(',')
+          .map((x) => x.trim().replace(/^['"]|['"]$/g, ''))
+          .filter(Boolean);
+        for (const item of items) {
+          if (pluginNames.has(item)) {
+            fail(
+              'context-pollution-sibling-ignore-example',
+              docPath,
+              `config example places live marketplace plugin "${item}" inside ignore: [...]`
+            );
+          }
         }
       }
     }
@@ -594,16 +767,24 @@ function auditMarketplace(repoRoot, opts) {
       );
     }
 
-    // 8e. Blanket "Hooks ... apply to Claude Code only" siloing claims in READMEs
+    // 8e. Blanket Claude-Code-only siloing claims across READMEs and marketplace manifest
     if (rel === 'README.md' && /Hooks\b[^\n]*apply to Claude Code only/i.test(content)) {
       fail('context-pollution-false-hook-silo', docPath, 'false blanket claim that hooks apply to Claude Code only');
     }
     if (
-      rel.endsWith('/README.md') &&
+      (rel === 'README.md' || rel.endsWith('/README.md')) &&
       (/^##\s+Hooks\s*\(Claude[- ]Code[- ]only\)/im.test(content) ||
-        /\bThe hooks? (?:is|are) Claude[- ]Code[- ]only\b/i.test(content))
+        /\bThe hooks? (?:is|are) Claude[- ]Code[- ]only\b/i.test(content) ||
+        /\bHooks are Claude[- ]Code[- ]specific\b/i.test(content))
     ) {
-      fail('context-pollution-false-hook-silo', docPath, 'misleading Claude-Code-only hook heading/statement in plugin README');
+      fail('context-pollution-false-hook-silo', docPath, 'misleading Claude-Code-only hook heading/statement in README');
+    }
+    if (
+      (rel === '.claude-plugin/marketplace.json' || rel === 'README.md' || rel === 'AGENTS.md') &&
+      (/\bOpen-source skills and plugins for Claude Code\b/i.test(content) ||
+        /\bClaude Code installs from it\b/i.test(content))
+    ) {
+      fail('context-pollution-claude-only-claim', docPath, 'Claude-Code-exclusive framing violates cross-vendor marketplace rules');
     }
   }
   recordCheck('anti-context-pollution-scan', findings.length === beforePollution, `${docsToScan.length} file(s) scanned`);

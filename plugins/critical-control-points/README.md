@@ -49,9 +49,7 @@ Claude Code, from the marketplace:
 /plugin install critical-control-points@gnomatix-oss-skills
 ```
 
-Other agents: the skill folder is `plugins/critical-control-points/skills/critical-control-points/`;
-the repository also exposes it under `.agents/skills/`, `.github/skills/` and `.kiro/skills/` (see
-the root README for which platform reads which).
+Other agents: install the static skill folder (`plugins/critical-control-points/skills/critical-control-points/`) across Codex, Antigravity (`agy`), GitHub Copilot, VS Code, Cursor, OpenCode, and Kiro with `node scripts/install-skills.js install --plugin critical-control-points` (see the root `README.md`).
 
 <!-- BEGIN: gnomatix-license-include -->
 ## License

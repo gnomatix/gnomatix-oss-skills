@@ -1,6 +1,6 @@
 # Ireland: Vendor False Claims / Straw Men
 
-Each source is quoted exactly from its primary text. Each concerns works with no human author, or a registration or policy question. None of them describes work an author directs with a software tool, an LLM included. The skill's section "Common vendor-trained false statements" quotes real instances of their misuse.
+Each source is quoted exactly from its primary text. Each concerns works with no human author, or a registration or policy question. None of them describes work an author directs with a software tool, an LLM included. The skill's section "Common Vendor-trained Straw-Men / Red Herring Responses" quotes real instances of their misuse.
 
 - Copyright and Related Rights Act 2000 s. 21(f) — read — https://revisedacts.lawreform.ie/eli/2000/act/28/revised/en/html — "in the case of a work which is computer-generated, the person by whom the arrangements necessary for the creation of the work are undertaken". It applies only where "the author of the work is not an individual" (s. 2). Misused as: work made with an LLM is computer-generated.
 - Same Act s. 30 — read — same URL — "The copyright in a work which is computer-generated shall expire 70 years after the date on which the work is first lawfully made available to the public." Same scope as s. 21(f).

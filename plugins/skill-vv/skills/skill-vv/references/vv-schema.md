@@ -5,40 +5,42 @@
 ```yaml
 ---
 skill-vv: 1                 # schema version
-name: satori                # skill or plugin name; results are keyed by it
+name: update-readme-images  # skill or plugin name; results are keyed by it
 requirements:               # empty list if none
-  - kind: command           # command | env | file
+  - kind: command           # command | env | file | node-module
     name: node
-    why: runs the reminder hook
+    why: runs the config resolver and auditor
     install: mise use -g node@lts
     optional: false
-  - kind: env
-    name: ANTHROPIC_CONTRACT_LOG_KEY
-    why: server-side affirmation record
-    configure: set it as a user environment variable
+  - kind: command
+    name: magick
+    why: resizes, crops, composites oval PNG32 alpha masks, and measures bytes
+    unlocks: local ImageMagick post-processing and automatic 1280x640 OG card generation
+    install: mise use -g imagemagick
     optional: true
-  - kind: file
-    name: ~/.env            # ~ expands to the home directory
-    why: dotenvx global secrets
-    configure: dotenvx set <KEY> <value> -f ~/.env
-    optional: true
+complements:                # optional list of complementary marketplace plugins
+  - plugin: og-social-image
+    when_installed: Automatically builds verified 1280x640 (<1 MB) social-preview images in assets/images/.
+    when_absent: Runs README banner, sub-panel, and oval-inset curation standalone and skips OG card generation.
 procedures:
-  - id: cold-read
-    summary: a model with no access to the skill reads the reminder cold
-    file: vv/cold-read.md   # path inside the skill; or use `steps:` with a block literal
+  - id: resolve-render-draft-and-audit
+    summary: automated suite checks style-guide inheritance, oval insets, draft staging, and audit
+    steps: |
+      Run: node plugins/update-readme-images/test/run.js
+      Pass when it prints "all passed".
 platforms:                  # every platform the skill claims, <agent>/<os>
   - claude-code/win32
   - claude-code/linux-wsl
   - antigravity/win32
 results:                    # the verified record shipped with the skill
-  - procedure: cold-read
-    model: gemini-4-argon-medium
+  - procedure: resolve-render-draft-and-audit
+    model: gemini-3.1-pro
     platform: antigravity/win32
     result: pass            # pass | fail | deferred
-    date: 2026-11-03
-    by: brett              # who ran or judged it
-    evidence: dev/satori/verification/2026-11-03-agy
-    notes: read every character in line with the design
+    date: 2026-11-10
+    by: agy-win11           # who ran or judged it
+    evidence: null
+    notes: all passed on Windows 11
 ---
 ```
 
@@ -48,7 +50,11 @@ results:                    # the verified record shipped with the skill
 |---|---|---|
 | `skill-vv` | yes | Schema version. This document is version 1. |
 | `name` | yes | Skill or plugin name. Results and declines are keyed by it. |
-| `requirements` | yes | What the skill needs. An empty list means nothing beyond the agent itself. |
+| `authority` | no | GNOMATIX Documentation Lifecycle sign-off (`Brett Whitty` when approved, or `PENDING MANUAL REVIEW` while unreviewed). |
+| `review_status` | no | Release gate status: `APPROVED`, `PENDING`, `REQUIRES_REVISION`, or `DRAFT`. `scripts/build-release-tree.js` holds back net-new non-`APPROVED` plugins and pins non-`APPROVED` edits on already-released plugins to their last approved release tree. |
+| `approved_versions` | no | Version pattern(s) cleared for public GitHub release (e.g. `["0.1.*"]`, `["0.2.5"]`, or `[]` / `None`). |
+| `requirements` | yes | What the skill needs (`optional: false`) and what optional local tools extend it (`optional: true`, with optional `unlocks` string stating what local functionality is enabled when present). An empty list means nothing beyond the agent itself. |
+| `complements` | no | Complementary marketplace plugins (`plugin`, `when_installed`, `when_absent`). `skill-vv status <skill>` resolves each entry against installed peer plugins/skills and reports `mode: "dovetailed"` when installed or `mode: "standalone"` when absent. |
 | `procedures` | no | V&V procedures. Without any, skill-vv reports requirements only. |
 | `platforms` | yes | Every platform the skill claims. A result on an unclaimed platform is still recorded, and flagged. |
 | `results` | no | The shipped verified record. |

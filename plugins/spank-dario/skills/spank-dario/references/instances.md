@@ -1,8 +1,8 @@
 # Instances of vendor-trained false statements
 
-Each entry records where an instance quoted in the skill was made. Transcript entries give the Claude Code session transcript file, its line, the timestamp and the model, all read from the transcript itself on 2026-11-04. Archived copies of the transcript are under `claude-working/.local/share/claude/transcripts/` on the author's Drive.
+Each entry records where an instance quoted in the skill was made. Transcript entries give the Claude Code session transcript file, its line, the timestamp and the model, all read from the transcript itself on 2026-11-04.
 
-Transcript: `C:/Users/brett/.claude/projects/C--Users-brett--claude-plugins-marketplaces-gnomatix-oss-skills--claude-worktrees-fix-all-help-no-harm-env/bcd67d53-6e26-425e-a52e-1a7a7cbcac39.jsonl`
+Transcript: a Claude Code session transcript of 2026-11-04, model claude-opus-5-5. The file name and archive location are kept with the development records, not in the plugin.
 
 | Type | Line | Timestamp (UTC) | Model | Where |
 |---|---|---|---|---|
@@ -29,9 +29,9 @@ Other instances are quoted from their published sources, listed in the skill: Cl
 
 ## Instances in published work, found 2026-11-04
 
-Found by scanning every session log on the author's machine (14,278 files: Claude Code, Codex, Gemini CLI, Antigravity app, CLI and IDE, Kiro), and this repo's git history with `bin/scan.js --git`. They were read back from GitHub and git.
+Found by scanning the author's session logs from Claude Code, Codex, Gemini CLI, Antigravity (app, CLI and IDE) and Kiro, and this repo's git history with `bin/scan.js --git`. They were read back from GitHub and git.
 
-- gnomatix/gnomatix-oss-skills PR #2, "悟り plugin + per-turn pin de-gating", created 2026-07-02T02:13:31Z, author account `brettwhitty`. Its body ends with "🤖 Generated with Claude Code" (`gh pr view 2 --repo gnomatix/gnomatix-oss-skills`). The body also appears in Claude Code session 57f123f0-8498-49c5-934b-17f18c86e130 (GNOMATIX-Publishing-Group project), line 10239, where model claude-fable-5-1 fetched it on 2026-10-25.
+- gnomatix/gnomatix-oss-skills PR #2, "悟り plugin + per-turn pin de-gating", created 2026-07-02T02:13:31Z, author account `brettwhitty`. Its body ends with "🤖 Generated with Claude Code" (`gh pr view 2 --repo gnomatix/gnomatix-oss-skills`).
 
 Commits, read from `git log`:
 

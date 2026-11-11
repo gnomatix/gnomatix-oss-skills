@@ -1,6 +1,6 @@
-# Claude Code millenial-crybaby-spanking hook
+# Harness-level millenial-crybaby-spanking hook
 
-Hooks are not part of the cross-CLI [Agent Skills](https://agentskills.io) standard. This directory contains the Claude-Code-specific harness-level enforcement layer.
+Hooks sit outside the [Agent Skills](https://agentskills.io) `SKILL.md` specification. This directory contains the pure-Node `PreToolUse` enforcement layer (auto-loaded via `hooks.json` in Claude Code and compatible JSON-stdin/stdout hook harnesses).
 
 ## What it does
 

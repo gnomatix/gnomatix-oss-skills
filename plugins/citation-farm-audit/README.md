@@ -63,7 +63,7 @@ Node 18 or later (built-in `fetch`) for the profile script; curl for the example
 /plugin install citation-farm-audit@gnomatix-oss-skills
 ```
 
-For the full five-skill *cui bono* suite (`cui-bono`, `logic-decomposer`, `logic-toolbox`, `citation-farm-audit`, `source-provenance`, and `missile-command`), you can also install `cui-bono@gnomatix-oss-skills`; both plugins coexist cleanly. For other agents, the Agent Skills folders are linked from `.agents/skills/`, `.github/skills/` and `.kiro/skills/` at the repo root; see the main README.
+For the full six-skill *cui bono* suite (`cui-bono`, `logic-decomposer`, `logic-toolbox`, `citation-farm-audit`, `source-provenance`, and `missile-command`), install `cui-bono@gnomatix-oss-skills` (or run `/gnox:migrate` / `node scripts/install-skills.js migrate` to upgrade an existing install); both plugins coexist cleanly. For other agents, install static skill copies with `node scripts/install-skills.js install --plugin cui-bono`.
 
 <!-- BEGIN: gnomatix-license-include -->
 ## License

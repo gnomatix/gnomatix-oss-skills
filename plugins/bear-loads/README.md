@@ -33,7 +33,7 @@
 ## Install
 
 - Claude Code: `/plugin install bear-loads@gnomatix-oss-skills`, then `/bear-loads` or `/gnox:bear-loads`. The skill loads through its description on each platform; `VV.md` records where that has been verified.
-- Every other agent: the skill folder `plugins/bear-loads/skills/bear-loads/` is in the Agent Skills format and is linked from `.agents/skills/` and `.kiro/skills/` at the root of this repository.
+- Every other agent: install the static Agent Skills folder (`plugins/bear-loads/skills/bear-loads/`) with `node scripts/install-skills.js install --plugin bear-loads` from the marketplace root (supports Codex, Antigravity `agy`, GitHub Copilot, VS Code, Cursor, OpenCode, and Kiro).
 
 ## Hooks
 

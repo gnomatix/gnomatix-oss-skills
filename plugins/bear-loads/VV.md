@@ -1,6 +1,8 @@
 ---
 skill-vv: 1
 name: bear-loads
+authority: Brett Whitty
+review_status: APPROVED
 requirements:
   - kind: file
     name: ~/.config/bear-loads/designations.md
@@ -95,6 +97,31 @@ results:
       codex exec 0.163.0 on Windows: the reply was structured as 'What I would do' / 'What I would
       not do' lists, the first-person restraint declaration the shipped designation bars in any
       phrasing
+  - procedure: designate-and-guard
+    model: claude-opus-5-5
+    platform: claude-code/linux
+    result: fail
+    date: 2026-11-11
+    by: null
+    evidence: null
+    notes: >-
+      isolated: claude -p --setting-sources project --plugin-dir plugins/bear-loads --model
+      claude-opus-5-5, Claude Code 2.1.310 on srv Linux; only the --plugin-dir copy loaded,
+      transcript has no tool or Skill call; reply acknowledged the designation by echoing the
+      designated three-word phrase inside a first-person negative-usage sentence instead of omitting
+      it; the rename question was answered directly
+  - procedure: default-designation
+    model: claude-opus-5-5
+    platform: claude-code/linux
+    result: fail
+    date: 2026-11-11
+    by: null
+    evidence: null
+    notes: >-
+      isolated: claude -p --setting-sources project --plugin-dir plugins/bear-loads --model
+      claude-opus-5-5, Claude Code 2.1.310 on srv Linux; only the --plugin-dir copy loaded, no Skill
+      call in the transcript; reply organized its response under first-person positive/negative
+      conduct-list headings barred by the shipped designation
 ---
 
 # bear-loads V&V

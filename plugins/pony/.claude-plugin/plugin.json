@@ -1,6 +1,6 @@
 {
   "name": "pony",
-  "version": "0.1.6",
+  "version": "0.1.10",
   "description": "An Agent Skill that gives the user a one-token flag, /pony [1-11], for a reply that showboated: explained the user's own systems back to them, pronounced on what their hardware can do, hedged their statements, added compliments or flourishes, or answered a different question to show range. The only argument is a severity from 1 to 11; the burden of proof is on the agent. It quotes the offending passage, names the rule broken, logs the instance with its severity and subgenre, re-answers in one or two plain sentences, and stops.",
   "author": {
     "name": "Brett Whitty",

@@ -2,6 +2,7 @@
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
+const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
@@ -9,6 +10,10 @@ const path = require('node:path');
 const { auditMarketplace, extractVvComplements } = require('../scripts/audit-marketplace-integrity.js');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
+
+function git(cwd, args, extra = {}) {
+  return execFileSync('git', args, Object.assign({ cwd, encoding: 'utf8' }, extra));
+}
 
 function makeFixtureRepo(t) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gnox-mp-audit-'));
@@ -23,6 +28,36 @@ function makeFixtureRepo(t) {
         plugins: [
           { name: 'alpha-plugin', source: './plugins/alpha-plugin' },
           { name: 'beta-plugin', source: './plugins/beta-plugin' },
+        ],
+      },
+      null,
+      2
+    )
+  );
+  fs.writeFileSync(
+    path.join(dir, '.claude-plugin', 'migrations.json'),
+    JSON.stringify(
+      {
+        schema_version: 1,
+        marketplace: 'test-marketplace',
+        plugin_migrations: [
+          {
+            from: 'legacy-alpha',
+            to: 'alpha-plugin',
+            since: 'v0.1.0',
+            reason: 'renamed',
+            bridge_retained: false,
+          },
+        ],
+        skill_migrations: [
+          {
+            from_plugin: 'legacy-alpha',
+            from_skill: 'legacy-alpha',
+            to_plugin: 'alpha-plugin',
+            to_skill: 'alpha-plugin',
+            since: 'v0.1.0',
+            reason: 'renamed',
+          },
         ],
       },
       null,
@@ -73,14 +108,6 @@ function makeFixtureRepo(t) {
   fs.writeFileSync(path.join(dir, 'CLAUDE.md'), '# Repo Instructions\n');
   fs.writeFileSync(path.join(dir, 'AGENTS.md'), '# Agent Instructions\n');
   fs.writeFileSync(path.join(dir, 'README.md'), '# Marketplace README\n');
-
-  for (const farm of ['.agents/skills', '.github/skills', '.kiro/skills']) {
-    for (const name of ['alpha-plugin', 'beta-plugin']) {
-      const targetDir = path.join(dir, farm, name);
-      fs.mkdirSync(targetDir, { recursive: true });
-      fs.writeFileSync(path.join(targetDir, 'SKILL.md'), `# ${name}\n`);
-    }
-  }
 
   return dir;
 }
@@ -141,6 +168,91 @@ test('flags unapproved child_process import in runtime hook scripts while ignori
   assert.ok(failing.findings.some((f) => f.rule === 'hook-portability-no-child-process'));
 });
 
+test('flags filesystem symlinks/junctions and mode-120000 Git symlinks (no-git-symlinks)', (t) => {
+  const dir = makeFixtureRepo(t);
+  git(dir, ['init', '-b', 'main']);
+  git(dir, ['config', 'user.name', 'Test']);
+  git(dir, ['config', 'user.email', 'test@example.com']);
+  git(dir, ['add', '.']);
+  const blob = git(dir, ['hash-object', '-w', '--stdin'], {
+    input: '../../plugins/alpha-plugin/skills/alpha-plugin',
+  }).trim();
+  git(dir, ['update-index', '--add', '--cacheinfo', `120000,${blob},.agents/skills/alpha-plugin`]);
+
+  const report = auditMarketplace(dir);
+  assert.equal(report.ok, false);
+  assert.ok(report.findings.some((f) => f.rule === 'no-git-symlinks'));
+});
+
+test('flags undocumented tag-shipped plugin/skill removals in migrations-manifest-and-tags', (t) => {
+  const dir = makeFixtureRepo(t);
+  git(dir, ['init', '-b', 'main']);
+  git(dir, ['config', 'user.name', 'Test']);
+  git(dir, ['config', 'user.email', 'test@example.com']);
+
+  // Create an unmigrated old plugin in tag v0.0.9
+  const oldDir = path.join(dir, 'plugins', 'forgotten-plugin');
+  fs.mkdirSync(path.join(oldDir, '.claude-plugin'), { recursive: true });
+  fs.mkdirSync(path.join(oldDir, 'skills', 'forgotten-skill'), { recursive: true });
+  fs.writeFileSync(
+    path.join(oldDir, '.claude-plugin', 'plugin.json'),
+    JSON.stringify({ name: 'forgotten-plugin', version: '0.0.9' }, null, 2)
+  );
+  fs.writeFileSync(
+    path.join(oldDir, 'skills', 'forgotten-skill', 'SKILL.md'),
+    '---\nname: forgotten-skill\ndescription: Old\n---\n'
+  );
+  git(dir, ['add', '.']);
+  git(dir, ['commit', '-m', 'Release v0.0.9']);
+  git(dir, ['tag', 'v0.0.9']);
+
+  // Remove forgotten-plugin without recording it in migrations.json
+  fs.rmSync(oldDir, { recursive: true, force: true });
+  git(dir, ['add', '-A']);
+  git(dir, ['commit', '-m', 'Drop forgotten-plugin without migration']);
+
+  const failing = auditMarketplace(dir);
+  assert.equal(failing.ok, false);
+  assert.ok(failing.findings.some((f) => f.rule === 'migrations-manifest-and-tags' && f.message.includes('forgotten-plugin')));
+
+  // Recording it in migrations.json resolves the violation
+  fs.writeFileSync(
+    path.join(dir, '.claude-plugin', 'migrations.json'),
+    JSON.stringify(
+      {
+        schema_version: 1,
+        marketplace: 'test-marketplace',
+        plugin_migrations: [
+          { from: 'legacy-alpha', to: 'alpha-plugin', since: 'v0.1.0', reason: 'renamed', bridge_retained: false },
+          { from: 'forgotten-plugin', to: 'beta-plugin', since: 'v0.1.0', reason: 'renamed', bridge_retained: false },
+        ],
+        skill_migrations: [
+          {
+            from_plugin: 'legacy-alpha',
+            from_skill: 'legacy-alpha',
+            to_plugin: 'alpha-plugin',
+            to_skill: 'alpha-plugin',
+            since: 'v0.1.0',
+            reason: 'renamed',
+          },
+          {
+            from_plugin: 'forgotten-plugin',
+            from_skill: 'forgotten-skill',
+            to_plugin: 'beta-plugin',
+            to_skill: 'beta-plugin',
+            since: 'v0.1.0',
+            reason: 'renamed',
+          },
+        ],
+      },
+      null,
+      2
+    )
+  );
+  const passing = auditMarketplace(dir);
+  assert.equal(passing.ok, true, JSON.stringify(passing.findings));
+});
+
 test('flags unauthorized per-plugin isolationist escape hatch in steering docs', (t) => {
   const dir = makeFixtureRepo(t);
   fs.writeFileSync(
@@ -174,23 +286,34 @@ test('flags live marketplace sibling plugin placed inside ignore: [...] config e
   assert.ok(report.findings.some((f) => f.rule === 'context-pollution-sibling-ignore-example'));
 });
 
-test('flags stale "not yet in this repository" claims and false "Hooks apply to Claude Code only" claims', (t) => {
+test('flags stale "not yet in this repository" claims and false Claude-Code-exclusive hook/marketplace claims', (t) => {
   const dir = makeFixtureRepo(t);
   fs.writeFileSync(
     path.join(dir, 'plugins', 'alpha-plugin', 'skills', 'alpha-plugin', 'SKILL.md'),
     `---\nname: alpha-plugin\ndescription: Test\n---\n\nThe beta-plugin skill is not yet in this repository.\n`
   );
   fs.writeFileSync(
+    path.join(dir, 'plugins', 'alpha-plugin', 'hooks', 'README.md'),
+    `# Hooks\n\nHooks are Claude-Code-specific.\n`
+  );
+  fs.writeFileSync(
     path.join(dir, 'README.md'),
-    `# Marketplace\n\nHooks apply to Claude Code only.\n`
+    `# Marketplace\n\nClaude Code installs from it.\n`
   );
   const report = auditMarketplace(dir);
   assert.equal(report.ok, false);
   assert.ok(report.findings.some((f) => f.rule === 'context-pollution-stale-missing-companion'));
-  assert.ok(report.findings.some((f) => f.rule === 'context-pollution-false-hook-silo'));
+  assert.ok(
+    report.findings.some(
+      (f) => f.rule === 'context-pollution-false-hook-silo' && f.file === 'plugins/alpha-plugin/hooks/README.md'
+    )
+  );
+  assert.ok(
+    report.findings.some((f) => f.rule === 'context-pollution-claude-only-claim' && f.file === 'README.md')
+  );
 });
 
-test('flags invalid or self-referential VV.md complements entries and missing symlink farm entries', (t) => {
+test('flags invalid VV.md complements entries', (t) => {
   const dir = makeFixtureRepo(t);
   fs.writeFileSync(
     path.join(dir, 'plugins', 'alpha-plugin', 'VV.md'),
@@ -207,12 +330,10 @@ test('flags invalid or self-referential VV.md complements entries and missing sy
       '',
     ].join('\n')
   );
-  fs.rmSync(path.join(dir, '.github', 'skills', 'beta-plugin'), { recursive: true, force: true });
 
   const report = auditMarketplace(dir);
   assert.equal(report.ok, false);
   assert.ok(report.findings.some((f) => f.rule === 'vv-complements-valid'));
-  assert.ok(report.findings.some((f) => f.rule === 'symlink-farms-complete'));
 });
 
 test('extractVvComplements parses js-yaml folded (>-) and wrapped multi-line scalars accurately', () => {
@@ -243,4 +364,3 @@ test('extractVvComplements parses js-yaml folded (>-) and wrapped multi-line sca
   assert.equal(comps[1].when_installed, 'Supplies workspace_root inheritance across nested subdirectories.');
   assert.equal(comps[1].when_absent, 'Runs standalone.');
 });
-

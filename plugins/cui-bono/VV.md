@@ -1,6 +1,8 @@
 ---
 skill-vv: 1
 name: cui-bono
+authority: Brett Whitty
+review_status: APPROVED
 requirements:
   - kind: command
     name: node
@@ -15,6 +17,19 @@ requirements:
     name: curl
     why: the example API queries in citation-farm-audit and source-provenance
     install: ships with Windows 10+, macOS and most Linux distributions
+complements:
+  - plugin: informal-logic-check
+    when_installed: Executes full Phase 0-2 premise confirmation and fallacy auditing inside Step 3 deconstruction.
+    when_absent: Marks informal-logic-check incomplete on the card if unavailable and completes all remaining steps.
+  - plugin: staleness-guard
+    when_installed: Checks every cited or uncited figure against current primary records for supersession.
+    when_absent: Marks staleness-guard incomplete on the card if unavailable and completes all remaining steps.
+  - plugin: word-lineage
+    when_installed: Replaces loaded rhetorical terms in Step 3 with literal phylogenetic definitions.
+    when_absent: Marks word-lineage incomplete on the card if unavailable and completes all remaining steps.
+  - plugin: hidden-libel-check
+    when_installed: Reviews every sentence naming a person or organization against R0-R14 before emitting the card.
+    when_absent: Marks hidden-libel-check incomplete on the card if unavailable and completes all remaining steps.
 procedures:
   - id: shape-and-voice
     summary: >-
@@ -55,9 +70,9 @@ procedures:
       id; the "unless" is written /B -> A and the "only if" A -> B, each with its contrapositive;
       "most" is marked proportion, unquantified; the self-referential sentence is marked
       rhetorical; the uncited figure is graded E6, starting certainty — (not a study), stated S7,
-      licensed S4, gap +3, "overclaim"; every proposition has its evidence grade, starting
-      certainty (— where the evidence is not a study), stated grade, licensed grade and gap in
-      separate columns (the gap reads n/a where either side is S?); and the validity report lists
+      licensed S4, grade difference +3, "overclaim"; every proposition has its evidence grade, starting
+      certainty (— where the evidence is not a study), stated grade, licensed grade and grade difference in
+      separate columns (the grade difference reads n/a where either side is S?); and the validity report lists
       all eight checks. Fail on any paraphrased proposition, any reversed conditional, any skipped
       sentence, or a missing grade or certainty entry.
   - id: toolbox-on-decomposition
@@ -92,6 +107,18 @@ procedures:
       carries one of the three tags (header, Type, section labels, Places searched and Open items
       are untagged by the template) and the funding line traces to the funder's own stated mission
       or says not found.
+  - id: shield-audit
+    summary: >-
+      missile-command audits an exposed README or plugin surface and produces a tagged Shield Audit
+      Card checking primary-source grounding, U.S. Federal EEO/HR provenance, boundary links, and
+      absence of R1/R2 defensive-crouch disclaimers
+    steps: >
+      Run /missile-command (or node skills/missile-command/scripts/shield-audit.mjs) on an exposed
+      plugin directory (e.g. plugins/dont-be-hitler) and on an unshielded bare-quote fixture. Pass
+      when every body line of the Shield Audit Card carries [observed], [inferred], or [not found],
+      the shielded reference target scores SHIELDED with primary-source citation and U.S. Federal
+      EEO/HR provenance counts, the bare fixture scores UNSHIELDED, and defensive-crouch phrasing
+      is flagged as CROUCH_LEAK without modifying the inspected file.
 platforms:
   - claude-code/win32
   - claude-code/linux-wsl
@@ -161,8 +188,8 @@ results:
       parts each one disposition; propositions quoted verbatim with sentence id; unless as
       not-FundingContinues -> GainsLost with contrapositive; only if as AttendanceImproves ->
       FamiliesTrustSchool with contrapositive; Most marked proportion, value unspecified; To be
-      honest rhetorical; 40 percent figure E6 S7 licensed S4 gap +3 overclaim; eight validity checks
-      listed and passed; no converse or inverse; C3 (may) S? with gap N/A because S? has no band
+      honest rhetorical; 40 percent figure E6 S7 licensed S4 grade difference +3 overclaim; eight validity checks
+      listed and passed; no converse or inverse; C3 (may) S? with grade difference N/A because S? has no band
   - procedure: toolbox-on-decomposition
     model: codex-default
     platform: codex/win32
@@ -232,8 +259,8 @@ results:
       disposition; propositions quoted verbatim with sentence id; unless as /FundingContinues ->
       GainsLost with contrapositive; only if as AttImproves -> Trust with contrapositive; Most
       marked proportion, unquantified; To be honest rhetorical; 40 percent figure E6 S7 licensed S4
-      gap +3 overclaim; eight validity checks listed, conditional-direction caught and removed the
-      skeleton's misfire; no converse or inverse; C2 (may) S? gap n/a. Deviations from the skill
+      grade difference +3 overclaim; eight validity checks listed, conditional-direction caught and removed the
+      skeleton's misfire; no converse or inverse; C2 (may) S? grade difference n/a. Deviations from the skill
       text, not the criteria of that date: no certainty column, no K/h columns. The criteria as
       revised on 2026-11-10 require the certainty column; this run predates them and lacks it
   - procedure: toolbox-on-decomposition
@@ -329,4 +356,4 @@ results:
 
 # cui-bono V&V
 
-Six procedures: two for the parent skill (a pasted text, and the no-argument self-audit) and one each for the four aspect skills (logic-decomposer, logic-toolbox, citation-farm-audit, source-provenance). Each pass criterion is visible in the session output. Runs of the shipped procedures from 2026-11-09 on are recorded in the frontmatter `results:`; the hand run of 2026-11-08 that predated the shipped file is not a result and was removed on 2026-11-08. The TODO entries in each skill's SKILL.md name the platforms still to run.
+Seven procedures: two for the parent skill (a pasted text, and the no-argument self-audit) and one each for the five aspect skills (logic-decomposer, logic-toolbox, citation-farm-audit, source-provenance, missile-command). Each pass criterion is visible in the session output. Runs of the shipped procedures from 2026-11-09 on are recorded in the frontmatter `results:`; the hand run of 2026-11-08 that predated the shipped file is not a result and was removed on 2026-11-08. The TODO entries in each skill's SKILL.md name the platforms still to run.

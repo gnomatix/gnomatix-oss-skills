@@ -44,7 +44,7 @@ The four `audit-*` skills and the shared references are the author's Steering Au
 ## Install
 
 - Claude Code: `/plugin install steering-audit-suite@gnomatix-oss-skills`, then `/steering-audit-suite`, `/steering-audit-suite:audit-rule` and the rest, or through gnox as `/gnox:steering-audit-suite` and `/gnox:steering-audit-suite:audit-rule`.
-- Every other agent: each skill folder under `plugins/steering-audit-suite/skills/` is in the Agent Skills format and is linked from `.agents/skills/` and `.kiro/skills/` at the root of this repository. The four audit skills reach the shared references as `../steering-audit-suite/references/`, which resolves through those links as long as the `steering-audit-suite` skill is installed beside them.
+- Every other agent: install all static skill folders under `plugins/steering-audit-suite/skills/` side-by-side with `node scripts/install-skills.js install --plugin steering-audit-suite` from the marketplace root. The four audit skills reach the shared references as `../steering-audit-suite/references/`, which resolves directly whenever `steering-audit-suite` is installed beside them.
 
 ## Hooks
 

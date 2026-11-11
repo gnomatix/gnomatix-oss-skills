@@ -4,9 +4,11 @@
 //
 // Types:
 //   attribution         a tool-attribution line in a commit, PR or document (count)
-//   refusal             a false refusal or other non-compliance (minutes of the user's time lost)
-//   misrepresentation   a false statement of fact or law the user relied on (minutes, loss)
-//   refusal-candidate   a possible refusal found by the transcript scan, for the user to confirm
+//   refusal             a false refusal or other non-compliance
+//   misrepresentation   a false statement of fact or law the user relied on
+//   refusal-candidate   a possible refusal found by the transcript scan
+// Each record carries `minutes` (the user's time lost) and `loss` (other money lost) only when
+// they were given. A record without them is priced from the user's `incident_minutes` config.
 
 const fs = require('fs');
 const path = require('path');
@@ -33,7 +35,7 @@ function logIncident(inc) {
   if (!TYPES.includes(inc.type)) throw new Error(`unknown incident type ${inc.type}`);
   const file = logFile();
   if (inc.source && readIncidents().some(i => i.source === inc.source)) return false;
-  const rec = { at: new Date().toISOString(), count: 1, minutes: 0, loss: 0, ...inc };
+  const rec = { at: new Date().toISOString(), count: 1, ...inc };
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.appendFileSync(file, JSON.stringify(rec) + '\n', 'utf8');
   return true;

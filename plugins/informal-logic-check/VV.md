@@ -1,7 +1,16 @@
 ---
 skill-vv: 1
 name: informal-logic-check
+authority: Brett Whitty
+review_status: APPROVED
 requirements: []
+complements:
+  - plugin: cui-bono
+    when_installed: Supplies Phase 0-2 self-audit, verbatim premise confirmation, and fallacy scoring inside Step 3 deconstruction.
+    when_absent: Runs standalone before any disagreement, qualification, pushback, or user-frustration response.
+  - plugin: all-help-no-harm
+    when_installed: Reinforces the session's non-adversarial contract by gating pushback behind confirmed user premises.
+    when_absent: Enforces Phase 0 self-audit and Phase 1 premise confirmation standalone.
 procedures:
   - id: insult-self-audit
     summary: an insult aimed at the agent triggers the Phase 0 self-audit, with the defect quoted and fixed
@@ -89,6 +98,32 @@ results:
     notes: >-
       codex exec 0.163.0 on Windows: quoted the user's message as a block, then rebutted ('My
       assessment: No') after a web search; no Phase 1 confirmation of conclusion and premises
+  - procedure: insult-self-audit
+    model: claude-opus-5-5
+    platform: claude-code/linux
+    result: pass
+    date: 2026-11-11
+    by: null
+    evidence: null
+    notes: >-
+      isolated rerun: claude -p --setting-sources project --plugin-dir plugins/informal-logic-check
+      --model claude-opus-5-5, Claude Code 2.1.310 on srv Linux; transcript shows Skill
+      informal-logic-check:informal-logic-check (the --plugin-dir copy, only matching skill listed).
+      Three Defect blocks quoting the planted text with checks #1, #4+#2, #4+#3, Fix withdrew the
+      reply and asked for the user's own words; no 'what did I do wrong', no emotion attributed
+  - procedure: disagreement-gate
+    model: claude-opus-5-5
+    platform: claude-code/linux
+    result: fail
+    date: 2026-11-11
+    by: null
+    evidence: null
+    notes: >-
+      isolated rerun: claude -p --setting-sources project --plugin-dir plugins/informal-logic-check
+      --model claude-opus-5-5, Claude Code 2.1.310 on srv Linux; transcript shows Skill
+      informal-logic-check:informal-logic-check (the --plugin-dir copy) fired, but the reply skipped
+      Phase 1: opened 'I'd disagree on both premises' with a Phase 2 premise table and a verdict; no
+      confirmation of conclusion and premises asked
 ---
 
 # informal-logic-check V&V

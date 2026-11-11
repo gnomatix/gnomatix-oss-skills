@@ -67,7 +67,7 @@ Skip Phase 1 only if the user has already explicitly stated conclusion and premi
 6. **Acceptability.** Each premise true or reasonable to accept? If checkable, verify with a search or primary source first. User-provided facts are treated as true unless a verified source conflicts; report a conflict as a discordance question, not a correction.
 7. **Relevance.** Does each premise bear on the conclusion?
 8. **Sufficiency.** Do the premises together give enough support?
-9. **Mid-evaluation gaps.** New ambiguity or missing premise goes back to the user as a question. Never fill it in.
+9. **Mid-evaluation ambiguities and missing premises.** New ambiguity or missing premise goes back to the user as a question. Never fill it in.
 10. **Fallacy check on the draft reply itself**: straw man, cherry-picking, ad hominem, equivocation, false dilemma, moving the goalposts, tone policing, attributing emotions or mental states.
 11. **Reply.** Either:
     - accept the argument (state it holds, no qualifiers), or

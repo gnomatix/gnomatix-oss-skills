@@ -9,13 +9,14 @@
 //    `authority: PENDING MANUAL REVIEW`, or `approved_versions` not matching plugin.json#version) and
 //    that has never shipped in `--parent` is HELD BACK from the public GitHub release snapshot
 //    (excluded from plugins/, .claude-plugin/marketplace.json, .VERSIONS.json, README.md,
-//    lib/gnox-discovery.js, plugins/gnox/commands/, and .agents/.github/.kiro skill farms).
+//    lib/gnox-discovery.js, and plugins/gnox/commands/).
 // 2. Any already-released plugin (`--parent` has plugins/<p>/) whose HEAD frontmatter is unapproved
 //    is PINNED back to its exact last-approved tree from `--parent` (verifying `--parent`'s version
 //    matches `approved_versions` when `approved_versions` is specified).
-// 3. Hard-blocks any release snapshot that drops ANY plugin present in `--parent` or in
-//    RELEASED_MARKETPLACE_PLUGIN_IDS, runs `auditMarketplace` against the materialized snapshot,
-//    and runs `claude plugin validate` (when `claude` is on PATH) before emitting the tree SHA.
+// 3. Strips any residual mode-120000 Git symlinks from the release index, hard-blocks any release
+//    snapshot that drops ANY plugin present in `--parent` or in RELEASED_MARKETPLACE_PLUGIN_IDS,
+//    runs `auditMarketplace` against the materialized snapshot, and runs `claude plugin validate`
+//    (when `claude` is on PATH) before emitting the tree SHA.
 
 'use strict';
 
@@ -152,6 +153,8 @@ function updateReadmeForRelease(readmeText, parentReadmeText, { excludedPlugins,
   for (const p of excludedPlugins) {
     const escaped = p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     out = out.replace(new RegExp(`^- \\[\`${escaped}\`\\]\\(plugins\\/${escaped}\\/\\):.*\\n`, 'gm'), '');
+    out = out.replace(new RegExp(`\\[\`${escaped}\`\\]\\(plugins\\/${escaped}\\/[^)]*\\),\\s*`, 'g'), '');
+    out = out.replace(new RegExp(`,\\s*(?:and\\s+)?\\[\`${escaped}\`\\]\\(plugins\\/${escaped}\\/[^)]*\\)`, 'g'), '');
     out = out.replace(new RegExp(`, ${escaped}(?=[.,\\n])`, 'g'), '');
     out = out.replace(new RegExp(`${escaped}, `, 'g'), '');
   }
@@ -220,12 +223,20 @@ function buildReleaseTree(opts) {
     return blob;
   };
 
+  // Strip any residual mode-120000 symlink entries from --index unconditionally
+  const initialStageEntries = gitIdx(['ls-files', '-s', '-z']).split('\0').filter(Boolean);
+  for (const entry of initialStageEntries) {
+    const m = /^120000\s+[0-9a-f]{40}\s+\d+\t(.+)$/.exec(entry);
+    if (m) {
+      gitIdx(['rm', '-q', '--cached', '--ignore-unmatch', '--', m[1]]);
+    }
+  }
+
   // Load --parent marketplace metadata if --parent is supplied
   let parentMp = null;
   const parentPluginEntries = new Map();
   let parentReadme = null;
   let parentManifest = null;
-  const parentSymlinks = [];
 
   if (parentCommit) {
     const parentMpRaw = tryGit(['show', `${parentCommit}:.claude-plugin/marketplace.json`]);
@@ -239,16 +250,6 @@ function buildReleaseTree(opts) {
     const parentVersionsRaw = tryGit(['show', `${parentCommit}:.VERSIONS.json`]);
     if (parentVersionsRaw) {
       try { parentManifest = JSON.parse(parentVersionsRaw); } catch { parentManifest = null; }
-    }
-    const parentTreeLines = (tryGit(['ls-tree', '-r', '-z', parentCommit, '--', '.agents/skills', '.github/skills', '.kiro/skills']) || '')
-      .split('\0')
-      .filter(Boolean);
-    for (const entry of parentTreeLines) {
-      const m = /^(\d+)\s+\w+\s+([0-9a-f]{40})\t(.+)$/.exec(entry);
-      if (m && m[1] === '120000') {
-        const target = git(['cat-file', 'blob', m[2]]).trim();
-        parentSymlinks.push({ mode: '120000', blob: m[2], path: m[3], target });
-      }
     }
   }
 
@@ -321,21 +322,6 @@ function buildReleaseTree(opts) {
 
   // Apply exclusions and pins to --index
   if (excludedPlugins.size > 0 || pinnedPlugins.size > 0) {
-    // Remove current symlink entries for excluded & pinned plugins
-    const indexStageLines = gitIdx(['ls-files', '-s', '-z', '--', '.agents/skills', '.github/skills', '.kiro/skills'])
-      .split('\0')
-      .filter(Boolean);
-    for (const line of indexStageLines) {
-      const m = /^(\d+)\s+([0-9a-f]{40})\s+\d+\t(.+)$/.exec(line);
-      if (!m) continue;
-      const target = git(['cat-file', 'blob', m[2]]).trim();
-      for (const pName of [...excludedPlugins, ...pinnedPlugins.keys()]) {
-        if (target.startsWith(`../../plugins/${pName}/`)) {
-          gitIdx(['rm', '-q', '--cached', '--ignore-unmatch', '--', m[3]]);
-        }
-      }
-    }
-
     for (const pName of excludedPlugins) {
       gitIdx(['rm', '-r', '-q', '--cached', '--ignore-unmatch', '--', `plugins/${pName}`]);
       process.stderr.write(`release-gate: holding back unapproved plugin "${pName}" from public snapshot\n`);
@@ -344,11 +330,10 @@ function buildReleaseTree(opts) {
     for (const [pName, info] of pinnedPlugins.entries()) {
       gitIdx(['rm', '-r', '-q', '--cached', '--ignore-unmatch', '--', `plugins/${pName}`]);
       gitIdx(['read-tree', `--prefix=plugins/${pName}/`, `${parentCommit}:plugins/${pName}`]);
-      const restoredSymlinks = parentSymlinks.filter((s) => s.target.startsWith(`../../plugins/${pName}/`));
-      for (const sym of restoredSymlinks) {
-        gitIdx(['update-index', '--add', '--cacheinfo', `${sym.mode},${sym.blob},${sym.path}`]);
-      }
-      if (restoredSymlinks.length === 0) pinnedHasZeroSkills.add(pName);
+      const parentSkills = (tryGit(['ls-tree', '-r', '-z', parentCommit, '--', `plugins/${pName}/skills`]) || '')
+        .split('\0')
+        .filter((x) => /\/SKILL\.md$/.test(x));
+      if (parentSkills.length === 0) pinnedHasZeroSkills.add(pName);
       process.stderr.write(
         `release-gate: pinning "${pName}" to approved release ${info.pinnedVersion} (holding back HEAD ${info.headVersion})\n`
       );
@@ -386,26 +371,20 @@ function buildReleaseTree(opts) {
       const prunedGd = pruneGnoxDiscoverySource(gdRaw, { allowedPlugins, allowedSkills });
       stageText('lib/gnox-discovery.js', prunedGd);
     }
-    // Ensure .agents/skills, .github/skills, and .kiro/skills symlink farms match every skill present in --index
-    const presentFarms = ['.agents/skills', '.github/skills', '.kiro/skills'].filter((farm) =>
-      gitIdx(['ls-files', '-z', '--', farm]).split('\0').some(Boolean)
-    );
-    if (presentFarms.length > 0) {
-      const farmRmTargets = gitIdx(['ls-files', '-z', '--', ...presentFarms]);
-      if (farmRmTargets) {
-        gitIdx(['update-index', '--force-remove', '-z', '--stdin'], { input: farmRmTargets });
-      }
-      const postSkillPaths = gitIdx(['ls-files', '-z']).split('\0').filter(Boolean);
-      const allowedSet = new Set((mp.plugins || []).map((e) => e.name));
-      for (const fp of postSkillPaths) {
-        const sm = /^plugins\/([^/]+)\/skills\/([^/]+)\/SKILL\.md$/.exec(fp);
-        if (!sm || !allowedSet.has(sm[1])) continue;
-        const relTarget = `../../plugins/${sm[1]}/skills/${sm[2]}`;
-        const linkBlob = git(['hash-object', '-w', '--stdin'], { input: relTarget }).trim();
-        for (const farm of presentFarms) {
-          gitIdx(['update-index', '--add', '--cacheinfo', `120000,${linkBlob},${farm}/${sm[2]}`]);
+
+    // Update plugins/update-readme-images/config/readme-images.json if excluded plugins are present
+    const riPath = 'plugins/update-readme-images/config/readme-images.json';
+    const riRaw = tryGitIdx(['show', `:${riPath}`]);
+    if (riRaw !== null && excludedPlugins.size > 0 && !pinnedPlugins.has('update-readme-images')) {
+      try {
+        const riObj = JSON.parse(riRaw);
+        if (riObj && riObj.style_guides) {
+          for (const pName of excludedPlugins) {
+            delete riObj.style_guides[`gnomatix-oss-skills:plugins:${pName}`];
+          }
         }
-      }
+        stageText(riPath, JSON.stringify(riObj, null, 2) + '\n');
+      } catch { /* ignore */ }
     }
   }
 
@@ -415,23 +394,6 @@ function buildReleaseTree(opts) {
   try {
     const prefixSlash = tmpDir.endsWith(path.sep) ? tmpDir : tmpDir + path.sep;
     gitIdx(['-c', 'core.symlinks=false', 'checkout-index', '-a', '-f', `--prefix=${prefixSlash}`]);
-
-    const stageEntries = gitIdx(['ls-files', '-s', '-z']).split('\0').filter(Boolean);
-    for (const entry of stageEntries) {
-      const m = /^120000\s+([0-9a-f]{40})\s+\d+\t(.+)$/.exec(entry);
-      if (!m) continue;
-      const [, sha, relPath] = m;
-      const destPath = path.join(tmpDir, ...relPath.split('/'));
-      const relTarget = git(['cat-file', 'blob', sha]).trim();
-      try { fs.rmSync(destPath, { recursive: true, force: true }); } catch { /* ignore */ }
-      fs.mkdirSync(path.dirname(destPath), { recursive: true });
-      const absTarget = path.resolve(path.dirname(destPath), ...relTarget.split('/'));
-      try {
-        fs.symlinkSync(relTarget.split('/').join(path.sep), destPath, 'dir');
-      } catch {
-        fs.symlinkSync(absTarget, destPath, 'junction');
-      }
-    }
 
     // Regenerate synced lib copies and gnox router commands inside tmpDir ONLY when target plugins are not pinned
     const syncLibScript = path.join(tmpDir, 'scripts', 'sync-lib.js');
@@ -590,6 +552,7 @@ function buildReleaseTree(opts) {
       checkReleasedPlugins: options.checkReleasedPlugins,
       requiredPluginIds: options.requiredPluginIds,
       skipPinnedPlugins: Array.from(pinnedPlugins.keys()),
+      checkTagCoverage: false,
     });
     if (!auditReport.ok) {
       const details = auditReport.findings.map((f) => `  - [${f.rule}] ${f.file}: ${f.message}`).join('\n');

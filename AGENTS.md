@@ -70,8 +70,8 @@ All cross-vendor agents and parallel Gemini, Claude Code, Codex, Kiro, and Antig
 
 Treat the following interfaces, contracts, and directories as settled foundations:
 
-- **Marketplace & Cross-CLI Layout:** `.claude-plugin/marketplace.json`, self-contained `plugins/<name>/.claude-plugin/plugin.json` manifests (zero hard `dependencies`), and the three 37-skill symlink farms (`.agents/skills/`, `.github/skills/`, `.kiro/skills/`).
-- **Canonical Zero-Dependency Helpers & Mechanical Gates:** `lib/fs-safe.js`, `lib/gnox-discovery.js`, `scripts/sync-lib.js` (`--check`), `scripts/audit-marketplace-integrity.js`, `.githooks/pre-commit`, and `scripts/release.sh`.
+- **Marketplace & Cross-CLI Layout:** `.claude-plugin/marketplace.json`, `.claude-plugin/migrations.json`, self-contained `plugins/<name>/.claude-plugin/plugin.json` manifests (zero hard `dependencies`), zero Git symlinks (`120000` prohibited), and `scripts/install-skills.js` for static cross-CLI installation and rename/move state migration.
+- **Canonical Zero-Dependency Helpers & Mechanical Gates:** `lib/fs-safe.js`, `lib/gnox-discovery.js`, `scripts/sync-lib.js` (`--check`), `scripts/install-skills.js`, `scripts/audit-marketplace-integrity.js`, `scripts/build-release-tree.js`, `.githooks/pre-commit`, and `scripts/release.sh`.
 - **Verification & Namespace Schemas:** The `VV.md` `skill-vv: 1` contract (`requirements` with `optional` + `unlocks`, `complements` with `plugin` + `when_installed` + `when_absent`, `procedures`, `platforms`, `results`), `plugins/skill-vv/bin/skill-vv.js` (`--no-installed`), and `gnox` session-namespace & router conventions (`workspace_root:subdir:...`, `[NS]{@target}`, `«term» [CURIE]`, `plugins/gnox/scripts/build-commands.js`).
 - **Visual Branding & Encrypted R&D Boundaries:** `.claude/readme-images.json`, `plugins/*/assets/images/*` (protected by the non-destructive `assets/drafts/` + `--promote-draft --approved-by` workflow), `plugins/og-social-image`, `.gitattributes` (`dev/** filter=git-crypt`), and plugins outside the active revision queue (`bear-loads`, `pony`, `spank-dario`, `critical-control-points`, `open-and-honest-agent`, `word-lineage`, `source-provenance`, `citation-farm-audit`, `all-help-no-harm`, `steering-audit-suite`, `staleness-guard`, `informal-logic-check`, `did-you-rtfm`, `log-session`, `inaudible-markup`, `ontology-lookup`, `update-readme-images`, `agent-darktriad-check`).
 
@@ -132,9 +132,9 @@ cp -rf source dest          # NOT: cp -r source dest
 - `apt-get` - use `-y` flag
 - `brew` - use `HOMEBREW_NO_AUTO_UPDATE=1` env var
 
-## Deferred V&V & Release Promotion Queue (`TODO.md`)
+## Draft Support & Deferred V&V Queue (Beads `bd` + GNOMATIX YAML Frontmatter)
 
-- Unpromoted plugin drafts and post-release revisions awaiting live V&V and owner sign-off are tracked in [`TODO.md`](TODO.md) and gated via GNOMATIX YAML frontmatter (`authority`, `review_status`, `approved_versions`) enforced by `scripts/build-release-tree.js` and `scripts/audit-marketplace-integrity.js`. Do not promote `PENDING` revisions to public GitHub releases before their V&V tasks in `TODO.md` are completed and approved by Brett Whitty.
+- Unpromoted plugin drafts and post-release revisions awaiting live V&V and owner sign-off are tracked in Beads (`bd`) — never in ad-hoc markdown TODO lists — and gated via GNOMATIX YAML frontmatter (`authority`, `review_status`, `approved_versions`) enforced by `scripts/build-release-tree.js` and `scripts/audit-marketplace-integrity.js`. Do not promote `PENDING` revisions to public GitHub releases before their V&V Beads issues are completed and approved by Brett Whitty.
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:970c3bf2 -->
 ## Beads Issue Tracker

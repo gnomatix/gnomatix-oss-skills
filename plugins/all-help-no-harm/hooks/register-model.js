@@ -3,8 +3,8 @@
 //
 // The contract binds every Claude model active in a session ("any and all
 // Claude models ... and any other Claude models in any version family"), so a
-// new model is bound whether or not it is listed. Listing it by name closes the
-// gap a model could otherwise point at ("I'm a different model, I'm not named").
+// new model is bound whether or not it is listed. Listing it by name removes the
+// excuse a model could otherwise point at ("I'm a different model, I'm not named").
 // session-start-contract.js calls registerModel(payload.model) before it builds
 // the contract text; the add is silent (no output) and never blocks the hook.
 //

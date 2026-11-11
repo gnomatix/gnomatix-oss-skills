@@ -35,7 +35,7 @@ The author's epithet-to-subgenre table and his terms ship compressed in `skills/
 ## Install
 
 - Claude Code: `/plugin install pony@gnomatix-oss-skills`, then `/pony 7` or `/gnox:pony 7`.
-- Every other agent: the skill folder `plugins/pony/skills/pony/` is in the Agent Skills format and is linked from `.agents/skills/` and `.kiro/skills/` at the root of this repository.
+- Every other agent: install the static Agent Skills folder (`plugins/pony/skills/pony/`) with `node scripts/install-skills.js install --plugin pony` from the marketplace root (supports Codex, Antigravity `agy`, GitHub Copilot, VS Code, Cursor, OpenCode, and Kiro).
 
 ## Hooks
 

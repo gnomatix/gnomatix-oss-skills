@@ -23,6 +23,7 @@ function opts(args) {
     if (a.startsWith('--')) {
       const k = a.slice(2);
       if (k === 'json') { o.json = true; continue; }
+      if (k === 'no-installed') { o.noInstalled = true; continue; }
       if (k === 'developer') { o.developer = 'true'; continue; }
       const val = args[i + 1];
       i += 1;
@@ -38,13 +39,13 @@ function main(argv) {
   const cli = path.resolve(__filename);
   try {
     if (cmd === 'check') {
-      const report = vv.check({ model: o.model, agent: o.agent, roots: o.root, projectDir: o.project });
+      const report = vv.check({ model: o.model, agent: o.agent, roots: o.root, projectDir: o.project, includeInstalled: !o.noInstalled });
       if (o.json) console.log(JSON.stringify(report, null, 2));
       else { const t = vv.formatReport(report, cli); if (t) console.log(t); }
       return 0;
     }
     if (cmd === 'status') {
-      const report = vv.check({ model: o.model, agent: o.agent, roots: o.root, projectDir: o.project });
+      const report = vv.check({ model: o.model, agent: o.agent, roots: o.root, projectDir: o.project, includeInstalled: !o.noInstalled });
       const s = report.skills.find((x) => x.name === sub);
       if (!s) { console.error(`no VV.md found for ${sub}`); return 1; }
       console.log(JSON.stringify(Object.assign({ model: report.model, platform: report.platform }, s), null, 2));

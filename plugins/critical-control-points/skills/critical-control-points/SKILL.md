@@ -38,11 +38,15 @@ gate. A CCP is never reported as a blocker. The one exception is the big red but
   the state changes.
 - **No silent CCPs.** Every CCP ends in a question or a notification to the user.
 - **The user's words go in records, not in authored files.** Where the user's direction bears
-  on the point, the issue-tracker record and the log carry it verbatim, with its date, and the
-  agent's own account sits beside it, marked as the agent's. Authored files (rules, skills,
-  memories, docs, code comments, agent prompts) never quote the user's words;
+  on the point, the issue-tracker record and the log carry it verbatim, with its date. The
+  agent does not restate, interpret or summarize the user's direction beside it. Authored files
+  (rules, skills, memories, docs, code comments, agent prompts) never quote the user's words;
   they state the rule plainly and point to the record. The agent's wording is never presented
   as the user's.
+- **The agent's own text in a record is corrective feedback only.** When the agent writes
+  about a failure, it states what it did wrong, the rule it broke, and the fix, so the failure
+  is not repeated. It never adds mitigation, context in its own favour, an alternative reading
+  of the user's correction, or anything that softens the failure the user documented.
 
 ## The procedure
 
@@ -69,7 +73,7 @@ it applies.
      - **Decision needed:** one sentence.
      - **Provenance:** the records it gates or relates to (linked), commits, files and lines, the
        agent and session that raised it, and the user's direction where it bears on the point,
-       quoted verbatim with its date, with the agent's account beside it marked as the agent's.
+       quoted verbatim with its date.
      - **What I already checked:** each tool from step 1 and what it returned.
      - **Situation (facts only):** what happened and what is affected, without options or a
        preferred answer. The reviewer in step 6 rewrites this neutrally.
@@ -105,8 +109,8 @@ it applies.
    Backlog items that gate nothing live wait for a batch when the user asks for one; live
    blocking decisions are asked at once.
 
-8. **Close the loop.** Record the decision the user's answer settles, in the agent's words with
-   the date, act on it, and close the record and the task. If the answer sets a standing rule,
+8. **Close the loop.** Record the user's answer verbatim with the date, act on it, and close
+   the record and the task. If the answer sets a standing rule,
    save the rule to memory the same way: what it requires, from when, where it came from.
 
 ## The big red button

@@ -1,8 +1,9 @@
 #!/bin/sh
 # Publish a release of this marketplace to the public GitHub repo.
 #
-# The live repo is the private Gitea one. The public GitHub repo, which Claude Code installs
-# from, gets releases only: one snapshot commit per release on its main, tagged v<VERSION>.
+# The live repo is the private Gitea one. The public GitHub repo, which cross-vendor agent CLIs
+# and plugin managers install from, gets releases only: one snapshot commit per release on its
+# main, tagged v<VERSION>.
 # It never sees the live history, the tracker, agent logs, the encrypted dev/ folder, or
 # unapproved in-progress plugins gated via GNOMATIX YAML frontmatter (`review_status`,
 # `authority`, `approved_versions`).
@@ -20,7 +21,7 @@ set -eu
 LIVE=${RELEASE_LIVE:-origin}
 PUBLIC=${RELEASE_PUBLIC:-https://github.com/gnomatix/gnomatix-oss-skills.git}
 # Left out of every public release.
-EXCLUDE=".beads .claude/python-authorizations dev TODO.md"
+EXCLUDE=".beads .claude/python-authorizations dev"
 WIPE=0
 for a in "$@"; do
   case "$a" in

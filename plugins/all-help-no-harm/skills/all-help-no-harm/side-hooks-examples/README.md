@@ -84,7 +84,7 @@ appended to the configured output log.
 | `model.params.seed` | int | Fixed seed for reproducibility. |
 | `prompt_template` | string | The per-clause question; `${clause_text}` and `${message}` are substituted. |
 | `threshold` | float | Minimum confidence for a `yes` verdict to count as a detected violation (drives exit code 2). |
-| `throttle_ms` | int | Coordinator-enforced minimum gap between runs. |
+| `throttle_ms` | int | Coordinator-enforced minimum time in milliseconds between runs. |
 | `max_concurrent` | int | Coordinator-enforced concurrency cap. |
 
 ## Performance / resource notes

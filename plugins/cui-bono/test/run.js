@@ -25,6 +25,7 @@ const TRUTH = path.join(ROOT, 'skills', 'logic-toolbox', 'scripts', 'truth-table
 const COND = path.join(ROOT, 'skills', 'logic-toolbox', 'scripts', 'conditionals.mjs');
 const SKEL = path.join(ROOT, 'skills', 'logic-decomposer', 'scripts', 'skeleton.mjs');
 const PROFILE = path.join(ROOT, 'skills', 'citation-farm-audit', 'scripts', 'openalex-profile.mjs');
+const SHIELD = path.join(ROOT, 'skills', 'missile-command', 'scripts', 'shield-audit.mjs');
 
 let failures = 0;
 
@@ -340,7 +341,7 @@ async function main() {
       check(JSON.stringify(cond.S4) === '["every"]', `S4 indicator is "every" (${JSON.stringify(cond.S4)})`);
       check(JSON.stringify(cond.S6) === '["no","without"]', `S6 indicators are "no" and "without" (${JSON.stringify(cond.S6)})`);
       check(JSON.stringify(cond.S9) === '["either","or"]', `S9 indicators are "either" and "or" (${JSON.stringify(cond.S9)})`);
-      check(j.grades.length === 9 && j.grades.every((g) => 'basisCited' in g && 'markers' in g && 'licensed' in g && 'verdict' in g), 'GRADES has one row per sentence with the step-6 columns');
+      check(j.grades.length === 9 && j.grades.every((g) => 'basisCited' in g && 'markers' in g && 'licensed' in g && 'gradeDifference' in g &&'verdict' in g), 'GRADES has one row per sentence with the step-6 columns');
       check(j.validity.coverage === '9 sentences, 0 dispositions', `coverage pre-computed (${j.validity.coverage})`);
       check(Array.isArray(j.validity.checks) && j.validity.checks.length === 8, 'eight validity checks listed');
     }
@@ -423,6 +424,40 @@ async function main() {
       check(fail.status === 2 && /OpenAlex 503/.test(fail.stderr) && !/\n\s+at /.test(fail.stderr), `openalex-profile: an HTTP error exits 2 with the status (exit ${fail.status}: ${fail.stderr.trim().split('\n')[0]})`);
     } finally {
       server.close();
+    }
+  }
+
+  // ---- 6. shield-audit.mjs (missile-command) ------------------------------
+  {
+    const bad = run(SHIELD, []);
+    check(bad.status === 2 && /usage/.test(bad.stderr), 'shield-audit: missing target exits 2 with usage');
+    const missing = run(SHIELD, [path.join(FIX, 'no-such-readme.md')]);
+    check(missing.status === 2 && /cannot read/.test(missing.stderr), 'shield-audit: unreadable target exits 2');
+
+    // Canonical reference implementation: plugins/dont-be-hitler/README.md
+    const dbhDir = path.join(ROOT, '..', 'dont-be-hitler');
+    const r = run(SHIELD, [dbhDir, '--json']);
+    check(r.status === 0, `shield-audit on dont-be-hitler exits 0${r.status === 0 ? '' : `: ${r.stderr.trim()}`}`);
+    let j = null;
+    try { j = JSON.parse(r.stdout); } catch (err) { check(false, `shield-audit --json parses: ${err.message}`); }
+    if (j) {
+      check(j.verdict === 'SHIELDED', `dont-be-hitler/README.md verdict is SHIELDED (got ${j.verdict}: ${j.reason})`);
+      check(j.primaryCitationsCount >= 20, `dont-be-hitler/README.md has >= 20 primary citations (got ${j.primaryCitationsCount})`);
+      check(j.federalEeoMarkersCount >= 8, `dont-be-hitler/README.md has >= 8 Federal EEO/HR markers (got ${j.federalEeoMarkersCount})`);
+      check(j.defensiveCrouchLeaks.length === 0, 'dont-be-hitler/README.md has 0 R1/R2 defensive-crouch leaks');
+    }
+
+    // Module check: bare exposed quote -> UNSHIELDED; defensive crouch -> CROUCH_LEAK
+    try {
+      const sm = await import(pathToFileURL(SHIELD).href);
+      const bare = sm.auditMarkdown('# dont-be-hitler\n\n> "Degenerate art censorship."\n\n(Jane Roe, 2026-11-05)\n', 'bare.md');
+      check(bare.verdict === 'UNSHIELDED' && bare.exposed === true && bare.namedQuotes === 1, `bare tripwire quote scores UNSHIELDED (got ${bare.verdict})`);
+      const crouch = sm.auditMarkdown('# demo\n\nWhile the name may shock readers, we apologize if anyone misreads this satire.\n', 'crouch.md');
+      check(crouch.verdict === 'CROUCH_LEAK' && crouch.defensiveCrouchLeaks.length >= 1, `defensive-crouch disclaimer scores CROUCH_LEAK (got ${crouch.verdict})`);
+      const card = sm.formatCard(bare);
+      check(/^### SHIELD AUDIT: bare\.md$/m.test(card) && /\[observed\]/.test(card) && /\[not found\]/.test(card), 'formatCard tags body lines with [observed] / [not found]');
+    } catch (err) {
+      check(false, `shield-audit.mjs imports as a module: ${err.message}`);
     }
   }
 

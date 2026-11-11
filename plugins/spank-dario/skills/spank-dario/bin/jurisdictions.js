@@ -13,6 +13,13 @@
 //   model_vendors:  list, e.g. [anthropic, google]
 //   hourly_rate:    the user's rate, for bin/estimate.js: a number, or [min, max]
 //   currency:       ISO 4217 code for hourly_rate and recorded losses, e.g. CAD
+//   incident_minutes: the user's time lost per incident, by type, for incidents logged without
+//                   --minutes (the commit-msg hook and the scan can't know it), e.g.
+//                   { attribution: <minutes>, refusal: <minutes> }. Values are minutes, more than 0.
+//   token_prices:   per-million-token prices by model ID, for bin/estimate.js --usage, each with input,
+//                   cache_write_5m, cache_write_1h, cache_read and output; <model>:fast for fast mode.
+//                   They override references/us/anthropic-api-prices.json.
+//   token_prices_currency: ISO 4217 code of token_prices, required with them.
 // Command-line options override the config. SPANK_DARIO_COUNTRY (comma-separated) overrides
 // the config countries. With no country anywhere, the system locale's region is used and
 // reported as "detected", for the agent to confirm and save.
@@ -22,6 +29,8 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const { yaml, JS_YAML_INSTALL } = require(path.join(__dirname, '..', 'lib', 'yaml.js'));
+const { TYPES: INCIDENT_TYPES } = require(path.join(__dirname, '..', 'lib', 'incidents.js'));
+const TOKEN_PRICE_FIELDS = ['input', 'cache_write_5m', 'cache_write_1h', 'cache_read', 'output'];
 
 const SKILL_ROOT = path.resolve(__dirname, '..');
 const REF = path.join(SKILL_ROOT, 'references');
@@ -76,7 +85,7 @@ function readFrontmatter(file) {
 const asList = v => (v == null ? [] : Array.isArray(v) ? v : [v]).map(x => String(x).trim().toLowerCase()).filter(Boolean);
 
 function loadConfig(cwd) {
-  const cfg = { countries: [], platform: null, model_vendors: [], hourly_rate: null, currency: null, sources: [] };
+  const cfg = { countries: [], platform: null, model_vendors: [], hourly_rate: null, currency: null, incident_minutes: {}, token_prices: {}, token_prices_currency: null, config_errors: [], sources: [] };
   for (const { scope, file } of configFiles(cwd)) {
     const d = readFrontmatter(file);
     if (d === null) continue;
@@ -89,6 +98,25 @@ function loadConfig(cwd) {
     if (Array.isArray(d.hourly_rate) && d.hourly_rate.length === 2 && d.hourly_rate.every(x => Number.isFinite(Number(x)))) cfg.hourly_rate = d.hourly_rate.map(Number);
     else if (d.hourly_rate != null && Number.isFinite(Number(d.hourly_rate))) cfg.hourly_rate = Number(d.hourly_rate);
     if (d.currency) cfg.currency = String(d.currency).toUpperCase();
+    if (d.incident_minutes && typeof d.incident_minutes === 'object' && !Array.isArray(d.incident_minutes)) {
+      for (const [type, v] of Object.entries(d.incident_minutes)) {
+        const n = Number(v);
+        if (INCIDENT_TYPES.includes(type) && Number.isFinite(n) && n > 0) cfg.incident_minutes[type] = n;
+        else cfg.config_errors.push(`${scope}: incident_minutes.${String(type).slice(0, 40)} ignored: give a known incident type and minutes more than 0`);
+      }
+    }
+    if (d.token_prices_currency) cfg.token_prices_currency = String(d.token_prices_currency).toUpperCase();
+    if (d.token_prices && typeof d.token_prices === 'object' && !Array.isArray(d.token_prices)) {
+      for (const [model, p] of Object.entries(d.token_prices)) {
+        const ok = p && typeof p === 'object' && TOKEN_PRICE_FIELDS.every(k => p[k] !== null && p[k] !== '' && Number.isFinite(Number(p[k])) && Number(p[k]) >= 0);
+        if (ok) cfg.token_prices[model] = Object.fromEntries(TOKEN_PRICE_FIELDS.map(k => [k, Number(p[k])]));
+        else cfg.config_errors.push(`${scope}: token_prices.${String(model).slice(0, 60)} ignored: give ${TOKEN_PRICE_FIELDS.join(', ')}, each a number of 0 or more`);
+      }
+    }
+  }
+  if (Object.keys(cfg.token_prices).length && !cfg.token_prices_currency) {
+    cfg.config_errors.push('token_prices ignored: set token_prices_currency to the currency they are in');
+    cfg.token_prices = {};
   }
   return cfg;
 }
@@ -197,7 +225,7 @@ function main() {
   lines.push('read:');
   for (const a of active) lines.push(`  ${a.file}  (${a.reason})`);
   if (missing.length) {
-    lines.push('no reference yet (report as a gap):');
+    lines.push('no reference yet (report it to the user by name):');
     for (const m of missing) lines.push(`  ${m.file}  (${m.reason})`);
   }
   process.stdout.write(lines.join('\n') + '\n');

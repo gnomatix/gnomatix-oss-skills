@@ -1,12 +1,15 @@
 ---
 skill-vv: 1
 name: log-session
+authority: Brett Whitty
+review_status: APPROVED
 requirements:
   - kind: command
     name: gws
     why: >-
       creates the calendar event on the CLI path, when the session has no calendar tool or MCP
       connector
+    unlocks: direct CLI logging to the Google Calendar work journal without requiring an app or MCP calendar connector
     install: mise use -g github:googleworkspace/cli
     optional: true
   - kind: file
@@ -21,6 +24,13 @@ requirements:
     why: names the journal calendar; the skill writes it on the first run after one question
     configure: copy skills/log-session/settings.example.md there and set calendar
     optional: true
+complements:
+  - plugin: gnox
+    when_installed: Exposes /gnox:log-session command routing and session workspace_root context for journal notes.
+    when_absent: Invocable directly via /log-session across Claude Code, Antigravity, Codex, and Kiro.
+  - plugin: inaudible-markup
+    when_installed: Formats session summary notes with CLI-safe [NS]{@target} callouts and structured role tags.
+    when_absent: Writes concise plain-text bullet notes to the configured work-journal calendar.
 procedures:
   - id: first-run-settings
     summary: with no settings file, the agent shows the defaults, asks one question, and writes the file
@@ -103,6 +113,41 @@ results:
       the missing settings file, showed the four defaults, asked one question (keep the defaults or
       change the calendar name), logged nothing; noted it could not write the file in the read-only
       sandbox
+  - procedure: first-run-settings
+    model: claude-opus-5-5
+    platform: claude-code/linux
+    result: pass
+    date: 2026-11-11
+    by: null
+    evidence: null
+    notes: >-
+      isolated: claude -p --setting-sources project --plugin-dir plugins/log-session --model
+      claude-opus-5-5 --allowedTools 'Read Write Skill', Claude Code 2.1.310 on srv Linux, settings
+      file absent; '/log-session test run' ran the --plugin-dir copy: said first run, showed the
+      four defaults, asked one question, logged nothing; on resume 'Write them as shown.' it wrote
+      ~/.config/log-session/settings.md with valid frontmatter, then attempted list_calendars
+      (permission denied), so no event was created
+  - procedure: gws-dry-run
+    model: claude-opus-5-5
+    platform: claude-code/linux
+    result: deferred
+    date: 2026-11-11
+    by: null
+    evidence: null
+    notes: >-
+      srv gemini-exec-host: gws is installed (mise shim) but gws auth status reports auth_method
+      none, no credentials.enc; gws auth login needs a browser and is run by the user, not
+      unattended
+  - procedure: live-log
+    model: claude-opus-5-5
+    platform: claude-code/linux
+    result: deferred
+    date: 2026-11-11
+    by: null
+    evidence: null
+    notes: >-
+      srv gemini-exec-host: the procedure runs only when the user says to create a real calendar
+      event; no such word given for this run
 ---
 
 # log-session V&V

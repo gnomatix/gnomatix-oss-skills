@@ -1,6 +1,6 @@
-# Claude Code firewall hooks
+# Harness firewall hooks
 
-Hooks are not part of the cross-CLI [Agent Skills](https://agentskills.io) standard. This directory contains the Claude-Code-specific harness-level enforcement layer for the `did-you-rtfm` skill.
+Hooks sit outside the [Agent Skills](https://agentskills.io) `SKILL.md` specification. This directory contains the pure-Node `Stop` / `SubagentStop` and `PreToolUse` enforcement layer for `did-you-rtfm` (auto-loaded via `hooks.json` in Claude Code and wireable into any CLI harness supporting JSON-stdin/stdout hooks).
 
 ## What's here
 

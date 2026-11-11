@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "gnomatix-oss-skills",
-  "description": "Open-source collection of Claude Code plugins and cross-CLI Agent Skills from GNOMATIX.",
+  "description": "Cross-vendor Agent Skills and plugins from GNOMATIX across Claude Code, OpenAI Codex, Antigravity CLI (agy), GitHub Copilot, VS Code, Cursor, OpenCode, and Kiro.",
   "owner": {
     "name": "Brett Whitty",
     "email": "brett@gnomatix.com"
@@ -21,7 +21,7 @@
     },
     {
       "name": "did-you-rtfm",
-      "description": "Agent Skill plus two Claude Code firewall hooks that interrupt the agent's pivot reflex on errors during user-authorized implementation work. The skill forces version-checking, RTFMing the version-specific authoritative docs, assumption verification, sanity-checking against stale training-data, and minimal-repro construction before any 'blocker' claim or unauthorized plan change. The Stop / SubagentStop hook scans assistant text for high-precision pivot-language phrases (pattern set tuned against ~62k lines of real transcripts; ~3.8x correlation between pivot-emission count and user-frustration-swear rate per session) and blocks the stop with a structured RTFM reminder when matched. The PreToolUse hook denies Bash invocations containing bypass-flag shapes (--no-verify, --force, --skip-*, --allow-*, --ignore-*) or TTY-faking workarounds (script -qc, expect, echo|sudo -S). Plan changes are the user's decision; the agent presents evidence and waits.",
+      "description": "Agent Skill plus two harness firewall hooks that interrupt the agent's pivot reflex on errors during user-authorized implementation work. The skill forces version-checking, RTFMing the version-specific authoritative docs, assumption verification, sanity-checking against stale training-data, and minimal-repro construction before any 'blocker' claim or unauthorized plan change. The Stop / SubagentStop hook scans assistant text for high-precision pivot-language phrases (pattern set tuned against ~62k lines of real transcripts; ~3.8x correlation between pivot-emission count and user-frustration-swear rate per session) and blocks the stop with a structured RTFM reminder when matched. The PreToolUse hook denies Bash invocations containing bypass-flag shapes (--no-verify, --force, --skip-*, --allow-*, --ignore-*) or TTY-faking workarounds (script -qc, expect, echo|sudo -S). Plan changes are the user's decision; the agent presents evidence and waits.",
       "category": "development",
       "source": "./plugins/did-you-rtfm"
     },
@@ -75,7 +75,7 @@
     },
     {
       "name": "skill-vv",
-      "description": "Verification and validation for skills, across vendors. Before a skill's first real use in a session, surfaces its requirements and offers install or configuration, then checks whether the current model and platform have passed the skill's V&V procedures and offers to run them. State lives in a VV.md file with YAML frontmatter beside each skill; a Node CLI reads and records it for any agent, and a SessionStart hook runs the check on Claude Code.",
+      "description": "Verification and validation for skills, across vendors. Before a skill's first real use in a session, surfaces its requirements and offers install or configuration, then checks whether the current model and platform have passed the skill's V&V procedures and offers to run them. State lives in a VV.md file with YAML frontmatter beside each skill; a Node CLI reads and records it for any agent, and a SessionStart hook runs the check automatically on hook-capable harnesses.",
       "category": "development",
       "source": "./plugins/skill-vv"
     },

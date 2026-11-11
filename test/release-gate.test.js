@@ -18,22 +18,6 @@ function git(cwd, args, extra = {}) {
   return execFileSync('git', args, Object.assign({ cwd, encoding: 'utf8' }, extra));
 }
 
-function addSkillSymlinksInGit(repoDir, pluginName, skillName) {
-  const relTarget = `../../plugins/${pluginName}/skills/${skillName}`;
-  const blob = git(repoDir, ['hash-object', '-w', '--stdin'], { input: relTarget }).trim();
-  for (const farm of ['.agents/skills', '.github/skills', '.kiro/skills']) {
-    const linkPath = path.join(repoDir, ...`${farm}/${skillName}`.split('/'));
-    fs.mkdirSync(path.dirname(linkPath), { recursive: true });
-    try { fs.rmSync(linkPath, { recursive: true, force: true }); } catch { /* ignore */ }
-    try {
-      fs.symlinkSync(relTarget.split('/').join(path.sep), linkPath, 'dir');
-    } catch {
-      fs.symlinkSync(path.join(repoDir, 'plugins', pluginName, 'skills', skillName), linkPath, 'junction');
-    }
-    git(repoDir, ['update-index', '--add', '--cacheinfo', `120000,${blob},${farm}/${skillName}`]);
-  }
-}
-
 function writePluginInRepo(repoDir, { name, version, vvExtra = '', hasSkill = true }) {
   const pDir = path.join(repoDir, 'plugins', name);
   fs.mkdirSync(path.join(pDir, '.claude-plugin'), { recursive: true });
@@ -119,7 +103,7 @@ test('parseLifecycleFrontmatter and evaluatePluginApproval handle APPROVED, PEND
   assert.equal(evalApproved.approved, true);
 });
 
-test('buildReleaseTree holds back net-new PENDING plugins, pins PENDING edits on released plugins to parent, and ships APPROVED updates', (t) => {
+test('buildReleaseTree holds back net-new PENDING plugins, pins PENDING edits on released plugins, strips any 120000 symlinks, and ships APPROVED updates', (t) => {
   const repoDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gnox-rel-gate-'));
   t.after(() => fs.rmSync(repoDir, { recursive: true, force: true }));
 
@@ -169,17 +153,31 @@ test('buildReleaseTree holds back net-new PENDING plugins, pins PENDING edits on
       2
     ) + '\n'
   );
+  fs.writeFileSync(
+    path.join(repoDir, '.claude-plugin', 'migrations.json'),
+    JSON.stringify(
+      {
+        schema_version: 1,
+        marketplace: 'synthetic-marketplace',
+        plugin_migrations: [],
+        skill_migrations: [],
+      },
+      null,
+      2
+    ) + '\n'
+  );
 
   git(repoDir, ['add', '.']);
-  addSkillSymlinksInGit(repoDir, 'steady-plugin', 'steady-plugin');
-  addSkillSymlinksInGit(repoDir, 'pinned-plugin', 'pinned-plugin');
+  // Simulate a historical parent release that had a legacy 120000 symlink
+  const legacySymBlob = git(repoDir, ['hash-object', '-w', '--stdin'], {
+    input: '../../plugins/steady-plugin/skills/steady-plugin',
+  }).trim();
+  git(repoDir, ['update-index', '--add', '--cacheinfo', `120000,${legacySymBlob},.agents/skills/steady-plugin`]);
   git(repoDir, ['commit', '-m', 'Release v0.1.11']);
   const parentSha = git(repoDir, ['rev-parse', 'HEAD']).trim();
 
-  // Now simulate private Gitea main advancing with:
-  // 1) steady-plugin updated to APPROVED 0.1.1
-  // 2) pinned-plugin updated to PENDING 0.2.7 (approved_versions: [0.2.5]) + an extra pending skill
-  // 3) wip-plugin added at PENDING 0.1.0 (approved_versions: [])
+  // Advance main with clean zero-symlink state + approved & pending changes
+  git(repoDir, ['rm', '-q', '--cached', '--ignore-unmatch', '--', '.agents/skills/steady-plugin']);
   fs.writeFileSync(path.join(repoDir, 'VERSION'), '0.1.12\n');
   writePluginInRepo(repoDir, {
     name: 'steady-plugin',
@@ -232,12 +230,16 @@ test('buildReleaseTree holds back net-new PENDING plugins, pins PENDING edits on
   );
 
   git(repoDir, ['add', '.']);
-  addSkillSymlinksInGit(repoDir, 'pinned-plugin', 'pinned-extra');
-  addSkillSymlinksInGit(repoDir, 'wip-plugin', 'wip-plugin');
   git(repoDir, ['commit', '-m', 'Advance main with approved and pending changes']);
 
   const idxPath = path.join(repoDir, '.git', 'test-release-index');
   git(repoDir, ['read-tree', 'HEAD'], { env: Object.assign({}, process.env, { GIT_INDEX_FILE: idxPath }) });
+  // Even if an accidental 120000 entry were injected into the candidate index, buildReleaseTree strips it
+  git(
+    repoDir,
+    ['update-index', '--add', '--cacheinfo', `120000,${legacySymBlob},.kiro/skills/steady-plugin`],
+    { env: Object.assign({}, process.env, { GIT_INDEX_FILE: idxPath }) }
+  );
 
   const result = buildReleaseTree({
     repoRoot: repoDir,
@@ -252,7 +254,14 @@ test('buildReleaseTree holds back net-new PENDING plugins, pins PENDING edits on
   assert.equal(result.pinnedPlugins['pinned-plugin'].pinnedVersion, '0.2.5');
   assert.equal(result.releasedPluginCount, 2);
 
-  // Verify exact snapshot tree contents
+  // Verify exact snapshot tree contents and zero 120000 entries
+  const rawTreeModes = git(repoDir, ['ls-tree', '-r', result.treeSha]).split(/\r?\n/).filter(Boolean);
+  assert.equal(
+    rawTreeModes.some((line) => line.startsWith('120000 ')),
+    false,
+    'release tree must contain zero mode-120000 symlinks'
+  );
+
   const snapMp = JSON.parse(git(repoDir, ['show', `${result.treeSha}:.claude-plugin/marketplace.json`]));
   assert.deepEqual(snapMp.plugins.map((p) => p.name), ['steady-plugin', 'pinned-plugin']);
   assert.equal(snapMp.plugins[1].description, 'Pinned 0.2.5 approved');
@@ -305,8 +314,6 @@ test('buildReleaseTree and auditMarketplace hard-block removal of any previously
   );
 
   git(repoDir, ['add', '.']);
-  addSkillSymlinksInGit(repoDir, 'alpha-plugin', 'alpha-plugin');
-  addSkillSymlinksInGit(repoDir, 'citation-farm-audit', 'citation-farm-audit');
   git(repoDir, ['commit', '-m', 'Release v0.1.8']);
   const parentSha = git(repoDir, ['rev-parse', 'HEAD']).trim();
 
@@ -324,15 +331,11 @@ test('buildReleaseTree and auditMarketplace hard-block removal of any previously
     ) + '\n'
   );
   git(repoDir, ['add', '-A']);
-  for (const farm of ['.agents/skills', '.github/skills', '.kiro/skills']) {
-    git(repoDir, ['rm', '-q', '--cached', '--ignore-unmatch', '--', `${farm}/citation-farm-audit`]);
-  }
   git(repoDir, ['commit', '-m', 'Drop citation-farm-audit']);
 
   const auditRes = auditMarketplace(repoDir, {
     checkReleasedPlugins: true,
     requiredPluginIds: ['alpha-plugin', 'citation-farm-audit'],
-    checkSymlinkFarms: false,
   });
   assert.equal(auditRes.ok, false);
   assert.ok(auditRes.findings.some((f) => f.rule === 'released-plugin-removed'));

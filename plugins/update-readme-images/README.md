@@ -87,10 +87,16 @@ node plugins/update-readme-images/skills/update-readme-images/scripts/update-rea
   --init /path/to/my-repo --workspace-root my-repo
 ```
 
-## Requirements
+## Stand-Alone, Complementary Plugins, & Optional Local Tools
 
-- Node.js 18 or later.
-- ImageMagick 7 (`magick` command on `PATH`, e.g. `mise use -g imagemagick`) for `--verify-images`, `--sync-og-images`, and `--make-oval-inset` (gracefully skipped for automatic OG generation when unavailable and `mise` is absent).
+- **Stand-alone baseline**: Requires only Node.js 18+. Config resolution (`--resolve`), glob rule matching, Markdown embed auditing (`--audit`), draft staging (`--stage-revision`), approved promotion (`--promote-draft`), and project scaffolding (`--init`) work out of the box with zero sibling plugins.
+- **Complementary marketplace plugins (activated when installed)**:
+  - [`og-social-image`](../og-social-image/): invoked automatically across every `assets/images/` directory (`--sync-og-images`) to produce verified `1280×640` (`< 1 MB`) social-preview cards unless `og_social_image.enabled` is `false`.
+  - [`gnox`](../gnox/): supplies session-wide `workspace_root:subdir:...` namespace inheritance, `[NS]{@target}` draft-approval callouts, and `/gnox:update-readme-images` routing.
+  - [`critical-control-points`](../critical-control-points/) & [`goal-compliant-task-queue`](../goal-compliant-task-queue/): track staged `assets/drafts/` image replacement proposals asynchronously until user sign-off.
+  - [`hidden-libel-check`](../hidden-libel-check/): reviews authored alt-text, captions, and surrounding README prose before commit.
+- **Optional local tools**:
+  - **ImageMagick 7 (`magick` on `PATH`, installable via `mise use -g imagemagick`)**: unlocks `--verify-images` pixel/alpha inspection, `--sync-og-images` social-card generation, and `--make-oval-inset` `PNG32` oval alpha-mask compositing; degrades cleanly when absent and `mise` is unavailable.
 
 ## Install
 
@@ -100,7 +106,7 @@ node plugins/update-readme-images/skills/update-readme-images/scripts/update-rea
 ```
 
 - **Antigravity CLI (`agy`)**: `agy plugin install ./plugins/update-readme-images`
-- **Every other agent**: the skill folder `plugins/update-readme-images/skills/update-readme-images/` is in the cross-CLI [Agent Skills](https://agentskills.io) format and is linked from `.agents/skills/`, `.github/skills/`, and `.kiro/skills/` at the repository root.
+- **Every other agent**: install the static skill folder (`plugins/update-readme-images/skills/update-readme-images/`) across Codex, GitHub Copilot, VS Code, Cursor, OpenCode, and Kiro with `node scripts/install-skills.js install --plugin update-readme-images` from the marketplace root.
 
 ## Verification and validation
 

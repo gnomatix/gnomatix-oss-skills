@@ -58,3 +58,5 @@ The user's word maps to an accurate literal term for the agent's own voice. The 
 ## Related
 
 - `spank-dario`: keeps software tools from being written in as authors of the user's work. Together: the user's work is the user's, credited to them and in their own words.
+- `hidden-libel-check`: prevents an agent from isolating user words in uncontextualized "hostage-video" framing under the user's byline (originally titled *"Actually, I'm The A-Hole"*).
+- `cui-bono:missile-command`: pairs with `dont-be-hitler` across the inside/outside boundary — `dont-be-hitler` governs the agent working *for* the user, while `missile-command` helps the user proactively protect their work, reputation, and personhood from bad-faith *outside* framing using verified primary facts, U.S. Federal EEO/HR inclusivity provenance, and disarming satire.

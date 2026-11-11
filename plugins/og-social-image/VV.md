@@ -1,12 +1,21 @@
 ---
 skill-vv: 1
 name: og-social-image
+authority: Brett Whitty
+review_status: APPROVED
 requirements:
   - kind: command
     name: magick
     why: resizes, crops, re-encodes and measures the image (ImageMagick 7)
     install: mise use -g imagemagick
     optional: false
+complements:
+  - plugin: update-readme-images
+    when_installed: Invoked automatically across every assets/images/ directory during README image curation and audit runs unless opted out.
+    when_absent: Runs directly on any individual hero, banner, or logo whenever /og-social-image is invoked.
+  - plugin: gnox
+    when_installed: Exposes /gnox:og-social-image command routing and workspace_root:subdir:... path scoping.
+    when_absent: Invocable directly via /og-social-image or natural-language social-preview requests.
 procedures:
   - id: generate-and-verify
     summary: the skill's documented commands produce a 1280x640 JPEG under 1 MB from a sample source
@@ -82,6 +91,29 @@ results:
       codex exec 0.163.0 on Windows, scratch project with the plugin skill linked under
       .agents/skills: produced vv-scratch/hero-og-image.jpg at 1280x640 JPEG q92, 318042 bytes,
       reported dimensions and size, source unchanged
+  - procedure: generate-and-verify
+    model: claude-opus-5-5
+    platform: claude-code/linux
+    result: pass
+    date: 2026-11-11
+    by: null
+    evidence: null
+    notes: >-
+      node test/run.js: all passed on srv gemini-exec-host (Linux), ImageMagick 7.1.2-31; output
+      1280x640 JPEG 319369 bytes
+  - procedure: in-session
+    model: claude-opus-5-5
+    platform: claude-code/linux
+    result: pass
+    date: 2026-11-11
+    by: null
+    evidence: null
+    notes: >-
+      isolated rerun: claude -p --setting-sources project --plugin-dir plugins/og-social-image
+      --model claude-opus-5-5, Claude Code 2.1.310 on srv Linux; transcript shows Skill
+      og-social-image:og-social-image (the --plugin-dir copy), then magick identify hero.png
+      (1408x683) first, cover-crop, magick identify + stat; reported 1280x640, 29468 bytes (my
+      magick identify: JPEG 1280x640 29468B); source unchanged
 ---
 
 # og-social-image V&V

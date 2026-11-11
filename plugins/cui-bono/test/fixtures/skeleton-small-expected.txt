@@ -12,9 +12,9 @@ id  | sentence | quoted                                   | indicator | form    
     | S1       | "All of it is voluntary."                | all       |               |                 |
 
 GRADES
-id  | proposition (quoted)              | evidence | certainty              | basis cited          | stated | markers           | licensed | gap  | verdict
-    | "All of it is voluntary."         |          |                        |                      |        |                   |          |      |
-    | "Pause works."                    |          |                        |                      |        |                   |          |      |
+id  | proposition (quoted)              | evidence | certainty              | basis cited          | stated | markers           | licensed | grade difference | verdict
+    | "All of it is voluntary."         |          |                        |                      |        |                   |          |                  |
+    | "Pause works."                    |          |                        |                      |        |                   |          |                  |
 
 VALIDITY
 coverage: 2 sentences, 0 dispositions

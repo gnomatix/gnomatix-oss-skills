@@ -112,7 +112,7 @@ Convention: "earlier elements will be placed to the LEFT of later elements"; cro
 (S sits left of both V and R; the book draws S below the O-M-V line with lines to V and to R.)
 Test: who can be first = any letter with nothing to its left (T, P, S); who can be last = any letter with nothing to its right (N, V, R).
 
-**Numbered ordering: the Number Line.** Slots `_ _ _ _ _ _ _` numbered 1..n; blocks `[HM]` for adjacency, `H _ _ M` for fixed gaps; **Not Laws** (PowerScore's term) written under a slot as the letters that cannot occupy it. PowerScore forum staff (checked snippets): the ">" arrow "just indicates that A is to the left of B, no more and no less"; a rectangle block is used only when two variables "must always be in the same place"; the "double not-arrow" is for conditional exclusions, the "not-block" for multistack slots.
+**Numbered ordering: the Number Line.** Slots `_ _ _ _ _ _ _` numbered 1..n; blocks `[HM]` for adjacency, `H _ _ M` for a fixed number of empty slots between two letters; **Not Laws** (PowerScore's term) written under a slot as the letters that cannot occupy it. PowerScore forum staff (checked snippets): the ">" arrow "just indicates that A is to the left of B, no more and no less"; a rectangle block is used only when two variables "must always be in the same place"; the "double not-arrow" is for conditional exclusions, the "not-block" for multistack slots.
 
 **Binary grouping: the Logic Chain** (Manhattan ch. 6) and **7Sage in/out**: elements listed in an IN column and an OUT column; each conditional rule and its contrapositive drawn as arrows between columns. 7Sage "lawgic" notation (forum lesson notes, checked): "/ = not"; "-> = arrow, implies"; "<-> = biconditional"; "(Either) or, but not both" written as `/A <-> C`; "not both" as `A -> /C` with contrapositive `C -> /A`; contrapositive rule: "1. and becomes or, vice versa 2. negate both elements".
 
@@ -448,16 +448,16 @@ For each proposition from the decomposer, two independent grades, after ICD 203'
 
 **(b) Stated-confidence grade (from the text's wording).** Map the proposition's hedges and boosters onto the ICD 203 seven-point likelihood row, or onto IPCC's five confidence qualifiers when the claim is about validity rather than occurrence: S7 "certain / it is clear that / definitely" (boosters, ~95-100); S6 "very likely / highly probable"; S5 "likely / probably / we believe"; S4 "roughly even / may or may not"; S3 "unlikely / doubtful"; S2 "very unlikely"; S1 "almost no chance"; S? "possible / might / could" (Kent's no-odds "possible": record as hedged, no numeric band). A flat declarative with no hedge or booster is graded S7: it is Kent's type-one statement of fact and one of ICD 203's "statements that convey underlying intelligence information", asserted without qualification.
 
-**(c) Gap.** Expected stated grade given the evidence: E1-E2 licenses up to S7; E3 up to S6; E4 up to S5; E5-E6 up to S4; E0 up to S? only. Gap = stated minus licensed. Positive = **overclaim**; negative = **underclaim**; zero = calibrated.
+**(c) Grade difference.** Expected stated grade given the evidence: E1-E2 licenses up to S7; E3 up to S6; E4 up to S5; E5-E6 up to S4; E0 up to S? only. Grade difference = stated minus licensed. Positive = **overclaim**; negative = **underclaim**; zero = calibrated.
 
 ```
- ID  Proposition (quote)                       Evidence  Basis cited          Stated  Markers              Licensed  Gap   Verdict
- P1  "it is clear that X causes Y"             E4        preprint, n=40       S7      "it is clear that"   S5        +2    overclaim
- P2  "X may be associated with Y"              E2        RCT, CI excludes 0   S?      "may"                S7        -     underclaim
- P3  "roughly half of respondents agreed"      E1        survey table 3       S7      none (flat report)   S7        0     calibrated
- P4  "everyone knows that Z"                   E0        none                 S7      "everyone knows"     S?        +max  overclaim, unsourced
+ ID  Proposition (quote)                       Evidence  Basis cited          Stated  Markers              Licensed  Grade difference  Verdict
+ P1  "it is clear that X causes Y"             E4        preprint, n=40       S7      "it is clear that"   S5        +2                overclaim
+ P2  "X may be associated with Y"              E2        RCT, CI excludes 0   S?      "may"                S7        -                 underclaim
+ P3  "roughly half of respondents agreed"      E1        survey table 3       S7      none (flat report)   S7        0                 calibrated
+ P4  "everyone knows that Z"                   E0        none                 S7      "everyone knows"     S?        +max              overclaim, unsourced
 ```
-**Procedure.** 1 take the proposition list (F4); 2 locate the cited basis for each, assign E; 3 apply GRADE modifiers; 4 tag hedges/boosters (G5), assign S; 5 compute licensed S from E and the gap; 6 write the two grades and the gap in separate columns, never merged into one word (ICD 203 D.6.e(2)(b)); 7 keep a traceable account (IPCC paragraph 2): the quote, the source located, and the modifiers applied; 8 across a document, tabulate the gap distribution; a systematic positive gap is the document's overclaim profile, which the calibration test (G6) would score if outcomes were later known.
+**Procedure.** 1 take the proposition list (F4); 2 locate the cited basis for each, assign E; 3 apply GRADE modifiers; 4 tag hedges/boosters (G5), assign S; 5 compute licensed S from E, and the grade difference (stated minus licensed); 6 write the two grades and the grade difference in separate columns, never merged into one word (ICD 203 D.6.e(2)(b)); 7 keep a traceable account (IPCC paragraph 2): the quote, the source located, and the modifiers applied; 8 across a document, tabulate the distribution of grade differences; a systematic positive grade difference is the document's overclaim profile, which the calibration test (G6) would score if outcomes were later known.
 
 ---
 

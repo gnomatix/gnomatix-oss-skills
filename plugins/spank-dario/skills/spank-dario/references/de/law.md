@@ -26,3 +26,13 @@ Statute: Urheberrechtsgesetz (UrhG), https://www.gesetze-im-internet.de/urhg/BJN
 - (f) § 43 — read 2026-11-04 — same URL — "Die Vorschriften dieses Unterabschnitts sind auch anzuwenden, wenn der Urheber das Werk in Erfüllung seiner Verpflichtungen aus einem Arbeits- oder Dienstverhältnis geschaffen hat, soweit sich aus dem Inhalt oder dem Wesen des Arbeits- oder Dienstverhältnisses nichts anderes ergibt."
 - (e) § 69a(3) software originality — read 2026-11-04 — same URL — "Computerprogramme werden geschützt, wenn sie individuelle Werke in dem Sinne darstellen, daß sie das Ergebnis der eigenen geistigen Schöpfung ihres Urhebers sind. Zur Bestimmung ihrer Schutzfähigkeit sind keine anderen Kriterien, insbesondere nicht qualitative oder ästhetische, anzuwenden."
 - (f) § 69b(1) employer rights in computer programs — read 2026-11-04 — same URL — "Wird ein Computerprogramm von einem Arbeitnehmer in Wahrnehmung seiner Aufgaben oder nach den Anweisungen seines Arbeitgebers geschaffen, so ist ausschließlich der Arbeitgeber zur Ausübung aller vermögensrechtlichen Befugnisse an dem Computerprogramm berechtigt, sofern nichts anderes vereinbart ist." § 69b(2) applies this to Dienstverhältnisse.
+
+## Vendor liability
+
+Statute: Bürgerliches Gesetzbuch (BGB) and UrhG § 97, each section page fetched from gesetze-im-internet.de on 2026-11-10; every quote below matched character for character in that text.
+
+- BGB § 278 — read 2026-11-10 — https://www.gesetze-im-internet.de/bgb/__278.html — "Der Schuldner hat ein Verschulden seines gesetzlichen Vertreters und der Personen, deren er sich zur Erfüllung seiner Verbindlichkeit bedient, in gleichem Umfang zu vertreten wie eigenes Verschulden."
+- BGB § 280(1) — read 2026-11-10 — https://www.gesetze-im-internet.de/bgb/__280.html — "Verletzt der Schuldner eine Pflicht aus dem Schuldverhältnis, so kann der Gläubiger Ersatz des hierdurch entstehenden Schadens verlangen. Dies gilt nicht, wenn der Schuldner die Pflichtverletzung nicht zu vertreten hat."
+- BGB § 831(1) — read 2026-11-10 — https://www.gesetze-im-internet.de/bgb/__831.html — "Wer einen anderen zu einer Verrichtung bestellt, ist zum Ersatz des Schadens verpflichtet, den der andere in Ausführung der Verrichtung einem Dritten widerrechtlich zufügt."
+- UrhG § 97(1) — read 2026-11-10 — https://www.gesetze-im-internet.de/urhg/__97.html — "Wer das Urheberrecht oder ein anderes nach diesem Gesetz geschütztes Recht widerrechtlich verletzt, kann von dem Verletzten auf Beseitigung der Beeinträchtigung, bei Wiederholungsgefahr auf Unterlassung in Anspruch genommen werden."
+- UrhG § 97(2) — read 2026-11-10 — same URL — "Wer die Handlung vorsätzlich oder fahrlässig vornimmt, ist dem Verletzten zum Ersatz des daraus entstehenden Schadens verpflichtet."

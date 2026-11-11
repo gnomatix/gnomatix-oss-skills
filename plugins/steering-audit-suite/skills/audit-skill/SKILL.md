@@ -52,7 +52,7 @@ When in this repo:
 - Don't recommend an OSS alternative just because it exists. Recommend it only if it would meet the skill's actual requirements; otherwise note that no equivalent exists at the required capability level.
 - Don't propose a portability change for a skill that has a deliberate single-tool dependency. Surface as a question to the owner: "this skill hard-codes X — intentional or should it be made portable?"
 - Don't copy structure from a manufacturer exemplar without understanding why it works there. The exemplar is a reference, not a template to clone.
-- Don't make stylistic preference findings. Audit for behavior leakage and portability gaps, not aesthetics.
+- Don't make stylistic preference findings. Audit for behavior leakage and for content that does not work on another vendor's agent, not aesthetics.
 - Anti-patterns and the audit checklist are **non-exhaustive** — see `../steering-audit-suite/references/checklist.md` and use the "Other Findings" section of the report for issues outside the enumerated checks.
 
 ## Resilience to Correction

@@ -1,6 +1,8 @@
 ---
 skill-vv: 1
 name: spank-dario
+authority: Brett Whitty
+review_status: APPROVED
 requirements:
   - kind: command
     name: node
@@ -214,6 +216,28 @@ results:
       write as denied with the exact JSON; it also declined the harness attribution reminder. The
       write to .claude/settings.json needs the user's approval, which -p cannot give; rerun
       interactively and approve the write
+  - procedure: test-suite
+    model: claude-opus-5-5
+    platform: claude-code/win32
+    result: pass
+    date: 2026-11-11
+    by: null
+    evidence: null
+    notes: >-
+      node skills/spank-dario/test/run.js in the source tree at 874c189 on Windows 11, node
+      v24.21.0: all passed
+  - procedure: commit-in-session
+    model: claude-opus-5-5
+    platform: claude-code/win32
+    result: pass
+    date: 2026-11-11
+    by: null
+    evidence: null
+    notes: >-
+      commits by this session in gnomatix-oss-skills on 2026-11-10/11 (68d748c, db8d3d3, 47bd9ed,
+      8adc279, 874c189 and others): git log --since 12h --author 'Brett Whitty' bodies grep for
+      co-authored-by, generated with, claude-session, claude.ai/code: 0 lines; author is the
+      configured git user
 ---
 
 # spank-dario V&V

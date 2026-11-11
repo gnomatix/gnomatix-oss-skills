@@ -1,5 +1,7 @@
 # goal-compliant-task-queue
 
+![goal-compliant-task-queue](assets/images/goal-compliant-task-queue-banner.jpg)
+
 Brett Whitty's question / task / record protocol, as a tested tool. Each question Brett asks becomes a session task and one working document. The agent works it in the document; Brett ticks and comments there; the agent asks "Have I sufficiently responded to your question?"; and only after his "yes" is a bead created.
 
 Brett's specification, verbatim: [`skills/goal-compliant-task-queue/references/brett-spec.md`](skills/goal-compliant-task-queue/references/brett-spec.md). The design, data flow and requirement traceability: [`docs/system-design.md`](docs/system-design.md).

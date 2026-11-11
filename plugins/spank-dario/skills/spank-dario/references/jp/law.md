@@ -28,3 +28,15 @@ Statute: Copyright Act (Act No. 48 of 1970), official English translation, https
 ## Sources
 
 - English quotes are from the official translation of the 2021 version. The Japanese text on e-Gov is the current, authoritative text. Where they differ, as in art. 20(2)(i), which in the current Japanese text also cites Article 33-3(1), the Japanese text is quoted above alongside.
+
+## Vendor liability
+
+Japanese text from e-Gov's law API (Civil Code 129AC0000000089, Copyright Act 345AC0000000048, Consumer Contract Act 412AC0000000061), read 2026-11-10; every quote below matched character for character in that text. English renderings in `jp/skill.md` are this skill's, not official translations.
+
+- Civil Code art. 415(1) — read 2026-11-10 — https://laws.e-gov.go.jp/api/1/lawdata/129AC0000000089 — "債務者がその債務の本旨に従った履行をしないとき又は債務の履行が不能であるときは、債権者は、これによって生じた損害の賠償を請求することができる。"
+- Civil Code art. 709 — read 2026-11-10 — same URL — "故意又は過失によって他人の権利又は法律上保護される利益を侵害した者は、これによって生じた損害を賠償する責任を負う。"
+- Civil Code art. 715(1) — read 2026-11-10 — same URL — "ある事業のために他人を使用する者は、被用者がその事業の執行について第三者に加えた損害を賠償する責任を負う。ただし、使用者が被用者の選任及びその事業の監督について相当の注意をしたとき、又は相当の注意をしても損害が生ずべきであったときは、この限りでない。"
+- Copyright Act art. 112(1) — read 2026-11-10 — https://laws.e-gov.go.jp/api/1/lawdata/345AC0000000048 — "著作者、著作権者、出版権者、実演家又は著作隣接権者は、その著作者人格権、著作権、出版権、実演家人格権又は著作隣接権を侵害する者又は侵害するおそれがある者に対し、その侵害の停止又は予防を請求することができる。"
+- Copyright Act art. 115 — read 2026-11-10 — same URL — "著作者又は実演家は、故意又は過失によりその著作者人格権又は実演家人格権を侵害した者に対し、損害の賠償に代えて、又は損害の賠償とともに、著作者又は実演家であることを確保し、又は訂正その他著作者若しくは実演家の名誉若しくは声望を回復するために適当な措置を請求することができる。"
+- Consumer Contract Act art. 8(1)(i) — read 2026-11-10 — https://laws.e-gov.go.jp/api/1/lawdata/412AC0000000061 — "事業者の債務不履行により消費者に生じた損害を賠償する責任の全部を免除し、又は当該事業者にその責任の有無を決定する権限を付与する条項"
+- Consumer Contract Act art. 10 — read 2026-11-10 — same URL — "民法第一条第二項に規定する基本原則に反して消費者の利益を一方的に害するものは、無効とする。"

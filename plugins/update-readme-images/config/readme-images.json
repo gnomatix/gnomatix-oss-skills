@@ -35,13 +35,14 @@
   "style_guides": {
     "gnomatix-oss-skills": {
       "doc": "plugins/update-readme-images/config/style-guides/gnomatix-oss-skills.md",
-      "summary": "Root GNOMATIX OSS Skills visual style guide: Simpsons animation × Skottie Young comic linework hybrid, flat saturated colors, multi-axis reference layering SOP, native in-scene diegetic cartoon typography, and gold-standard anchor reference images.",
+      "summary": "Root GNOMATIX OSS Skills visual style guide: Saturday-morning cel animation × Skottie Young comic linework hybrid, realistic warm human skin tones (never Simpsons-yellow), flat saturated colors, multi-axis reference layering SOP, native in-scene diegetic cartoon typography, and gold-standard realistic-skin-tone anchor reference images.",
       "inherit": true,
       "og_social_image": true,
       "reference_images": [
-        "plugins/did-you-rtfm/assets/images/did-you-rtfm-banner.jpg",
-        "plugins/all-help-no-harm/assets/images/all-help-no-harm-banner.jpg",
-        "plugins/satori/assets/images/satori-banner.jpg"
+        "plugins/python-elimination-program/assets/images/python-elimination-program-banner.jpg",
+        "plugins/python-elimination-program/assets/images/old-willy-computer-lab-panel.jpg",
+        "plugins/cui-bono/assets/images/citation-farm-audit-banner.jpg",
+        "plugins/steering-audit-suite/assets/images/steering-audit-suite-banner.jpg"
       ],
       "palette": {
         "navy": "#0B1F4A",
@@ -134,13 +135,129 @@
       ]
     },
     {
+      "id": "root-readme-category-subpanels",
+      "description": "Root repository README.md includes a 16:9 section sub-panel immediately below each categorized plugin heading (### ...) under ## Plugins.",
+      "glob": "README.md",
+      "doc": "plugins/update-readme-images/config/rules/root-readme-panels.md",
+      "panels": [
+        {
+          "id": "category-your-work-done",
+          "type": "sub-panel",
+          "required": true,
+          "placement": "after-heading",
+          "section_heading": "### Your work, done the way you asked",
+          "src_pattern": "assets/images/category-your-work-done-panel.jpg",
+          "alt_pattern": "Your work, done the way you asked",
+          "embed_style": "markdown",
+          "dimensions": {
+            "aspect_ratio": "16:9",
+            "width": 1376,
+            "height": 768,
+            "format": "JPEG"
+          }
+        },
+        {
+          "id": "category-your-name-and-record",
+          "type": "sub-panel",
+          "required": true,
+          "placement": "after-heading",
+          "section_heading": "### Your name and your record",
+          "src_pattern": "assets/images/category-your-name-and-record-panel.jpg",
+          "alt_pattern": "Your name and your record",
+          "embed_style": "markdown",
+          "dimensions": {
+            "aspect_ratio": "16:9",
+            "width": 1376,
+            "height": 768,
+            "format": "JPEG"
+          }
+        },
+        {
+          "id": "category-sources-behind-claims",
+          "type": "sub-panel",
+          "required": true,
+          "placement": "after-heading",
+          "section_heading": "### The sources behind your claims",
+          "src_pattern": "assets/images/category-sources-behind-claims-panel.jpg",
+          "alt_pattern": "The sources behind your claims",
+          "embed_style": "markdown",
+          "dimensions": {
+            "aspect_ratio": "16:9",
+            "width": 1376,
+            "height": 768,
+            "format": "JPEG"
+          }
+        },
+        {
+          "id": "category-skills-you-can-rely-on",
+          "type": "sub-panel",
+          "required": true,
+          "placement": "after-heading",
+          "section_heading": "### Skills you can rely on",
+          "src_pattern": "assets/images/category-skills-you-can-rely-on-panel.jpg",
+          "alt_pattern": "Skills you can rely on",
+          "embed_style": "markdown",
+          "dimensions": {
+            "aspect_ratio": "16:9",
+            "width": 1376,
+            "height": 768,
+            "format": "JPEG"
+          }
+        },
+        {
+          "id": "category-sound-tool-choices",
+          "type": "sub-panel",
+          "required": true,
+          "placement": "after-heading",
+          "section_heading": "### Sound tool choices for your project",
+          "src_pattern": "assets/images/category-sound-tool-choices-panel.jpg",
+          "alt_pattern": "Sound tool choices for your project",
+          "embed_style": "markdown",
+          "dimensions": {
+            "aspect_ratio": "16:9",
+            "width": 1376,
+            "height": 768,
+            "format": "JPEG"
+          }
+        },
+        {
+          "id": "category-words-and-writing",
+          "type": "sub-panel",
+          "required": true,
+          "placement": "after-heading",
+          "section_heading": "### Words and writing",
+          "src_pattern": "assets/images/category-words-and-writing-panel.jpg",
+          "alt_pattern": "Words and writing",
+          "embed_style": "markdown",
+          "dimensions": {
+            "aspect_ratio": "16:9",
+            "width": 1376,
+            "height": 768,
+            "format": "JPEG"
+          }
+        },
+        {
+          "id": "category-your-projects-images",
+          "type": "sub-panel",
+          "required": true,
+          "placement": "after-heading",
+          "section_heading": "### Your project's images",
+          "src_pattern": "assets/images/category-your-projects-images-panel.jpg",
+          "alt_pattern": "Your project's images",
+          "embed_style": "markdown",
+          "dimensions": {
+            "aspect_ratio": "16:9",
+            "width": 1376,
+            "height": 768,
+            "format": "JPEG"
+          }
+        }
+      ]
+    },
+    {
       "id": "plugin-readme-top-panel",
       "description": "Every plugin README.md under plugins/*/README.md must include a top-level titled banner immediately after its H1 heading, paired with an automatic 1280x640 OG social image in its assets/images directory.",
       "glob": "plugins/*/README.md",
-      "exclude": [
-        "plugins/dont-be-hitler/README.md",
-        "plugins/goal-compliant-task-queue/README.md"
-      ],
       "doc": "plugins/update-readme-images/config/rules/plugin-readme-panels.md",
       "panels": [
         {

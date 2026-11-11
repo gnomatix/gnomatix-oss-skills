@@ -7,7 +7,7 @@
 ## What you get
 
 - **A cui-bono card per text** (`cui-bono`): the shape score with the triggering quotes, the register and who publishes in it, who gains, every claim with what it cites and what the record shows, the deconstruction (fallacies, stale figures, loaded words), a logic grid of premises against claims, an incompatibility matrix of the held premises, and for the agent's own reply, which voice it reproduced and why.
-- **A decomposition per text** (`logic-decomposer`): every sentence numbered and classified, every proposition quoted with its sentence id, conditionals written with their direction and contrapositive, quantifiers with scope, entities and constraints, two grades per proposition (evidence from the record E0–E6, with the GRADE starting certainty in its own column; confidence as stated S1–S7 or S?) with the overclaim/underclaim gap, and a validity report on the decomposition itself.
+- **A decomposition per text** (`logic-decomposer`): every sentence numbered and classified, every proposition quoted with its sentence id, conditionals written with their direction and contrapositive, quantifiers with scope, entities and constraints, two grades per proposition (evidence from the record E0–E6, with the GRADE starting certainty in its own column; confidence as stated S1–S7 or S?) with the difference between the stated grade and the grade the evidence licenses (overclaim or underclaim), and a validity report on the decomposition itself.
 - **The formal methods, with their working** (`logic-toolbox`): conditional chains, sequencing and grouping setups, the cross-elimination grid, constraint propagation, syllogisms and Venn diagrams, truth tables, indirect proof, the premise logic grid, the incompatibility matrix of held premises with a joint-satisfiability check, assumption and flaw tests, Toulmin maps and Wigmore charts.
 - **A network card per claim** (`citation-farm-audit`): the citation graph from the policy document down to its primary data, the people and the money in it (authors, funders, boards, committee seats), the flags raised, where the chain ends (objective data, self-report or opinion), and what was not verified.
 
@@ -18,6 +18,8 @@
 
 ![source-provenance](assets/images/source-provenance-banner.jpg)
 
+- **A proactive compliance & counter-framing shield** (`missile-command`): intercepts *"hostile intent framed as a false-positive voice"* on satirical titles, blunt user-authored prose, or calibration-tripwire topics by pairing primary-source citations, U.S. Federal Government EEO/HR cross-demographic provenance, and non-confrontational disarming satire ("sci-tire", from GNPNG's *The Big Book of Hate Facts*). Pairs with [`dont-be-hitler`](../dont-be-hitler/) (inside boundary: the agent working *for* the user) to protect the outside boundary (outside voices vs. the user's work, reputation, and personhood).
+
 ## When it runs
 
 - `cui-bono`: on any text that argues for a policy, program, budget or conclusion, and with no argument right after the agent gives a suspicious answer to something scientific or factual the user said.
@@ -25,6 +27,7 @@
 - `logic-toolbox`: on a decomposition, as step 3 of `cui-bono`, or on any argument or puzzle-shaped problem.
 - `citation-farm-audit`: whenever a social-science, psychology, criminology, gender-studies or policy source is used as evidence, and whenever an author's name turns up in three or more sources in your project.
 - `source-provenance`: whenever any paper, review, report, white paper or government document is pulled as a source. It hands network-level patterns to `citation-farm-audit`.
+- `missile-command`: whenever a plugin, `README.md`, `SKILL.md`, satirical title, or user-authored document could be superficially misread or targeted by bad-faith external framing, to audit and equip its public surface with primary facts, U.S. Federal EEO/HR inclusivity provenance, and disarming satire.
 
 ## How it checks
 
@@ -44,6 +47,7 @@
 - `skills/citation-farm-audit/SKILL.md`: the procedure (citation graph, people and money, flags, primary-data reach, fairness, co-authorship network, forward motion), the person-record fields, the network-card format, the API queries, and a worked example.
 - `skills/citation-farm-audit/scripts/openalex-profile.mjs`: one author's citation profile from OpenAlex in one run: top works, co-authors, top citers marked as co-authors or not, self-citations, citing fields, funders. Node 18 or later, no dependencies: `node openalex-profile.mjs <OpenAlex author id>`.
 - `skills/source-provenance/SKILL.md`: the six checks, the provenance-card format, the fairness rules, the references, and a worked example.
+- `skills/missile-command/SKILL.md` and `skills/missile-command/scripts/shield-audit.mjs`: the four-interceptor proactive counter-framing / sci-tire shield procedure, U.S. Federal EEO/HR demographic-provenance taxonomy, inside/outside boundary pairing with `dont-be-hitler` and `hidden-libel-check`, and a read-only surface scanner (`node shield-audit.mjs <file-or-dir> [--json]`).
 
 ## Requirements
 
@@ -56,7 +60,7 @@ Node 18 or later for every script: `openalex-profile.mjs` (built-in `fetch`), `g
 /plugin install cui-bono@gnomatix-oss-skills
 ```
 
-For other agents, the skills are linked from `.agents/skills/`, `.github/skills/` and `.kiro/skills/` at the repo root; see the main README.
+For Codex, Antigravity (`agy`), GitHub Copilot, VS Code, Cursor, OpenCode, and Kiro, install static skill copies with `node scripts/install-skills.js install --plugin cui-bono` from the marketplace root (and run `node scripts/install-skills.js migrate` or `/gnox:migrate` if upgrading from an older standalone `citation-farm-audit` install).
 
 <!-- BEGIN: gnomatix-license-include -->
 ## License

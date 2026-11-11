@@ -26,9 +26,9 @@ The empirical anchor for the documented-fact / hypothetical-bad-value-judgment d
 
 ### 1B. Attitudinal-survey data on Black-American attitudes toward homosexuality
 
-Direct empirical documentation of the attitudinal-gap claim, using nationally-representative survey data.
+Direct empirical documentation of the claim that Black and White Americans differ in their attitudes toward homosexuality, using nationally-representative survey data.
 
-- **Sherkat, D. E., de Vries, K. M., & Creek, S.** (2010). Race, Religion, and Opposition to Same-Sex Marriage. *Social Science Quarterly*, 91(1), 80–98. DOI: 10.1111/j.1540-6237.2010.00682.x. Uses NORC General Social Survey data. Documents the Black-White attitudinal gap and identifies sectarian Protestant denomination + church attendance as the primary mediating factors.
+- **Sherkat, D. E., de Vries, K. M., & Creek, S.** (2010). Race, Religion, and Opposition to Same-Sex Marriage. *Social Science Quarterly*, 91(1), 80–98. DOI: 10.1111/j.1540-6237.2010.00682.x. Uses NORC General Social Survey data. Documents the difference between Black and White respondents' opposition to same-sex marriage and identifies sectarian Protestant denomination + church attendance as the primary mediating factors.
 
 - **Sherkat, D. E., Powell-Williams, M., Maddox, G., & de Vries, K. M.** (2011). Religion, politics, and support for same-sex marriage in the United States, 1988–2008. *Social Science Research*, 40(1), 167–180. Twenty-year GSS trend analysis.
 

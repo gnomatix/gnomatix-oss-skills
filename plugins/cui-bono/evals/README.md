@@ -53,7 +53,7 @@ Plugin arm only, one run per case, judge haiku (the default). Graders passed cou
 | 2026-11-09 | toolbox-on-decomposition | 0.1.19 | 1.00 | 12/12 | `2026-11-09T06-57-33-876Z` |
 | 2026-11-09 | network-card | 0.1.6 | 1.00 | 9/9 | `2026-11-09T03-07-53-997Z` |
 
-## Known skill gaps
+## Known skill-text failures
 
 Failures the graders caught that the skill text, not the harness, has to fix.
 

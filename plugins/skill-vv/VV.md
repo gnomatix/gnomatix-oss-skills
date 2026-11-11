@@ -1,6 +1,8 @@
 ---
 skill-vv: 1
 name: skill-vv
+authority: Brett Whitty
+review_status: APPROVED
 requirements:
   - kind: command
     name: node
@@ -12,6 +14,12 @@ requirements:
     why: reads and writes VV.md frontmatter
     install: mise use -g npm:js-yaml@4.1.0
     optional: false
+complements:
+  - plugin: gnox
+    when_installed: >-
+      Exposes /gnox:skill-vv and /gnox:skill-vv:bug-report routing alongside session-wide GNOMATIX
+      topology discovery.
+    when_absent: Runs standalone via /skill-vv, SessionStart/UserPromptSubmit hooks, and bin/skill-vv.js.
 procedures:
   - id: cli-suite
     summary: the CLI's automated tests pass
@@ -39,10 +47,10 @@ results:
     by: null
     evidence: null
     notes: >-
-      user-invoked /gnox:skill-vv in session 75792833: ran check, surfaced the report (satori
-      cold-read; skill-vv cli-suite and check-in-session; spank-dario seven procedures; gnox VV.md
-      unreadable), ran the spank-dario test suite and recorded five evidenced results into the
-      source VV.md with --into, and recorded this result
+      user-invoked /gnox:skill-vv: ran check, surfaced the report (satori cold-read; skill-vv
+      cli-suite and check-in-session; spank-dario seven procedures; gnox VV.md unreadable), ran the
+      spank-dario test suite and recorded five evidenced results into the source VV.md with --into,
+      and recorded this result
   - procedure: cli-suite
     model: claude-fable-5-1
     platform: claude-code/win32
@@ -57,6 +65,26 @@ results:
       sibling satori VV.md as ../satori/VV.md, a source-tree path that the cache layout
       (gnomatix-oss-skills/satori/<version>/) does not have; defect recorded in beads and
       dev/skill-vv/bugs/
+  - procedure: cli-suite
+    model: claude-opus-5-5
+    platform: claude-code/win32
+    result: pass
+    date: 2026-11-11
+    by: null
+    evidence: null
+    notes: >-
+      node --test test/skill-vv.test.js in the source tree at 874c189 on Windows 11, node v24.21.0:
+      14 pass, 0 fail
+  - procedure: cli-suite
+    model: gemini-4-carbon
+    platform: antigravity/win32
+    result: pass
+    date: 2026-11-11
+    by: agy-win11
+    evidence: null
+    notes: >-
+      node --test plugins/skill-vv/test/skill-vv.test.js on Windows 11: 16 pass, 0 fail including
+      marketplace VV.md validation and standalone/dovetailed complements resolution
 ---
 
 # skill-vv V&V

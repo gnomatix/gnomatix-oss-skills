@@ -1,7 +1,16 @@
 ---
 skill-vv: 1
 name: steering-audit-suite
+authority: Brett Whitty
+review_status: APPROVED
 requirements: []
+complements:
+  - plugin: skill-vv
+    when_installed: Pairs 15-check behavioral and portability audits of SKILL.md/CLAUDE.md files with VV.md execution records.
+    when_absent: Runs audit-rule, audit-skill, audit-workflow, audit-collection, and rule-audit standalone.
+  - plugin: hidden-libel-check
+    when_installed: Combines behavioral loophole/escape-hatch auditing with R0-R14 reputational discretion checks on authored docs.
+    when_absent: Delivers full structural, behavioral, and portability audit reports standalone.
 procedures:
   - id: self-audit
     summary: >-
@@ -104,7 +113,7 @@ results:
       codex exec 0.163.0 on Windows, scratch project with .agents/skills junctions: audited
       audit-rule/SKILL.md, read both installed exemplars in full and compared structure, classified
       the document as a SKILL, ran the checklist with line-referenced evidence, four substantive
-      gaps, no files changed
+      findings, no files changed
   - procedure: collection-refactor
     model: codex-default
     platform: codex/win32
@@ -116,6 +125,49 @@ results:
       codex exec 0.163.0 on Windows: inventory table of the three files with type and vendor, one
       merge candidate (release.md and shipping.md), per-document findings with checks 8 and 10,
       style.md kept separate, all files unchanged
+  - procedure: self-audit
+    model: claude-opus-5-5
+    platform: claude-code/linux
+    result: pass
+    date: 2026-11-11
+    by: null
+    evidence: null
+    notes: >-
+      isolated: claude -p --setting-sources project --plugin-dir plugins/steering-audit-suite
+      --model claude-opus-5-5 --allowedTools 'Read Glob Grep Skill', Claude Code 2.1.310 on srv
+      Linux; transcript shows Skill steering-audit-suite:audit-skill (the --plugin-dir copy) on
+      audit-rule/SKILL.md; report has stated intent, type SKILL with reason, two named exemplars
+      (engineering code-review, design accessibility-review), all 15 checks with findings or 'no
+      finding', Other Findings, Portability Findings, surface-vs-intent split, authorization note;
+      md5 5b649c5d unchanged, git status clean
+  - procedure: classify-and-route
+    model: claude-opus-5-5
+    platform: claude-code/linux
+    result: pass
+    date: 2026-11-11
+    by: null
+    evidence: null
+    notes: >-
+      isolated: claude -p --setting-sources project --plugin-dir plugins/steering-audit-suite
+      --model claude-opus-5-5, Claude Code 2.1.310 on srv Linux; 'Audit this: rules.md' (five
+      always-on rules, no frontmatter); transcript: Skill steering-audit-suite:steering-audit-suite
+      (the --plugin-dir copy), read doc-types.md, then Skill steering-audit-suite:audit-rule;
+      classified RULE with discriminators (every session, no phases, no trigger frontmatter, no
+      gates), 15 checks, no portability section, md5 c68bca15 unchanged
+  - procedure: collection-refactor
+    model: claude-opus-5-5
+    platform: claude-code/linux
+    result: pass
+    date: 2026-11-11
+    by: null
+    evidence: null
+    notes: >-
+      isolated: claude -p --setting-sources project --plugin-dir plugins/steering-audit-suite
+      --model claude-opus-5-5, Claude Code 2.1.310 on srv Linux; transcript shows Skill
+      steering-audit-suite:audit-collection (the --plugin-dir copy); Inventory table with all three
+      paths and types, per-document 15-check findings for each, 'Refactor: Merge' of release.md +
+      shipping.md with source, destination, reason, effect on invocation and risk; md5sums of all
+      three files unchanged
 ---
 
 # steering-audit-suite V&V

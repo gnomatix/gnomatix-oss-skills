@@ -11,6 +11,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const { discoverMarketplace } = require('./gnox-discovery');
 
 const STATE_DIR = path.join(os.homedir(), '.local', 'state', 'skill-vv');
 const RESULTS_FILE = path.join(STATE_DIR, 'results.jsonl');
@@ -151,6 +152,36 @@ function parseVv(text, file) {
   if (!Array.isArray(data.platforms)) problems.push('platforms must be a list');
   if (data.procedures !== undefined && !Array.isArray(data.procedures)) problems.push('procedures must be a list');
   if (data.results !== undefined && !Array.isArray(data.results)) problems.push('results must be a list');
+  if (Array.isArray(data.requirements)) {
+    for (const r of data.requirements) {
+      if (r && r.unlocks !== undefined && typeof r.unlocks !== 'string') {
+        problems.push('requirement unlocks must be a string');
+        break;
+      }
+    }
+  }
+  if (data.authority !== undefined && (typeof data.authority !== 'string' || !data.authority.trim())) {
+    problems.push('authority must be a non-empty string');
+  }
+  if (data.review_status !== undefined) {
+    const validReviewStatuses = ['APPROVED', 'PENDING', 'REQUIRES_REVISION', 'DRAFT'];
+    if (typeof data.review_status !== 'string' || !validReviewStatuses.includes(data.review_status)) {
+      problems.push(`review_status must be one of ${validReviewStatuses.join(', ')}`);
+    }
+  }
+  if (data.approved_versions !== undefined) {
+    const okScalar = data.approved_versions === null || typeof data.approved_versions === 'string';
+    const okList = Array.isArray(data.approved_versions) && data.approved_versions.every((v) => typeof v === 'string');
+    if (!okScalar && !okList) {
+      problems.push('approved_versions must be a string, list of strings, or null');
+    }
+  }
+  if (data.complements !== undefined) {
+    if (!Array.isArray(data.complements)) problems.push('complements must be a list');
+    else if (data.complements.some((c) => !c || typeof c.plugin !== 'string' || !c.plugin.trim())) {
+      problems.push('complements entries require a plugin name');
+    }
+  }
   if (problems.length) throw new Error(`${file}: ${problems.join('; ')}`);
   return { data, body: m[2] };
 }
@@ -223,9 +254,14 @@ function findVvFiles(root, depth) {
   return out;
 }
 
-function discover({ roots, env } = {}) {
+function discover({ roots, env, includeInstalled } = {}) {
   const e = env || process.env;
-  const all = [...claudeInstalledRoots(), ...(roots || []), ...String(e.SKILL_VV_ROOTS || '').split(path.delimiter).filter(Boolean)];
+  const useInstalled = includeInstalled !== false && e.SKILL_VV_NO_INSTALLED !== '1';
+  const all = [
+    ...(useInstalled ? claudeInstalledRoots() : []),
+    ...(roots || []),
+    ...String(e.SKILL_VV_ROOTS || '').split(path.delimiter).filter(Boolean),
+  ];
   const seen = new Set();
   const files = [];
   for (const r of all) {
@@ -274,12 +310,24 @@ function requirementMet(r, env) {
 
 // ---------- status ----------
 
-function vvStatus(vv, { model, platform, localResults, declined, env } = {}) {
+function vvStatus(vv, { model, platform, localResults, declined, env, knownPeers } = {}) {
   const name = vv.data.name;
   const dec = declined || {};
   const missing = vv.data.requirements
     .filter((r) => r && r.name && !dec[`${name}:${r.name}`] && !requirementMet(r, env))
     .map((r) => Object.assign({ kind: 'command', optional: false }, r));
+
+  const peerSet = knownPeers instanceof Set ? knownPeers : new Set();
+  const complements = (vv.data.complements || []).map((c) => {
+    const active = peerSet.has(c.plugin);
+    return {
+      plugin: c.plugin,
+      active,
+      mode: active ? 'dovetailed' : 'standalone',
+      when_installed: c.when_installed || '',
+      when_absent: c.when_absent || '',
+    };
+  });
 
   const results = (vv.data.results || []).map((r) => Object.assign({ name }, r))
     .concat((localResults || []).filter((r) => r && r.name === name));
@@ -296,7 +344,18 @@ function vvStatus(vv, { model, platform, localResults, declined, env } = {}) {
     };
   });
   const claimed = vv.data.platforms.includes(platform);
-  return { name, file: vv.file, missing, procedures, claimed, claimedPlatforms: vv.data.platforms };
+  return {
+    name,
+    file: vv.file,
+    authority: vv.data.authority || null,
+    reviewStatus: vv.data.review_status || 'APPROVED',
+    approvedVersions: vv.data.approved_versions !== undefined ? vv.data.approved_versions : ['*'],
+    missing,
+    complements,
+    procedures,
+    claimed,
+    claimedPlatforms: vv.data.platforms,
+  };
 }
 
 // ---------- per-project settings: <project>/.claude/skill-vv.local.md ----------
@@ -305,7 +364,7 @@ function vvStatus(vv, { model, platform, localResults, declined, env } = {}) {
 // enabled: true            # false turns skill-vv off for this project
 // agent: claude-code       # default agent when --agent is not given
 // roots: [./plugins]       # extra directories to scan, relative to the project
-// ignore: [satori]         # skills not to prompt for in this project
+// ignore: [example-local-skill] # skills not to prompt for in this project
 // ---
 
 const SETTINGS_DEFAULTS = { enabled: true, agent: null, roots: [], ignore: [] };
@@ -374,7 +433,7 @@ function loadSettings(projectDir) {
   return s;
 }
 
-function check({ model, agent, roots, env, projectDir } = {}) {
+function check({ model, agent, roots, env, projectDir, includeInstalled } = {}) {
   const settings = loadSettings(projectDir);
   const mdl = normalizeModel(model);
   const platform = platformKey(agent || settings.agent, env);
@@ -385,17 +444,35 @@ function check({ model, agent, roots, env, projectDir } = {}) {
   const errors = settings.errors.slice();
   const installed = new Set(claudeInstalledRoots().map((r) => path.resolve(r).toLowerCase()));
   const isInstalled = (f) => [...installed].some((r) => path.resolve(f).toLowerCase().startsWith(r + path.sep.toLowerCase()) || path.resolve(f).toLowerCase().startsWith(r + '/'));
-  for (const f of discover({ roots: (roots || []).concat(settings.roots), env })) {
+  const allRoots = (roots || []).concat(settings.roots);
+  const loadedVvs = [];
+  const e = env || process.env;
+  const homeOverride = e.HOME || e.USERPROFILE || os.homedir();
+  const topology = discoverMarketplace({
+    projectDir: projectDir || null,
+    env: e,
+    homeDir: homeOverride,
+    extraRoots: allRoots,
+  });
+  const knownPeers = new Set(topology.installedPlugins.concat(topology.installedSkills));
+
+  for (const f of discover({ roots: allRoots, env, includeInstalled })) {
     try {
       const vv = loadVv(f);
-      if (vv && !settings.ignore.includes(vv.data.name)) {
-        const st = vvStatus(vv, { model: mdl, platform, localResults, declined, env });
-        st.trusted = isInstalled(f);
-        skills.push(st);
+      if (vv) {
+        knownPeers.add(vv.data.name);
+        loadedVvs.push({ file: f, vv });
       }
     } catch (err) {
       if (err.code === 'SKILL_VV_NO_YAML') throw err;
       errors.push(err.message);
+    }
+  }
+  for (const { file: f, vv } of loadedVvs) {
+    if (!settings.ignore.includes(vv.data.name)) {
+      const st = vvStatus(vv, { model: mdl, platform, localResults, declined, env, knownPeers });
+      st.trusted = isInstalled(f);
+      skills.push(st);
     }
   }
   return { model: mdl, platform, skills, errors };
@@ -425,13 +502,15 @@ function formatReport(report, cliPath) {
     if (auto.length) {
       lines.push('Unmet requirements that mise installs. Install each now, without asking, then tell the user what you installed:');
       for (const r of auto) {
-        lines.push(`- ${r.kind} ${r.name}${r.optional ? ' (optional)' : ''}: ${r.why || ''} Run: ${r.install}`);
+        const unlocks = r.unlocks ? ` Unlocks: ${r.unlocks.replace(/\.?$/, '.')}` : '';
+        lines.push(`- ${r.kind} ${r.name}${r.optional ? ' (optional)' : ''}: ${r.why || ''}${unlocks} Run: ${r.install}`);
       }
     }
     if (ask.length) {
       lines.push('Unmet requirements. Ask whether to install or configure each:');
       for (const r of ask) {
-        lines.push(`- ${r.kind} ${r.name}${r.optional ? ' (optional)' : ''}: ${r.why || ''} How: ${r.install || r.configure || 'see the skill README'}`);
+        const unlocks = r.unlocks ? ` Unlocks: ${r.unlocks.replace(/\.?$/, '.')}` : '';
+        lines.push(`- ${r.kind} ${r.name}${r.optional ? ' (optional)' : ''}: ${r.why || ''}${unlocks} How: ${r.install || r.configure || 'see the skill README'}`);
       }
       lines.push(`  Declined: ${cli} record decline ${s.name} <requirement>`);
     }

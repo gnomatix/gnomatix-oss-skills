@@ -246,15 +246,74 @@ try {
     '--sync-og-images --regenerate stages candidate OG images into assets/drafts without overwriting existing ones'
   );
 
-  // 2f. Test --apply inserting top-level-panel into end-user README.md
+  // 2f. Test --apply inserting top-level-panel and ### category heading sub-panels into end-user README.md
+  const catPanelA = path.join(userRepo, 'assets', 'images', 'cat-alpha-panel.jpg');
+  const catPanelB = path.join(userRepo, 'assets', 'images', 'cat-beta-panel.jpg');
+  runMagick(['-size', '1376x768', 'xc:royalblue', catPanelA]);
+  runMagick(['-size', '1376x768', 'xc:seagreen', catPanelB]);
+  userCfg.rules.push({
+    id: 'category-subpanels',
+    glob: 'README.md',
+    doc: 'docs/readme-images/rules/readme-panels.md',
+    panels: [
+      {
+        id: 'cat-alpha',
+        type: 'sub-panel',
+        required: true,
+        placement: 'after-heading',
+        section_heading: '### Category Alpha',
+        src_pattern: 'assets/images/cat-alpha-panel.jpg',
+        alt_pattern: 'Category Alpha',
+        embed_style: 'markdown'
+      },
+      {
+        id: 'cat-beta',
+        type: 'sub-panel',
+        required: true,
+        placement: 'after-heading',
+        section_heading: '### Category Beta',
+        src_pattern: 'assets/images/cat-beta-panel.jpg',
+        alt_pattern: 'Category Beta',
+        embed_style: 'markdown'
+      }
+    ]
+  });
+  fs.writeFileSync(userCfgPath, JSON.stringify(userCfg, null, 2) + '\n', 'utf8');
+
   const userReadme = path.join(userRepo, 'README.md');
-  fs.writeFileSync(userReadme, '# acme-widgets\n\nA sample project.\n', 'utf8');
+  fs.writeFileSync(
+    userReadme,
+    [
+      '# acme-widgets',
+      '',
+      'A sample project.',
+      '',
+      '## Plugins',
+      '',
+      '### Category Alpha',
+      '',
+      '- `alpha`: First plugin.',
+      '',
+      '### Category Beta',
+      '',
+      '- `beta`: Second plugin.',
+      ''
+    ].join('\n'),
+    'utf8'
+  );
   const applyRes = runCli(['--apply', 'README.md', '--repo', userRepo, '--json']);
   check(applyRes.status === 0, '--apply README.md in end-user repo exits 0');
   const updatedMd = fs.readFileSync(userReadme, 'utf8');
   check(
-    updatedMd.includes('![acme-widgets](assets/images/acme-widgets-banner.jpg)'),
-    '--apply inserts top-level banner immediately after H1'
+    updatedMd.includes('![acme-widgets](assets/images/acme-widgets-banner.jpg)') &&
+      updatedMd.includes('### Category Alpha\n\n![Category Alpha](assets/images/cat-alpha-panel.jpg)\n\n- `alpha`') &&
+      updatedMd.includes('### Category Beta\n\n![Category Beta](assets/images/cat-beta-panel.jpg)\n\n- `beta`'),
+    '--apply inserts top-level banner after H1 and category sub-panels immediately under each ### heading'
+  );
+  const userAuditRes = runCli(['--audit', 'README.md', '--repo', userRepo, '--verify-images', '--json']);
+  check(
+    userAuditRes.status === 0 && JSON.parse(userAuditRes.stdout).passed === true,
+    '--audit --verify-images validates ### category heading sub-panels without cross-section bleed'
   );
 } catch (err) {
   check(false, `temp repo / draft / OG test threw error: ${err.message}`);
@@ -262,14 +321,14 @@ try {
   try { fs.rmSync(tmpDir, { recursive: true, force: true }); } catch { /* ignore */ }
 }
 
-// 3. Full audit of gnomatix-oss-skills itself (all 23 plugins, companion OG images, sub-panels, and Old Willy oval inset)
+// 3. Full audit of gnomatix-oss-skills itself (root hero + 7 category sub-panels + all 27 plugins + companion OG images + Old Willy oval inset)
 {
   const auditRes = runCli(['--audit', '--verify-images', '--json']);
   check(auditRes.status === 0, 'full gnomatix-oss-skills --audit --verify-images exits 0');
   if (auditRes.stdout) {
     const report = JSON.parse(auditRes.stdout);
     check(
-      report.passed === true && report.failures === 0 && report.panels_checked >= 32,
+      report.passed === true && report.failures === 0 && report.panels_checked >= 45,
       `all ${report.panels_checked} configured panels across ${report.files_checked} files in gnomatix-oss-skills passed verification`
     );
   }

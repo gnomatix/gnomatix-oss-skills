@@ -2,29 +2,41 @@
 
 ![skill-vv](assets/images/skill-vv-banner.jpg)
 
-Verification and validation for skills, across vendors.
+Verification, requirement readiness, and complementary topology status for skills, across vendors.
 
-Before a skill's first real use in a session, skill-vv does two things, in this order:
+Before a skill's first real use in a session, `skill-vv` does two things, in this order:
 
-1. It surfaces the skill's requirements, such as commands, environment variables or files, and offers to install or configure anything missing.
+1. It surfaces the skill's requirements (commands, environment variables, node modules, or files — distinguishing required baseline items from `optional: true` local tools and what extended capabilities each optional tool `unlocks`), and offers to install or configure anything missing.
 2. It checks whether the current model and platform have passed the skill's V&V procedures, and offers to run them if not.
 
-Results are recorded. A failure is fixed on the spot, or explained to you directly with the evidence and what blocks the fix.
+Results are recorded. A failure is fixed on the spot, or explained to you directly with the evidence and what blocks the fix. `skill-vv status <skill>` also resolves any `complements:` entries declared in a plugin's `VV.md`, reporting whether each companion plugin is active (`dovetailed`) or absent (`standalone`).
 
 ## How it works
 
-- **`VV.md`**, beside each skill, holds the state as YAML frontmatter: requirements, procedures, claimed platforms, and the verified results. The schema is in `skills/skill-vv/references/vv-schema.md`.
-- **`bin/skill-vv.js`** is a Node CLI that reads and records that state. Any vendor's agent can run it: `check`, `status`, `record result` and `record decline`.
-- **`hooks/session-start.js`** runs `check` at session start on Claude Code. Other vendors run the same `check` command from their instruction file.
+- **`VV.md`**, beside each skill, holds the state as YAML frontmatter: requirements (`optional: false` and `optional: true` + `unlocks`), complementary marketplace plugins (`complements`), procedures, claimed platforms, and verified results. The schema is in [`skills/skill-vv/references/vv-schema.md`](skills/skill-vv/references/vv-schema.md).
+- **`bin/skill-vv.js`** is a Node CLI that reads and records that state. Any vendor's agent can run it: `check`, `status`, `record result`, `record decline`, `bug locate`, and `bug log`.
+- **`hooks/session-start.js`** runs `check` at session start on Claude Code, and **`hooks/bug-prompt.js`** routes `/<skill> #bug <report>` prompts to `skill-vv:bug-report`. Other vendors run the same `check` command from their instruction file.
 - **`skills/skill-vv/SKILL.md`** is the workflow the agent follows.
 
 Results from installed copies go to `~/.local/state/skill-vv/`. Results kept with a skill are written back into its source `VV.md` with `record result ... --into <VV.md>`.
+
+## Stand-Alone & Complementary Plugins
+
+- **Stand-alone**: `skill-vv` installs and operates independently for any project or single installed skill that ships a `VV.md`.
+- **Complements when installed**:
+  - **Every marketplace plugin with a `VV.md`**: checks its required and optional local tools, surfaces `mise` / `deps/` installation commands, tracks per-model/platform V&V status, and resolves declared `complements:` pairings.
+  - **`gnox`**: pairs `skill-vv`'s per-skill readiness report with `/gnox:skill-vv` command routing and session-wide GNOMATIX namespacing.
+
+## Optional Local Tools
+
+- **Baseline requirements**: `node` (`mise use -g node@lts`) and `js-yaml` (`mise use -g npm:js-yaml@4.1.0`, resolved solely from trusted `mise` data directories).
+- **Optional developer tool**: `git-crypt` unlocks encrypted bug-report storage under `<repo>/dev/<skill>/bugs/` in GNOMATIX development checkouts; end-user installs log locally to `~/.local/dev/<skill>/bugs/` without `git-crypt`.
 
 ## Bug reports: `/<skill> #bug <report>`
 
 Typing `/<skill> #bug <what went wrong>` for any skill routes the prompt to `skill-vv:bug-report`, so the skill's normal task doesn't run. The bug-report skill works through the bug with you, reproducing it where it can, and records it. What happens next depends on who is reporting:
 
-- **Developer:** the skill sits in a git checkout outside the plugin cache.
+- **Developer:** the skill sits in a git checkout outside the plugin cache (opted into with `--developer`).
   - The record goes to `<repo>/dev/<skill>/bugs/`, which is git-crypt encrypted in GNOMATIX repos.
   - The bug is fixed then and there, or you're told directly what blocks the fix. An open bug gets a beads issue, not an entry in the skill's files.
   - A V&V failure is recorded in its `VV.md`.
@@ -41,23 +53,18 @@ The settings file is optional. It lives at `<project>/.claude/skill-vv.local.md`
 
 ```markdown
 ---
-enabled: true        # false turns skill-vv off in this project
-agent: claude-code   # default when --agent is not given
-roots: [./plugins]   # extra directories to scan, relative to the project
-ignore: [satori]     # skills not to prompt for in this project
+enabled: true                  # false turns skill-vv off in this project
+agent: claude-code             # default when --agent is not given
+roots: [./plugins]             # extra directories to scan, relative to the project
+ignore: [example-local-skill]  # skills not to prompt for in this project
 ---
 ```
 
 Keep it out of git with `.claude/*.local.md`. The CLI reads it from the current directory, or from `--project <dir>`. The hook reads it from the session's working directory. Invalid values are reported, and the defaults are used in their place.
 
-## Requirements
-
-- `node`: `mise use -g node@lts`
-- `js-yaml`: `mise use -g npm:js-yaml@4.1.0`
-
 ## Tests
 
-```
+```sh
 node --test plugins/skill-vv/test/skill-vv.test.js
 ```
 

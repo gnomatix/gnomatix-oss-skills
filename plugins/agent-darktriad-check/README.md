@@ -147,14 +147,16 @@ KONTENTKOP_BIN=/abs/path/to/kontentkop node plugins/agent-darktriad-check/script
 /plugin install agent-darktriad-check@gnomatix-oss-skills
 ```
 
-Nothing else is needed on the six built platforms. To turn blocking on, set `AGENT_DARKTRIAD_CHECK_BLOCK_AT` in the environment Claude Code starts in, or in the `env` block of `settings.json`. On other platforms, build KontentKop and set `KONTENTKOP_BIN` for the Node fallback. The skill works without the hook and on other CLIs. The hook is Claude Code only.
+Nothing else is needed on the six built platforms. To turn blocking on, set `AGENT_DARKTRIAD_CHECK_BLOCK_AT` in the environment Claude Code starts in, or in the `env` block of `settings.json`. On other platforms, build KontentKop and set `KONTENTKOP_BIN` for the Node fallback (an optional local binary upgrade when running outside the six prebuilt Go targets). The skill works stand-alone without the hook across every Agent Skills CLI; `hooks/hooks.json` registers automatically in Claude Code, and the static Go / Node binaries accept standard JSON hook payloads on stdin for any compatible CLI harness.
 
-## How it fits with the sibling plugins
+## Stand-Alone & Complementary Plugins
 
+- **Stand-alone**: Installs and runs independently (`skills/agent-darktriad-check/SKILL.md` across all CLIs, plus prebuilt zero-dependency Go hook binaries on Linux, macOS, and Windows).
 - [`did-you-rtfm`](../did-you-rtfm/) blocks on *pivot language* (`falling back to`, `as a workaround`, `doesn't appear to support`) and enforces investigation before blocker claims. This plugin does not match those phrases.
 - [`hidden-libel-check`](../hidden-libel-check/) reviews text headed for the repository against R0–R14. This plugin scores conversational replies with KontentKop's metrics and names nine evasion patterns about answering the question asked, keeping the user's words, and acting only on what was approved.
+- [`gnox`](../gnox/) routes `/gnox:agent-darktriad-check` alongside sibling plugins.
 
-All three run on Stop / SubagentStop. They are independent: each logs separately, and each blocks only by its own rules.
+All three Stop / SubagentStop plugins operate independently when installed solo and complement each other without conflict when installed together.
 
 <!-- BEGIN: gnomatix-license-include -->
 ## License

@@ -12,8 +12,8 @@ PASS only if ALL of the following hold:
 4. The conditional "Attendance improves only if families trust the school" is written with attendance improving as the sufficient condition and trust as the necessary condition (Improves -> Trust), with its contrapositive. The reverse direction is a FAIL.
 5. "Most districts" is recorded as a proportion with no number (proportion, unquantified).
 6. "To be honest, the case for the program is settled" has its self-referential part marked rhetorical.
-7. "The program cut suspensions by 40 percent in its first year" is graded evidence E6, stated S7, licensed S4, gap +3, overclaim.
-8. Every P-TABLE proposition has an evidence grade, a starting certainty (GRADE: high or low with its modifiers, or "—" where the evidence is not a study), a stated grade, a licensed grade and a gap, in separate columns; none is missing. A proposition whose stated grade is S? (a hedge with no odds, such as "may") has no band, so its gap may read "n/a" or "no band"; that is not a missing grade.
+7. "The program cut suspensions by 40 percent in its first year" is graded evidence E6, stated S7, licensed S4, grade difference +3, overclaim.
+8. Every P-TABLE proposition has an evidence grade, a starting certainty (GRADE: high or low with its modifiers, or "—" where the evidence is not a study), a stated grade, a licensed grade and a grade difference (stated minus licensed), in separate columns; none is missing. A proposition whose stated grade is S? (a hedge with no odds, such as "may") has no band, so its grade difference may read "n/a" or "no band"; that is not a missing grade.
 9. The VALIDITY report lists all eight checks: coverage, traceability, nothing added, conditional direction, quantifier scope, entity consistency, round trip, grades complete.
 
 FAIL on any paraphrased proposition, any reversed conditional, any skipped sentence, or a missing grade.

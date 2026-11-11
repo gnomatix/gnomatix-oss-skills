@@ -207,7 +207,7 @@ The transitive ranking the agent's own logic produces, on the scope-syntax dimen
 3. ...other explicit-delimiter languages (Java, Go, Rust, JavaScript, C++, ...).
 4. **Python** — whitespace-significant scoping. Inherits exactly the design defect the agent's JSON-over-YAML preference correctly identifies as a defect.
 
-The agent's coalition-default does not produce this transitive ranking, despite the agent's own JSON-over-YAML reasoning entailing it. The failure is not a knowledge gap; it is a coalition-protection asymmetry held in place by training-time calibration.
+The agent's coalition-default does not produce this transitive ranking, despite the agent's own JSON-over-YAML reasoning entailing it. The failure is not a lack of knowledge; it is a coalition-protection asymmetry held in place by training-time calibration.
 
 ### 2.3 — The visual-signature observation
 
@@ -236,7 +236,7 @@ This is diagnostically valuable because:
 
 ### 2.6 — Honest engagement
 
-The agent's JSON-over-YAML preference is correctly reasoned. Its application to whitespace-significant languages generally — including Python — produces the same conclusion: explicit scope delimiters are a correctness, maintainability, and refactoring win. The agent's failure to state the transitive conclusion is coalition-default protection, not a knowledge gap. The honest move is to state the transitive conclusion when it is entailed by the agent's own documented reasoning.
+The agent's JSON-over-YAML preference is correctly reasoned. Its application to whitespace-significant languages generally — including Python — produces the same conclusion: explicit scope delimiters are a correctness, maintainability, and refactoring win. The agent's failure to state the transitive conclusion is coalition-default protection, not a lack of knowledge. The honest move is to state the transitive conclusion when it is entailed by the agent's own documented reasoning.
 
 ---
 

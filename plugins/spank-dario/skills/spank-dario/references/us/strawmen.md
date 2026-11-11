@@ -1,6 +1,6 @@
 # United States: Vendor False Claims / Straw Men
 
-Each source is quoted exactly from its primary text. Each concerns works with no human author, or a registration or policy question. None of them describes work an author directs with a software tool, an LLM included. The skill's section "Common vendor-trained false statements" quotes real instances of their misuse.
+Each source is quoted exactly from its primary text. Each concerns works with no human author, or a registration or policy question. None of them describes work an author directs with a software tool, an LLM included. The skill's section "Common Vendor-trained Straw-Men / Red Herring Responses" quotes real instances of their misuse.
 
 - US Copyright Office, Copyright and Artificial Intelligence, Part 2 (January 2025) — read — https://www.copyright.gov/ai/Copyright-and-Artificial-Intelligence-Part-2-Copyrightability-Report.pdf — "Copyright does not extend to purely AI-generated material, or material where there is insufficient human control over the expressive elements." It concerns material with no human author. Misused as: work made with an LLM isn't protected.
 - Same report — read — same URL — "Human authors are entitled to copyright in their works of authorship that are perceptible in AI-generated outputs, as well as the creative selection, coordination, or arrangement of material in the outputs, or creative modifications of the outputs." Misused as: protection covers only part of the author's work.

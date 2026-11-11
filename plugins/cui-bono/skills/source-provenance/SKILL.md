@@ -20,7 +20,7 @@ Every body entry on the card (each fact, inference or absence it records) carrie
 - `inferred`: reasoned from observed facts; the reasoning is stated.
 - `not found`: searched for and absent; the places searched are listed.
 
-No body entry goes on the card untagged. A `not found` is a finding, not a gap to fill with a guess.
+No body entry goes on the card untagged. A `not found` is a finding, not a card entry to fill in with a guess.
 
 ### (a) Funding
 

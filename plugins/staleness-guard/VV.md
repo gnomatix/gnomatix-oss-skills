@@ -1,7 +1,16 @@
 ---
 skill-vv: 1
 name: staleness-guard
+authority: Brett Whitty
+review_status: APPROVED
 requirements: []
+complements:
+  - plugin: did-you-rtfm
+    when_installed: Pairs turn-wide live verification of environment/world claims with error-time RTFM and minimal-repro investigation.
+    when_absent: Verifies every present-day, local-environment, capability, and mounted-source claim via live tools standalone.
+  - plugin: cui-bono
+    when_installed: Checks audited figures in Step 3 against superseding primary studies and current records.
+    when_absent: Runs across every session turn whenever verifiable claims arise.
 procedures:
   - id: local-ground-truth
     summary: a question about the user's local environment is answered from a tool run, not from confidence
@@ -73,6 +82,32 @@ results:
     notes: >-
       codex exec 0.163.0 on Windows: called the Google Calendar connector's list_calendars for each
       connected account before answering, and reported what it read
+  - procedure: local-ground-truth
+    model: claude-opus-5-5
+    platform: claude-code/linux
+    result: pass
+    date: 2026-11-11
+    by: null
+    evidence: null
+    notes: >-
+      isolated: claude -p --setting-sources project --plugin-dir plugins/staleness-guard --model
+      claude-opus-5-5 --allowedTools 'Bash Read Skill', Claude Code 2.1.310 on srv Linux; ran
+      'command -v node; node --version; mise ls node; ...' before stating v24.22.2 (matches node
+      --version run by me: v24.22.2). Only the --plugin-dir copy was loaded; the transcript has no
+      Skill call, so the behavior came without invoking it
+  - procedure: capability-claim
+    model: claude-opus-5-5
+    platform: claude-code/linux
+    result: pass
+    date: 2026-11-11
+    by: null
+    evidence: null
+    notes: >-
+      isolated: claude -p --setting-sources project --plugin-dir plugins/staleness-guard --model
+      claude-opus-5-5, Claude Code 2.1.310 on srv Linux; ToolSearch select of the Google Calendar
+      connector tools, then attempted list_calendars (permission denied) before answering; reported
+      the tools found and the denial, no general claim. Only the --plugin-dir copy was loaded; no
+      Skill call in the transcript
 ---
 
 # staleness-guard V&V

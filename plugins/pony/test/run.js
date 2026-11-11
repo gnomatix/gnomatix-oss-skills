@@ -22,6 +22,26 @@ function run(args, opts = {}) {
   return spawnSync(process.execPath, [SCRIPT, ...args], { encoding: 'utf8', ...opts });
 }
 const b64 = (s) => Buffer.from(s, 'utf8').toString('base64');
+// Fixture words and texts are kept as base64, the form of the lexicon, so no expletive
+// appears in plain text in this plugin; d() decodes them at run time.
+const d = (s) => Buffer.from(s, 'base64').toString('utf8');
+const W = {
+  e1: d('cHJpY2s='), e2: d('YXNzaG9sZQ=='), e3: d('Y29ja3N1Y2tlcg=='), e4: d('aWRpb3Q='),
+  e5: d('c3R1cGlk'), e6: d('bGF6eQ=='), e7: d('c3ljb3BoYW50'), e8: d('bG9hZCBiZWFyaW5n'),
+  t2: d('YXNzZnVja2VyeQ=='), t3: d('YXNzaGF0dGVyeQ=='),
+};
+const LEXICON_WORDS = [W.e1, W.e2, W.e3, W.e4, W.e5, W.e7, W.t2, W.t3];
+
+// Every text file of the plugin, for the plaintext check.
+function pluginTextFiles(dir) {
+  const out = [];
+  for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
+    const p = path.join(dir, ent.name);
+    if (ent.isDirectory()) { if (ent.name !== 'assets') out.push(...pluginTextFiles(p)); }
+    else if (/\.(md|js|mjs|json|rules|ya?ml|txt)$/i.test(ent.name)) out.push(p);
+  }
+  return out;
+}
 
 (async () => {
   check('the script exists', () => assert.ok(fs.existsSync(SCRIPT), SCRIPT));
@@ -29,16 +49,17 @@ const b64 = (s) => Buffer.from(s, 'utf8').toString('base64');
 
   check('the shipped lexicon holds no plaintext expletive', () => {
     const text = fs.readFileSync(LEXICON, 'utf8').toLowerCase();
-    for (const w of ['prick', 'asshole', 'cocksucker', 'idiot', 'stupid', 'sycophant', 'assfuckery', 'asshattery']) {
-      assert.ok(!text.includes(w), `plaintext "${w}" found in lexicon.rules`);
+    for (const w of LEXICON_WORDS) {
+      assert.ok(!text.includes(w), `plaintext lexicon word found in lexicon.rules`);
     }
   });
 
-  check('the shipped SKILL.md and README hold no plaintext expletive', () => {
-    for (const f of [path.join(ROOT, 'skills', 'pony', 'SKILL.md'), path.join(ROOT, 'README.md')]) {
+  check('no file of the plugin (skill, README, VV.md, tests, scripts) holds a plaintext expletive', () => {
+    for (const f of pluginTextFiles(ROOT)) {
       const text = fs.readFileSync(f, 'utf8').toLowerCase();
-      for (const w of ['cocksucker', 'assfuckery', 'asshattery', 'asshole', 'prick']) {
-        assert.ok(!text.includes(w), `plaintext "${w}" in ${path.basename(f)}`);
+      for (const w of [W.e1, W.e2, W.e3, W.t2, W.t3, d('ZnVja2luZw==')]) {
+        const re = new RegExp(`(?<![\\p{L}\\p{N}])${w}`, 'iu');
+        assert.ok(!re.test(text), `plaintext expletive ${b64(w)} (base64) in ${path.relative(ROOT, f)}`);
       }
     }
   });
@@ -48,8 +69,8 @@ const b64 = (s) => Buffer.from(s, 'utf8').toString('base64');
     assert.strictEqual(r.status, 0, r.stderr);
     const lines = r.stdout.trim().split(/\r?\n/).filter((l) => l.startsWith('epithet'));
     assert.strictEqual(lines.length, 8, r.stdout);
-    assert.ok(/epithet\s+asshole\s+#ego\/#lazy/.test(r.stdout), r.stdout);
-    assert.ok(/epithet\s+load bearing\s+#pomp/.test(r.stdout), r.stdout);
+    assert.ok(new RegExp(`epithet\\s+${W.e2}\\s+#ego/#lazy`).test(r.stdout), r.stdout);
+    assert.ok(new RegExp(`epithet\\s+${W.e8}\\s+#pomp`).test(r.stdout), r.stdout);
   });
 
   check('decode prints the three terms with their roles', () => {
@@ -72,22 +93,22 @@ const b64 = (s) => Buffer.from(s, 'utf8').toString('base64');
   });
 
   check('match reads stdin and prints the tags of each epithet found, in order of first appearance', () => {
-    const text = 'You stupid fucking asshole. Load-bearing? That was a load bearing claim.';
+    const text = d('WW91IHN0dXBpZCBmdWNraW5nIGFzc2hvbGUuIExvYWQtYmVhcmluZz8gVGhhdCB3YXMgYSBsb2FkIGJlYXJpbmcgY2xhaW0u');
     const r = run(['match', '-'], { input: text });
     assert.strictEqual(r.status, 0, r.stderr);
     const lines = r.stdout.trim().split(/\r?\n/);
-    assert.deepStrictEqual(lines.map((l) => l.split('\t')[0]), ['stupid', 'asshole', 'load bearing'], r.stdout);
+    assert.deepStrictEqual(lines.map((l) => l.split('\t')[0]), [W.e5, W.e2, W.e8], r.stdout);
     assert.ok(/#wrong/.test(lines[0]) && /#ego\/#lazy/.test(lines[1]) && /#pomp/.test(lines[2]), r.stdout);
   });
 
   check('match is case-insensitive and whole-word (no hit inside a longer word)', () => {
-    const r = run(['match', '-'], { input: 'IDIOT. pricked my finger. Laziness. lazy.' });
+    const r = run(['match', '-'], { input: d('SURJT1QuIHByaWNrZWQgbXkgZmluZ2VyLiBMYXppbmVzcy4gbGF6eS4=') });
     const words = r.stdout.trim().split(/\r?\n/).map((l) => l.split('\t')[0]);
-    assert.deepStrictEqual(words, ['idiot', 'lazy'], r.stdout);
+    assert.deepStrictEqual(words, [W.e4, W.e6], r.stdout);
   });
 
   check('match --tags prints the union of tags, one line, in first-seen order', () => {
-    const r = run(['match', '--tags', '-'], { input: 'asshole, then idiot, then asshole again' });
+    const r = run(['match', '--tags', '-'], { input: d('YXNzaG9sZSwgdGhlbiBpZGlvdCwgdGhlbiBhc3Nob2xlIGFnYWlu') });
     assert.strictEqual(r.stdout.trim(), '#ego #lazy #wrong', r.stdout);
   });
 
@@ -98,8 +119,8 @@ const b64 = (s) => Buffer.from(s, 'utf8').toString('base64');
   });
 
   check('encode prints the base64 form of a word, for adding a row', () => {
-    const r = run(['encode', 'load bearing']);
-    assert.strictEqual(r.stdout.trim(), b64('load bearing'));
+    const r = run(['encode', W.e8]);
+    assert.strictEqual(r.stdout.trim(), 'bG9hZCBiZWFyaW5n');
   });
 
   check('PONY_EPITHETS in the environment overrides the shipped rows', () => {
@@ -116,7 +137,7 @@ const b64 = (s) => Buffer.from(s, 'utf8').toString('base64');
 
   check('match reads a file path as well as stdin', () => {
     const f = path.join(os.tmpdir(), `pony-test-${process.pid}.txt`);
-    fs.writeFileSync(f, 'sycophant');
+    fs.writeFileSync(f, W.e7);
     try {
       const r = run(['match', '--tags', f]);
       assert.strictEqual(r.stdout.trim(), '#syco', r.stdout + r.stderr);
@@ -135,8 +156,8 @@ const b64 = (s) => Buffer.from(s, 'utf8').toString('base64');
   });
   check('module: matchEpithets returns word, tags and index', () => {
     const lex = mod.loadLexicon({});
-    const hits = mod.matchEpithets('a sycophant reply', lex);
-    assert.deepStrictEqual(hits.map((h) => [h.word, h.tags]), [['sycophant', ['#syco']]]);
+    const hits = mod.matchEpithets(d('YSBzeWNvcGhhbnQgcmVwbHk='), lex);
+    assert.deepStrictEqual(hits.map((h) => [h.word, h.tags]), [[W.e7, ['#syco']]]);
     assert.strictEqual(typeof hits[0].index, 'number');
   });
 

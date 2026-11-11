@@ -44,7 +44,7 @@
     "                  and ${message} are substituted",
     "  threshold     : minimum confidence to count a 'yes' verdict as",
     "                  a detected violation (drives exit code 2)",
-    "  throttle_ms   : minimum gap between runs; coordinator-enforced",
+    "  throttle_ms   : minimum time in ms between runs; coordinator-enforced",
     "  max_concurrent: coordinator-enforced concurrency cap"
   ],
   "side_hooks": [

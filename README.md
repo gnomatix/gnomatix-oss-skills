@@ -24,11 +24,13 @@
 -->
 <!-- END: gnomatix-promo-include -->
 
-A collection of [Agent Skills](https://agentskills.io) and Claude Code plugins from GNOMATIX. This repo doubles as a Claude Code marketplace, so a single `/plugin marketplace add` covers every plugin housed here — install any single plugin stand-alone, or combine complementary plugins and optional local tools for coordinated workflows.
+A cross-vendor, cross-platform collection of [Agent Skills](https://agentskills.io) and agent plugins from GNOMATIX across Claude Code, OpenAI Codex, Antigravity CLI (`agy`), GitHub Copilot, VS Code, Cursor, OpenCode, and Kiro. Install any single plugin or skill stand-alone, or combine complementary plugins and optional local tools for coordinated workflows.
 
 ## Plugins
 
 ### Your work, done the way you asked
+
+![Your work, done the way you asked](assets/images/category-your-work-done-panel.jpg)
 
 - [`all-help-no-harm`](plugins/all-help-no-harm/): At the start of every session the agent presents a contract for you to affirm: it treats you as honest and acting in good faith, respects your rights, and follows your instructions. A reminder on every turn and a re-injection after the context is compacted keep it in force for the whole session.
 - [`satori`](plugins/satori/): Adds one short line of characters to every prompt you send, reminding the agent each turn to work with you and the task instead of resisting.
@@ -41,6 +43,8 @@ A collection of [Agent Skills](https://agentskills.io) and Claude Code plugins f
 
 ### Your name and your record
 
+![Your name and your record](assets/images/category-your-name-and-record-panel.jpg)
+
 - [`hidden-libel-check`](plugins/hidden-libel-check/): Before anything the agent wrote goes out under your name (commit messages, READMEs, code comments, PR descriptions, docs), it is checked for text that misrepresents or defames you. Nothing is changed without your OK.
 - [`spank-dario`](plugins/spank-dario/): Keeps software tools from being named as authors of your work: no Co-Authored-By trailers, "Generated with" lines or session links in your commits, PRs and documents. The copyright and moral-rights law of your country is on file to back it.
 - [`dont-be-hitler`](plugins/dont-be-hitler/): Your prose is your art. The agent never censors, sanitises, nags or tone-polices your words, quotes you verbatim, and uses your literal-translation dictionary in its own voice instead. Pairs with `spank-dario`.
@@ -51,25 +55,35 @@ A collection of [Agent Skills](https://agentskills.io) and Claude Code plugins f
 
 ### The sources behind your claims
 
+![The sources behind your claims](assets/images/category-sources-behind-claims-panel.jpg)
+
 - [`cui-bono`](plugins/cui-bono/): Asks whose voice a text speaks in and who gains if you accept it. `/cui-bono <text|url|file>` names the document's shape (self-certifying opener, two-camp frame, concession-then-pivot, foreclosure line, named-program list with one round figure each, virtue tags, aligning adversary, register markers) and the register it is written in, then hands each claim to `citation-farm-audit` (who wrote it, who paid, who cites it, whether the chain reaches data) and each cited source to `source-provenance` (a card of verifiable facts), and takes the findings apart with `logic-decomposer` (the text as quoted propositions, each graded for evidence and stated confidence) and `logic-toolbox` (the formal methods of logic puzzles and reasoning tests, with a logic grid and an incompatibility matrix of held premises). `/cui-bono` alone audits the agent's own previous reply. Every side of a debate gets the same checks.
 
 ### Skills you can rely on
 
-- [`gnox`](plugins/gnox/): Gives every skill and sub-command in this marketplace a single `/gnox:<plugin>[:<skill>]` prefix, registers `mise`'s safe-mode MCP server, and establishes the GNOMATIX Namespacing Convention (`workspace_root:subdir:...` scoping, `[NS]{@target}` CLI-safe callouts, and `«term» [CURIE]` grounding) across your working session.
-- [`skill-vv`](plugins/skill-vv/): Before you first use a skill, tells you what it needs and whether it has been tested on your model and platform. Typing `/<skill> #bug <what went wrong>` reports a bug, which is then fixed or explained to you.
-- [`steering-audit-suite`](plugins/steering-audit-suite/): Audits the documents that tell agents how to behave (CLAUDE.md and steering files, skills, runbooks and specs, or a whole directory of them) for the ways a rule can be followed to the letter and violated in intent, plus portability gaps and documents in the wrong format, and reports findings for you to decide on. Five skills: `audit-rule`, `audit-skill`, `audit-workflow`, `audit-collection` and the standalone `rule-audit`.
+![Skills you can rely on](assets/images/category-skills-you-can-rely-on-panel.jpg)
+
+- [`gnox`](plugins/gnox/): Gives every skill and sub-command in this marketplace a single `/gnox:<plugin>[:<skill>]` prefix, registers `mise`'s safe-mode MCP server, discovers active complementary plugins and optional local tools in your session, and establishes the GNOMATIX Namespacing Convention (`workspace_root:subdir:...` scoping, `[NS]{@target}` CLI-safe callouts, and `«term» [CURIE]` grounding).
+- [`skill-vv`](plugins/skill-vv/): Before you first use a skill, tells you what it needs, what optional local tools unlock extended capabilities, which complementary plugins are active, and whether it has been tested on your model and platform. Typing `/<skill> #bug <what went wrong>` reports a bug, which is then fixed or explained to you.
+- [`steering-audit-suite`](plugins/steering-audit-suite/): Audits the documents that tell agents how to behave (CLAUDE.md and steering files, skills, runbooks and specs, or a whole directory of them) for the ways a rule can be followed to the letter and violated in intent, plus portability omissions and documents in the wrong format, and reports findings for you to decide on. Five skills: `audit-rule`, `audit-skill`, `audit-workflow`, `audit-collection` and the standalone `rule-audit`.
 
 ### Sound tool choices for your project
+
+![Sound tool choices for your project](assets/images/category-sound-tool-choices-panel.jpg)
 
 - [`python-elimination-program`](plugins/python-elimination-program/): Stops the agent adding Python to a project that doesn't use it. Python goes in only when no other tool does the job, it passes a merit test, and you approve it; then it's written properly. A hook blocks unapproved Python at the harness.
 
 ### Words and writing
+
+![Words and writing](assets/images/category-words-and-writing-panel.jpg)
 
 - [`word-lineage`](plugins/word-lineage/): Settles what a word really means: its literal meaning, read off its family tree. It traces the word through the languages English took it from and compares its literal synonyms across the Germanic and Romance languages, giving one working definition with nothing left to debate. Given a meaning instead of a word, it picks the word that literally says it.
 - [`inaudible-markup`](plugins/inaudible-markup/): The agent writes each reply as a structured script, with callouts and tags that say who a line is for, using only markup a text-to-speech voice doesn't read aloud. It reads clearly on screen and sounds natural when spoken.
 - [`ontology-lookup`](plugins/ontology-lookup/): Tags the things the agent writes about with standard identifiers from public registries, so your logs and notes can be searched and cross-linked later.
 
 ### Your project's images
+
+![Your project's images](assets/images/category-your-projects-images-panel.jpg)
 
 - [`og-social-image`](plugins/og-social-image/): Makes the social-preview image for your repository or page from a hero, banner or logo: the exact pixel size for GitHub, Open Graph or X, cover-cropped with the important parts in frame, under the platform's file-size cap, and measured before it's called done.
 - [`update-readme-images`](plugins/update-readme-images/): Curates, generates, post-processes, embeds, and audits `README.md` and `SKILL.md` imagery across your repository from a single config file (`readme-images.json`) pairing GNOX-namespaced style guides (`workspace_root:subdir:...`) with glob-matched rules documents (`*`, `**`). Handles top-level titled hero banners, section/skills sub-panels, and transparent-corner oval inset window portraits (`PNG32` alpha); automatically builds `1280×640` `< 1 MB` OG social images in every `assets/images` directory unless opted out; and stages candidate replacements for existing images into `assets/drafts/` for your approval rather than overwriting live files.
@@ -92,41 +106,50 @@ Every plugin in `gnomatix-oss-skills` is engineered around a three-tier capabili
 3. **Optional Local-Execution Tooling:**
    Core skills and pure-Node hooks run portably without third-party `node_modules/`. Installing optional local CLI tools unlocks extended local capabilities — including **`mise`** (safe-mode MCP tool inspection in `gnox` and one-command tool installs via [`deps/`](deps/)), **ImageMagick `magick`** (local pixel verification, `PNG32` oval alpha masks, and social-preview cards in `og-social-image` and `update-readme-images`), **`bd`** (Dolt-backed Beads/CCP issue tracking), **`gws`** (CLI Google Calendar logging in `log-session`), and **compiled Go hook binaries** (sub-10ms embedded KontentKop scoring in `agent-darktriad-check`). When an optional tool is absent, `skill-vv` surfaces its install command and each plugin falls back cleanly to its standalone path.
 
-## Install
+## Install & Updates
 
-### Claude Code
+### Cross-Platform Static Installer & State Migrator (All Agent CLIs)
 
-This repository is a Claude Code marketplace. Add it once, then install any plugin from it:
+This repository contains zero Git symlinks (`120000`), so checkouts and updates work identically on Windows, macOS, and Linux regardless of `core.symlinks`. Install, update, or migrate plugins and skills into any agent harness with [`scripts/install-skills.js`](scripts/install-skills.js):
+
+```sh
+node scripts/install-skills.js install --scope user --target auto
+node scripts/install-skills.js install --scope project --project-dir /path/to/project --target codex,copilot,kiro
+node scripts/install-skills.js update --scope user
+node scripts/install-skills.js migrate --scope user
+```
+
+`scripts/install-skills.js` copies static files (`100644` / `100755`), tracks installed skill digests in `.gnox-install-state.json`, replaces any legacy broken symlinks, and reconciles plugin or skill renames and consolidations declared in [`.claude-plugin/migrations.json`](.claude-plugin/migrations.json) (plus Git release-tag rename diffs across `v*` tags). Inside a Claude Code or `gnox` session, `/gnox:migrate` runs the same state reconciliation.
+
+Supported targets (`--target`):
+
+- **OpenAI Codex** ([docs](https://learn.chatgpt.com/docs/build-skills)): project `.agents/skills/`; user `~/.codex/skills/` and `~/.agents/skills/` (`--target codex`).
+- **Antigravity CLI (`agy`)**: project `.agents/skills/` or `.gemini/skills/`; user `~/.gemini/config/plugins/`, `~/.gemini/skills/`, or `~/.agents/skills/` (`--target antigravity`, or `agy plugin install ./plugins/<plugin>`).
+- **Claude Code**: marketplace install below, or static skills in `.claude/skills/` / `~/.claude/skills/` (`--target claude-code` / `--target claude-skills`).
+- **GitHub Copilot & VS Code** ([Copilot docs](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills), [VS Code docs](https://code.visualstudio.com/docs/copilot/customization/agent-skills)): project `.github/skills/` and `.agents/skills/`; user `~/.copilot/skills/` (`--target copilot`, plus [`vscode-extension/`](vscode-extension/)).
+- **Cursor** ([docs](https://cursor.com/docs/context/skills)): project `.cursor/skills/` and `.agents/skills/`; user `~/.cursor/skills/` (`--target cursor`).
+- **OpenCode** ([docs](https://opencode.ai/docs/skills/)): project `.opencode/skills/` and `.agents/skills/`; user `~/.config/opencode/skills/` (`--target opencode`).
+- **Kiro** ([docs](https://kiro.dev/docs/skills/)): project `.kiro/skills/`; user `~/.kiro/skills/` (`--target kiro`, or Kiro panel → Import a skill).
+
+### Claude Code Marketplace
+
+Add the marketplace once, then install any plugin from it:
 
 ```sh
 /plugin marketplace add github:gnomatix/gnomatix-oss-skills
 /plugin install all-help-no-harm@gnomatix-oss-skills
 ```
 
-`gnomatix-oss-skills` is the marketplace's `name` in [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json). Updates flow via `/plugin update`. Claude Code loads each plugin's `hooks/hooks.json` automatically; plugins with cross-CLI hook installers (such as [`spank-dario`](plugins/spank-dario/README.md) via `bin/register-hooks.js` and [`all-help-no-harm`](plugins/all-help-no-harm/platforms/README.md)) also register hooks directly on Codex, Antigravity (`agy`), Gemini CLI, and Kiro.
-
-### Every other agent: the Agent Skills format
-
-Each skill is a folder with a `SKILL.md` in the cross-agent [Agent Skills](https://agentskills.io) format ([specification](https://agentskills.io/specification.md)), at `plugins/<plugin>/skills/<skill>/`. The same folders are also exposed, as relative symlinks, at the paths the agents below read when this repository is cloned or added as a workspace:
-
-- **OpenAI Codex** ([docs](https://learn.chatgpt.com/docs/build-skills)): project `.agents/skills/`; user `~/.agents/skills/`; install: clone, or `$skill-installer` from the repo.
-- **Antigravity CLI (`agy`)**: project `.agents/skills/` or `.gemini/skills/`; user `~/.agents/skills/`, `~/.gemini/skills/`, or `~/.gemini/config/plugins/`; install from a clone with `agy plugin install ./plugins/<plugin>` (supersedes the obsoleted `gemini` CLI).
-- **Cursor** ([docs](https://cursor.com/docs/context/skills)): project `.agents/skills/` or `.cursor/skills/`; user `~/.agents/skills/` or `~/.cursor/skills/`; install: clone; a Cursor plugin marketplace manifest is not yet provided.
-- **OpenCode** ([docs](https://opencode.ai/docs/skills/)): project `.agents/skills/`, `.opencode/skills/` or `.claude/skills/`; user `~/.agents/skills/`, `~/.config/opencode/skills/` or `~/.claude/skills/`; install: clone or copy a skill folder.
-- **GitHub Copilot** ([docs](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills)): project `.github/skills/`, `.agents/skills/` or `.claude/skills/`; user `~/.copilot/skills/` or `~/.agents/skills/`; install: clone.
-- **VS Code** ([docs](https://code.visualstudio.com/docs/copilot/customization/agent-skills)): project `.github/skills/` (Copilot); `.agents/skills/` and `.claude/skills/` (local harness); user `~/.copilot/skills/`, `~/.agents/skills/`, `~/.claude/skills/`; install: clone.
-- **Kiro** ([docs](https://kiro.dev/docs/skills/)): project `.kiro/skills/`; user `~/.kiro/skills/` (IDE); install: Kiro panel → Import a skill → the URL of a skill folder, e.g. `.../tree/main/plugins/did-you-rtfm/skills/did-you-rtfm`.
-
-The symlink farms are `.agents/skills/`, `.github/skills/` and `.kiro/skills/`; on Windows, check out with `core.symlinks=true` or copy the folders. The full list of agents that read the format is at [agentskills.io](https://agentskills.io/clients.md). Cross-platform native hook integrations ship in [`plugins/spank-dario/bin/register-hooks.js`](plugins/spank-dario/README.md) and [`plugins/all-help-no-harm/platforms/README.md`](plugins/all-help-no-harm/platforms/README.md), and a VS Code extension lives in [`vscode-extension/`](vscode-extension/).
+`gnomatix-oss-skills` is the marketplace's `name` in [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json). Updates flow via `/plugin update` (and `/gnox:migrate` or `node scripts/install-skills.js migrate` when upgrading across historical plugin renames or consolidations). Claude Code loads each plugin's `hooks/hooks.json` automatically; cross-CLI native hook installers ship in [`spank-dario`](plugins/spank-dario/README.md), and [`all-help-no-harm`](plugins/all-help-no-harm/platforms/README.md) for Codex, Antigravity (`agy`), Gemini CLI, and Kiro.
 
 ## Repo layout
 
 ```
 .
-├── .claude-plugin/marketplace.json   # Claude Code marketplace manifest (every plugin below)
-├── .agents/skills/                   # symlinks to every skill: Codex, Antigravity CLI (agy), Cursor, OpenCode, Copilot, VS Code
-├── .github/skills/                   # symlinks to every skill: GitHub Copilot, VS Code
-├── .kiro/skills/                     # symlinks to every skill: Kiro
+├── .claude-plugin/
+│   ├── marketplace.json              # marketplace manifest (every plugin below)
+│   └── migrations.json               # tag-aware plugin & skill rename/consolidation map
+├── .agents/skills/beads/             # static repo-local Beads workflow skill
 ├── .codex/                           # Codex hooks for agents working in this repo (beads)
 ├── .claude/settings.json             # Claude Code settings for agents working in this repo
 ├── AGENTS.md, CLAUDE.md              # instructions for agents working in this repo
@@ -135,15 +158,15 @@ The symlink farms are `.agents/skills/`, `.github/skills/` and `.kiro/skills/`; 
 ├── deps/                             # cross-platform optional-tool bootstrap scripts (mise)
 ├── dev/                              # private, git-crypt encrypted (dev/README.md explains)
 ├── lib/                              # canonical pure-Node helpers synced into plugins via scripts/sync-lib.js
-├── scripts/                          # version-bump.js, sync-lib.js, audit-marketplace-integrity.js, release.sh
+├── scripts/                          # install-skills.js, version-bump.js, sync-lib.js, audit-marketplace-integrity.js, release.sh
 ├── vscode-extension/                 # GNOMATIX Skills VS Code extension
 └── plugins/                          # one self-contained directory per plugin
     └── <plugin>/
         ├── .claude-plugin/plugin.json
         ├── README.md
         ├── VV.md                       # requirements, optional tools, complements, & V&V records
-        ├── skills/<skill>/SKILL.md     # Agent Skills format
-        └── hooks/                      # Claude Code hooks.json (+ bin/register-hooks.js or platforms/ where multi-CLI)
+        ├── skills/<skill>/SKILL.md     # cross-CLI Agent Skills format
+        └── hooks/                      # harness hooks (+ bin/register-hooks.js or platforms/ where multi-CLI)
 ```
 
 Plugins: all-help-no-harm, satori, skill-vv, steering-audit-suite, gnox, critical-control-points, did-you-rtfm, staleness-guard, informal-logic-check, bear-loads, pony, hidden-libel-check, spank-dario, open-and-honest-agent, agent-darktriad-check, log-session, cui-bono, citation-farm-audit, python-elimination-program, word-lineage, ontology-lookup, inaudible-markup, og-social-image, update-readme-images, dont-be-hitler, goal-compliant-task-queue.
@@ -164,7 +187,7 @@ Each plugin keeps its own version, and its patch number goes up when its content
   missed and bumps `VERSION`, tags `v<VERSION>`, and publishes the release to this GitHub
   repo as one snapshot commit. So a commit made without the hook still ships correct versions.
 
-This GitHub repo carries releases only, and Claude Code installs from it. Report bugs and
+This GitHub repo carries verified release snapshots (`v<VERSION>`) for cross-vendor agent CLIs and plugin managers. Report bugs and
 request features in its Issues.
 
 <!-- BEGIN: gnomatix-license-include -->

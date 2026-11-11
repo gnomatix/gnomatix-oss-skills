@@ -162,7 +162,7 @@ export function skeleton(text) {
     const ind = findIndicators(s.text);
     if (ind.length) conditionals.push({ id: '', sentence: s.id, quoted: quoted(s.text), indicators: ind, form: '', contrapositive: '', kind: '' });
   }
-  const grades = sentences.map((s) => ({ id: '', proposition: quoted(s.text), evidence: '', certainty: '', basisCited: '', stated: '', markers: '', licensed: '', gap: '', verdict: '' }));
+  const grades = sentences.map((s) => ({ id: '', proposition: quoted(s.text), evidence: '', certainty: '', basisCited: '', stated: '', markers: '', licensed: '', gradeDifference: '', verdict: '' }));
   const coverage = `${sentences.length} sentence${sentences.length === 1 ? '' : 's'}, 0 dispositions`;
   const checks = CHECKS.map((name) => ({ name, value: name === 'coverage' ? coverage : '' }));
   return { sentences, ptable, conditionals, grades, validity: { coverage, checks } };
@@ -215,9 +215,9 @@ export function render(sk, wrap = 0) {
   ));
   out.push('', 'GRADES');
   out.push(...table(
-    ['id', 'proposition (quoted)', 'evidence', 'certainty', 'basis cited', 'stated', 'markers', 'licensed', 'gap', 'verdict'],
-    sk.grades.map((g) => [g.id, g.proposition, g.evidence, g.certainty, g.basisCited, g.stated, g.markers, g.licensed, g.gap, g.verdict]),
-    [3, 33, 8, 22, 20, 6, 17, 8, 4, 7], [1], wrap,
+    ['id', 'proposition (quoted)', 'evidence', 'certainty', 'basis cited', 'stated', 'markers', 'licensed', 'grade difference', 'verdict'],
+    sk.grades.map((g) => [g.id, g.proposition, g.evidence, g.certainty, g.basisCited, g.stated, g.markers, g.licensed, g.gradeDifference, g.verdict]),
+    [3, 33, 8, 22, 20, 6, 17, 8, 16, 7], [1], wrap,
   ));
   out.push('', 'VALIDITY');
   for (const c of sk.validity.checks) out.push(`${c.name}:${c.value ? ` ${c.value}` : ''}`);

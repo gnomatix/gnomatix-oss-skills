@@ -33,7 +33,7 @@
 ## Install
 
 - Claude Code: `/plugin install informal-logic-check@gnomatix-oss-skills`, then `/informal-logic-check` or `/gnox:informal-logic-check`. The skill loads through its description on each platform; `VV.md` records where that has been verified.
-- Every other agent: the skill folder `plugins/informal-logic-check/skills/informal-logic-check/` is in the Agent Skills format and is linked from `.agents/skills/` and `.kiro/skills/` at the root of this repository.
+- Every other agent: install the static Agent Skills folder (`plugins/informal-logic-check/skills/informal-logic-check/`) with `node scripts/install-skills.js install --plugin informal-logic-check` from the marketplace root (supports Codex, Antigravity `agy`, GitHub Copilot, VS Code, Cursor, OpenCode, and Kiro).
 
 ## Hooks
 

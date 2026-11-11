@@ -29,3 +29,11 @@ Statute: Code de la propriété intellectuelle (CPI). legifrance.gouv.fr blocks 
 ## Sources
 
 - Légifrance blocks automated loading (Cloudflare bot check). Légifrance text was read in fragments of at most 125 characters, joined, and cross-checked against the codes.droit.org mirror.
+
+## Vendor liability
+
+Source: the codes.droit.org PDF of the CPI (https://codes.droit.org/PDF/Code%20de%20la%20propri%C3%A9t%C3%A9%20intellectuelle.pdf, a reproduction of Légifrance data, not an official site), text extracted and read 2026-11-10; every quote below matched character for character in that text. The Code civil's contract and tort liability articles were not fetched.
+
+- L. 335-3 para. 1 — read 2026-11-10 — same PDF — "Est également un délit de contrefaçon toute reproduction, représentation ou diffusion, par quelque moyen que ce soit, d'une oeuvre de l'esprit en violation des droits de l'auteur, tels qu'ils sont définis et réglementés par la loi."
+- L. 331-1-3 para. 1 — read 2026-11-10 — same PDF — "Pour fixer les dommages et intérêts, la juridiction prend en considération distinctement : 1° Les conséquences économiques négatives de l'atteinte aux droits, dont le manque à gagner et la perte subis par la partie lésée ; 2° Le préjudice moral causé à cette dernière ; 3° Et les bénéfices réalisés par l'auteur de l'atteinte aux droits"
+- L. 331-1-3 para. 2 — read 2026-11-10 — same PDF — "Toutefois, la juridiction peut, à titre d'alternative et sur demande de la partie lésée, allouer à titre de dommages et intérêts une somme forfaitaire. Cette somme est supérieure au montant des redevances ou droits qui auraient été dus si l'auteur de l'atteinte avait demandé l'autorisation d'utiliser le droit auquel il a porté atteinte. Cette somme n'est pas exclusive de l'indemnisation du préjudice moral causé à la partie lésée."

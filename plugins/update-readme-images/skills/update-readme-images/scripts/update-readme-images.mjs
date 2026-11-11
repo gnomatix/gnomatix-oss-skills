@@ -1373,21 +1373,49 @@ function checkMarkdownPlacement(markdownText, panel) {
     if (secIdx < 0) {
       return { embedded: true, placement_ok: false, reason: `Target section '${panel.section_heading}' not found` };
     }
+    const hMatch = /^(#{1,6})\s+/.exec(panel.section_heading.trim());
+    const hLevel = hMatch ? hMatch[1].length : 2;
+    const nextSecRe = new RegExp(`^#{1,${hLevel}}\\s+\\S`);
     let nextSecIdx = lines.length;
     for (let i = secIdx + 1; i < lines.length; i += 1) {
-      if (/^##\s+\S/.test(lines[i])) {
+      if (nextSecRe.test(lines[i])) {
         nextSecIdx = i;
         break;
       }
     }
-    const sectionSlice = lines.slice(secIdx, nextSecIdx).join('\n');
-    const ok = anyEmbedRe.test(sectionSlice);
+    const sectionLines = lines.slice(secIdx, nextSecIdx);
+    const sectionSlice = sectionLines.join('\n');
+    if (!anyEmbedRe.test(sectionSlice)) {
+      return {
+        embedded: true,
+        placement_ok: false,
+        reason: `Image '${panel.resolved_src}' is not inside section '${panel.section_heading}'`
+      };
+    }
+    if (panel.placement === 'after-heading') {
+      let firstBodyBlockIdx = sectionLines.length;
+      for (let j = 1; j < sectionLines.length; j += 1) {
+        const t = sectionLines[j].trim();
+        if (!t) continue;
+        if (/^(?:[-*+]\s|\d+\.\s|\||```|#{1,6}\s)/.test(t)) {
+          firstBodyBlockIdx = j;
+          break;
+        }
+      }
+      const headWindow = sectionLines.slice(0, firstBodyBlockIdx).join('\n');
+      const headOk = anyEmbedRe.test(headWindow);
+      return {
+        embedded: true,
+        placement_ok: headOk,
+        reason: headOk
+          ? `Placed immediately after heading '${panel.section_heading}'`
+          : `Image '${panel.resolved_src}' is inside '${panel.section_heading}', but not immediately after the heading`
+      };
+    }
     return {
       embedded: true,
-      placement_ok: ok,
-      reason: ok
-        ? `Placed inside section '${panel.section_heading}' (${panel.placement})`
-        : `Image '${panel.resolved_src}' is not inside section '${panel.section_heading}'`
+      placement_ok: true,
+      reason: `Placed inside section '${panel.section_heading}' (${panel.placement})`
     };
   }
 
@@ -1591,9 +1619,12 @@ export function applyPanelsToFile(repoRoot, config, relFile) {
         const secIdx = lines.findIndex((l) => l.trim().toLowerCase() === panel.section_heading.trim().toLowerCase());
         if (secIdx < 0) continue;
 
+        const hMatch = /^(#{1,6})\s+/.exec(panel.section_heading.trim());
+        const hLevel = hMatch ? hMatch[1].length : 2;
+        const nextSecRe = new RegExp(`^#{1,${hLevel}}\\s+\\S`);
         let nextSecIdx = lines.length;
         for (let i = secIdx + 1; i < lines.length; i += 1) {
-          if (/^##\s+\S/.test(lines[i])) {
+          if (nextSecRe.test(lines[i])) {
             nextSecIdx = i;
             break;
           }

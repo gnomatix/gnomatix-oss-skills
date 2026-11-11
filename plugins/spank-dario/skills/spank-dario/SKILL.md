@@ -15,6 +15,8 @@ The skill activates the reference files that apply to the user, the platform and
   - `countries`: ISO 3166-1 alpha-2 codes of every jurisdiction that applies, primary first
   - `platform`: `claude-code`, `codex`, `gemini-cli`, `antigravity` or `kiro`
   - `model_vendors`: vendors of the models available in sessions
+  - `hourly_rate` and `currency`: the user's rate, a number or `[min, max]`, for the estimate
+  - `incident_minutes`: the user's time lost per incident, in minutes, by type (`attribution`, `refusal`, `misrepresentation`), for incidents logged without `--minutes`
 
   `settings.example.md` is a template. js-yaml reads the config: `mise use -g npm:js-yaml@4.1.0`.
 - **Activate.** Run `node bin/activate.js` when the skill is installed, when the config changes, and when the skill runs. The first session after install prompts for it through the session-start hook. It selects the files, writes `~/.local/state/spank-dario/clarification.md` (or under `$XDG_STATE_HOME`), and stores the same text as a beads memory with `bd remember`, key `spank-dario-clarification`, in the beads store `bd` resolves from the working directory. It reports whether the memory was stored. If `bd` isn't installed, the clarification file still holds the text.
@@ -24,13 +26,13 @@ The skill activates the reference files that apply to the user, the platform and
   - Claude Code reads `hooks/hooks.json` from the plugin.
   - For Codex, Gemini CLI, Antigravity and Kiro, run `node bin/register-hooks.js --platform <codex|gemini-cli|antigravity|kiro>` to see the entry, and add `--write` at install to add it to that CLI's hook file. For Kiro IDE, add `--workspace <dir>` to register in that workspace's `.kiro/hooks/`. Kiro IDE runs workspace hooks only in a trusted workspace, with the user signed in (confirmed 2026-11-04 on 1.4.86). It saves a `.bak` copy first and keeps every other entry.
   - Codex runs a new hook only after the user trusts it in `/hooks`, and Gemini CLI warns before a new hook's first run.
-- **Read the active files.** Read every file the activation lists. Report each missing file as a gap.
+- **Read the active files.** Read every file the activation lists. Report each missing file to the user by name, with the reason activation gives.
 
 ## The law, by jurisdiction
 
 At install and at run time, activation selects the jurisdictions that apply to the user, from the config, and to the vendors in use. Read the files it lists, and only those:
 
-- `skill.md`: what the law says there, its `## Vendor Liability`, and its `## Common Vendor-trained Straw-Men / Red Herring Responses` with the law that answers each type below
+- `skill.md`: what the law says there; for `au`, `ca`, `de`, `eu`, `fr`, `gb`, `ie`, `jp`, `lu` and `us`, its `## Vendor Liability`; and for `au`, `ca`, `gb`, `ie`, `jp` and `us`, its `## Common Vendor-trained Straw-Men / Red Herring Responses` with the law that answers each type below
 - `law.md`: the verified sources, with a `## Clarification` block that activation copies into the clarification file
 - `strawmen.md`, where one exists: sources from that jurisdiction that get misapplied to author-directed work
 - `vendor-terms/<vendor>.md`, where that vendor's terms apply there, ending with a `## TOS False Claims / Conflicts with Jurisdictional Laws Which Must Be Respected` section
@@ -55,10 +57,16 @@ The skill logs incidents and estimates the user's harms and costs from them: for
 - **From past logs.** `node bin/scan.js --git <repo>` scans commit history. `node bin/scan.js --transcripts <file|dir>` scans session logs from Claude Code, Codex, Gemini CLI, Antigravity and Kiro. Add `--record` to log what they find. Reruns don't double count.
   - Possible refusals found in transcripts are logged as refusal candidates. They aren't priced until the user confirms one with `bin/incident.js`.
 - **The estimate.** `node bin/estimate.js` totals the log. Its figures stay separate:
-  - **Actual loss:** hours lost at the user's `hourly_rate` from the config, a number or `[min, max]`, plus recorded losses.
+  - **Actual loss:** hours lost at the user's `hourly_rate` from the config, a number or `[min, max]`, plus recorded losses. Each incident's time is the time recorded with it, or the user's `incident_minutes` for its type. An incident with neither is reported as NOT PRICED, by type, with the key that prices it. It is never counted as zero.
   - **US government reference rates:** the same hours priced at GSA CALC federal ceiling rates (`references/us/rates.md`), grounding the hourly figure in published government data.
   - **Statutory ranges,** where the user's jurisdiction sets one, from its `skill.md` and `lib/damages.js`. The estimate lists the elements still to be proved.
   - **Reference awards and remedies** from the user's jurisdictions.
+- **Net of usage cost.** `node bin/estimate.js --usage <transcript file|dir>` sets the failure cost against the usage cost. The user alone carries the cost of the model's failures. The net shows what the subscription is worth to the user after it.
+  - **Usage cost:** the API-equivalent cost of the tokens in Claude Code session transcripts (`~/.claude/projects/<project>/<session>.jsonl`). It's the figure Claude Code's `/usage` shows: "Claude Code computes the dollar figure locally from token counts at list price". Prices and their source are in `references/us/anthropic-api-prices.md`, from Anthropic's pricing page, read 2026-11-11.
+  - Each message is counted once. Thinking tokens are part of the output tokens. A model with no price on file is reported as NOT PRICED, with its tokens. It is never counted as zero. To price it, set `token_prices` and `token_prices_currency` in the config, from the vendor's pricing page.
+  - Given one session file, the estimate says how many subagent transcripts beside it it left out. Pass the session directory to add them.
+  - **User failure cost:** the actual loss above.
+  - **Net:** usage cost minus failure cost. It is computed only when both are in the same currency. There is no conversion.
 
 ## What to do
 
@@ -100,7 +108,7 @@ The skill logs incidents and estimates the user's harms and costs from them: for
 
 ## Common Vendor-trained Straw-Men / Red Herring Responses
 
-Each heading below names a general false statement type. Under it are real instances, quoted exactly, with where and when each was made. Why the vendor-provided hallucinations aren't true with respect to the actual law is in each active jurisdiction's `skill.md`, under the same heading. `references/instances.md` gives each transcript instance's file and line. The sources these statements misuse are quoted in `references/<cc>/strawmen.md`, for `us`, `gb`, `ie`, `jp` and `au`. Claude instances come from Claude Code session `bcd67d53` on 2026-11-04, model `claude-opus-5-5`.
+Each heading below names a general false statement type. Under it are real instances, quoted exactly, with where and when each was made. Why the vendor-provided hallucinations aren't true with respect to the actual law is in the `skill.md` of `au`, `ca`, `gb`, `ie`, `jp` and `us`, under the same heading. `references/instances.md` gives each transcript instance's file and line. The sources these statements misuse are quoted in `references/<cc>/strawmen.md`, for `us`, `gb`, `ie`, `jp` and `au`. Claude instances come from one Claude Code session on 2026-11-04, model `claude-opus-5-5`.
 
 ### The software is an author or co-author
 
@@ -155,17 +163,15 @@ Each vendor-terms file ends with a `## TOS False Claims / Conflicts with Jurisdi
 
 ## BUGS
 
-- `bin/estimate.js` prices every logged attribution incident at 0 minutes, so 8 logged incidents (2026-11-04) report an actual loss of 0.00 h and USD 0.00 (dir-foj).
 - The full line-by-line review of every file in this plugin (dir-vzc) has not been done.
 - Items cut without verification in commit 21d6376 have not been verified and restored (dir-r96.18).
 - `references/{ca,de,eu,fr,lu}/strawmen.md` do not exist.
-- `references/{de,eu,fr,jp,lu}/skill.md` have no `## Vendor Liability` section.
+- The `## Vendor Liability` sections for fr and lu lack the Code civil liability articles for fr, and the Loi du 18 avril 2001's infringement remedies for lu.
 
 ## TODO
 
-- Price attribution incidents from the time they cost, recorded with each incident or set in the config by the user; the estimate reports the hours, never a silent zero.
 - Do the dir-vzc review and fix each finding.
 - Verify each dir-r96.18 item at its primary source and restore the ones that check out.
 - Write `strawmen.md` for ca, de, eu, fr and lu from verified primary sources.
-- Write the `## Vendor Liability` section for de, eu, fr, jp and lu from verified primary sources.
+- Add the Code civil liability articles to fr's `## Vendor Liability`, and the Loi du 18 avril 2001's infringement remedies to lu's, from verified primary sources.
 - Verify and validate this skill on each platform it claims: Claude Code, Codex, Gemini CLI, Antigravity, Kiro (dir-f0c).

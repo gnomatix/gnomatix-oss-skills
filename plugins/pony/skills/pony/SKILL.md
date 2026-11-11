@@ -80,6 +80,8 @@ The author's direction of 2026-11-07, record `dir-cfq` in the GNOMATIX direction
 
 - Closed 2026-11-08: the author confirmed (record persistint-game-9fp8) that this file, with its departures from the 2026-10-24 and 2026-10-27 originals (his term and descriptors inline and attributed rather than quoted; the vetting statement in the first person; the writing session named only in dev/pony/; the log fallback; the step-2 pattern pointer; "where the installation has them"), stands as the skill he directed.
 
+- Closed 2026-11-10: the README said no expletive appears in plain text in this plugin, while `test/run.js` and the `epithet-tags` procedure in `VV.md` carried lexicon words in plain text (hidden-libel-check review of 2026-11-10). The test fixtures and the VV.md flag message are now stored as base64, the lexicon method of `dir-gbq`, and `test/run.js` checks every text file of the plugin for a plaintext expletive.
+
 ## TODO
 
 - Verification and validation on every claimed platform, named here until each has passed and is recorded in `VV.md`: claude-code/win32, claude-code/linux-wsl, claude-code/linux, claude-code/darwin, codex/win32, codex/linux-wsl, antigravity/win32, antigravity/linux-wsl, kiro/win32. Tracked as persistint-game-h1pu.

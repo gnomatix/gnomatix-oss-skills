@@ -2,7 +2,7 @@
 
 ![did-you-rtfm](assets/images/did-you-rtfm-banner.jpg)
 
-> An [Agent Skill](https://agentskills.io) (with optional Claude Code firewall hooks) that interrupts the agent's pivot reflex on errors during user-authorized implementation work. The moment an error, unexpected output, perceived "blocker", or implementation gap appears — or the agent considers substituting a tool, scoping down, applying a workaround, inserting a fallback, or declaring an item infeasible — the skill forces version verification, version-specific authoritative documentation review, assumption verification, sanity-checking against stale training-data, and minimal-repro construction before any user-facing "blocker" claim or any unauthorized plan change.
+> An [Agent Skill](https://agentskills.io) (with harness firewall hooks) that interrupts the agent's pivot reflex on errors during user-authorized implementation work. The moment an error, unexpected output, perceived "blocker", or plan step the code does not yet implement appears — or the agent considers substituting a tool, scoping down, applying a workaround, inserting a fallback, or declaring an item infeasible — the skill forces version verification, version-specific authoritative documentation review, assumption verification, sanity-checking against stale training-data, and minimal-repro construction before any user-facing "blocker" claim or any unauthorized plan change.
 
 For users who want their agent to *engineer* through implementation errors instead of pivoting around them.
 
@@ -34,14 +34,22 @@ For users who want their agent to *engineer* through implementation errors inste
 |---|---|
 | [`did-you-rtfm`](skills/did-you-rtfm/SKILL.md) | Activates the moment the agent encounters an error or considers deviating from the agreed implementation plan. Forces version verification, version-specific authoritative documentation review, assumption verification by direct observation, sanity-checking against stale training-data, and minimal-repro construction before any user-facing "blocker" claim or any unauthorized plan change. The user — product owner, engineering lead, ultimate authority — decides all plan changes; the agent surfaces evidence and waits. |
 
-## Hooks (Claude Code only)
+## Hooks (`hooks.json` & JSON-stdin/stdout harness enforcement)
 
 | Hook | Event | Role |
 |---|---|---|
 | [`did-you-rtfm-stop`](hooks/did-you-rtfm-stop.js) | `Stop` / `SubagentStop` | After the agent finishes a turn, scans the assistant text for high-precision pivot-language phrases. If matched, blocks the stop and routes the agent back into the `did-you-rtfm` skill discipline. |
 | [`did-you-rtfm-user-reviewed-trigger-confirmation`](hooks/did-you-rtfm-user-reviewed-trigger-confirmation.js) | `PreToolUse` (Bash) | Before Bash invocation, asks the user to confirm commands that contain bypass-flag shapes (`--no-verify`, `--force`, `--skip-*`, `--allow-*`, `--ignore-*`) or TTY-faking workarounds (`script -qc`, `expect`, `echo \| sudo -S`). Routes the agent back to the skill. |
 
-Hooks are not part of the cross-CLI Agent Skills standard. The skill alone is portable; the hooks are the harness-level enforcement layer for Claude Code.
+`hooks/hooks.json` loads automatically in Claude Code (and the pure-Node scripts can be wired into any CLI harness that supports JSON stdin/stdout hooks). On CLIs without Stop/PreToolUse hooks, [`skills/did-you-rtfm/SKILL.md`](skills/did-you-rtfm/SKILL.md) operates stand-alone via the cross-CLI Agent Skills standard.
+
+## Stand-Alone & Complementary Plugins
+
+- **Stand-alone**: Installs and operates on its own (`node` only for the optional harness hooks; zero extra tools required for the Agent Skill).
+- **Complements when installed**:
+  - [`staleness-guard`](../staleness-guard/): pairs error-time RTFM investigation with turn-wide live verification of environment, version, and capability claims.
+  - [`critical-control-points`](../critical-control-points/): receives true post-RTFM blockers (complete with version checks and minimal-repro evidence) for structured, non-blocking user escalation.
+  - [`agent-darktriad-check`](../agent-darktriad-check/): complements `did-you-rtfm`'s pivot-phrase Stop gate with KontentKop psycholinguistic evasion scoring.
 
 ## Why
 
@@ -109,7 +117,7 @@ Sessions bucketed by per-session pivot-language emission count, with directed-at
 | 1–2 | 6 | **1.56%** (~3.8x baseline) |
 | 6+ | 1 | 3.52% (single-session, indicative) |
 
-Sessions where the agent emits pivot-language are sessions where the user is more likely to swear at the agent — even with conservative pattern matching. This skill exists to interrupt the failure mode that drives that gap.
+Sessions where the agent emits pivot-language are sessions where the user is more likely to swear at the agent — even with conservative pattern matching. This skill exists to interrupt the failure mode that drives that difference in swearing rates.
 
 **Provisional caveats:**
 
@@ -150,7 +158,7 @@ Then merge the `hooks` block from [`hooks/settings.example.jsonc`](hooks/setting
 
 ### Other CLIs (cross-CLI Agent Skills standard)
 
-The [`skills/`](skills/) subdirectory follows the cross-CLI [Agent Skills](https://agentskills.io) standard. Each CLI has its own install location — see the parent repo's README for per-CLI pointers. The hooks are Claude-Code-only and do not apply to other CLIs.
+The [`skills/`](skills/) subdirectory follows the cross-CLI [Agent Skills](https://agentskills.io) standard. Each CLI has its own install location — see the parent repo's README for per-CLI pointers. `hooks/hooks.json` registers automatically in Claude Code, while the pure-Node hook scripts accept JSON payloads on stdin for any compatible CLI harness.
 
 ## How it works
 
@@ -206,7 +214,7 @@ plugins/did-you-rtfm/
 ├── skills/
 │   └── did-you-rtfm/
 │       └── SKILL.md
-└── hooks/                                  (Claude-Code-only)
+└── hooks/                                  (pure-Node harness hooks + Claude Code hooks.json)
     ├── README.md
     ├── hooks.json
     ├── settings.example.jsonc

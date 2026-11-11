@@ -246,7 +246,7 @@ Unverified: none.
 
 ## Origin
 
-Directed by the author on 2026-10-27 and migrated into this repository on 2026-11-04 (directions store `dir-emv`, `dir-f1w`); the reach-line, evidence-era, mediator and supplied-fact rules follow his corrections of 2026-11-08 to a research brief run beside this skill's test (`dir-smj`, project bead persistint-game-h9lj), and the flag-line rule follows the V&V runs of the same day (bead persistint-game-k6ka). His words are kept verbatim in those records and in `dev/cui-bono/origins.md`.
+Directed by the author on 2026-10-27 and migrated into this repository on 2026-11-04 (directions store `dir-emv`, `dir-f1w`); the reach-line, evidence-era, mediator and supplied-fact rules follow his corrections of 2026-11-08 (`dir-smj`, project bead persistint-game-h9lj), and the flag-line rule follows the V&V runs of the same day (bead persistint-game-k6ka). His words are kept verbatim in those records and in `dev/cui-bono/origins.md`.
 
 ## BUGS
 

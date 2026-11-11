@@ -171,7 +171,7 @@ not confabulate a failure.
 
 When the trigger is read-only source material (Category G), a lazy keyword grep
 on guessed terms is a failure. It returns a thin slice, misses context, and
-leads the next agent to re-grep, re-guess, and hallucinate the gaps — compounding
+leads the next agent to re-grep, re-guess, and hallucinate the context the slice missed — compounding
 error across a project. Assume the next consumer is the weakest available agent
 and will not redo your work.
 
@@ -279,8 +279,8 @@ questions, which naive agents collapse into one:
 - **Applicability** (this trap): is its scope the one *this task* needs? A v1 doc
   is inapplicable to a v2 task even while perfectly fresh for v1.
 
-The legacy doc passes durability and fails applicability for draft work. That gap
-is the supersession trap.
+The legacy doc passes durability and fails applicability for draft work. Passing one
+and failing the other is the supersession trap.
 
 1. **Presence confers no authority.** Local / in-context is zero evidence that
    this is the version the task needs. Convenience, not provenance.

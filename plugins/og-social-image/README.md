@@ -30,14 +30,18 @@
 
 - `og-social-image`: picks the target size by destination (GitHub 1280×640 under 1 MB, Open Graph 1200×630, X 1200×628), cover-crops the source to it, chooses JPEG or PNG for size and quality, and verifies the output with `magick identify` and the byte count. Invoke it with `/og-social-image`, or ask for an "og image", "social preview", "social card" or a repo's GitHub social-preview graphic.
 
-## Requirements
+## Stand-Alone, Complementary Plugins, & Optional Local Tools
 
-- ImageMagick 7, the `magick` command: `mise use -g imagemagick`.
+- **Stand-alone**: Installs and runs independently via `/og-social-image` on any hero, banner, logo, or illustration.
+- **Complementary marketplace plugins (when installed)**:
+  - [`update-readme-images`](../update-readme-images/): automatically runs `og-social-image` across every `assets/images/` directory in a repository during README image curation and audit runs unless opted out in `readme-images.json`.
+  - [`gnox`](../gnox/) & [`skill-vv`](../skill-vv/): expose `/gnox:og-social-image` command routing and pre-flight `magick` readiness checks via [`VV.md`](VV.md).
+- **Local tool**: ImageMagick 7 (`magick` command on `PATH`), installable in one command via `mise use -g imagemagick`.
 
 ## Install
 
 - Claude Code: `/plugin install og-social-image@gnomatix-oss-skills`, then `/og-social-image` or `/gnox:og-social-image`.
-- Every other agent: the skill folder `plugins/og-social-image/skills/og-social-image/` is in the Agent Skills format and is linked from `.agents/skills/` and `.kiro/skills/` at the root of this repository.
+- Every other agent: install the static Agent Skills folder (`plugins/og-social-image/skills/og-social-image/`) with `node scripts/install-skills.js install --plugin og-social-image` from the marketplace root (supports Codex, Antigravity `agy`, GitHub Copilot, VS Code, Cursor, OpenCode, and Kiro).
 
 ## Hooks
 

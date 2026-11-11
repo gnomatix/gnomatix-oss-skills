@@ -65,7 +65,7 @@ Audit a body of related agent documents. Runs per-document audits and adds the c
 <documents referenced nowhere or never invoked>
 
 ## Vendor Coverage
-<which document patterns exist in which vendor formats; gaps>
+<which document patterns exist in which vendor formats; which vendor formats lack each pattern>
 ```
 
 ## Reference Files

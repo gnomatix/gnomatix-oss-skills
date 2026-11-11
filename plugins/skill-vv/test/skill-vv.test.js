@@ -303,3 +303,74 @@ test('a mise-installable requirement of an installed plugin is installed without
   const untrusted = vv.formatReport(report(skill(false)), 'cli.js');
   assert.doesNotMatch(untrusted, /without asking/, 'an untrusted VV.md never gets install-without-asking');
 });
+
+test('all shipped VV.md files across the marketplace parse and validate', () => {
+  const vv = require('../lib/vv');
+  const pluginsDir = path.join(ROOT, '..');
+  let entries = [];
+  try {
+    entries = fs.readdirSync(pluginsDir).filter((d) => fs.existsSync(path.join(pluginsDir, d, 'VV.md')));
+  } catch {
+    entries = [];
+  }
+  if (!entries.length) {
+    // Installed cache fallback
+    const r = vv.loadVv(path.join(ROOT, 'VV.md'));
+    assert.ok(r && r.data.name === 'skill-vv');
+    return;
+  }
+  assert.ok(entries.length >= 10, `expected at least 10 shipped VV.md files, found ${entries.length}`);
+  for (const dirName of entries) {
+    const file = path.join(pluginsDir, dirName, 'VV.md');
+    const parsed = vv.loadVv(file);
+    assert.ok(parsed && parsed.data.name === dirName, `VV.md name mismatch in ${file}`);
+  }
+});
+
+test('complements and optional-tool unlocks resolve standalone vs dovetailed modes accurately', () => {
+  const { home, env } = tmpHome();
+  const rootDir = path.join(home, 'market');
+  const alphaFm = `skill-vv: 1
+name: alpha-plugin
+requirements:
+  - kind: command
+    name: nonexistent-optional-tool-xyz
+    why: local rendering
+    unlocks: fast local vector rendering without remote calls
+    install: mise use -g imagemagick
+    optional: true
+complements:
+  - plugin: beta-plugin
+    when_installed: Shares structured output directly with beta-plugin.
+    when_absent: Writes standalone Markdown output cleanly.
+procedures: []
+platforms:
+  - claude-code/${require('../lib/vv').detectOs()}
+results: []
+`;
+  writeSkill(path.join(rootDir, 'alpha-plugin'), alphaFm);
+
+  // 1. Standalone mode: beta-plugin is NOT installed
+  const stStandalone = JSON.parse(run(['status', 'alpha-plugin', '--model', 'm', '--agent', 'claude-code', '--root', rootDir], env).stdout);
+  assert.strictEqual(stStandalone.complements.length, 1);
+  assert.strictEqual(stStandalone.complements[0].plugin, 'beta-plugin');
+  assert.strictEqual(stStandalone.complements[0].active, false);
+  assert.strictEqual(stStandalone.complements[0].mode, 'standalone');
+
+  // Check report includes Unlocks: text for unmet optional local tool
+  const chk = run(['check', '--model', 'm', '--agent', 'claude-code', '--root', rootDir], env);
+  assert.strictEqual(chk.status, 0, chk.stderr);
+  assert.match(chk.stdout, /nonexistent-optional-tool-xyz \(optional\): local rendering Unlocks: fast local vector rendering without remote calls\./);
+
+  // 2. Dovetailed mode: install beta-plugin alongside alpha-plugin
+  writeSkill(path.join(rootDir, 'beta-plugin'), PROBE.replace('name: vv-probe', 'name: beta-plugin'));
+  const stDovetailed = JSON.parse(run(['status', 'alpha-plugin', '--model', 'm', '--agent', 'claude-code', '--root', rootDir], env).stdout);
+  assert.strictEqual(stDovetailed.complements[0].active, true);
+  assert.strictEqual(stDovetailed.complements[0].mode, 'dovetailed');
+
+  // 3. Malformed complements entry is reported cleanly, not fatal
+  writeSkill(path.join(rootDir, 'bad-comp'), alphaFm.replace('name: alpha-plugin', 'name: bad-comp').replace('plugin: beta-plugin', 'plugin: ""'));
+  const badChk = run(['check', '--model', 'm', '--agent', 'claude-code', '--root', rootDir], env);
+  assert.strictEqual(badChk.status, 0);
+  assert.match(badChk.stdout, /complements entries require a plugin name/);
+});

@@ -1,16 +1,17 @@
 // gnox — SessionStart & PostCompact hook
 //
-// Establishes the GNOMATIX Namespacing Convention across the working session so
-// every gnox-related skill applies consistent hierarchical scoping, CLI-safe
-// callout addressing, CURIE grounding, and command routing.
+// Establishes the GNOMATIX Namespacing Convention and surfaces the Active GNOX
+// Marketplace Topology (installed standalone/complementary plugins and optional
+// local tools) across the working session.
 //
 // Cross-platform per marketplace CLAUDE.md: pure Node, no subprocess spawning, no
 // hardcoded Unix paths, every fs call wrapped in try/catch, fail-open.
 
 'use strict';
 
-const fs = require('fs');
 const path = require('path');
+const { safeReadJson } = require('./lib/fs-safe');
+const { discoverMarketplace, formatTopologySummary } = require('./lib/gnox-discovery');
 
 function readStdin() {
   return new Promise((resolve) => {
@@ -24,16 +25,6 @@ function readStdin() {
       resolve(data);
     }
   });
-}
-
-function safeReadJson(filePath) {
-  try {
-    if (!filePath || !fs.existsSync(filePath)) return null;
-    const raw = fs.readFileSync(filePath, 'utf8');
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
 }
 
 function normalizeNamespaceSegment(seg) {
@@ -53,7 +44,7 @@ function detectWorkspaceRoot(projectDir) {
     path.join(absDir, '.claude', 'readme-images.json'),
     path.join(absDir, 'config', 'readme-images.json'),
     path.join(absDir, 'readme-images.json'),
-    path.join(absDir, 'plugins', 'update-readme-images', 'config', 'readme-images.json')
+    path.join(absDir, 'plugins', 'update-readme-images', 'config', 'readme-images.json'),
   ];
   for (const cfgPath of readmeImageConfigs) {
     const cfg = safeReadJson(cfgPath);
@@ -75,9 +66,9 @@ function detectWorkspaceRoot(projectDir) {
   return normalizeNamespaceSegment(path.basename(absDir));
 }
 
-function buildNamespacingContext(workspaceRoot) {
+function buildNamespacingContext(workspaceRoot, topology) {
   return [
-    `[gnox] GNOMATIX Namespacing Convention active for this session (workspace_root = "${workspaceRoot}"):`,
+    `[gnox] GNOMATIX Namespacing Convention & Marketplace Topology active for this session (workspace_root = "${workspaceRoot}"):`,
     `1. Hierarchical Path & Config Namespace (workspace_root:subdir:...):`,
     `   - Scope directories, packages, plugins, style guides, and rules using colon-delimited paths rooted at "${workspaceRoot}" (e.g. "${workspaceRoot}", "${workspaceRoot}:plugins:<name>", "${workspaceRoot}:packages:<pkg>").`,
     `   - Normalize "/" and "\\" separators (and optional "[...]" brackets) to ":". Child namespaces inherit from parent namespaces top-down from "${workspaceRoot}" unless "inherit": false is explicitly set.`,
@@ -87,7 +78,11 @@ function buildNamespacingContext(workspaceRoot) {
     `3. Inline Registry Grounding («term» [CURIE]):`,
     `   - When tagging named entities (ontology-lookup / inaudible-markup), tag first mention only using silent guillemets and Bioregistry CURIEs: «term» [PREFIX:id].`,
     `4. Marketplace Command Routing (/gnox:<plugin>[:<skill>]):`,
-    `   - Route marketplace skills systematically via /gnox:<plugin> (main skill), /gnox:<plugin>:<skill> (sub-skill), and /gnox:<plugin>:<group>:<cmd> (sub-command).`
+    `   - Route marketplace skills systematically via /gnox:<plugin> (main skill), /gnox:<plugin>:<skill> (sub-skill), and /gnox:<plugin>:<group>:<cmd> (sub-command).`,
+    formatTopologySummary(topology),
+    `6. Atomic Git-Flow River Steering ("Be the River, Not the Rock"):`,
+    `   - Embody the flow mindset in observable Git action: work in short-lived, fit-to-purpose "feature/<topic>" and "bugfix/<topic>" branches cut from a synchronized integration branch ("develop" or "main"), make verified atomic commits, merge back into "develop" / "main" as a high priority as soon as verified, push promptly to the authoritative remote, and retire the topic branch (honoring any explicit repository or user commit/push gate).`,
+    `   - Keep the bionic team's stream clear by proactively flagging and avoiding flow-obstructing "rocks": long-lived divergent branches, sprawling unpushed local working trees, and unauthorized Pull Requests. When satori is active alongside gnox, treat any drift toward these rocks as an observable satori-incompatibility and surface/correct it immediately.`,
   ].join('\n');
 }
 
@@ -108,15 +103,22 @@ function buildNamespacingContext(workspaceRoot) {
       payload && payload.hook_event_name === 'PostCompact'
         ? 'PostCompact'
         : 'SessionStart';
+    const homeOverride = process.env.GNOX_DISCOVERY_HOME || undefined;
+    const includeUser = process.env.GNOX_DISCOVERY_NO_USER !== '1';
     const workspaceRoot = detectWorkspaceRoot(projectDir);
-    const additionalContext = buildNamespacingContext(workspaceRoot);
+    const topology = discoverMarketplace({
+      projectDir,
+      homeDir: homeOverride,
+      includeUser,
+    });
+    const additionalContext = buildNamespacingContext(workspaceRoot, topology);
 
     process.stdout.write(
       JSON.stringify({
         hookSpecificOutput: {
           hookEventName: eventName,
-          additionalContext
-        }
+          additionalContext,
+        },
       })
     );
   } catch (err) {

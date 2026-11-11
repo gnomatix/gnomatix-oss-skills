@@ -26,3 +26,16 @@ Sources: EUR-Lex (eur-lex.europa.eu) answered curl with an empty HTTP 202 bot ch
 ## Sources
 
 - EUR-Lex and curia.europa.eu pages block automated loading (bot challenge, JavaScript-only page). The same official texts were read from the Publications Office CELLAR, and DSM Directive arts. 4(3) and 26 also through EUR-Lex in the browser.
+
+## Vendor liability
+
+Sources: the Official Journal texts from the Publications Office (CELLAR), http://publications.europa.eu/resource/celex/<CELEX number>, English HTML, read 2026-11-10; every quote below matched character for character in that text.
+
+- Product Liability Directive (EU) 2024/2853, CELEX 32024L2853, art. 4(1) — read 2026-11-10 — "‘product’ means all movables, even if integrated into, or inter-connected with, another movable or an immovable; it includes electricity, digital manufacturing files, raw materials and software"
+- Directive (EU) 2024/2853, art. 5(1) — read 2026-11-10 — "Member States shall ensure that any natural person who suffers damage caused by a defective product (the ‘injured person’) is entitled to compensation in accordance with this Directive."
+- Directive (EU) 2024/2853, art. 6(1)(c) — read 2026-11-10 — "destruction or corruption of data that are not used for professional purposes"
+- Directive (EU) 2024/2853, art. 7(1) — read 2026-11-10 — "A product shall be considered defective where it does not provide the safety that a person is entitled to expect or that is required under Union or national law."
+- Directive (EU) 2024/2853, art. 2(1) — read 2026-11-10 — "This Directive shall apply to products placed on the market or put into service after 9 December 2026."
+- Unfair Terms Directive 93/13/EEC, CELEX 31993L0013, art. 3(1) — read 2026-11-10 — "A contractual term which has not been individually negotiated shall be regarded as unfair if, contrary to the requirement of good faith, it causes a significant imbalance in the parties' rights and obligations arising under the contract, to the detriment of the consumer."
+- Directive 93/13/EEC, art. 6(1) — read 2026-11-10 — "Member States shall lay down that unfair terms used in a contract concluded with a consumer by a seller or supplier shall, as provided for under their national law, not be binding on the consumer"
+- Enforcement Directive 2004/48/EC, CELEX 32004L0048, art. 13(1) — read 2026-11-10 — "Member States shall ensure that the competent judicial authorities, on application of the injured party, order the infringer who knowingly, or with reasonable grounds to know, engaged in an infringing activity, to pay the rightholder damages appropriate to the actual prejudice suffered by him as a result of the infringement."

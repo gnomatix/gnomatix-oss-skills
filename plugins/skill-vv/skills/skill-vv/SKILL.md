@@ -13,7 +13,8 @@ It works the same on every vendor: the state is a markdown file with YAML frontm
 
 Each skill or plugin that takes part ships a `VV.md` at its root. The YAML frontmatter is the state; the body explains the procedures for a human. The schema is in `references/vv-schema.md`. In short:
 
-- `requirements`: commands, environment variables or files the skill needs, each with why and how to install or configure it.
+- `requirements`: commands, environment variables, node modules or files the skill needs (`optional: false`) or uses to unlock extended local execution (`optional: true` with `unlocks`), each with why and how to install or configure it.
+- `complements`: optional list of complementary sibling plugins, naming both the dovetailed behavior (`when_installed`) and the standalone fallback (`when_absent`).
 - `procedures`: the V&V procedures, each with an id and the steps or a file that holds them.
 - `platforms`: every platform the skill claims to support, as `<agent>/<os>`.
 - `results`: the verified record, one entry per procedure, model and platform, with pass or fail, date and evidence.
@@ -56,4 +57,4 @@ Say so, and treat it as unverified on every platform. For a skill under developm
 
 ## Running the check automatically
 
-On Claude Code, the plugin's SessionStart hook runs `check` and puts its output in front of the agent at session start. Other vendors have no equivalent hook, so their instruction file (`AGENTS.md`, `GEMINI.md`, or the vendor's rules file) needs one line telling the agent to run step 1 at the start of each session.
+When installed as a plugin on harnesses that execute `hooks/hooks.json` (such as Claude Code and compatible plugin runners), the `SessionStart` hook runs `check` and surfaces pending items automatically at session start. When installed as a standalone `SKILL.md` directory (`.agents/skills/skill-vv`, `.github/skills/skill-vv`, `.kiro/skills/skill-vv`) without plugin hooks, add one line to the workspace's instruction file (`AGENTS.md`, `GEMINI.md`, or vendor rules file) telling the agent to run step 1 at session start.

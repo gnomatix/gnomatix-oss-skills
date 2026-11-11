@@ -60,7 +60,10 @@ When a term could mean different things, define it once with guillemets: `«cont
 
 ## Identifiers: the companion skill
 
-For identifiers from an ontology or other controlled vocabulary, use the companion skill `ontology-lookup`. Its inline CURIE form `«term» [PREFIX:id]` is built only from marks on the silent list above (guillemets, square brackets, colon), so an identifier stays silent in voice mode and the term is still spoken. (`ontology-lookup` is not yet in this repository; this skill names it as the companion so the two stay consistent when it lands.)
+For identifiers from an ontology or other controlled vocabulary, this skill complements `ontology-lookup` in this marketplace. Its inline CURIE form `«term» [PREFIX:id]` is built only from marks on the silent list above (guillemets, square brackets, colon), so an identifier stays silent in voice mode while the term is spoken naturally:
+
+- **When `ontology-lookup` is installed in the session:** resolve first-mention domain entities with `ontology-lookup` (`scripts/lookup.mjs`) and emit verified `«term» [PREFIX:id]` tags inline.
+- **When `ontology-lookup` is not installed (stand-alone mode):** apply the silent structure, `[NS]{@target}` callout, and `{Decision}` / `{Request}` / `{Definition}` / `{Open question}` / `{Correction}` passage labels above without inventing unverified CURIE tags.
 
 ## Shape of a reply
 

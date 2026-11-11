@@ -1,20 +1,23 @@
 ---
 name: gnox
 description: >-
-  Apply the GNOMATIX Namespacing Convention across all gnox-related skill
-  execution and route marketplace commands under the /gnox: prefix:
-  workspace_root:subdir:... hierarchical config and path scoping, [NS]{@target}
-  CLI-safe callouts with 4-step namespace resolution, «term» [CURIE] inline
-  entity grounding, and /gnox:<plugin>[:<skill>] command dispatch.
+  Apply the GNOMATIX Namespacing Convention, Atomic Git-Flow River Steering
+  ("Be the River, Not the Rock"), active complementary marketplace topology
+  discovery, and /gnox: command routing: workspace_root:subdir:... hierarchical
+  scoping, [NS]{@target} CLI-safe callouts, «term» [CURIE] inline entity
+  grounding, short-lived feature/*/bugfix/* branches with high-priority merge to
+  develop/main, and /gnox:<plugin>[:<skill>] dispatch.
 ---
 
-# gnox — GNOMATIX Router & Session Namespacing Convention
+# gnox — GNOMATIX Router, Session Namespacing, Git-Flow River Steering, & Topology
 
 ![gnox](../../assets/images/gnox-banner.jpg)
 
-Installing `gnox` provides both:
+Installing `gnox` provides four session-wide capabilities while leaving every plugin independently usable stand-alone:
 1. **One command prefix (`/gnox:`)** for every plugin, skill, and sub-command in the `gnomatix-oss-skills` marketplace.
-2. **The session-wide GNOMATIX Namespacing Convention**, injected automatically at `SessionStart` and `PostCompact` (via `hooks/session-namespace.js`) and defined here for every cross-agent CLI (`agy`, Codex, Kiro, Cursor, OpenCode) so all `gnox`-related skills execute under a single systematic convention.
+2. **The session-wide GNOMATIX Namespacing Convention**, injected automatically at `SessionStart` and `PostCompact` (via `hooks/session-namespace.js`) and defined here for every cross-agent CLI (`agy`, Codex, Kiro, Cursor, OpenCode).
+3. **Atomic Git-Flow River Steering ("Be the River, Not the Rock")**, translating the flow stance into observable team Git hygiene: short-lived `feature/*` / `bugfix/*` branches, verified atomic commits, and high-priority direct merge + push to `develop` / `main` without unpushed local worktrees or unauthorized Pull Requests.
+4. **Active Marketplace Topology Discovery** (`hooks/lib/gnox-discovery.js`), surfacing which complementary `gnomatix-oss-skills` plugins and optional local tools (`mise`, `magick`, `bd`, `gws`, `git-crypt`) are present in the current session so dovetailed integrations activate automatically and absent companions degrade cleanly to their standalone paths.
 
 ---
 
@@ -80,3 +83,27 @@ All router command stubs in `plugins/gnox/commands/` are generated deterministic
 node plugins/gnox/scripts/build-commands.js
 node plugins/gnox/scripts/build-commands.js --check
 ```
+
+---
+
+## 5. Atomic Git-Flow River Steering ("Be the River, Not the Rock")
+
+`gnox` translates the flow mindset (*"Be the river, not the rock"*) directly into observable version-control practice for bionic engineering teams:
+
+1. **Short-Lived, Fit-to-Purpose Branches (`feature/<topic>`, `bugfix/<topic>`)**:
+   - Cut a dedicated, narrowly-scoped `feature/<topic>` or `bugfix/<topic>` branch from a freshly fetched integration branch (`develop` or `main`) for each distinct unit of work.
+2. **Verified Atomic Commits & High-Priority Merge to `develop` / `main` ASAP**:
+   - Deliver small, verified atomic revisions, merge the short-lived branch back into `develop` / `main` as a high priority immediately upon verification, push promptly to the authoritative remote, and delete the retired topic branch (respecting any explicit repository or user commit/push gate).
+3. **Proactively Flag & Clear Flow-Obstructing "Rocks"**:
+   - Long-lived divergent branches, sprawling unpushed local working trees, and unauthorized Pull Requests act as "rocks" obstructing the bionic team's shared stream.
+   - Do not open Pull Requests unless explicitly instructed by the human owner.
+   - Whenever `satori` is installed alongside `gnox` (or when operating standalone), treat any accumulation of unmerged branches, unpushed local worktrees, or unrequested PR ceremony as an observable flow/satori incompatibility — flag it to the user or team lead and resolve it cleanly into atomic branch integration.
+
+---
+
+## 6. Three-Tier Stand-Alone + Complementary Synergy
+
+Every plugin routed by `gnox` obeys the three-tier marketplace contract:
+- **Tier 0 — Stand-Alone Core**: Works independently when installed alone with zero sibling plugins and zero optional local tools.
+- **Tier 1 — Complementary Plugin Dovetailing**: Activates paired integrations automatically whenever companion marketplace plugins are detected in the session (`gnox` ↔ `satori`, `update-readme-images` ↔ `og-social-image`, `inaudible-markup` ↔ `ontology-lookup` ↔ `word-lineage`, `spank-dario` ↔ `dont-be-hitler` ↔ `hidden-libel-check`, `did-you-rtfm` ↔ `critical-control-points` ↔ `staleness-guard`, `cui-bono` ↔ logic/provenance skills).
+- **Tier 2 — Optional Local Tooling**: Unlocks extended local capabilities when optional tools (`mise`, `magick`, `bd`, `gws`, `git-crypt`) are present on `PATH` or `mise` shims, and runs the documented standalone fallback when absent.
