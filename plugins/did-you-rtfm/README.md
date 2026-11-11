@@ -142,7 +142,7 @@ Sessions where the agent emits pivot-language are sessions where the user is mor
 From the parent marketplace repo:
 
 ```sh
-/plugin marketplace add github:gnomatix/gnomatix-oss-skills
+/plugin marketplace add gnomatix/gnomatix-oss-skills
 /plugin install did-you-rtfm@gnomatix-oss-skills
 ```
 

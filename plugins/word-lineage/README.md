@@ -74,7 +74,7 @@ The network is [`reference/lineage-network.nex`](skills/word-lineage/reference/l
 From the parent marketplace repo:
 
 ```sh
-/plugin marketplace add github:gnomatix/gnomatix-oss-skills
+/plugin marketplace add gnomatix/gnomatix-oss-skills
 /plugin install word-lineage@gnomatix-oss-skills
 ```
 

@@ -41,7 +41,7 @@
 ## Install
 
 - Claude Code: `/plugin install og-social-image@gnomatix-oss-skills`, then `/og-social-image` or `/gnox:og-social-image`.
-- Every other agent: install the static Agent Skills folder (`plugins/og-social-image/skills/og-social-image/`) with `node scripts/install-skills.js install --plugin og-social-image` from the marketplace root (supports Codex, Antigravity `agy`, GitHub Copilot, VS Code, Cursor, OpenCode, and Kiro).
+- Every other agent: the skill folder [`plugins/og-social-image/skills/og-social-image/`](skills/og-social-image/) follows the cross-CLI [Agent Skills](https://agentskills.io) format (`mise skills sync --prune`, or per-CLI install paths in the root `README.md`).
 
 ## Hooks
 

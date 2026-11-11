@@ -203,26 +203,24 @@ export function buildReleaseMarkdown({
   }
 
   if (Array.isArray(migrations) && migrations.length > 0) {
-    lines.push('## Rename & Consolidation Migrations (`.claude-plugin/migrations.json`)', '');
+    lines.push('## Marketplace Plugin Renames (`.claude-plugin/marketplace.json#renames`)', '');
     for (const m of migrations) {
-      lines.push(`- \`${m.from}\` → **\`${m.to}\`** (${m.kind || 'rename'}${m.introduced_in ? `, \`${m.introduced_in}\`` : ''})`);
+      lines.push(`- \`${m.from}\` → **\`${m.to}\`**`);
     }
     lines.push('');
   }
 
   lines.push(
-    '## Install, Update, & Migrate',
+    '## Install & Update',
     '',
     '```sh',
-    '# Claude Code marketplace:',
-    '/plugin marketplace add github:gnomatix/gnomatix-oss-skills',
-    '/plugin update',
-    '/gnox:migrate',
+    '# Claude Code marketplace (automatic rename migration via marketplace.json#renames):',
+    '/plugin marketplace add gnomatix/gnomatix-oss-skills',
+    '/plugin marketplace update gnomatix-oss-skills',
     '',
-    '# Cross-CLI static installer & state migrator (Codex, Antigravity agy, Copilot, Cursor, OpenCode, Kiro):',
-    'node scripts/install-skills.js update --scope user',
-    'node scripts/install-skills.js migrate --scope user',
-    'node plugins/gnox/scripts/local-config-wizard.js doctor',
+    '# Cross-platform tooling, packslip Agent Skills sync, & doctor via mise:',
+    'mise skills sync --prune',
+    'mise run doctor',
     '```',
     '',
     `# Just say NO to ${psaNoun}!`,
@@ -268,19 +266,20 @@ function main() {
   const versionRaw = (args.version || safeReadText(path.join(repoRoot, 'VERSION')) || '0.1.0').trim().replace(/^v/, '');
   const tag = `v${versionRaw}`;
   const prevTag = args['prev-tag'] || findPreviousReleaseTag(repoRoot, versionRaw);
-  const subtitle = args.subtitle || 'static cross-CLI installer, style-locked panels, & local config doctor';
+  const subtitle = args.subtitle || 'native marketplace renames, mise skill sync, & style-locked panels';
   const psaNoun = args['psa-noun'] || 'SYMLINKS';
 
   const diffs = collectPluginVersionDiffs(repoRoot, prevTag);
-  const migJson = safeReadJson(path.join(repoRoot, '.claude-plugin', 'migrations.json')) || {};
-  const migrations = [
-    ...(migJson.plugin_migrations || []).map((m) => ({ from: m.from, to: m.to, kind: m.type || 'plugin', introduced_in: m.since })),
-    ...(migJson.skill_migrations || []).map((m) => ({ from: `${m.from_plugin}:${m.from_skill}`, to: `${m.to_plugin}:${m.to_skill}`, kind: 'skill', introduced_in: m.since }))
-  ];
+  const mpJson = safeReadJson(path.join(repoRoot, '.claude-plugin', 'marketplace.json')) || {};
+  const renamesObj = mpJson.renames && typeof mpJson.renames === 'object' ? mpJson.renames : {};
+  const migrations = Object.entries(renamesObj).map(([from, to]) => ({
+    from,
+    to: to === null ? '(removed)' : to,
+  }));
 
   const defaultHighlights = [
     '**Zero Git Symlinks (`120000` → `100644` Static Files)**: Eliminated all repository symlinks so Windows (`core.symlinks=false`), macOS, and Linux checkouts behave identically.',
-    '**Cross-CLI Static Installer & Tag-Aware State Migrator**: Added `scripts/install-skills.js`, `.claude-plugin/migrations.json`, and `/gnox:migrate` across Claude Code, Codex, Antigravity (`agy`), GitHub Copilot, VS Code, Cursor, OpenCode, and Kiro.',
+    '**Native Claude Code Marketplace Renames & `mise` Skill Sync**: Configured top-level `renames` and `forceRemoveDeletedPlugins` in `.claude-plugin/marketplace.json` alongside declarative `mise.toml` (`mise skills sync --prune`, `mise run doctor`).',
     '**Style-Locked Main `README.md` Category Sub-Panels & Reference Resolution**: Regenerated all seven categorized plugin section panels strictly from the GNOMATIX visual style guide with project-specific reference-document priority and automatic `1280×640` (`< 1 MB`) OG social cards.',
     '**Non-LLM `/gnox:local-config-wizard` & `/gnox:doctor`**: Added Charmbracelet `huh`/`gum`-compatible declarative plugin wizard manifests (`gnox-wizard/v1`), Interactive Design Mode for external repositories, and `doctor`/`validate` sanity checks.'
   ];

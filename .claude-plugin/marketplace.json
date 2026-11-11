@@ -6,6 +6,12 @@
     "name": "Brett Whitty",
     "email": "brett@gnomatix.com"
   },
+  "forceRemoveDeletedPlugins": true,
+  "renames": {
+    "actually-im-the-ahole": "hidden-libel-check",
+    "kontentkop-agent-output": "agent-darktriad-check",
+    "forbidden-output-guard": "bear-loads"
+  },
   "plugins": [
     {
       "name": "python-elimination-program",

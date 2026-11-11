@@ -59,11 +59,11 @@ Node 18 or later (built-in `fetch`) for the profile script; curl for the example
 ## Install
 
 ```sh
-/plugin marketplace add github:gnomatix/gnomatix-oss-skills
+/plugin marketplace add gnomatix/gnomatix-oss-skills
 /plugin install citation-farm-audit@gnomatix-oss-skills
 ```
 
-For the full six-skill *cui bono* suite (`cui-bono`, `logic-decomposer`, `logic-toolbox`, `citation-farm-audit`, `source-provenance`, and `missile-command`), install `cui-bono@gnomatix-oss-skills` (or run `/gnox:migrate` / `node scripts/install-skills.js migrate` to upgrade an existing install); both plugins coexist cleanly. For other agents, install static skill copies with `node scripts/install-skills.js install --plugin cui-bono`.
+For the full six-skill *cui bono* suite (`cui-bono`, `logic-decomposer`, `logic-toolbox`, `citation-farm-audit`, `source-provenance`, and `missile-command`), install `cui-bono@gnomatix-oss-skills`; both plugins coexist cleanly. For other agents, sync via `mise skills sync --prune` or install from [`plugins/cui-bono/skills/`](../cui-bono/skills/) per the root `README.md`.
 
 <!-- BEGIN: gnomatix-license-include -->
 ## License

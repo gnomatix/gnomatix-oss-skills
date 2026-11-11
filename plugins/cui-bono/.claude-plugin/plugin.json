@@ -1,6 +1,6 @@
 {
   "name": "cui-bono",
-  "version": "0.1.33",
+  "version": "0.1.34",
   "description": "Asks whose voice a text speaks in and who gains if the reader accepts it. The main skill names the document's shape and register and routes its claims to citation-farm-audit (authors, funders, citation networks, primary data) and its sources to source-provenance (a card of verifiable facts), then deconstructs the findings with the logic skills. With no argument it audits the agent's own previous reply.",
   "author": {
     "name": "Brett Whitty",

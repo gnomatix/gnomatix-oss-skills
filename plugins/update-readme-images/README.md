@@ -101,12 +101,12 @@ node plugins/update-readme-images/skills/update-readme-images/scripts/update-rea
 ## Install
 
 ```sh
-/plugin marketplace add github:gnomatix/gnomatix-oss-skills
+/plugin marketplace add gnomatix/gnomatix-oss-skills
 /plugin install update-readme-images@gnomatix-oss-skills
 ```
 
 - **Antigravity CLI (`agy`)**: `agy plugin install ./plugins/update-readme-images`
-- **Every other agent**: install the static skill folder (`plugins/update-readme-images/skills/update-readme-images/`) across Codex, GitHub Copilot, VS Code, Cursor, OpenCode, and Kiro with `node scripts/install-skills.js install --plugin update-readme-images` from the marketplace root.
+- **Every other agent**: the skill folders under [`skills/`](skills/) follow the cross-CLI [Agent Skills](https://agentskills.io) format (`mise skills sync --prune`, or per-CLI install paths in the root `README.md`).
 
 ## Verification and validation
 

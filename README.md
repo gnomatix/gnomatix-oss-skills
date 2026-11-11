@@ -108,57 +108,61 @@ Every plugin in `gnomatix-oss-skills` is engineered around a three-tier capabili
 
 ## Install & Updates
 
-### Cross-Platform Static Installer & State Migrator (All Agent CLIs)
-
-This repository contains zero Git symlinks (`120000`), so checkouts and updates work identically on Windows, macOS, and Linux regardless of `core.symlinks`. Install, update, or migrate plugins and skills into any agent harness with [`scripts/install-skills.js`](scripts/install-skills.js):
-
-```sh
-node scripts/install-skills.js install --scope user --target auto
-node scripts/install-skills.js install --scope project --project-dir /path/to/project --target codex,copilot,kiro
-node scripts/install-skills.js update --scope user
-node scripts/install-skills.js migrate --scope user
-```
-
-`scripts/install-skills.js` copies static files (`100644` / `100755`), tracks installed skill digests in `.gnox-install-state.json`, replaces any legacy broken symlinks, and reconciles plugin or skill renames and consolidations declared in [`.claude-plugin/migrations.json`](.claude-plugin/migrations.json) (plus Git release-tag rename diffs across `v*` tags). Inside a Claude Code or `gnox` session, `/gnox:migrate` runs the same state reconciliation.
-
-Supported targets (`--target`):
-
-- **OpenAI Codex** ([docs](https://learn.chatgpt.com/docs/build-skills)): project `.agents/skills/`; user `~/.codex/skills/` and `~/.agents/skills/` (`--target codex`).
-- **Antigravity CLI (`agy`)**: project `.agents/skills/` or `.gemini/skills/`; user `~/.gemini/config/plugins/`, `~/.gemini/skills/`, or `~/.agents/skills/` (`--target antigravity`, or `agy plugin install ./plugins/<plugin>`).
-- **Claude Code**: marketplace install below, or static skills in `.claude/skills/` / `~/.claude/skills/` (`--target claude-code` / `--target claude-skills`).
-- **GitHub Copilot & VS Code** ([Copilot docs](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills), [VS Code docs](https://code.visualstudio.com/docs/copilot/customization/agent-skills)): project `.github/skills/` and `.agents/skills/`; user `~/.copilot/skills/` (`--target copilot`, plus [`vscode-extension/`](vscode-extension/)).
-- **Cursor** ([docs](https://cursor.com/docs/context/skills)): project `.cursor/skills/` and `.agents/skills/`; user `~/.cursor/skills/` (`--target cursor`).
-- **OpenCode** ([docs](https://opencode.ai/docs/skills/)): project `.opencode/skills/` and `.agents/skills/`; user `~/.config/opencode/skills/` (`--target opencode`).
-- **Kiro** ([docs](https://kiro.dev/docs/skills/)): project `.kiro/skills/`; user `~/.kiro/skills/` (`--target kiro`, or Kiro panel → Import a skill).
-
 ### Claude Code Marketplace
 
-Add the marketplace once, then install any plugin from it:
+Install any plugin directly from the `gnomatix/gnomatix-oss-skills` marketplace in one step (Claude Code `2.1.275+`), or add the marketplace catalog first:
 
 ```sh
-/plugin marketplace add github:gnomatix/gnomatix-oss-skills
+/plugin install all-help-no-harm --marketplace gnomatix/gnomatix-oss-skills
+
+# Or add the catalog once and install by plugin id:
+/plugin marketplace add gnomatix/gnomatix-oss-skills
 /plugin install all-help-no-harm@gnomatix-oss-skills
 ```
 
-`gnomatix-oss-skills` is the marketplace's `name` in [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json). Updates flow via `/plugin update` (and `/gnox:migrate` or `node scripts/install-skills.js migrate` when upgrading across historical plugin renames or consolidations). Claude Code loads each plugin's `hooks/hooks.json` automatically; cross-CLI native hook installers ship in [`spank-dario`](plugins/spank-dario/README.md), and [`all-help-no-harm`](plugins/all-help-no-harm/platforms/README.md) for Codex, Antigravity (`agy`), Gemini CLI, and Kiro.
+`gnomatix-oss-skills` is the marketplace's `name` in [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json). Updates flow via `/plugin marketplace update gnomatix-oss-skills` (or `claude plugin update <plugin>@gnomatix-oss-skills`, or background auto-update enabled in `/plugin`). Historical plugin renames (`actually-im-the-ahole` → `hidden-libel-check`, `kontentkop-agent-output` → `agent-darktriad-check`, `forbidden-output-guard` → `bear-loads`) and removed plugins are migrated automatically by Claude Code via top-level `renames` and `forceRemoveDeletedPlugins` in [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json). Claude Code loads each plugin's `hooks/hooks.json` automatically; cross-CLI native hook installers ship in [`spank-dario`](plugins/spank-dario/README.md), and [`all-help-no-harm`](plugins/all-help-no-harm/platforms/README.md) for Codex, Antigravity (`agy`), Gemini CLI, and Kiro.
+
+### Cross-Platform Tooling & Agent Skills (`mise` & [agentskills.io](https://agentskills.io))
+
+This repository contains zero Git symlinks (`120000`), so checkouts and updates work identically on Windows, macOS, and Linux regardless of `core.symlinks`. Cross-platform runtime tools, packslip-declared Agent Skills, and project tasks are managed through **`mise`** ([`mise.toml`](mise.toml) and [`deps/`](deps/)):
+
+```sh
+# Bootstrap mise (Linux / macOS or Windows PowerShell):
+curl -fsSL https://raw.githubusercontent.com/gnomatix/gnomatix-oss-skills/main/deps/mise.sh | sh
+powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/gnomatix/gnomatix-oss-skills/main/deps/mise.ps1 | iex"
+
+# Sync active packslip-declared Agent Skills and run environment diagnostics:
+mise skills sync --prune
+mise run doctor
+```
+
+Each skill is a self-contained folder with a `SKILL.md` in the cross-agent [Agent Skills](https://agentskills.io) format ([specification](https://agentskills.io/specification.md)) at `plugins/<plugin>/skills/<skill>/`:
+
+- **OpenAI Codex** ([docs](https://learn.chatgpt.com/docs/build-skills)): project `.agents/skills/`; user `~/.codex/skills/` and `~/.agents/skills/` (`mise skills sync --prune`).
+- **Antigravity CLI (`agy`)**: `agy plugin install ./plugins/<plugin>`, or project `.agents/skills/` / user `~/.gemini/config/plugins/`.
+- **Claude Code**: marketplace install above (`/plugin install <plugin> --marketplace gnomatix/gnomatix-oss-skills`).
+- **GitHub Copilot & VS Code** ([Copilot docs](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills), [VS Code docs](https://code.visualstudio.com/docs/copilot/customization/agent-skills)): project `.github/skills/` and `.agents/skills/`; user `~/.copilot/skills/` (plus [`vscode-extension/`](vscode-extension/)).
+- **Cursor** ([docs](https://cursor.com/docs/context/skills)): project `.cursor/skills/` and `.agents/skills/`; user `~/.cursor/skills/`.
+- **OpenCode** ([docs](https://opencode.ai/docs/skills/)): project `.opencode/skills/` and `.agents/skills/`; user `~/.config/opencode/skills/`.
+- **Kiro** ([docs](https://kiro.dev/docs/skills/)): project `.kiro/skills/`; user `~/.kiro/skills/` (or Kiro panel → Import a skill).
 
 ## Repo layout
 
 ```
 .
 ├── .claude-plugin/
-│   ├── marketplace.json              # marketplace manifest (every plugin below)
-│   └── migrations.json               # tag-aware plugin & skill rename/consolidation map
+│   └── marketplace.json              # marketplace manifest (plugins, renames, forceRemoveDeletedPlugins)
 ├── .agents/skills/beads/             # static repo-local Beads workflow skill
 ├── .codex/                           # Codex hooks for agents working in this repo (beads)
 ├── .claude/settings.json             # Claude Code settings for agents working in this repo
 ├── AGENTS.md, CLAUDE.md              # instructions for agents working in this repo
 ├── README.md
+├── mise.toml                         # declarative mise tools, skills sync settings, and tasks
 ├── assets/                           # README boilerplate blocks and images
 ├── deps/                             # cross-platform optional-tool bootstrap scripts (mise)
 ├── dev/                              # private, git-crypt encrypted (dev/README.md explains)
 ├── lib/                              # canonical pure-Node helpers synced into plugins via scripts/sync-lib.js
-├── scripts/                          # install-skills.js, version-bump.js, sync-lib.js, audit-marketplace-integrity.js, release.sh
+├── scripts/                          # version-bump.js, sync-lib.js, audit-marketplace-integrity.js, build-release-tree.js, release.sh
 ├── vscode-extension/                 # GNOMATIX Skills VS Code extension
 └── plugins/                          # one self-contained directory per plugin
     └── <plugin>/

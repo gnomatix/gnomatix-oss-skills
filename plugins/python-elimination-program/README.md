@@ -64,7 +64,7 @@ The plugin enforces "if you can't manage your dependencies, you shouldn't have t
 From the parent marketplace repo:
 
 ```sh
-/plugin marketplace add github:gnomatix/gnomatix-oss-skills
+/plugin marketplace add gnomatix/gnomatix-oss-skills
 /plugin install python-elimination-program@gnomatix-oss-skills
 ```
 
@@ -81,7 +81,7 @@ To enable the millenial-crybaby-spanking hook without using the plugin install p
 
 ### Other CLIs (cross-CLI Agent Skills & hook-capable harnesses)
 
-Install the static skill directories into Codex, Antigravity (`agy`), GitHub Copilot, VS Code, Cursor, OpenCode, or Kiro with `node scripts/install-skills.js install --plugin python-elimination-program` from the marketplace root (see the root `README.md` for target flags). The pure-Node `PreToolUse` hook in [`hooks/whacking-day-millenial-crybaby-spanking.js`](hooks/whacking-day-millenial-crybaby-spanking.js) reads standard JSON hook stdin/stdout and can be wired into any CLI harness that supports `PreToolUse` / `BeforeTool` command hooks; on CLIs without hooks, the four Agent Skills enforce the gate sequence directly.
+Each folder under [`skills/`](skills/) follows the cross-CLI [Agent Skills](https://agentskills.io) standard (`mise skills sync --prune`, or per-CLI install paths in the root `README.md`). The pure-Node `PreToolUse` hook in [`hooks/whacking-day-millenial-crybaby-spanking.js`](hooks/whacking-day-millenial-crybaby-spanking.js) reads standard JSON hook stdin/stdout and can be wired into any CLI harness that supports `PreToolUse` / `BeforeTool` command hooks; on CLIs without hooks, the four Agent Skills enforce the gate sequence directly.
 
 ## How the gates interact
 

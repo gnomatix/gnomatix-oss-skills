@@ -17,8 +17,8 @@ Create or update a versioned release message (`docs/releases/v<VERSION>.md`) pai
 
 1. **Always Resolve & Report Configured Reference Documents First**:
    Run `update-readme-images.mjs --resolve docs/releases/v<VERSION>.md` before generating any release panel image, read every resolved project-specific or fallback style guide and rules document in full, and **explicitly state the Configured Reference Documents** (with `[project-specific]` vs `[gnomatix-oss-skills-fallback]` origin tags) in your output.
-2. **Real Version & Migration Telemetry**:
-   Never invent version numbers or plugin counts. `scripts/author-release-readme.mjs` inspects `VERSION`, `.VERSIONS.json`, prior `v*` Git tags, and `.claude-plugin/migrations.json` to build the exact Newly Published / Updated Plugin Version Matrix and migration summary.
+2. **Real Version & Rename Telemetry**:
+   Never invent version numbers or plugin counts. `scripts/author-release-readme.mjs` inspects `VERSION`, `.VERSIONS.json`, prior `v*` Git tags, and `.claude-plugin/marketplace.json` (`renames`) to build the exact Newly Published / Updated Plugin Version Matrix and rename summary.
 3. **Candid PSA Release Register & 16:9 Illustration**:
    - Pair substantive engineering highlights and copy-pasteable cross-CLI commands (`Claude Code`, `Codex`, `Antigravity agy`, `Copilot`, `VS Code`, `Cursor`, `OpenCode`, `Kiro`) with a memorable 1980s Saturday-morning PSA closer (`# Just say NO to <ANTI-PATTERN>!` / `## ... Knowing is half the battle.`).
    - Illustrate the release's headline improvements and anti-pattern victory in a dedicated `16:9` (`1376×768`) panel at `assets/images/releases/release-v<VERSION>-banner.jpg`, passing gold-standard `reference_images` in `ImagePaths` and keeping natural human complexions, dynamic comic ink linework, and clear headroom around diegetic signage.

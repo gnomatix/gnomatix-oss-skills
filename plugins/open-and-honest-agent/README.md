@@ -51,7 +51,7 @@ The skill does not make the agent perfect. It makes the agent visible.
 From the parent marketplace repo:
 
 ```sh
-/plugin marketplace add github:gnomatix/gnomatix-oss-skills
+/plugin marketplace add gnomatix/gnomatix-oss-skills
 /plugin install open-and-honest-agent@gnomatix-oss-skills
 ```
 

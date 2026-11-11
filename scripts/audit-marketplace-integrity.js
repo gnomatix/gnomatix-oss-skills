@@ -12,11 +12,11 @@
 // 5. Canonical lib/ Synchronization: synced copies of lib/fs-safe.js and lib/gnox-discovery.js match root lib/.
 // 6. gnox Router Synchronization: plugins/gnox/scripts/build-commands.js --check passes (when present).
 // 7. Zero Git Symlinks (`no-git-symlinks`): zero mode-120000 Git symlink entries in the Git index and zero
-//    filesystem symlinks/junctions anywhere in the repository tree (all cross-CLI installs use static copies
-//    via scripts/install-skills.js).
-// 8. Rename/Consolidation Migration Manifest & Tag Coverage (`migrations-manifest-and-tags`): validates
-//    .claude-plugin/migrations.json and verifies across all `v*` Git release tags that every historically
-//    shipped plugin and skill either still exists at its original path or has an explicit migration entry.
+//    filesystem symlinks/junctions anywhere in the repository tree (all tracked files are regular static blobs).
+// 8. Native Marketplace Renames & Tag Coverage (`marketplace-renames-and-tags`): validates top-level
+//    `renames` and `forceRemoveDeletedPlugins` in .claude-plugin/marketplace.json, prohibits bespoke
+//    .claude-plugin/migrations.json files, and verifies across all `v*` Git release tags that every
+//    historically shipped plugin either remains in `plugins` or is mapped in `marketplace.json#renames`.
 // 9. VV.md Complementary Topology & Lifecycle Frontmatter Integrity: every `complements:` entry in
 //    plugins/*/VV.md names a real marketplace plugin (never itself) and provides both `when_installed`
 //    and `when_absent` behaviors; optional GNOMATIX release-gating fields (`authority`, `review_status`,
@@ -498,7 +498,7 @@ function auditMarketplace(repoRoot, opts) {
       fail(
         'no-git-symlinks',
         sym,
-        'filesystem symlink/junction is prohibited in repository; use scripts/install-skills.js static copies instead'
+        'filesystem symlink/junction is prohibited in repository; commit regular static files (100644/100755) instead'
       );
     }
     if (fs.existsSync(path.join(root, '.git')) && options.checkGitIndexSymlinks !== false) {
@@ -528,112 +528,114 @@ function auditMarketplace(repoRoot, opts) {
     );
   }
 
-  // 6b. Migration manifest & Git release-tag rename/move coverage (`migrations-manifest-and-tags`)
-  const migPath = path.join(root, '.claude-plugin', 'migrations.json');
-  const enforceMigrations =
-    options.checkMigrations === true ||
-    (options.checkMigrations !== false && (fs.existsSync(migPath) || (mp && mp.name === 'gnomatix-oss-skills')));
-  if (enforceMigrations) {
+  // 6b. Native Claude Code marketplace.json `renames` + `forceRemoveDeletedPlugins` & Git release-tag coverage
+  const legacyMigPath = path.join(root, '.claude-plugin', 'migrations.json');
+  const enforceRenames =
+    options.checkMigrations !== false && Boolean(mp);
+  if (enforceRenames) {
     const beforeMig = findings.length;
-    if (!fs.existsSync(migPath)) {
-      fail('migrations-manifest-and-tags', migPath, 'missing .claude-plugin/migrations.json');
-    } else {
-      let mig = null;
-      try {
-        mig = JSON.parse(fs.readFileSync(migPath, 'utf8'));
-      } catch (err) {
-        fail('migrations-manifest-and-tags', migPath, `invalid JSON: ${err.message}`);
+    if (fs.existsSync(legacyMigPath)) {
+      fail(
+        'marketplace-renames-and-tags',
+        legacyMigPath,
+        'bespoke .claude-plugin/migrations.json is prohibited; declare native top-level "renames" and "forceRemoveDeletedPlugins" in .claude-plugin/marketplace.json'
+      );
+    }
+    if (mp.name === 'gnomatix-oss-skills') {
+      if (mp.forceRemoveDeletedPlugins !== true) {
+        fail(
+          'marketplace-renames-and-tags',
+          mpPath,
+          'expected top-level "forceRemoveDeletedPlugins": true in .claude-plugin/marketplace.json'
+        );
       }
-      if (mig) {
-        if (mig.schema_version !== 1) {
-          fail('migrations-manifest-and-tags', migPath, `expected schema_version 1, got ${JSON.stringify(mig.schema_version)}`);
-        }
-        const pluginMigratedFrom = new Set();
-        const skillMigratedFrom = new Set();
+      if (!mp.renames || typeof mp.renames !== 'object' || Array.isArray(mp.renames)) {
+        fail(
+          'marketplace-renames-and-tags',
+          mpPath,
+          'missing top-level "renames" object in .claude-plugin/marketplace.json'
+        );
+      }
+    }
 
-        for (const pm of mig.plugin_migrations || []) {
-          if (!pm || !pm.from || !pm.to || !pm.since || !pm.reason || typeof pm.bridge_retained !== 'boolean') {
-            fail('migrations-manifest-and-tags', migPath, `incomplete plugin_migrations entry: ${JSON.stringify(pm)}`);
-            continue;
-          }
-          pluginMigratedFrom.add(pm.from);
-          if (!pluginNames.has(pm.to)) {
-            fail('migrations-manifest-and-tags', migPath, `plugin migration target "${pm.to}" (from "${pm.from}") does not exist in marketplace.json`);
-          }
-          if (pm.bridge_retained && !pluginNames.has(pm.from)) {
-            fail('migrations-manifest-and-tags', migPath, `plugin migration "${pm.from}" declares bridge_retained: true, so "${pm.from}" must remain in marketplace.json`);
-          }
-        }
+    const renamesMap = mp.renames && typeof mp.renames === 'object' && !Array.isArray(mp.renames) ? mp.renames : {};
+    if (mp.renames !== undefined && (typeof mp.renames !== 'object' || mp.renames === null || Array.isArray(mp.renames))) {
+      fail('marketplace-renames-and-tags', mpPath, '"renames" in marketplace.json must be a JSON object');
+    }
 
-        for (const sm of mig.skill_migrations || []) {
-          if (!sm || !sm.from_plugin || !sm.from_skill || !sm.to_plugin || !sm.to_skill || !sm.since || !sm.reason) {
-            fail('migrations-manifest-and-tags', migPath, `incomplete skill_migrations entry: ${JSON.stringify(sm)}`);
-            continue;
-          }
-          skillMigratedFrom.add(`${sm.from_plugin}/${sm.from_skill}`);
-          if (!skillKeySet.has(`${sm.to_plugin}/${sm.to_skill}`)) {
-            fail(
-              'migrations-manifest-and-tags',
-              migPath,
-              `skill migration target "${sm.to_plugin}/${sm.to_skill}" (from "${sm.from_plugin}/${sm.from_skill}") does not exist in plugins/`
-            );
-          }
+    for (const [fromName, rawTarget] of Object.entries(renamesMap)) {
+      if (rawTarget !== null && (typeof rawTarget !== 'string' || !rawTarget.trim())) {
+        fail(
+          'marketplace-renames-and-tags',
+          mpPath,
+          `renames.${fromName}: target must be a plugin name string or null, got ${JSON.stringify(rawTarget)}`
+        );
+        continue;
+      }
+      let cur = rawTarget;
+      const seen = new Set([fromName]);
+      let cyclic = false;
+      while (typeof cur === 'string' && Object.prototype.hasOwnProperty.call(renamesMap, cur)) {
+        if (seen.has(cur)) {
+          fail('marketplace-renames-and-tags', mpPath, `renames.${fromName}: rename chain contains a cycle at "${cur}"`);
+          cyclic = true;
+          break;
         }
+        seen.add(cur);
+        cur = renamesMap[cur];
+      }
+      if (!cyclic && cur !== null && !pluginNames.has(cur)) {
+        fail(
+          'marketplace-renames-and-tags',
+          mpPath,
+          `renames.${fromName}: chain target "${cur}" does not resolve to null or an entry in marketplace.json#plugins`
+        );
+      }
+    }
 
-        if (fs.existsSync(path.join(root, '.git')) && options.checkTagCoverage !== false) {
-          const rTags = spawnSync('git', ['-C', root, 'tag', '-l', 'v*'], {
+    if (fs.existsSync(path.join(root, '.git')) && options.checkTagCoverage !== false) {
+      const rTags = spawnSync('git', ['-C', root, 'tag', '-l', 'v*'], {
+        encoding: 'utf8',
+        shell: false,
+        windowsHide: true,
+      });
+      if (rTags.status === 0 && rTags.stdout) {
+        const tags = rTags.stdout.split(/\r?\n/).map((t) => t.trim()).filter(Boolean);
+        const seenMissingPlugins = new Set();
+        for (const tag of tags) {
+          const rTree = spawnSync('git', ['-C', root, 'ls-tree', '-r', '--name-only', tag, '--', 'plugins/'], {
             encoding: 'utf8',
             shell: false,
             windowsHide: true,
+            maxBuffer: 20 * 1024 * 1024,
           });
-          if (rTags.status === 0 && rTags.stdout) {
-            const tags = rTags.stdout.split(/\r?\n/).map((t) => t.trim()).filter(Boolean);
-            const seenMissingPlugins = new Set();
-            const seenMissingSkills = new Set();
-            for (const tag of tags) {
-              const rTree = spawnSync('git', ['-C', root, 'ls-tree', '-r', '--name-only', tag, '--', 'plugins/'], {
-                encoding: 'utf8',
-                shell: false,
-                windowsHide: true,
-                maxBuffer: 20 * 1024 * 1024,
-              });
-              if (rTree.status !== 0 || !rTree.stdout) continue;
-              for (const p of rTree.stdout.split(/\r?\n/)) {
-                const pm = /^plugins\/([^/]+)\/\.claude-plugin\/plugin\.json$/.exec(p);
-                if (pm) {
-                  const oldPlugin = pm[1];
-                  if (!pluginNames.has(oldPlugin) && !pluginMigratedFrom.has(oldPlugin) && !seenMissingPlugins.has(oldPlugin)) {
-                    seenMissingPlugins.add(oldPlugin);
-                    fail(
-                      'migrations-manifest-and-tags',
-                      migPath,
-                      `plugin "${oldPlugin}" shipped in tag ${tag} is absent from marketplace.json without an entry in .claude-plugin/migrations.json`
-                    );
-                  }
-                  continue;
-                }
-                const sm = /^plugins\/([^/]+)\/skills\/([^/]+)\/SKILL\.md$/.exec(p);
-                if (sm) {
-                  const key = `${sm[1]}/${sm[2]}`;
-                  if (!skillKeySet.has(key) && !skillMigratedFrom.has(key) && !seenMissingSkills.has(key)) {
-                    seenMissingSkills.add(key);
-                    fail(
-                      'migrations-manifest-and-tags',
-                      migPath,
-                      `skill "${key}" shipped in tag ${tag} moved or was renamed without an entry in .claude-plugin/migrations.json`
-                    );
-                  }
-                }
+          if (rTree.status !== 0 || !rTree.stdout) continue;
+          for (const p of rTree.stdout.split(/\r?\n/)) {
+            const pm = /^plugins\/([^/]+)\/\.claude-plugin\/plugin\.json$/.exec(p);
+            if (pm) {
+              const oldPlugin = pm[1];
+              if (
+                !pluginNames.has(oldPlugin) &&
+                !Object.prototype.hasOwnProperty.call(renamesMap, oldPlugin) &&
+                !seenMissingPlugins.has(oldPlugin)
+              ) {
+                seenMissingPlugins.add(oldPlugin);
+                fail(
+                  'marketplace-renames-and-tags',
+                  mpPath,
+                  `plugin "${oldPlugin}" shipped in tag ${tag} is absent from marketplace.json#plugins without an entry in marketplace.json#renames`
+                );
               }
             }
           }
         }
       }
     }
+
     recordCheck(
-      'migrations-manifest-and-tags',
+      'marketplace-renames-and-tags',
       findings.length === beforeMig,
-      findings.length === beforeMig ? 'migrations.json and release-tag coverage verified' : 'migration coverage issues found'
+      findings.length === beforeMig ? 'marketplace.json renames and release-tag coverage verified' : 'marketplace renames coverage issues found'
     );
   }
 

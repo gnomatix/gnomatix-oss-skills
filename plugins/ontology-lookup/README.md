@@ -76,7 +76,7 @@ Wikidata, schema.org, SKOS, Dublin Core, PROV-O, OWL-Time, BFO, Gene Ontology, C
 From the parent marketplace repo:
 
 ```sh
-/plugin marketplace add github:gnomatix/gnomatix-oss-skills
+/plugin marketplace add gnomatix/gnomatix-oss-skills
 /plugin install ontology-lookup@gnomatix-oss-skills
 ```
 

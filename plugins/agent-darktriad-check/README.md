@@ -143,7 +143,7 @@ KONTENTKOP_BIN=/abs/path/to/kontentkop node plugins/agent-darktriad-check/script
 ## Install
 
 ```sh
-/plugin marketplace add github:gnomatix/gnomatix-oss-skills
+/plugin marketplace add gnomatix/gnomatix-oss-skills
 /plugin install agent-darktriad-check@gnomatix-oss-skills
 ```
 

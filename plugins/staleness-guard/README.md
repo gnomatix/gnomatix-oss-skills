@@ -34,7 +34,7 @@
 ## Install
 
 - Claude Code: `/plugin install staleness-guard@gnomatix-oss-skills`, then `/staleness-guard` or `/gnox:staleness-guard`. The skill loads through its description on each platform; `VV.md` records where that has been verified.
-- Every other agent: install the static Agent Skills folder (`plugins/staleness-guard/skills/staleness-guard/`) with `node scripts/install-skills.js install --plugin staleness-guard` from the marketplace root (supports Codex, Antigravity `agy`, GitHub Copilot, VS Code, Cursor, OpenCode, and Kiro).
+- Every other agent: the skill folder [`plugins/staleness-guard/skills/staleness-guard/`](skills/staleness-guard/) follows the cross-CLI [Agent Skills](https://agentskills.io) format (`mise skills sync --prune`, or per-CLI install paths in the root `README.md`).
 
 ## Hooks
 

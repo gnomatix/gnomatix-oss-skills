@@ -73,8 +73,8 @@ const SKILL_TO_PLUGIN = {
   'author-release-readme': 'update-readme-images',
 };
 
-// Historical plugin/skill rename and consolidation map (mirrors .claude-plugin/migrations.json)
-// so legacy user installations are recognized and offered graceful state migration via /gnox:migrate.
+// Historical plugin rename/consolidation map (mirrors .claude-plugin/marketplace.json#renames)
+// so legacy user installations are recognized during topology discovery.
 const LEGACY_PLUGIN_MIGRATIONS = {
   'actually-im-the-ahole': 'hidden-libel-check',
   'kontentkop-agent-output': 'agent-darktriad-check',
@@ -482,7 +482,7 @@ function formatTopologySummary(topology) {
   if (migList.length > 0) {
     const summary = migList.map((m) => `${m.from}->${m.to} (${m.source})`).join(', ');
     lines.push(
-      `   - Pending install-state migrations (${migList.length}): ${summary}. Run /gnox:migrate or \`node scripts/install-skills.js migrate\` to reconcile renamed/consolidated plugins cleanly.`
+      `   - Legacy plugin names detected (${migList.length}): ${summary}. Update via \`/plugin marketplace update gnomatix-oss-skills\` in Claude Code or \`mise skills sync --prune\` via mise.`
     );
   }
   lines.push(

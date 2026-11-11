@@ -429,14 +429,18 @@ function runDoctor(repoRoot, options = {}) {
     });
   }
 
-  // Harness & symlink health
-  const statePath = path.join(os.homedir(), '.agents', '.gnox-install-state.json');
+  // Project mise.toml configuration check
+  const miseCfgPath = [
+    path.join(repoRoot, 'mise.toml'),
+    path.join(repoRoot, '.mise.toml'),
+    path.join(repoRoot, '.config', 'mise', 'mise.toml')
+  ].find((p) => safeExists(p));
   checks.push({
-    id: 'install-state:user',
-    severity: safeExists(statePath) ? 'ok' : 'info',
-    summary: safeExists(statePath)
-      ? `Cross-CLI static install state tracked at ${statePath}`
-      : `No user-scope .gnox-install-state.json yet (run \`node scripts/install-skills.js install --scope user\` to bootstrap static cross-CLI skills)`
+    id: 'mise-config:repo',
+    severity: 'info',
+    summary: miseCfgPath
+      ? `Declarative mise config present at ${miseCfgPath}`
+      : 'No repository mise.toml found (optional — see deps/README.md for mise setup)'
   });
 
   const wizards = discoverWizards(marketplaceRoot)

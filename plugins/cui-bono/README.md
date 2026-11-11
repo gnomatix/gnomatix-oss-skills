@@ -56,11 +56,11 @@ Node 18 or later for every script: `openalex-profile.mjs` (built-in `fetch`), `g
 ## Install
 
 ```sh
-/plugin marketplace add github:gnomatix/gnomatix-oss-skills
+/plugin marketplace add gnomatix/gnomatix-oss-skills
 /plugin install cui-bono@gnomatix-oss-skills
 ```
 
-For Codex, Antigravity (`agy`), GitHub Copilot, VS Code, Cursor, OpenCode, and Kiro, install static skill copies with `node scripts/install-skills.js install --plugin cui-bono` from the marketplace root (and run `node scripts/install-skills.js migrate` or `/gnox:migrate` if upgrading from an older standalone `citation-farm-audit` install).
+For Codex, Antigravity (`agy`), GitHub Copilot, VS Code, Cursor, OpenCode, and Kiro, each folder under [`skills/`](skills/) follows the cross-CLI [Agent Skills](https://agentskills.io) format (`mise skills sync --prune`, or per-CLI install paths in the root `README.md`).
 
 <!-- BEGIN: gnomatix-license-include -->
 ## License

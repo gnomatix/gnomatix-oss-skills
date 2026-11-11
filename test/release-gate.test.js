@@ -144,23 +144,12 @@ test('buildReleaseTree holds back net-new PENDING plugins, pins PENDING edits on
     JSON.stringify(
       {
         name: 'synthetic-marketplace',
+        forceRemoveDeletedPlugins: true,
+        renames: {},
         plugins: [
           { name: 'steady-plugin', description: 'Steady 0.1.0', source: './plugins/steady-plugin' },
           { name: 'pinned-plugin', description: 'Pinned 0.2.5 approved', source: './plugins/pinned-plugin' },
         ],
-      },
-      null,
-      2
-    ) + '\n'
-  );
-  fs.writeFileSync(
-    path.join(repoDir, '.claude-plugin', 'migrations.json'),
-    JSON.stringify(
-      {
-        schema_version: 1,
-        marketplace: 'synthetic-marketplace',
-        plugin_migrations: [],
-        skill_migrations: [],
       },
       null,
       2

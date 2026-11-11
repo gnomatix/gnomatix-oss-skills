@@ -57,7 +57,7 @@ These are documented here for transparency. If Brett Whitty observes a high rate
 When the plugin is installed via Claude Code's marketplace mechanism, [`hooks.json`](hooks.json) auto-registers the hooks. The `${CLAUDE_PLUGIN_ROOT}` placeholder resolves to the plugin's installation directory.
 
 ```sh
-/plugin marketplace add github:gnomatix/gnomatix-oss-skills
+/plugin marketplace add gnomatix/gnomatix-oss-skills
 /plugin install did-you-rtfm@gnomatix-oss-skills
 ```
 

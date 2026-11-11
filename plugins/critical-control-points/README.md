@@ -45,11 +45,11 @@ No hooks. The skill applies to Claude Code and to any agent that reads the Agent
 Claude Code, from the marketplace:
 
 ```sh
-/plugin marketplace add github:gnomatix/gnomatix-oss-skills
+/plugin marketplace add gnomatix/gnomatix-oss-skills
 /plugin install critical-control-points@gnomatix-oss-skills
 ```
 
-Other agents: install the static skill folder (`plugins/critical-control-points/skills/critical-control-points/`) across Codex, Antigravity (`agy`), GitHub Copilot, VS Code, Cursor, OpenCode, and Kiro with `node scripts/install-skills.js install --plugin critical-control-points` (see the root `README.md`).
+Other agents: the skill folder [`plugins/critical-control-points/skills/critical-control-points/`](skills/critical-control-points/) follows the cross-CLI [Agent Skills](https://agentskills.io) format (`mise skills sync --prune`, or per-CLI install paths in the root `README.md`).
 
 <!-- BEGIN: gnomatix-license-include -->
 ## License

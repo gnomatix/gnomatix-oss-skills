@@ -47,7 +47,7 @@ The silent set was tested by Brett Whitty in a voice-mode session on 2026-06-28.
 From the parent marketplace repo:
 
 ```sh
-/plugin marketplace add github:gnomatix/gnomatix-oss-skills
+/plugin marketplace add gnomatix/gnomatix-oss-skills
 /plugin install inaudible-markup@gnomatix-oss-skills
 ```
 

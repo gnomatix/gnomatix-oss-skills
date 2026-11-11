@@ -9,7 +9,8 @@ One namespace for every skill in the `gnomatix-oss-skills` marketplace — plus 
 | `/gnox:<plugin>` | the plugin's main skill, the one named like the plugin (for example `/gnox:hidden-libel-check`); for a plugin without one, a list of its commands |
 | `/gnox:<plugin>:<skill>` | any other skill of the plugin (for example `/gnox:python-elimination-program:zartan`) |
 | `/gnox:<plugin>:<group>:<cmd>` | the plugin's own sub-command `/<plugin>:<group>:<cmd>`, from its `commands/<group>/<cmd>.md`, at any depth |
-| `/gnox:migrate` | reconciles user/project install state across historical plugin and skill renames or consolidations (`scripts/install-skills.js migrate`) |
+| `/gnox:local-config-wizard` | runs the non-LLM `gnox-wizard/v1` local configuration wizard (`huh`/`gum` TUI or deterministic `--answers` mode) |
+| `/gnox:doctor` | runs non-LLM `mise` / tool / plugin configuration diagnostics across the active repository |
 
 Each command hands its arguments to the plugin's own skill, so the target plugin has to be installed when you invoke its routed command. Every plugin still installs and runs stand-alone under its own `/<plugin>` command whether or not `gnox` is installed.
 

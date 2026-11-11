@@ -47,7 +47,7 @@ With none of the three, it says so and stops.
 ## Install
 
 - Claude Code: `/plugin install log-session@gnomatix-oss-skills`, then `/log-session` or `/gnox:log-session`.
-- Every other agent: install the static Agent Skills folder (`plugins/log-session/skills/log-session/`) with `node scripts/install-skills.js install --plugin log-session` from the marketplace root (supports Codex, Antigravity `agy`, GitHub Copilot, VS Code, Cursor, OpenCode, and Kiro).
+- Every other agent: the skill folder [`plugins/log-session/skills/log-session/`](skills/log-session/) follows the cross-CLI [Agent Skills](https://agentskills.io) format (`mise skills sync --prune`, or per-CLI install paths in the root `README.md`).
 
 ## Hooks
 

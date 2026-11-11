@@ -1,0 +1,41 @@
+# gnomatix-oss-skills — declarative tool, skill-sync, and task configuration (mise)
+
+[tools]
+node = "lts"
+
+[settings]
+skills.auto_sync = true
+skills.prune = true
+
+[tasks.skills-sync]
+description = "Sync active packslip-declared Agent Skills into .agents/skills and prune retired links"
+run = "mise skills sync --prune"
+
+[tasks.doctor]
+description = "Run non-LLM environment and plugin configuration diagnostics"
+run = "node plugins/gnox/scripts/local-config-wizard.js doctor"
+
+[tasks.audit]
+description = "Verify marketplace manifest, native renames, zero-symlink, and anti-pollution gates"
+run = "node scripts/audit-marketplace-integrity.js"
+
+[tasks.validate]
+description = "Validate Claude Code marketplace manifest and plugin schemas"
+run = "claude plugin validate ."
+
+[tasks.sync-lib]
+description = "Synchronize canonical zero-dependency root lib/ modules into plugins"
+run = "node scripts/sync-lib.js"
+
+[tasks.build-commands]
+description = "Regenerate /gnox:<plugin> router commands from .claude-plugin/marketplace.json"
+run = "node plugins/gnox/scripts/build-commands.js"
+
+[tasks.test]
+description = "Run marketplace integrity, release-gate, version-bump, and gnox test suites"
+run = [
+  "node --test test/marketplace-integrity.test.js test/release-gate.test.js",
+  "node scripts/test/version-bump.test.js",
+  "node scripts/test/local-config-wizard.test.js",
+  "node plugins/gnox/test/run.js",
+]

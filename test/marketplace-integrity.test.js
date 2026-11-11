@@ -25,39 +25,13 @@ function makeFixtureRepo(t) {
     JSON.stringify(
       {
         name: 'test-marketplace',
+        forceRemoveDeletedPlugins: true,
+        renames: {
+          'legacy-alpha': 'alpha-plugin',
+        },
         plugins: [
           { name: 'alpha-plugin', source: './plugins/alpha-plugin' },
           { name: 'beta-plugin', source: './plugins/beta-plugin' },
-        ],
-      },
-      null,
-      2
-    )
-  );
-  fs.writeFileSync(
-    path.join(dir, '.claude-plugin', 'migrations.json'),
-    JSON.stringify(
-      {
-        schema_version: 1,
-        marketplace: 'test-marketplace',
-        plugin_migrations: [
-          {
-            from: 'legacy-alpha',
-            to: 'alpha-plugin',
-            since: 'v0.1.0',
-            reason: 'renamed',
-            bridge_retained: false,
-          },
-        ],
-        skill_migrations: [
-          {
-            from_plugin: 'legacy-alpha',
-            from_skill: 'legacy-alpha',
-            to_plugin: 'alpha-plugin',
-            to_skill: 'alpha-plugin',
-            since: 'v0.1.0',
-            reason: 'renamed',
-          },
         ],
       },
       null,
@@ -184,7 +158,7 @@ test('flags filesystem symlinks/junctions and mode-120000 Git symlinks (no-git-s
   assert.ok(report.findings.some((f) => f.rule === 'no-git-symlinks'));
 });
 
-test('flags undocumented tag-shipped plugin/skill removals in migrations-manifest-and-tags', (t) => {
+test('flags undocumented tag-shipped plugin removals in marketplace-renames-and-tags', (t) => {
   const dir = makeFixtureRepo(t);
   git(dir, ['init', '-b', 'main']);
   git(dir, ['config', 'user.name', 'Test']);
@@ -206,43 +180,31 @@ test('flags undocumented tag-shipped plugin/skill removals in migrations-manifes
   git(dir, ['commit', '-m', 'Release v0.0.9']);
   git(dir, ['tag', 'v0.0.9']);
 
-  // Remove forgotten-plugin without recording it in migrations.json
+  // Remove forgotten-plugin without recording it in marketplace.json#renames
   fs.rmSync(oldDir, { recursive: true, force: true });
   git(dir, ['add', '-A']);
-  git(dir, ['commit', '-m', 'Drop forgotten-plugin without migration']);
+  git(dir, ['commit', '-m', 'Drop forgotten-plugin without rename entry']);
 
   const failing = auditMarketplace(dir);
   assert.equal(failing.ok, false);
-  assert.ok(failing.findings.some((f) => f.rule === 'migrations-manifest-and-tags' && f.message.includes('forgotten-plugin')));
+  assert.ok(
+    failing.findings.some((f) => f.rule === 'marketplace-renames-and-tags' && f.message.includes('forgotten-plugin'))
+  );
 
-  // Recording it in migrations.json resolves the violation
+  // Recording it in marketplace.json#renames resolves the violation
   fs.writeFileSync(
-    path.join(dir, '.claude-plugin', 'migrations.json'),
+    path.join(dir, '.claude-plugin', 'marketplace.json'),
     JSON.stringify(
       {
-        schema_version: 1,
-        marketplace: 'test-marketplace',
-        plugin_migrations: [
-          { from: 'legacy-alpha', to: 'alpha-plugin', since: 'v0.1.0', reason: 'renamed', bridge_retained: false },
-          { from: 'forgotten-plugin', to: 'beta-plugin', since: 'v0.1.0', reason: 'renamed', bridge_retained: false },
-        ],
-        skill_migrations: [
-          {
-            from_plugin: 'legacy-alpha',
-            from_skill: 'legacy-alpha',
-            to_plugin: 'alpha-plugin',
-            to_skill: 'alpha-plugin',
-            since: 'v0.1.0',
-            reason: 'renamed',
-          },
-          {
-            from_plugin: 'forgotten-plugin',
-            from_skill: 'forgotten-skill',
-            to_plugin: 'beta-plugin',
-            to_skill: 'beta-plugin',
-            since: 'v0.1.0',
-            reason: 'renamed',
-          },
+        name: 'test-marketplace',
+        forceRemoveDeletedPlugins: true,
+        renames: {
+          'legacy-alpha': 'alpha-plugin',
+          'forgotten-plugin': 'beta-plugin',
+        },
+        plugins: [
+          { name: 'alpha-plugin', source: './plugins/alpha-plugin' },
+          { name: 'beta-plugin', source: './plugins/beta-plugin' },
         ],
       },
       null,
