@@ -1,8 +1,7 @@
 'use strict';
 // spank-dario damages table. Each figure is quoted from its source in references/<cc>/law.md.
 // Statutory ranges are what a statute provides per violation. Reference awards are what a
-// decision awarded. Neither is a prediction for any one case: each element of the claim has
-// to be proved.
+// decision awarded.
 
 const STATUTORY = {
   us: [

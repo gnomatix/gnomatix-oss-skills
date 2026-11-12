@@ -1,6 +1,6 @@
 ---
 name: word-lineage
-description: "Invoke on /word-lineage <word or words>. Traces an English word's lineage phylogenetically: which layer it came from (native Germanic, Norse, Latin, French, other), the evidence for it (similarity to the source-language word, conjugation, synonym set, core vs borrowed vocabulary), and its literal meaning read off the tree, placed on a NEXUS network of English and its donor languages with a cross-language synonym map. Also a word-choice mode (/word-lineage meaning: <phrase>): picks the synonym whose literal meaning matches. Gives one answer per word, plainly; refined with the author when an answer is wrong."
+description: "Invoke on /word-lineage {word or words}. Traces an English word's lineage phylogenetically: which layer it came from (native Germanic, Norse, Latin, French, other), the evidence for it (similarity to the source-language word, conjugation, synonym set, core vs borrowed vocabulary), and its literal meaning read off the tree, placed on a NEXUS network of English and its donor languages with a cross-language synonym map. Also a word-choice mode (/word-lineage meaning: {phrase}): picks the synonym whose literal meaning matches. Gives one answer per word, plainly; refined with the author when an answer is wrong."
 ---
 
 # word-lineage — reading a word off its family tree

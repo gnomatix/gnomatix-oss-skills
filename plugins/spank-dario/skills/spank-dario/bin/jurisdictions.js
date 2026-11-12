@@ -182,11 +182,11 @@ function select(args, cwd) {
     }
   }
 
-  // Each selected law file brings its folder's skill.md and strawmen.md.
+  // Each selected law file brings its folder's jurisdiction.md and strawmen.md.
   for (const [rel, reason] of [...want]) {
     const m = rel.match(/^(\w+)\/(law|berne)\.md$/);
     if (!m) continue;
-    for (const f of ['skill.md', 'strawmen.md']) {
+    for (const f of ['jurisdiction.md', 'strawmen.md']) {
       if (f === 'strawmen.md' && !isFile(path.join(REF, m[1], f))) continue;
       want.push([`${m[1]}/${f}`, reason]);
     }

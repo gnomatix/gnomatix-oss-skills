@@ -8,6 +8,11 @@
       "id": "project-readme-images-config",
       "type": "any_file_exists",
       "candidates": [
+        ".gnox/readme-images-default.json",
+        ".claude/readme-images-default.json",
+        "config/readme-images-default.json",
+        "readme-images-default.json",
+        "plugins/update-readme-images/config/readme-images-default.json",
         ".gnox/readme-images.json",
         ".claude/readme-images.json",
         "config/readme-images.json",
@@ -42,12 +47,12 @@
         {
           "type": "select",
           "key": "config_location",
-          "title": "Where should the project readme-images.json configuration live?",
-          "default": ".gnox/readme-images.json",
+          "title": "Where should the project readme-images-default.json configuration live (with readme-images-user.json beside it)?",
+          "default": ".gnox/readme-images-default.json",
           "options": [
-            { "label": ".gnox/readme-images.json (Recommended cross-CLI project config)", "value": ".gnox/readme-images.json" },
-            { "label": ".claude/readme-images.json (Claude Code project config)", "value": ".claude/readme-images.json" },
-            { "label": "config/readme-images.json (Repository config/ folder)", "value": "config/readme-images.json" }
+            { "label": ".gnox/readme-images-default.json (Recommended cross-CLI project config)", "value": ".gnox/readme-images-default.json" },
+            { "label": ".claude/readme-images-default.json (Claude Code project config)", "value": ".claude/readme-images-default.json" },
+            { "label": "config/readme-images-default.json (Repository config/ folder)", "value": "config/readme-images-default.json" }
           ]
         }
       ]

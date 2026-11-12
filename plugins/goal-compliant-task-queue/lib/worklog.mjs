@@ -2,7 +2,7 @@
 // Node built-ins only. Every write is temp-file + rename inside the state directory, under a lock.
 // Brett's words are stored exactly as read (no trim, no newline normalisation); only comparisons trim.
 //
-// The CLI (bin/worklog) and the MCP server (lib/mcp-server.mjs) both call these functions, so the
+// The CLI (scripts/worklog) and the MCP server (lib/mcp-server.mjs) both call these functions, so the
 // same state and the same refusal rules apply whichever one the agent uses.
 
 import fs from 'node:fs'

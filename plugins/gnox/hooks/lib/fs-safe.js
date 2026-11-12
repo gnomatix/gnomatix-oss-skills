@@ -193,8 +193,47 @@ function cleanStaleLock(lockPath, maxAgeMs) {
   return false;
 }
 
+// Cross-platform "touch": creates targetPath (and its directory) with `skeleton` when it does not
+// exist, otherwise leaves its content alone and updates its access and modification times.
+// Returns true when the file was created.
+function ensureFile(targetPath, skeleton = '') {
+  if (fs.existsSync(targetPath)) {
+    const now = new Date();
+    try { fs.utimesSync(targetPath, now, now); } catch { /* times are best effort */ }
+    return false;
+  }
+  ensureDir(path.dirname(targetPath));
+  atomicWrite(targetPath, skeleton);
+  return true;
+}
+
+// mise.toml-style layering: objects merge key by key; any other value in `over` (scalars,
+// arrays, null) replaces the value in `base`.
+function deepMerge(base, over) {
+  const isObj = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
+  if (!isObj(base) || !isObj(over)) return over === undefined ? base : over;
+  const out = { ...base };
+  for (const [k, v] of Object.entries(over)) out[k] = k in base ? deepMerge(base[k], v) : v;
+  return out;
+}
+
+// Reads <name>-default.json and merges <name>-user.json over it, creating the user file as an
+// empty object when it is missing. A malformed file throws, naming the file.
+function loadLayeredJson(defaultPath, userPath, userSkeleton = '{}\n') {
+  const read = (p) => {
+    const raw = fs.readFileSync(p, 'utf8');
+    try { return JSON.parse(raw); } catch (err) { throw new Error(`${p}: ${err.message}`); }
+  };
+  const base = fs.existsSync(defaultPath) ? read(defaultPath) : {};
+  if (userPath) ensureFile(userPath, userSkeleton);
+  return userPath ? deepMerge(base, read(userPath)) : base;
+}
+
 module.exports = {
   WIN_MAX_SAFE_PATH,
+  ensureFile,
+  deepMerge,
+  loadLayeredJson,
   sleepSync,
   validatePath,
   ensureDir,

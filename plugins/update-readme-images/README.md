@@ -28,7 +28,7 @@
 
 ## What this plugin does
 
-`update-readme-images` keeps the visual identity of `gnomatix-oss-skills` (and any end-user repository that adopts it) consistent and auditable across every Markdown document. Instead of scattering one-off prompts in chat history, the plugin reads [`config/readme-images.json`](config/readme-images.json) (or `<repo>/.claude/readme-images.json`), combining four capabilities:
+`update-readme-images` keeps the visual identity of `gnomatix-oss-skills` (and any end-user repository that adopts it) consistent and auditable across every Markdown document. Instead of scattering one-off prompts in chat history, the plugin reads [`config/readme-images-default.json`](config/readme-images-default.json) with [`readme-images-user.json`](config/readme-images-user.json) merged over it (or `<repo>/.claude/readme-images-default.json` and its `readme-images-user.json`), combining four capabilities:
 
 1. **GNOX-Namespaced Style Guides (`workspace_root:subdir:...`)**:
    - Style guides are keyed using the GNOX colon-delimited hierarchical namespace notation (`gnomatix-oss-skills`, `gnomatix-oss-skills:plugins:python-elimination-program`, `gnomatix-oss-skills:plugins:cui-bono`, etc.).
@@ -82,7 +82,7 @@ node plugins/update-readme-images/skills/update-readme-images/scripts/update-rea
   --make-oval-inset portrait.jpg assets/images/portrait-oval.png \
   --width 864 --height 1013 --outer-color "#0B1F4A" --inner-color "#D4AF37"
 
-# 7. Scaffold .claude/readme-images.json, style guides, and rules in an end-user repository
+# 7. Scaffold .claude/readme-images-default.json (plus an empty readme-images-user.json), style guides, and rules in an end-user repository
 node plugins/update-readme-images/skills/update-readme-images/scripts/update-readme-images.mjs \
   --init /path/to/my-repo --workspace-root my-repo
 ```

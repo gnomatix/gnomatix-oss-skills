@@ -7,7 +7,7 @@ Source of requirements: Brett's words, in [`../skills/goal-compliant-task-queue/
 | Component | Files | Job |
 |---|---|---|
 | Core library | `lib/worklog.mjs` | All state, rules and refusals. Every other component calls it. |
-| CLI | `bin/worklog`, `lib/cli.mjs` | The agent's command-line interface; text arguments as files so his words arrive byte for byte. |
+| CLI | `scripts/worklog`, `lib/cli.mjs` | The agent's command-line interface; text arguments as files so his words arrive byte for byte. |
 | MCP server | `lib/mcp-server.mjs`, `.mcp.json` | The same operations as `worklog_*` tools over stdio JSON-RPC; no network. |
 | Page template | `templates/working-document.html` | One dependency-free page for both the hub (`mode: "hub"`) and each document (`mode: "doc"`); content embedded as JSON; the store holds only Brett's ticks and comments. |
 | claude.ai hub | built by `artifact-payload --hub` | Tab per open question; the claude.ai equivalent of the pane (A31). |

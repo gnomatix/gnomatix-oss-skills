@@ -1,6 +1,6 @@
 # Ireland
 
-Every entry was read and quoted from its primary source.
+Every entry names its source and the date it was read.
 
 ## Clarification
 

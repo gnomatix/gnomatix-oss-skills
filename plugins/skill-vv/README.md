@@ -14,7 +14,7 @@ Results are recorded. A failure is fixed on the spot, or explained to you direct
 ## How it works
 
 - **`VV.md`**, beside each skill, holds the state as YAML frontmatter: requirements (`optional: false` and `optional: true` + `unlocks`), complementary marketplace plugins (`complements`), procedures, claimed platforms, and verified results. The schema is in [`skills/skill-vv/references/vv-schema.md`](skills/skill-vv/references/vv-schema.md).
-- **`bin/skill-vv.js`** is a Node CLI that reads and records that state. Any vendor's agent can run it: `check`, `status`, `record result`, `record decline`, `bug locate`, and `bug log`.
+- **`scripts/skill-vv.js`** is a Node CLI that reads and records that state. Any vendor's agent can run it: `check`, `status`, `record result`, `record decline`, `bug locate`, and `bug log`.
 - **`hooks/session-start.js`** runs `check` at session start on Claude Code, and **`hooks/bug-prompt.js`** routes `/<skill> #bug <report>` prompts to `skill-vv:bug-report`. Other vendors run the same `check` command from their instruction file.
 - **`skills/skill-vv/SKILL.md`** is the workflow the agent follows.
 

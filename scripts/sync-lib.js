@@ -20,6 +20,7 @@ const TARGETS = [
   { src: 'lib/gnox-discovery.js', dest: 'plugins/gnox/hooks/lib/gnox-discovery.js' },
   { src: 'lib/fs-safe.js', dest: 'plugins/skill-vv/lib/fs-safe.js' },
   { src: 'lib/gnox-discovery.js', dest: 'plugins/skill-vv/lib/gnox-discovery.js' },
+  { src: 'lib/fs-safe.js', dest: 'plugins/update-readme-images/lib/fs-safe.js' },
 ];
 
 const BANNER_PREFIX = '// GENERATED COPY — DO NOT EDIT DIRECTLY.\n';

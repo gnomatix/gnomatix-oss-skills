@@ -1,6 +1,6 @@
 # Luxembourg
 
-Every entry was read and quoted from its primary source.
+Every entry names its source and the date it was read.
 
 ## Clarification
 
@@ -27,3 +27,5 @@ Statute: Code civil, in Legilux's consolidated version of 26/12/2025 (http://dat
 - Art. 1382, fault liability — read 2026-11-10 — same — "Tout fait quelconque de l'homme, qui cause à autrui un dommage, oblige celui par la faute duquel il est arrivé, à le réparer."
 - Art. 1383, negligence — read 2026-11-10 — same — "Chacun est responsable du dommage qu'il a causé non seulement par son fait, mais encore par sa négligence ou par son imprudence."
 - Art. 1384, first and third paragraphs, liability for persons one answers for (as amended by the Loi du 27 juin 2018) — read 2026-11-10 — same — "On est responsable non seulement du dommage que l’on cause par son propre fait, mais encore de celui qui est causé par le fait des personnes dont on doit répondre, ou des choses que l’on a sous sa garde." and "Les maîtres et les commettants, du dommage causé par leurs domestiques et préposés dans les fonctions auxquelles ils les ont employés."
+- Loi du 18 avril 2001, art. 76, first sentence, cessation — read 2026-11-10 — the consolidated version above — "Lorsque la juridiction constate une atteinte au droit d’auteur, à un droit voisin ou à un droit sui generis sur des bases de données, il ordonne la cessation de celle-ci à tout auteur de l’atteinte."
+- Loi du 18 avril 2001, art. 86, legal persons answer for their agents — read 2026-11-10 — same — "Les personnes morales sont solidairement tenues responsables des condamnations, dommages et intérêts, amendes, frais, confiscations, restitutions et sanctions pécuniaires et en nature, prononcées pour infraction aux dispositions de la présente loi contre leurs administrateurs, représentants et préposés."

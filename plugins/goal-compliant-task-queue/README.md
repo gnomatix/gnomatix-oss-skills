@@ -40,7 +40,7 @@ The skill gives the procedure, step by step, with the A-numbers each step implem
 | The full record of one question | `worklog show <slug>` | `worklog_show` |
 | The config as the tool reads it | `worklog config` | |
 
-Run the CLI as `node "${CLAUDE_PLUGIN_ROOT}/bin/worklog" …`. Exit code 2 means a rule in the spec refused the operation.
+Run the CLI as `node "${CLAUDE_PLUGIN_ROOT}/scripts/worklog" …`. Exit code 2 means a rule in the spec refused the operation.
 
 The tool cannot reach claude.ai. The agent publishes the pages with its Artifact tool (with the capabilities `artifact-payload` writes), writes their stores with ArtifactData, and reads Brett's review back with an ArtifactData `list … out_dir`, which `pull` merges.
 
@@ -54,12 +54,12 @@ Local first (A60-A62): every store read goes to `out_dir = <state>/pulls/<slug>`
 
 ## The watcher (A60-A62)
 
-`worklog watch` watches `<state>/questions` and `<state>/pulls` with `fs.watch` (no polling), waits until a question has been quiet for 30 s (`GCTQ_WATCH_DEBOUNCE_MS`), then sends "worklog: <slug> changed" to the session with `bin/worklog-notify`. That posts to the session's messaging socket: `CLAUDE_CODE_MESSAGING_SOCKET` (a unix socket path) and `CLAUDE_CODE_MESSAGING_TOKEN`, which each Claude Code session exports; the client sends `{"type":"auth","token":"<token>"}` on the first line, then the text. The agent starts it at session start under PM2, passing the session's socket and token, for example in `~/.config/pm2/ecosystem.config.cjs`:
+`worklog watch` watches `<state>/questions` and `<state>/pulls` with `fs.watch` (no polling), waits until a question has been quiet for 30 s (`GCTQ_WATCH_DEBOUNCE_MS`), then sends "worklog: <slug> changed" to the session with `scripts/worklog-notify`. That posts to the session's messaging socket: `CLAUDE_CODE_MESSAGING_SOCKET` (a unix socket path) and `CLAUDE_CODE_MESSAGING_TOKEN`, which each Claude Code session exports; the client sends `{"type":"auth","token":"<token>"}` on the first line, then the text. The agent starts it at session start under PM2, passing the session's socket and token, for example in `~/.config/pm2/ecosystem.config.cjs`:
 
 ```js
 module.exports = { apps: [{
   name: 'worklog-watch',
-  script: process.env.HOME + '/.claude/plugins/cache/gnomatix-oss-skills/goal-compliant-task-queue/0.1.0/bin/worklog', // the installed plugin's bin/worklog
+  script: process.env.HOME + '/.claude/plugins/cache/gnomatix-oss-skills/goal-compliant-task-queue/0.1.0/scripts/worklog', // the installed plugin's scripts/worklog
   args: 'watch',
   interpreter: 'node',
   autorestart: true,

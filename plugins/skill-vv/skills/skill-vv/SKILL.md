@@ -28,7 +28,7 @@ Run these in order. Requirements come first, because a V&V run on a skill with m
 1. **Check.** Run the CLI with this session's model and agent:
 
    ```
-   node <skill-vv>/bin/skill-vv.js check --model <model-id> --agent <agent>
+   node <skill-vv>/scripts/skill-vv.js check --model <model-id> --agent <agent>
    ```
 
    `<agent>` is the CLI running this session: `claude-code`, `gemini-cli`, `antigravity`, `codex` or `kiro`. Add `--root <dir>` for skill directories the CLI does not find on its own. It prints, per skill, the unmet requirements and whether V&V is still needed for this model and platform. No output means nothing needs attention.
@@ -36,13 +36,13 @@ Run these in order. Requirements come first, because a V&V run on a skill with m
 2. **Requirements.** For each unmet requirement, ask the user, in one question per skill, whether to install or configure it now. Show what it is, why the skill needs it, and the install or configure command from the record. Do what the user agrees to, then re-run `check`. If the user declines one, record it so it is not asked again:
 
    ```
-   node <skill-vv>/bin/skill-vv.js record decline <skill> <requirement>
+   node <skill-vv>/scripts/skill-vv.js record decline <skill> <requirement>
    ```
 
 3. **V&V.** For each skill that still needs V&V on this model and platform, ask the user whether to run the procedure now. Name the model, the platform, the procedure and what it involves. If the platform is not one the skill claims, say so. If the user says yes, follow the procedure exactly as written, then record the outcome:
 
    ```
-   node <skill-vv>/bin/skill-vv.js record result <skill> <procedure> pass|fail --model <model-id> --agent <agent> --notes "<what was checked>" [--evidence <path>]
+   node <skill-vv>/scripts/skill-vv.js record result <skill> <procedure> pass|fail --model <model-id> --agent <agent> --notes "<what was checked>" [--evidence <path>]
    ```
 
    If the user wants to skip it for now, record `deferred`, which stops the prompt for this model and platform until a pass or fail is recorded.

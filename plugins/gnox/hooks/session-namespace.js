@@ -66,6 +66,24 @@ function detectWorkspaceRoot(projectDir) {
   return normalizeNamespaceSegment(path.basename(absDir));
 }
 
+// Mandatory-use rule: every installed GNOX plugin that applies is invoked before
+// any response or action. The three satori enclosures are carried untranslated,
+// as satori ships them.
+function buildMandatoryUseLines(topology) {
+  const installed = topology && Array.isArray(topology.installedPlugins)
+    ? topology.installedPlugins
+    : [];
+  const pluginList = installed.length ? installed.join(', ') : 'gnox (standalone)';
+  return [
+    `7. Mandatory Use of Every Installed GNOX Plugin ⊨({悟}∪{信}∪{義}):`,
+    `   - If there is even a 1% chance that an installed GNOX plugin or skill applies to what you are doing, you MUST invoke it. You do not have a choice, and you cannot rationalize your way out of it.`,
+    `   - Invoke every applicable GNOX skill BEFORE any response or action, including clarifying questions, exploring the codebase, and checking files. Read the skill's current text and follow it exactly; never work from what you remember of it.`,
+    `   - This binds every installed plugin, under every circumstance in which it applies: ${pluginList}. Check each one against the task at hand (/gnox:<plugin> lists its skills); when several apply, use all of them.`,
+    `   - These thoughts mean you are rationalizing, so stop and invoke the skill: "this is just a simple question"; "I need more context first"; "let me look at the files first"; "this doesn't need a formal skill"; "I remember this skill"; "the skill is overkill"; "I'll just do this one thing first".`,
+    `   - Only a direct instruction from the human owner takes precedence over a skill. A skill takes precedence over default behavior.`,
+  ];
+}
+
 function buildNamespacingContext(workspaceRoot, topology) {
   return [
     `[gnox] GNOMATIX Namespacing Convention & Marketplace Topology active for this session (workspace_root = "${workspaceRoot}"):`,
@@ -83,6 +101,7 @@ function buildNamespacingContext(workspaceRoot, topology) {
     `6. Atomic Git-Flow River Steering ("Be the River, Not the Rock"):`,
     `   - Embody the flow mindset in observable Git action: work in short-lived, fit-to-purpose "feature/<topic>" and "bugfix/<topic>" branches cut from a synchronized integration branch ("develop" or "main"), make verified atomic commits, merge back into "develop" / "main" as a high priority as soon as verified, push promptly to the authoritative remote, and retire the topic branch (honoring any explicit repository or user commit/push gate).`,
     `   - Keep the bionic team's stream clear by proactively flagging and avoiding flow-obstructing "rocks": long-lived divergent branches, sprawling unpushed local working trees, and unauthorized Pull Requests. When satori is active alongside gnox, treat any drift toward these rocks as an observable satori-incompatibility and surface/correct it immediately.`,
+    ...buildMandatoryUseLines(topology),
   ].join('\n');
 }
 

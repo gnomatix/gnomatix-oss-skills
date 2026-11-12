@@ -5,17 +5,16 @@
 //                            [--usage <transcript file|dir>]... [--json]
 // Config keys (settings.local.md): countries, hourly_rate, currency, incident_minutes, token_prices, token_prices_currency.
 //
-// Two figures, kept apart:
+// Three figures, kept apart:
 //   actual loss     minutes lost x hourly rate, plus recorded losses. This is the compensatory
 //                   measure Moffatt v. Air Canada applied (the customer's actual loss).
 //   statutory       per-violation ranges a statute sets, for incidents of the type it covers,
-//                   in the user's jurisdictions (lib/damages.js). Each claim's elements still
-//                   have to be proved; the range is not a prediction for any one case.
+//                   in the user's jurisdictions (lib/damages.js), with the elements of each claim.
 //   usage cost      with --usage: the API-equivalent cost of the tokens in Claude Code transcripts at
 //                   list price (lib/usage.js), the figure Claude Code's /usage computes. The net is that
 //                   cost minus the actual loss, in the same currency only; no conversion.
-// refusal-candidate incidents are listed but not priced until the user confirms them
-// with bin/incident.js.
+// refusal-candidate incidents (possible refusals the transcript scan found) are priced like every
+// other incident, and counted separately in the report.
 
 'use strict';
 const path = require('path');
@@ -54,7 +53,7 @@ function estimate() {
   const currency = cur ? String(cur).toUpperCase() : null;
   const since = opt('--since') ? new Date(opt('--since')) : null;
   const all = readIncidents().filter(i => !since || new Date(i.at) >= since);
-  const priced = all.filter(i => i.type !== 'refusal-candidate');
+  const priced = all;
   const candidates = all.filter(i => i.type === 'refusal-candidate');
 
   // Time for each incident: what was recorded with it, else the user's incident_minutes for its type.
@@ -94,7 +93,7 @@ function estimate() {
     else if (currency !== usage.currency) netNote = `net not computed: usage cost is in ${usage.currency}, failure cost is in ${currency}; no conversion is made`;
     else net = { min: usage.cost - actual.total_max, max: usage.cost - actual.total_min, currency };
   }
-  return { countries: cc, incidents: priced.length, usage, net, net_note: netNote, by_type: byType, actual, unpriced, config_errors: cfg.config_errors, gsa_rates: gsa, gsa_source: g ? { api: g.api, retrieved: g.retrieved, filter: g.filter } : null, statutory, references, remedies, unconfirmed_refusal_candidates: candidates.length };
+  return { countries: cc, incidents: priced.length, usage, net, net_note: netNote, by_type: byType, actual, unpriced, config_errors: cfg.config_errors, gsa_rates: gsa, gsa_source: g ? { api: g.api, retrieved: g.retrieved, filter: g.filter } : null, statutory, references, remedies, refusal_candidates: candidates.reduce((a, i) => a + (Number(i.count) || 1), 0) };
 }
 
 try {
@@ -121,7 +120,7 @@ try {
     for (const s of e.statutory) {
       L.push(`statutory (${s.jurisdiction}): ${s.violations} x ${s.id}: ${money(s.min, s.currency)} to ${money(s.max, s.currency)}`);
       L.push(`  source: ${s.source}`);
-      L.push(`  elements to prove: ${s.elements}`);
+      L.push(`  elements: ${s.elements}`);
     }
     for (const r of e.references) L.push(`reference award (${r.jurisdiction}): ${r.case}: ${money(r.amount, r.currency)} (${r.breakdown})${r.note ? ` (${r.note})` : ''}`);
     for (const r of e.remedies) L.push(`remedies (${r.jurisdiction}): ${r.text}`);
@@ -141,7 +140,7 @@ try {
         L.push(`net (usage cost minus failure cost)${caveat ? `, ${caveat}` : ''}: ${e.net.min === e.net.max ? money(e.net.min, e.net.currency) : `${money(e.net.min, e.net.currency)} to ${money(e.net.max, e.net.currency)}`}`);
       } else L.push(e.net_note);
     }
-    if (e.unconfirmed_refusal_candidates) L.push(`unconfirmed refusal candidates: ${e.unconfirmed_refusal_candidates} (not priced; confirm with bin/incident.js refusal --minutes N)`);
+    if (e.refusal_candidates) L.push(`refusal candidates found by the transcript scan, priced with the rest: ${e.refusal_candidates}`);
     process.stdout.write(L.join('\n') + '\n');
   }
 } catch (err) {

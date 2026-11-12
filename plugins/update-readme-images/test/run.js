@@ -101,6 +101,37 @@ function runMagick(args) {
   );
 }
 
+// 1a. The bundled readme-images-default.json is overridden by readme-images-user.json in the
+//     plugin's persistent data directory (CLAUDE_PLUGIN_DATA), created from the shipped skeleton
+//     when missing, so user settings survive plugin updates.
+{
+  const bareRepo = fs.mkdtempSync(path.join(os.tmpdir(), 'uri-bare-'));
+  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'uri-data-'));
+  const env = { CLAUDE_PLUGIN_DATA: dataDir, GNOX_DISABLE_PROJECT_VISUALS_AUTODISCOVER: '1' };
+  try {
+    const first = runCli(['--repo', bareRepo, '--resolve', 'README.md', '--json'], env);
+    const userFile = path.join(dataDir, 'readme-images-user.json');
+    check(
+      first.status === 0 && fs.existsSync(userFile) && JSON.parse(fs.readFileSync(userFile, 'utf8')) &&
+        JSON.parse(first.stdout).workspace_root === 'gnomatix-oss-skills',
+      'with only the bundled config, readme-images-user.json is created in CLAUDE_PLUGIN_DATA from the shipped skeleton'
+    );
+    fs.writeFileSync(userFile, JSON.stringify({ workspace_root: 'from-user-data' }), 'utf8');
+    const second = runCli(['--repo', bareRepo, '--resolve', 'README.md', '--json'], env);
+    check(
+      second.status === 0 && JSON.parse(second.stdout).workspace_root === 'from-user-data',
+      'readme-images-user.json in CLAUDE_PLUGIN_DATA overrides the bundled readme-images-default.json'
+    );
+    check(
+      fs.existsSync(path.join(path.dirname(CLI_SCRIPT), '..', '..', '..', 'config', 'readme-images-user.json')),
+      'the plugin ships an empty readme-images-user.json skeleton beside readme-images-default.json'
+    );
+  } finally {
+    fs.rmSync(bareRepo, { recursive: true, force: true });
+    fs.rmSync(dataDir, { recursive: true, force: true });
+  }
+}
+
 // 1b. Test external-user fallback confirmation gate + .gnox/readme-images.json priority + author-release-readme.mjs
 {
   const extTmp = fs.mkdtempSync(path.join(os.tmpdir(), 'update-readme-images-ext-'));
@@ -172,10 +203,145 @@ function runMagick(args) {
     );
     check(
       relOut.status === 0 &&
-        relOut.stdout.includes('https://raw.githubusercontent.com/gnomatix/gnomatix-oss-skills/v0.2.0/assets/images/releases/release-v0.2.0-banner.jpg') &&
-        relOut.stdout.includes('# Just say NO to SYMLINKS!') &&
-        relOut.stdout.includes('## ... Knowing is half the battle.'),
-      'author-release-readme.mjs generates versioned PSA release note and rewrites relative banner path to tag-pinned raw GitHub URL'
+        relOut.stdout.includes('# Release v0.2.0') &&
+        relOut.stdout.includes('/plugin marketplace add gnomatix/gnomatix-oss-skills') &&
+        !/just say no|half the battle/i.test(relOut.stdout) &&
+        !/!\[[^\]]*\]\([^)]*banner/i.test(relOut.stdout) &&
+        !relOut.stdout.includes('Zero Git Symlinks') &&
+        !relOut.stdout.includes('Antigravity CLI') &&
+        !relOut.stdout.includes('mise skills sync'),
+      'author-release-readme.mjs writes a release note with no PSA closing lines, no banner image, no fixed headlines, no unchecked platform claim and no mise skills sync line'
+    );
+
+    // Title banners of plugins new in the release are the only panels; a release banner appears
+    // only when its release-v<X>-banner-prompt.md exists in the project-visuals directory.
+    const tinyJpg = Buffer.from([0xff, 0xd8, 0xff, 0xd9]);
+    fs.mkdirSync(path.join(extTmp, 'plugins', 'sample-plugin', 'assets', 'images'), { recursive: true });
+    fs.writeFileSync(path.join(extTmp, 'plugins', 'sample-plugin', 'assets', 'images', 'sample-plugin-banner.jpg'), tinyJpg);
+    fs.mkdirSync(path.join(extTmp, 'assets', 'images', 'releases'), { recursive: true });
+    fs.writeFileSync(path.join(extTmp, 'assets', 'images', 'releases', 'release-v0.2.0-banner.jpg'), tinyJpg);
+    const visualsTmp = fs.mkdtempSync(path.join(os.tmpdir(), 'uri-visuals-'));
+    const relArgs = [releaseScript, '--repo', extTmp, '--version', '0.2.0', '--render-github-body', '--write'];
+    const relEnv = { ...process.env, GNOX_PROJECT_VISUALS_DIR: visualsTmp };
+    const pluginBannerUrl = 'https://raw.githubusercontent.com/gnomatix/gnomatix-oss-skills/v0.2.0/plugins/sample-plugin/assets/images/sample-plugin-banner.jpg';
+    const releaseBannerUrl = 'https://raw.githubusercontent.com/gnomatix/gnomatix-oss-skills/v0.2.0/assets/images/releases/release-v0.2.0-banner.jpg';
+    const noPrompt = spawnSync(process.execPath, relArgs, { encoding: 'utf8', windowsHide: true, env: relEnv });
+    check(
+      noPrompt.status === 0 && noPrompt.stdout.includes(pluginBannerUrl) && !noPrompt.stdout.includes(releaseBannerUrl),
+      'release note shows the title banner of a plugin new in the release, and no release banner without a release-v<X>-banner-prompt.md'
+    );
+    const tmplPath = path.join(visualsTmp, 'ext-custom', 'release-v0.2.0-banner-prompt.md');
+    const tmpl = fs.existsSync(tmplPath) ? fs.readFileSync(tmplPath, 'utf8') : '';
+    check(
+      /^---\r?\n[\s\S]*?\nhighlights:/.test(tmpl) && /Use these style documents/.test(tmpl) && /\nauto-generated: true\n/.test(tmpl) &&
+        /## Render instructions/.test(tmpl) && /1376/.test(tmpl) && /768/.test(tmpl) &&
+        /## Changelog/.test(tmpl) && tmpl.includes('# Release v0.2.0') && /## Style documents \(inlined\)/.test(tmpl),
+      'writing a release note with no prompt file creates release-v<X>-banner-prompt.md: front matter, the style-document instruction, the render instructions (dimensions), the changelog and the style documents inlined'
+    );
+    const again = spawnSync(process.execPath, relArgs, { encoding: 'utf8', windowsHide: true, env: relEnv });
+    check(
+      again.status === 0 && again.stdout.includes(releaseBannerUrl),
+      'the generated template is the default banner instruction: once its banner exists, the release note shows it'
+    );
+    fs.mkdirSync(path.join(visualsTmp, 'ext-custom'), { recursive: true });
+    fs.writeFileSync(
+      path.join(visualsTmp, 'ext-custom', 'release-v0.2.0-banner-prompt.md'),
+      [
+        '---',
+        'title: Sample release title',
+        'short-description: "One-paragraph summary of the release."',
+        'banner-alt: Sample release banner',
+        'highlights:',
+        '  - First real change',
+        '  - Second real change',
+        '---',
+        'Authorized release banner prompt.',
+        ''
+      ].join('\n'),
+      'utf8'
+    );
+    const withPrompt = spawnSync(process.execPath, relArgs, { encoding: 'utf8', windowsHide: true, env: relEnv });
+    check(
+      withPrompt.status === 0 && withPrompt.stdout.includes(releaseBannerUrl) && withPrompt.stdout.includes(pluginBannerUrl),
+      'release note shows the release banner when <visuals>/<workspace_root>/release-v<X>-banner-prompt.md exists'
+    );
+    check(
+      withPrompt.stdout.includes('# Release v0.2.0: Sample release title') &&
+        withPrompt.stdout.includes('One-paragraph summary of the release.') &&
+        withPrompt.stdout.includes('![Sample release banner](') &&
+        withPrompt.stdout.includes('- First real change') &&
+        withPrompt.stdout.includes('- Second real change') &&
+        !withPrompt.stdout.includes('Authorized release banner prompt.'),
+      'release-v<X>-banner-prompt.md YAML front matter sets the title, short description, banner alt text and changes; the image prompt body stays out of the note'
+    );
+    fs.rmSync(visualsTmp, { recursive: true, force: true });
+    // Path safety: the prompt file stays inside the project-visuals directory whatever the
+    // workspace_root and version say, and only documents under the repo, the plugin or the
+    // project-visuals directory are inlined into it.
+    const cfgPath = path.join(extTmp, '.gnox', 'readme-images.json');
+    const cfgBefore = fs.readFileSync(cfgPath, 'utf8');
+    const outsideDir = fs.mkdtempSync(path.join(os.tmpdir(), 'uri-outside-'));
+    const outsideDoc = path.join(outsideDir, 'outside-style.md');
+    fs.writeFileSync(outsideDoc, 'OUTSIDE-DOCUMENT-BODY-MARKER\n', 'utf8');
+    fs.writeFileSync(
+      cfgPath,
+      JSON.stringify({
+        version: 1,
+        workspace_root: '../uri-escaped',
+        style_guides: { '../uri-escaped': { doc: outsideDoc.split(path.sep).join('/'), summary: 'Outside style' } },
+        rules: []
+      }),
+      'utf8'
+    );
+    const visualsSec = fs.mkdtempSync(path.join(os.tmpdir(), 'uri-visuals-sec-'));
+    const secEnv = { ...process.env, GNOX_PROJECT_VISUALS_DIR: path.join(visualsSec, 'visuals') };
+    const secRun = spawnSync(process.execPath, [releaseScript, '--repo', extTmp, '--version', '0.3.0', '--render-github-body', '--write'], { encoding: 'utf8', windowsHide: true, env: secEnv });
+    const listAll = (dir) => (fs.existsSync(dir) ? fs.readdirSync(dir, { recursive: true }).map(String) : []);
+    const secPrompts = listAll(visualsSec).filter((f) => /banner-prompt\.md$/.test(f));
+    check(
+      secRun.status === 0 && secPrompts.length === 1 && secPrompts[0].split(path.sep).join('/').startsWith('visuals/'),
+      'a workspace_root with path separators or ".." cannot move the banner prompt out of the project-visuals directory'
+    );
+    const secText = secPrompts.length === 1 ? fs.readFileSync(path.join(visualsSec, secPrompts[0]), 'utf8') : '';
+    check(
+      secText.length > 0 && !secText.includes('OUTSIDE-DOCUMENT-BODY-MARKER') && secText.includes('outside-style.md'),
+      'a style document outside the repo, the plugin and the project-visuals directory is named in the banner prompt and not inlined'
+    );
+    const badVersion = spawnSync(process.execPath, [releaseScript, '--repo', extTmp, '--version', '../../0.4.0', '--render-github-body', '--write'], { encoding: 'utf8', windowsHide: true, env: secEnv });
+    check(
+      badVersion.status !== 0 && /version/i.test(badVersion.stderr) && listAll(visualsSec).filter((f) => /banner-prompt\.md$/.test(f)).length === 1,
+      'a --version with path separators or ".." is refused before anything is written'
+    );
+    fs.writeFileSync(cfgPath, cfgBefore, 'utf8');
+    for (const f of ['docs/releases/v0.3.0.md']) fs.rmSync(path.join(extTmp, ...f.split('/')), { force: true });
+    fs.rmSync(visualsSec, { recursive: true, force: true });
+    fs.rmSync(outsideDir, { recursive: true, force: true });
+
+
+    // Changes from commit subjects: EPIC / FEATURE / BUGFIX listed one by one, everything else
+    // collapsed to one line per scope.
+    const subjects = [
+      'FEATURE(cui-bono): add the logic grid (a1)',
+      'BUGFIX(spank-dario): date the Moffatt entries (b2)',
+      'EPIC(release-notes): notes from the published snapshots (c3)',
+      'DOCS(spank-dario): reword a TODO (d4)',
+      'spank-dario: tidy BUGS wording (e5)',
+      'spank-dario: fix a typo (f6)',
+      'CHORE: bump lockfile (g7)',
+    ];
+    const sumRun = spawnSync(process.execPath, ['--input-type=module', '-e',
+      `import { summarizeCommits } from ${JSON.stringify(require('url').pathToFileURL(releaseScript).href)}; process.stdout.write(JSON.stringify(summarizeCommits(${JSON.stringify(subjects)})));`],
+      { encoding: 'utf8', windowsHide: true });
+    let sum = [];
+    try { sum = JSON.parse(sumRun.stdout); } catch { sum = []; }
+    check(
+      sum[0] === 'Epic (release-notes): notes from the published snapshots (c3)' &&
+        sum.includes('Feature (cui-bono): add the logic grid (a1)') &&
+        sum.includes('Fix (spank-dario): date the Moffatt entries (b2)') &&
+        sum.includes('spank-dario: 3 smaller changes') &&
+        sum.includes('other: 1 smaller change') &&
+        sum.length === 5,
+      'summarizeCommits lists EPIC/FEATURE/BUGFIX commits and collapses the rest per scope'
     );
 
     const verPathRes = runCli(['--version-path', 'assets/images/category-your-work-done-panel.jpg', '--version', '0.1.17']);
@@ -224,8 +390,9 @@ try {
   const initRes = runCli(['--init', userRepo, '--workspace-root', 'acme-widgets', '--json']);
   check(initRes.status === 0, '--init scaffolds end-user repo config and docs');
   check(
-    fs.existsSync(path.join(userRepo, '.claude', 'readme-images.json')),
-    'created .claude/readme-images.json in end-user repo'
+    fs.existsSync(path.join(userRepo, '.claude', 'readme-images-default.json')) &&
+      fs.existsSync(path.join(userRepo, '.claude', 'readme-images-user.json')),
+    'created .claude/readme-images-default.json and an empty readme-images-user.json in end-user repo'
   );
 
   // 2b. Create a new oval inset PNG (target does not exist yet -> written directly to assets/images)
@@ -336,7 +503,7 @@ try {
   runMagick(['-size', '1376x768', 'plasma:purple-gold', optOutBanner]);
 
   // Configure namespace opt-out for acme-widgets:packages:opted-out
-  const userCfgPath = path.join(userRepo, '.claude', 'readme-images.json');
+  const userCfgPath = path.join(userRepo, '.claude', 'readme-images-default.json');
   const userCfg = JSON.parse(fs.readFileSync(userCfgPath, 'utf8'));
   userCfg.style_guides['acme-widgets:packages:opted-out'] = {
     doc: 'docs/readme-images/style-guides/default.md',

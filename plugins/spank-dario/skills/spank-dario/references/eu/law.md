@@ -1,6 +1,6 @@
 # European Union
 
-Every entry was read and quoted from its primary source.
+Every entry names its source and the date it was read.
 
 ## Clarification
 
@@ -9,6 +9,8 @@ Every entry was read and quoted from its primary source.
 - Under Painer, "an intellectual creation is an author’s own if it reflects the author’s personality" (C-145/10, para. 88).
 
 Sources: EUR-Lex (eur-lex.europa.eu) answered curl with an empty HTTP 202 bot challenge, and curia.europa.eu serves a JavaScript-only page, so the official texts were read from the Publications Office of the European Union (CELLAR, the repository behind EUR-Lex) at http://publications.europa.eu/resource/celex/<CELEX number>, English HTML, fetched with curl on 2026-11-04. Quotes keep the source's apostrophes (straight in the Directive, curly in the judgments).
+
+The DSM Directive art. 26 entry, dated 2026-11-11, was checked on that date against the Official Journal text from the Publications Office kept unmodified in `sources/32019L0790_dsm-directive.html`.
 
 - Directive 2009/24/EC art. 1(3), originality of computer programs — read 2026-11-04 — http://publications.europa.eu/resource/celex/32009L0024 — "A computer program shall be protected if it is original in the sense that it is the author's own intellectual creation. No other criteria shall be applied to determine its eligibility for protection."
 - Directive 2009/24/EC art. 1(2), expression not ideas — read 2026-11-04 — same URL — "Protection in accordance with this Directive shall apply to the expression in any form of a computer program. Ideas and principles which underlie any element of a computer program, including those which underlie its interfaces, are not protected by copyright under this Directive."
@@ -21,7 +23,7 @@ Sources: EUR-Lex (eur-lex.europa.eu) answered curl with an empty HTTP 202 bot ch
 - Painer, C-145/10, para. 94 — read 2026-11-04 — same URL — "In view of the foregoing, a portrait photograph can, under Article 6 of Directive 93/98, be protected by copyright if, which it is for the national court to determine in each case, such photograph is an intellectual creation of the author reflecting his personality and expressing his free and creative choices in the production of that photograph."
 
 - Directive (EU) 2019/790 (DSM), art. 4(3), text and data mining opt-out — read 2026-11-04 — https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=CELEX:32019L0790 — "The exception or limitation provided for in paragraph 1 shall apply on condition that the use of works and other subject matter referred to in that paragraph has not been expressly reserved by their rightholders in an appropriate manner, such as machine-readable means in the case of content made publicly available online." Art. 4(1) makes the exception to the reproduction and extraction rights it lists; moral rights aren't among them.
-- Same Directive, art. 26, application in time — read — same URL — "1. This Directive shall apply in respect of all works and other subject matter that are protected by national law in the field of copyright on or after 7 June 2021. 2. This Directive shall apply without prejudice to any acts concluded and rights acquired before 7 June 2021."
+- Same Directive, art. 26, application in time — read 2026-11-11 — same URL — "1. This Directive shall apply in respect of all works and other subject matter that are protected by national law in the field of copyright on or after 7 June 2021. 2. This Directive shall apply without prejudice to any acts concluded and rights acquired before 7 June 2021."
 
 ## Sources
 

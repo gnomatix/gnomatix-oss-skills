@@ -85,6 +85,28 @@ function check(ok, what) {
       ctx.includes('unauthorized Pull Requests'),
     'SessionStart output injects Atomic Git-Flow River Steering ("Be the River, Not the Rock")'
   );
+  {
+    const start = ctx.indexOf('7. Mandatory Use of Every Installed GNOX Plugin');
+    const section = start >= 0 ? ctx.slice(start) : '';
+    check(
+      start > ctx.indexOf('6. Atomic Git-Flow River Steering') &&
+        section.includes('even a 1% chance') &&
+        section.includes('BEFORE any response or action') &&
+        section.includes('including clarifying questions') &&
+        section.includes('You do not have a choice') &&
+        section.includes('rationaliz'),
+      'SessionStart output injects the mandatory-use rule for installed GNOX plugins (invoke before any response or action)'
+    );
+    check(
+      section.includes('⊨({悟}∪{信}∪{義})'),
+      'Mandatory-use rule carries the satori enclosures {悟} {信} {義}, untranslated'
+    );
+    check(
+      ['satori', 'critical-control-points', 'did-you-rtfm', 'skill-vv', 'spank-dario']
+        .every((name) => section.includes(name)),
+      'Mandatory-use rule names the installed plugins it binds'
+    );
+  }
 }
 
 // 3. Check PostCompact hook execution in an isolated standalone end-user workspace (zero sibling plugins, empty PATH)
@@ -126,6 +148,12 @@ function check(ok, what) {
         ctx.includes('none (each installed plugin runs its Tier 0 standalone path cleanly)') &&
         ctx.includes('none detected on PATH/mise shims (Tier 0 standalone fallbacks active)'),
       'PostCompact isolated standalone workspace runs cleanly at Tier 0 without sibling plugins or optional tools'
+    );
+    check(
+      ctx.includes('Mandatory Use of Every Installed GNOX Plugin') &&
+        ctx.includes('⊨({悟}∪{信}∪{義})') &&
+        ctx.includes('even a 1% chance'),
+      'PostCompact isolated standalone workspace still injects the mandatory-use rule and its satori enclosures'
     );
   } finally {
     try { fs.rmSync(tmp, { recursive: true, force: true }); } catch { /* ignore */ }

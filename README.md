@@ -170,7 +170,7 @@ Each skill is a self-contained folder with a `SKILL.md` in the cross-agent [Agen
         ├── README.md
         ├── VV.md                       # requirements, optional tools, complements, & V&V records
         ├── skills/<skill>/SKILL.md     # cross-CLI Agent Skills format
-        └── hooks/                      # harness hooks (+ bin/register-hooks.js or platforms/ where multi-CLI)
+        └── hooks/                      # harness hooks (+ scripts/register-hooks.js or platforms/ where multi-CLI)
 ```
 
 Plugins: all-help-no-harm, satori, skill-vv, steering-audit-suite, gnox, critical-control-points, did-you-rtfm, staleness-guard, informal-logic-check, bear-loads, pony, hidden-libel-check, spank-dario, open-and-honest-agent, agent-darktriad-check, log-session, cui-bono, citation-farm-audit, python-elimination-program, word-lineage, ontology-lookup, inaudible-markup, og-social-image, update-readme-images, dont-be-hitler, goal-compliant-task-queue.

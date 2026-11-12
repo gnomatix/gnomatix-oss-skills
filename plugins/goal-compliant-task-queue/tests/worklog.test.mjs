@@ -11,7 +11,7 @@ import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const CLI = path.join(ROOT, 'bin', 'worklog')
+const CLI = path.join(ROOT, 'scripts', 'worklog')
 const MCP = path.join(ROOT, 'lib', 'mcp-server.mjs')
 const ASK = 'Have I sufficiently responded to your question?'
 
@@ -676,14 +676,14 @@ test('worklog-notify: auth line with the token first, then the text, over the se
   await new Promise(r => server.listen(sock, r))
   try {
     const { spawn } = await import('node:child_process')
-    const p = spawn(process.execPath, [path.join(ROOT, 'bin', 'worklog-notify'), 'worklog: q1 changed'],
+    const p = spawn(process.execPath, [path.join(ROOT, 'scripts', 'worklog-notify'), 'worklog: q1 changed'],
       { env: { ...t.env, CLAUDE_CODE_MESSAGING_SOCKET: sock, CLAUDE_CODE_MESSAGING_TOKEN: 'tok-123' } })
     let stderr = ''
     p.stderr.on('data', d => { stderr += d })
     const code = await new Promise(res => p.on('close', res))
     assert.equal(code, 0, stderr)
     assert.deepEqual(got, ['{"type":"auth","token":"tok-123"}\nworklog: q1 changed\n'])
-    const bad = spawnSync(process.execPath, [path.join(ROOT, 'bin', 'worklog-notify'), 'x'], { encoding: 'utf8', env: t.env })
+    const bad = spawnSync(process.execPath, [path.join(ROOT, 'scripts', 'worklog-notify'), 'x'], { encoding: 'utf8', env: t.env })
     assert.equal(bad.status, 1)
     assert.match(bad.stderr, /CLAUDE_CODE_MESSAGING_SOCKET/)
     const ev = fs.readFileSync(path.join(t.dirs.state, 'log', 'events.jsonl'), 'utf8').trim().split('\n').map(l => JSON.parse(l))

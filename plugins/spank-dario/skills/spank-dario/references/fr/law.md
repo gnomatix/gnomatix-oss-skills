@@ -1,6 +1,6 @@
 # France
 
-Every entry was read and quoted from its primary source.
+Every entry names its source and the date it was read.
 
 ## Clarification
 
@@ -37,3 +37,11 @@ Source: the codes.droit.org PDF of the CPI (https://codes.droit.org/PDF/Code%20d
 - L. 335-3 para. 1 — read 2026-11-10 — same PDF — "Est également un délit de contrefaçon toute reproduction, représentation ou diffusion, par quelque moyen que ce soit, d'une oeuvre de l'esprit en violation des droits de l'auteur, tels qu'ils sont définis et réglementés par la loi."
 - L. 331-1-3 para. 1 — read 2026-11-10 — same PDF — "Pour fixer les dommages et intérêts, la juridiction prend en considération distinctement : 1° Les conséquences économiques négatives de l'atteinte aux droits, dont le manque à gagner et la perte subis par la partie lésée ; 2° Le préjudice moral causé à cette dernière ; 3° Et les bénéfices réalisés par l'auteur de l'atteinte aux droits"
 - L. 331-1-3 para. 2 — read 2026-11-10 — same PDF — "Toutefois, la juridiction peut, à titre d'alternative et sur demande de la partie lésée, allouer à titre de dommages et intérêts une somme forfaitaire. Cette somme est supérieure au montant des redevances ou droits qui auraient été dus si l'auteur de l'atteinte avait demandé l'autorisation d'utiliser le droit auquel il a porté atteinte. Cette somme n'est pas exclusive de l'indemnisation du préjudice moral causé à la partie lésée."
+
+Code civil: the codes.droit.org PDF (https://codes.droit.org/PDF/Code%20civil.pdf, "Dernière modification: 2026-07-29", a reproduction of Légifrance data, not an official site), downloaded 2026-11-11 and kept unmodified as `sources/code-civil.pdf`; text extracted with pdftotext.
+
+- Code civil art. 1231-1 — read 2026-11-11 — same PDF — "Le débiteur est condamné, s'il y a lieu, au paiement de dommages et intérêts soit à raison de l'inexécution de l'obligation, soit à raison du retard dans l'exécution, s'il ne justifie pas que l'exécution a été empêchée par la force majeure."
+- Code civil art. 1240 — read 2026-11-11 — same PDF — "Tout fait quelconque de l'homme, qui cause à autrui un dommage, oblige celui par la faute duquel il est arrivé à le réparer."
+- Code civil art. 1241 — read 2026-11-11 — same PDF — "Chacun est responsable du dommage qu'il a causé non seulement par son fait, mais encore par sa négligence ou par son imprudence."
+- Code civil art. 1242 para. 1 — read 2026-11-11 — same PDF — "On est responsable non seulement du dommage que l'on cause par son propre fait, mais encore de celui qui est causé par le fait des personnes dont on doit répondre, ou des choses que l'on a sous sa garde."
+- Code civil art. 1242, the paragraph on masters and principals — read 2026-11-11 — same PDF — "Les maîtres et les commettants, du dommage causé par leurs domestiques et préposés dans les fonctions auxquelles ils les ont employés"

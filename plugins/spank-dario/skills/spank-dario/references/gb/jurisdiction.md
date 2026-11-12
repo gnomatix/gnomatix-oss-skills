@@ -11,7 +11,7 @@ This jurisdiction's part of the skill. Every quotation is from `gb/law.md`, wher
 ## Vendor Liability
 
 - **False attribution.** A person has the right "not to have a literary, dramatic, musical or artistic work falsely attributed to him as author" (s. 84(1)), lasting until 20 years after the person's death (s. 86(2)).
-- **Computer programs.** The identification and integrity rights don't apply to a computer program (ss. 79(2), 81(2)).
+- **Computer programs.** The identification and integrity rights don't apply to a computer program (ss. 79(2), 81(2)). The false-attribution right has no such exception: the full text of s. 84 on file names none.
 
 ## Common Vendor-trained Straw-Men / Red Herring Responses
 

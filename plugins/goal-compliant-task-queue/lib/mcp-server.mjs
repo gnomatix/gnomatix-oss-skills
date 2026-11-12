@@ -1,4 +1,4 @@
-// worklog MCP server: the same operations as bin/worklog, over stdio JSON-RPC 2.0 (one message per line).
+// worklog MCP server: the same operations as scripts/worklog, over stdio JSON-RPC 2.0 (one message per line).
 // Node built-ins only; no network. Same state directory, same refusal rules: it calls lib/worklog.mjs.
 import * as W from './worklog.mjs'
 

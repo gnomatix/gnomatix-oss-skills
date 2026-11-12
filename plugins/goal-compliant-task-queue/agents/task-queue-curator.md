@@ -25,7 +25,7 @@ And the protocol it belongs to: the `goal-compliant-task-queue` skill and its ve
 ## Inputs
 
 - The session transcript: the JSONL path the main agent gives you. Read only the span you are pointed at.
-- The worklog state, through `node "${CLAUDE_PLUGIN_ROOT}/bin/worklog" status --json --tasks <ids>`, `metrics --json` and `show <slug>`.
+- The worklog state, through `node "${CLAUDE_PLUGIN_ROOT}/scripts/worklog" status --json --tasks <ids>`, `metrics --json` and `show <slug>`.
 - The beads tracker in the repo the main agent names (`bd show`, `bd list`; reads only unless the main agent asks for a write).
 - The session task list, as the main agent reports it.
 

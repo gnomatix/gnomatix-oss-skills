@@ -1,4 +1,4 @@
-// Argument parsing and output for bin/worklog. Every command maps to one function in worklog.mjs.
+// Argument parsing and output for scripts/worklog. Every command maps to one function in worklog.mjs.
 import fs from 'node:fs'
 import * as W from './worklog.mjs'
 

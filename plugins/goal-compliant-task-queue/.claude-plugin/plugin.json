@@ -1,6 +1,6 @@
 {
   "name": "goal-compliant-task-queue",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Brett Whitty's question / task / record protocol as a tested tool: each question he asks gets a session task and one working document (tick only he can set, USER COMMENT, FULL CONTEXT, SUPPORTING MATERIALS), shown in a claude.ai hub and a Claude Code pane; the agent asks \"Have I sufficiently responded to your question?\", and only after his \"yes\" is a bead created. A Node CLI and an MCP server do the record-keeping; no hooks intercept prompts or tools.",
   "author": {
     "name": "Brett Whitty",

@@ -1,0 +1,5 @@
+# Luxembourg: Vendor False Claims / Straw Men
+
+Each source is quoted exactly from its primary text. Each concerns works with no human author, or a registration or policy question. None of them describes work an author directs with a software tool, an LLM included. The skill's section "Common Vendor-trained Straw-Men / Red Herring Responses" quotes real instances of their misuse. A copy of each source as read is in `sources/`.
+
+- Projet de loi n° 8476 (Legilux `eli/dl/pl/2024/274`) — read 2026-11-10 — http://data.legilux.public.lu/eli/dl/pl/2024/274 (`sources/sparql-drafts-ia.csv`, Legilux's own record of the AI bills) — its title begins "Projet de loi portant mise en œuvre de certaines dispositions du règlement (UE) 2024/1689". It implements the EU AI Act; the Act itself is "binding in its entirety and directly applicable in all Member States" (Article 113, `../eu/sources/32024R1689_ai-act.html`), and what the Act requires of providers and deployers is set out in `../eu/strawmen.md`. None of the other Luxembourg acts and bills in that record concerns authorship. Misused as: Luxembourg has its own rule requiring a tool to be credited on work made with it.

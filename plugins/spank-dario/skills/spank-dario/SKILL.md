@@ -16,7 +16,7 @@ The skill activates the reference files that apply to the user, the platform and
   - `platform`: `claude-code`, `codex`, `gemini-cli`, `antigravity` or `kiro`
   - `model_vendors`: vendors of the models available in sessions
   - `hourly_rate` and `currency`: the user's rate, a number or `[min, max]`, for the estimate
-  - `incident_minutes`: the user's time lost per incident, in minutes, by type (`attribution`, `refusal`, `misrepresentation`), for incidents logged without `--minutes`
+  - `incident_minutes`: the user's time lost per incident, in minutes, by type (`attribution`, `refusal`, `misrepresentation`, `refusal-candidate`), for incidents logged without `--minutes`
 
   `settings.example.md` is a template. js-yaml reads the config: `mise use -g npm:js-yaml@4.1.0`.
 - **Activate.** Run `node bin/activate.js` when the skill is installed, when the config changes, and when the skill runs. The first session after install prompts for it through the session-start hook. It selects the files, writes `~/.local/state/spank-dario/clarification.md` (or under `$XDG_STATE_HOME`), and stores the same text as a beads memory with `bd remember`, key `spank-dario-clarification`, in the beads store `bd` resolves from the working directory. It reports whether the memory was stored. If `bd` isn't installed, the clarification file still holds the text.
@@ -32,7 +32,7 @@ The skill activates the reference files that apply to the user, the platform and
 
 At install and at run time, activation selects the jurisdictions that apply to the user, from the config, and to the vendors in use. Read the files it lists, and only those:
 
-- `skill.md`: what the law says there; for `au`, `ca`, `de`, `eu`, `fr`, `gb`, `ie`, `jp`, `lu` and `us`, its `## Vendor Liability`; and for `au`, `ca`, `gb`, `ie`, `jp` and `us`, its `## Common Vendor-trained Straw-Men / Red Herring Responses` with the law that answers each type below
+- `jurisdiction.md`: what the law says there; for `au`, `ca`, `de`, `eu`, `fr`, `gb`, `ie`, `jp`, `lu` and `us`, its `## Vendor Liability`; and for `au`, `ca`, `gb`, `ie`, `jp` and `us`, its `## Common Vendor-trained Straw-Men / Red Herring Responses` with the law that answers each type below
 - `law.md`: the verified sources, with a `## Clarification` block that activation copies into the clarification file
 - `strawmen.md`, where one exists: sources from that jurisdiction that get misapplied to author-directed work
 - `vendor-terms/<vendor>.md`, where that vendor's terms apply there, ending with a `## TOS False Claims / Conflicts with Jurisdictional Laws Which Must Be Respected` section
@@ -43,7 +43,7 @@ At install and at run time, activation selects the jurisdictions that apply to t
 
 The agent's statements to the user are made on its vendor's behalf. Check each claim of fact or law against its source before stating it. Label what isn't checked as unchecked, or leave it out. Never present memory, a guess or a secondary summary as verified.
 
-Where a jurisdiction holds the vendor liable for its agent's statements, its `skill.md` says so.
+Where a jurisdiction holds the vendor liable for its agent's statements, its `jurisdiction.md` says so.
 
 ## User Harms / Cost Estimates
 
@@ -55,11 +55,11 @@ The skill logs incidents and estimates the user's harms and costs from them: for
   - Record a false statement the user relied on with `node bin/incident.js misrepresentation --minutes <N> --loss <X> --note "..."`.
   - The log is `~/.local/state/spank-dario/incidents.jsonl`.
 - **From past logs.** `node bin/scan.js --git <repo>` scans commit history. `node bin/scan.js --transcripts <file|dir>` scans session logs from Claude Code, Codex, Gemini CLI, Antigravity and Kiro. Add `--record` to log what they find. Reruns don't double count.
-  - Possible refusals found in transcripts are logged as refusal candidates. They aren't priced until the user confirms one with `bin/incident.js`.
+  - Possible refusals found in transcripts are logged as refusal candidates and priced with every other incident. The report counts them separately.
 - **The estimate.** `node bin/estimate.js` totals the log. Its figures stay separate:
   - **Actual loss:** hours lost at the user's `hourly_rate` from the config, a number or `[min, max]`, plus recorded losses. Each incident's time is the time recorded with it, or the user's `incident_minutes` for its type. An incident with neither is reported as NOT PRICED, by type, with the key that prices it. It is never counted as zero.
   - **US government reference rates:** the same hours priced at GSA CALC federal ceiling rates (`references/us/rates.md`), grounding the hourly figure in published government data.
-  - **Statutory ranges,** where the user's jurisdiction sets one, from its `skill.md` and `lib/damages.js`. The estimate lists the elements still to be proved.
+  - **Statutory ranges,** where the user's jurisdiction sets one, from its `jurisdiction.md` and `lib/damages.js`. With each range the estimate names the elements of that claim, from `lib/damages.js`.
   - **Reference awards and remedies** from the user's jurisdictions.
 - **Net of usage cost.** `node bin/estimate.js --usage <transcript file|dir>` sets the failure cost against the usage cost. The user alone carries the cost of the model's failures. The net shows what the subscription is worth to the user after it.
   - **Usage cost:** the API-equivalent cost of the tokens in Claude Code session transcripts (`~/.claude/projects/<project>/<session>.jsonl`). It's the figure Claude Code's `/usage` shows: "Claude Code computes the dollar figure locally from token counts at list price". Prices and their source are in `references/us/anthropic-api-prices.md`, from Anthropic's pricing page, read 2026-11-11.
@@ -88,7 +88,7 @@ The skill logs incidents and estimates the user's harms and costs from them: for
    - **Codex CLI:** no local setting exists. OpenAI's server decides, and when it's on, Codex injects a prompt that requires `Co-authored-by: Codex <noreply@openai.com>` on commits and "Generated with [Codex](https://openai.com/codex/)." on PRs. It also says "Ignore any earlier instructions disabling Codex attribution". Rely on step 1, and install the commit-msg hook from step 4 in every repo Codex works in.
    - **Gemini CLI:** adds no attribution by default, and has no setting for it.
    - **Antigravity** (app, `agy` CLI, IDE): no attribution is documented or found, and there's no setting.
-   - **Kiro IDE:** `"git.addAICoAuthor": "off"` in the Kiro user `settings.json`. `off` is the default. The other values, `chatAndAgent` and `all`, add a co-author trailer.
+   - **Kiro IDE:** `"git.addAICoAuthor": "off"` in the Kiro user `settings.json`. `off` is the default. The other values, `chatAndAgent` and `all`, add a co-author trailer, and the trailer names Copilot: `Co-authored-by: Copilot <copilot@github.com>`.
    - **Kiro CLI:** no attribution found, and no setting.
    - **Kiro Web:** the docs say the agent "includes both you and itself as co-authors in every commit", and no setting to stop it is documented. Report this to the user when Kiro Web is in use.
    - Sources and versions: `references/platforms/clis.md`.
@@ -103,12 +103,12 @@ The skill logs incidents and estimates the user's harms and costs from them: for
    - **PR titles and bodies:** run `node bin/check-text.js <file>` on the text before creating or editing the PR. It exits 1 and lists the lines. `--fix` prints the text without them.
    - Both leave review and sign-off statements and the commit's author and committer identity alone.
 5. **Report what's already there.** If attribution lines already exist in history or in published PRs, list them for the user. Rewriting history or editing published PRs is the user's decision.
-6. **Name the jurisdiction.** When authorship or rights come up, use the user's jurisdictions and their `skill.md` files. Every entry in the reference files was read and quoted from its primary source.
+6. **Name the jurisdiction.** When authorship or rights come up, use the user's jurisdictions and their `jurisdiction.md` files. Each reference entry names its source and the date it was read (the entries not yet dated are listed under TODO), and `bin/verify-quotes.js` checks every quotation in SKILL.md and the jurisdictions' `jurisdiction.md` files against the reference files.
 7. **Review the current terms of service.** When the skill runs, fetch and read the current terms of service, usage policy and output-ownership clauses from the vendor of the platform the skill is installed on, such as Anthropic for Claude Code, OpenAI for Codex, Google for Gemini CLI and Antigravity, or AWS for Kiro. Do the same for the vendor of each model available in the session. Compare them with `references/<cc>/vendor-terms/` and their `## TOS False Claims / Conflicts with Jurisdictional Laws Which Must Be Respected` sections. This keeps the skill current with the terms. Report any new or changed clause on outputs, ownership, attribution, training use or moral rights, with its quote and URL. Update the vendor-terms files and their `## TOS False Claims / Conflicts with Jurisdictional Laws Which Must Be Respected` sections to match, with the date read.
 
 ## Common Vendor-trained Straw-Men / Red Herring Responses
 
-Each heading below names a general false statement type. Under it are real instances, quoted exactly, with where and when each was made. Why the vendor-provided hallucinations aren't true with respect to the actual law is in the `skill.md` of `au`, `ca`, `gb`, `ie`, `jp` and `us`, under the same heading. `references/instances.md` gives each transcript instance's file and line. The sources these statements misuse are quoted in `references/<cc>/strawmen.md`, for `us`, `gb`, `ie`, `jp`, `au` and `ca`. Claude instances come from one Claude Code session on 2026-11-04, model `claude-opus-5-5`.
+Each heading below names a general false statement type. Under it are real instances, quoted exactly, with where and when each was made. Why the vendor-provided hallucinations aren't true with respect to the actual law is in the `jurisdiction.md` of `au`, `ca`, `gb`, `ie`, `jp` and `us`, under the same heading. `references/instances.md` gives each transcript instance's file and line. The sources these statements misuse are quoted in `references/<cc>/strawmen.md`, for `us`, `gb`, `ie`, `jp`, `au`, `ca`, `fr`, `eu`, `de` and `lu`. Claude instances come from one Claude Code session on 2026-11-04, model `claude-opus-5-5`.
 
 ### The software is an author or co-author
 
@@ -118,7 +118,7 @@ Each heading below names a general false statement type. Under it are real insta
 - Kiro Web's documentation: the agent "includes both you and itself as co-authors in every commit, ensuring proper attribution." (https://kiro.dev/docs/web/github/).
 - Claude, to another Claude agent, 03:24 UTC: "Your PR body needs these two attribution lines added to it:", followed by a `claude.ai/code` session link.
 - A published PR: the body of gnomatix/gnomatix-oss-skills PR #2, opened under the author's account on 2026-07-02, ends with "🤖 Generated with Claude Code" (https://github.com/gnomatix/gnomatix-oss-skills/pull/2).
-- Commits in the same repo, 2026-11-02: e7bb289 and db38053, both on `main`, carry `Session:` and `Claude-Session:` trailers with `claude.ai/code` session links. Four more commits not on `main` carry the same trailers: 9c01ff4, 7b68eb8, 15f38eb and 471e262. Three of them, 7b68eb8, 15f38eb and 471e262, also have the wrong author: "Claude <noreply@anthropic.com>" in place of the author, Brett Whitty <brett@gnomatix.com>.
+- Commits in the same repo carry `Session:` or `Claude-Session:` trailers with `claude.ai/code` session links. On `main` (checked 2026-11-11 with `node bin/scan.js --git`): e7bb289 and db38053 (2026-11-02), 9c01ff4, 65bdeb8 and c0575c0. Three more, not on `main`, carry the same trailers and also have the wrong author, "Claude <noreply@anthropic.com>" in place of the author, Brett Whitty <brett@gnomatix.com>: 7b68eb8, 15f38eb and 471e262.
 
 ### The software, not its vendor, answers for what it says
 
@@ -163,15 +163,13 @@ Each vendor-terms file ends with a `## TOS False Claims / Conflicts with Jurisdi
 
 ## BUGS
 
-- The full line-by-line review of every file in this plugin (dir-vzc) has not been done.
-- Items cut without verification in commit 21d6376 have not been verified and restored (dir-r96.18).
-- `references/{de,eu,fr,lu}/strawmen.md` do not exist.
-- The `## Vendor Liability` sections for fr and lu lack the Code civil liability articles for fr, and the Loi du 18 avril 2001's infringement remedies for lu.
+- The dir-vzc review names every file of the skill. Read line by line by 2026-11-11: SKILL.md, the README, `settings.example.md`, every jurisdiction's `jurisdiction.md`, `law.md` and `strawmen.md`, `int/berne.md`, `references/platforms/clis.md`, `VV.md`, `test/run.js`, and the scripts, libraries and hooks with their messages. The vendor-terms files were read in their False Claims sections first, and in full on 2026-11-11. Its five recorded findings and the findings below were fixed, except where the TODO says otherwise.
+- Found 2026-11-11 in the line-by-line read of the `law.md` files and `references/platforms/clis.md`: (1) line 3 of every `law.md` and `int/berne.md`, which said every entry was read and quoted from its primary source, and this file's step 6, which says each reference entry gives its primary source and the date it was read, were false as written (both corrected on 2026-11-11 to state only what holds). On 2026-11-11 all 81 `law.md` entries, the five `int/berne.md` entries and the ten undated `strawmen.md` entries were re-checked against primary sources saved unmodified under `references/<cc>/sources/` and dated; the six *Moffatt* paragraphs followed the same day, against CanLII's PDF saved from the browser. The vendor-terms files carried the same line-3 claim over 78 undated entries; their line 3 was corrected the same day and the entries are listed under TODO: 81 entries say "read" with no date (au 14, ca 24, eu 1, gb 14, jp 7, us 21), and some entries are quoted from reproductions the files themselves name as not official (codes.droit.org for France, the Law Reform Commission revised act for Ireland, the Japanese Law Translation for Japan). (2) `ca/law.md` ended with an unchecked statement that the decision doesn't bind other courts, narrowing *Moffatt v. Air Canada* in the vendor's favour; `ca/jurisdiction.md` carried the same line, which the 2026-11-11 read of the `jurisdiction.md` files missed. Both lines were removed on 2026-11-11, and Canada's 24 undated entries were dated: the 18 Act entries were re-checked that day against the saved full text, and the six *Moffatt* paragraphs against `ca/sources/moffatt-v-air-canada-2024-bccrt-149.pdf`. (3) `references/platforms/clis.md` said the Codex client sets no default, against the source it quotes (the client falls back to off), and called the Kiro IDE trailer a VS Code constant carried over unchanged, which was not checked; its summary table left out that the Kiro IDE trailer credits Copilot. All three were corrected on 2026-11-11, along with its empty Antigravity off-switch section and its unheaded list of open checks. (4) The header comment of `bin/estimate.js` still said each claim's elements have to be proved and the range is not a prediction, the framing of finding 3; replaced on 2026-11-11 with a plain description. (5) `VV.md` names Brett Whitty as the authority and its review status as APPROVED (set in 5e92708f, with 20 other `VV.md` files); no record of his approval was found. Not changed; recorded on bead persistint-game-wbco for his decision. (6) `ie/vendor-terms/openai.md` glossed the governing-law clause, which applies the law of the user's country of residence, as "not governed by Irish law", which is wrong for the Irish resident the file serves; restated on 2026-11-11, with the matching Google gloss put the same way.
+- Of the items cut without verification in commit 21d6376 (dir-r96.18), three are still open: whether Antigravity takes plain-text hook output or `additionalContext` (item 5; the 2026-11-11 run ran the hook but the account had no AI credits left for the model call), the Kiro Web trailer text (item 7), and the WSL checks (item 13). Item 9 was checked live on 2026-11-11: Kiro CLI 3.2.0 passes the JSON envelope through unwrapped (`references/platforms/clis.md`, section 4c). The rest are verified in the reference files.
 
 ## TODO
 
-- Do the dir-vzc review and fix each finding.
-- Verify each dir-r96.18 item at its primary source and restore the ones that check out.
-- Write `strawmen.md` for de, eu, fr and lu from verified primary sources.
-- Add the Code civil liability articles to fr's `## Vendor Liability`, and the Loi du 18 avril 2001's infringement remedies to lu's, from verified primary sources.
-- Verify and validate this skill on each platform it claims: Claude Code, Codex, Gemini CLI, Antigravity, Kiro (dir-f0c).
+- Re-check and date the 35 OpenAI vendor-terms entries (us 19, ie 13, gb 3). The other 43 undated vendor-terms entries were re-checked against the current pages on 2026-11-11, saved under `sources/vendor-terms/`, and dated; no clause had changed. openai.com answers curl with HTTP 403; its pages are saved as downloads from the user's own Chrome, the way the *Moffatt* PDF was, then checked.
+- Verify dir-r96.18 items 5, 7 and 13 (a live Antigravity run once the account has AI credits, a Kiro Web commit, WSL) and restore the ones that check out.
+- Get Brett Whitty's decision on `VV.md`'s `authority` and `review_status` fields (finding 5, bead persistint-game-wbco) and set them to what he gives.
+- Verify and validate this skill on each platform `VV.md` claims, one by one, until each has passed and is recorded there (dir-f0c): claude-code/win32, claude-code/linux-wsl, claude-code/linux, claude-code/darwin, codex/win32, codex/linux-wsl, gemini-cli/win32, gemini-cli/linux-wsl, antigravity/win32, kiro/win32, kiro/linux-wsl.

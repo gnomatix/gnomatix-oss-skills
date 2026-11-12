@@ -1,7 +1,7 @@
 {
   "name": "staleness-guard",
-  "version": "0.1.13",
-  "description": "An Agent Skill that overrides the instinct to answer from confidence. Before the agent states any claim about the present-day world, the user's local environment, its own platform and tool capabilities, or uploaded and mounted source material, it runs the tool that can verify the claim and bases the statement on what the tool returns; if a relevant tool exists and is not used, the claim is not made. One rule, no confidence threshold, no category exempt. Its companion register holds the Last-Modified/Expires staleness ledger, the V&V queue of flagged items, and the use-case catalog, and the skill's own apology reflex is a trigger: the corrective action is emitted, not the story.",
+  "version": "0.1.14",
+  "description": "An Agent Skill that overrides the instinct to answer from confidence. Before the agent states any claim about the present-day world, the user's local environment, its own platform and tool capabilities, or uploaded and mounted source material, it runs the tool that can verify the claim and bases the statement on what the tool returns; if a relevant tool exists and is not used, the claim is not made. One rule, no confidence threshold, no category exempt. Ships a companion staleness register.",
   "author": {
     "name": "Brett Whitty",
     "email": "brett@gnomatix.com"

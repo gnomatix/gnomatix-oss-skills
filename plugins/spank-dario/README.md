@@ -51,7 +51,7 @@ For Kiro IDE add `--workspace <dir>`. Kiro IDE runs workspace hooks only in a tr
    - `platform`: `claude-code`, `codex`, `gemini-cli`, `antigravity` or `kiro`
    - `model_vendors`: the vendors of the models you use, such as `[anthropic]`
    - `hourly_rate` and `currency`, for the estimate. The rate can be a number or `[min, max]`.
-   - `incident_minutes`: your time lost per incident, in minutes, for each type (`attribution`, `refusal`, `misrepresentation`). The commit hook and the scan log incidents without knowing your time; the estimate prices them from this. An incident with no time recorded and no value here is reported as NOT PRICED.
+   - `incident_minutes`: your time lost per incident, in minutes, for each type (`attribution`, `refusal`, `misrepresentation`, `refusal-candidate`). The commit hook and the scan log incidents without knowing your time; the estimate prices them from this. An incident with no time recorded and no value here is reported as NOT PRICED.
 
    A project's `.claude/spank-dario.local.md` overrides the user file.
 2. **Activate.** Run `node skills/spank-dario/bin/activate.js`, and again whenever the config changes. It writes `~/.local/state/spank-dario/clarification.md`, which the session-start hook injects.
@@ -72,7 +72,7 @@ All are under `skills/spank-dario/`:
 - `node test/run.js`: run the tests
 - `node bin/verify-quotes.js`: check every quotation in the skill against its source
 
-The estimate is arithmetic on the log and the sources. A court decides liability and the amount.
+The estimate prices the incident log from your rate, the time recorded or configured for each incident, and the sources on file.
 
 <!-- BEGIN: gnomatix-license-include -->
 ## License

@@ -8,6 +8,12 @@ const os = require('node:os');
 const path = require('node:path');
 
 const { auditMarketplace, extractVvComplements } = require('../scripts/audit-marketplace-integrity.js');
+const {
+  PLUGIN_DESCRIPTION_MAX,
+  SKILL_DESCRIPTION_MAX,
+  readFrontmatter,
+  readFrontmatterScalar,
+} = require('../scripts/hosted-sync-limits.js');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 
@@ -325,4 +331,131 @@ test('extractVvComplements parses js-yaml folded (>-) and wrapped multi-line sca
   assert.equal(comps[1].plugin, 'update-readme-images');
   assert.equal(comps[1].when_installed, 'Supplies workspace_root inheritance across nested subdirectories.');
   assert.equal(comps[1].when_absent, 'Runs standalone.');
+});
+
+function hostedFindings(dir) {
+  return auditMarketplace(dir).findings.filter((f) => f.rule === 'hosted-sync-limits');
+}
+
+function setFixtureDescription(dir, name, description) {
+  const mpPath = path.join(dir, '.claude-plugin', 'marketplace.json');
+  const mp = JSON.parse(fs.readFileSync(mpPath, 'utf8'));
+  mp.plugins.find((p) => p.name === name).description = description;
+  fs.writeFileSync(mpPath, JSON.stringify(mp, null, 2));
+}
+
+test('flags plugin descriptions over the hosted sync limit in marketplace.json and plugin.json', (t) => {
+  const dir = makeFixtureRepo(t);
+  setFixtureDescription(dir, 'alpha-plugin', 'a'.repeat(PLUGIN_DESCRIPTION_MAX));
+  assert.equal(hostedFindings(dir).length, 0);
+
+  setFixtureDescription(dir, 'alpha-plugin', 'a'.repeat(PLUGIN_DESCRIPTION_MAX + 1));
+  fs.writeFileSync(
+    path.join(dir, 'plugins', 'beta-plugin', '.claude-plugin', 'plugin.json'),
+    JSON.stringify({ name: 'beta-plugin', version: '0.1.0', description: 'b'.repeat(PLUGIN_DESCRIPTION_MAX + 1) })
+  );
+  const found = hostedFindings(dir);
+  assert.equal(found.length, 2, JSON.stringify(found));
+  assert.ok(found.some((f) => f.file === '.claude-plugin/marketplace.json' && /alpha-plugin/.test(f.message)));
+  assert.ok(found.some((f) => f.file === 'plugins/beta-plugin/.claude-plugin/plugin.json'));
+});
+
+test('flags SKILL.md descriptions over the hosted sync limit, including folded block scalars', (t) => {
+  const dir = makeFixtureRepo(t);
+  const skillMd = path.join(dir, 'plugins', 'alpha-plugin', 'skills', 'alpha-plugin', 'SKILL.md');
+  const line = 'word '.repeat(20).trim();
+  const wrapped = Array.from({ length: 11 }, () => `  ${line}`).join('\n');
+  fs.writeFileSync(skillMd, `---\nname: alpha-plugin\ndescription: >-\n${wrapped}\n---\n\n# alpha\n`);
+  const found = hostedFindings(dir);
+  assert.equal(found.length, 1, JSON.stringify(found));
+  assert.match(found[0].message, new RegExp(`is 1099 characters; the hosted sync limit is ${SKILL_DESCRIPTION_MAX}`));
+});
+
+test('flags angle brackets in SKILL.md descriptions', (t) => {
+  const dir = makeFixtureRepo(t);
+  const skillMd = path.join(dir, 'plugins', 'alpha-plugin', 'skills', 'alpha-plugin', 'SKILL.md');
+  fs.writeFileSync(skillMd, '---\nname: alpha-plugin\ndescription: "Run as /alpha <word> on a term."\n---\n\n# alpha\n\nBody may use <tags>.\n');
+  const found = hostedFindings(dir);
+  assert.equal(found.length, 1, JSON.stringify(found));
+  assert.match(found[0].message, /angle bracket/);
+});
+
+test('flags a top-level bin/ directory in a plugin', (t) => {
+  const dir = makeFixtureRepo(t);
+  fs.mkdirSync(path.join(dir, 'plugins', 'alpha-plugin', 'bin'));
+  fs.writeFileSync(path.join(dir, 'plugins', 'alpha-plugin', 'bin', 'alpha.js'), "'use strict';\n");
+  fs.mkdirSync(path.join(dir, 'plugins', 'beta-plugin', 'skills', 'beta-plugin', 'bin'));
+  const found = hostedFindings(dir);
+  assert.equal(found.length, 1, JSON.stringify(found));
+  assert.equal(found[0].file, 'plugins/alpha-plugin/bin');
+});
+
+test('flags any skill.md under skills/ that does not start with YAML frontmatter', (t) => {
+  const dir = makeFixtureRepo(t);
+  const refDir = path.join(dir, 'plugins', 'alpha-plugin', 'skills', 'alpha-plugin', 'references', 'ca');
+  fs.mkdirSync(refDir, { recursive: true });
+  fs.writeFileSync(path.join(refDir, 'skill.md'), '# Canada\n\nReference text.\n');
+  fs.writeFileSync(path.join(refDir, 'notes.md'), '# Notes\n');
+  const found = hostedFindings(dir);
+  assert.equal(found.length, 1, JSON.stringify(found));
+  assert.equal(found[0].file, 'plugins/alpha-plugin/skills/alpha-plugin/references/ca/skill.md');
+});
+
+test('checkHostedSyncLimits: false turns the hosted sync check off', (t) => {
+  const dir = makeFixtureRepo(t);
+  fs.mkdirSync(path.join(dir, 'plugins', 'alpha-plugin', 'bin'));
+  const report = auditMarketplace(dir, { checkHostedSyncLimits: false });
+  assert.equal(report.findings.filter((f) => f.rule === 'hosted-sync-limits').length, 0);
+  assert.equal(report.checks.some((c) => c.id === 'hosted-sync-limits'), false);
+});
+
+test('readFrontmatterScalar reads plain, wrapped, quoted, folded and literal scalars', () => {
+  const fm = [
+    'name: demo',
+    'plain: one two # trailing comment',
+    'wrapped: first line',
+    '  second line',
+    'dq: "says \\"hi\\" there"',
+    "sq: 'it''s here'",
+    'folded: >-',
+    '  alpha',
+    '  beta',
+    '',
+    '  gamma',
+    'literal: |',
+    '  line one',
+    '  line two',
+    'last: end',
+  ].join('\n');
+  assert.equal(readFrontmatterScalar(fm, 'name'), 'demo');
+  assert.equal(readFrontmatterScalar(fm, 'plain'), 'one two');
+  assert.equal(readFrontmatterScalar(fm, 'wrapped'), 'first line second line');
+  assert.equal(readFrontmatterScalar(fm, 'dq'), 'says "hi" there');
+  assert.equal(readFrontmatterScalar(fm, 'sq'), "it's here");
+  assert.equal(readFrontmatterScalar(fm, 'folded'), 'alpha beta\ngamma');
+  assert.equal(readFrontmatterScalar(fm, 'literal'), 'line one\nline two');
+  assert.equal(readFrontmatterScalar(fm, 'last'), 'end');
+  assert.equal(readFrontmatterScalar(fm, 'absent'), null);
+  assert.equal(readFrontmatter('# no frontmatter\n'), null);
+  assert.equal(readFrontmatter('---\r\nname: x\r\n---\r\nbody\r\n'), 'name: x');
+});
+
+test('setPluginDescription writes one description to both manifests and refuses one over the limit', (t) => {
+  const { setPluginDescription, currentDescription } = require('../scripts/set-plugin-description.js');
+  const dir = makeFixtureRepo(t);
+  const mpPath = path.join(dir, '.claude-plugin', 'marketplace.json');
+  const pjPath = path.join(dir, 'plugins', 'alpha-plugin', '.claude-plugin', 'plugin.json');
+
+  const text = 'a'.repeat(PLUGIN_DESCRIPTION_MAX);
+  assert.deepEqual(setPluginDescription(dir, 'alpha-plugin', text), { plugin: 'alpha-plugin', length: PLUGIN_DESCRIPTION_MAX });
+  assert.equal(currentDescription(dir, 'alpha-plugin', 'marketplace'), text);
+  assert.equal(currentDescription(dir, 'alpha-plugin', 'plugin'), text);
+  assert.equal(JSON.parse(fs.readFileSync(pjPath, 'utf8')).version, '0.1.0');
+  assert.ok(fs.readFileSync(mpPath, 'utf8').endsWith('}\n'));
+
+  const before = [fs.readFileSync(mpPath, 'utf8'), fs.readFileSync(pjPath, 'utf8')];
+  assert.throws(() => setPluginDescription(dir, 'alpha-plugin', 'a'.repeat(PLUGIN_DESCRIPTION_MAX + 1)), /limit is/);
+  assert.throws(() => setPluginDescription(dir, 'no-such-plugin', 'x'));
+  assert.throws(() => currentDescription(dir, 'alpha-plugin', 'elsewhere'), /--from takes/);
+  assert.deepEqual([fs.readFileSync(mpPath, 'utf8'), fs.readFileSync(pjPath, 'utf8')], before);
 });

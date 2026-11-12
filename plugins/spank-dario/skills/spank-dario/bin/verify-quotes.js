@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// spank-dario: check every quotation in SKILL.md and in each references/<cc>/skill.md against the
+// spank-dario: check every quotation in SKILL.md and in each references/<cc>/jurisdiction.md against the
 // source files (every other file under references/). Usage: node bin/verify-quotes.js [--quiet]
 // A quotation is a double-quoted span of 15 or more characters. Spans that are only the text
 // between two separate quotations (starting or ending with a space, starting with punctuation, or holding ** or `) are skipped.
@@ -14,7 +14,7 @@ const sources = [], checked = [path.join(root, 'SKILL.md')];
   for (const e of fs.readdirSync(d, { withFileTypes: true })) {
     const p = path.join(d, e.name);
     if (e.isDirectory()) walk(p);
-    else if (e.name === 'skill.md') checked.push(p);
+    else if (e.name === 'jurisdiction.md') checked.push(p);
     else if (/\.(md|json)$/.test(e.name)) sources.push(norm(fs.readFileSync(p, 'utf8')));
   }
 })(path.join(root, 'references'));

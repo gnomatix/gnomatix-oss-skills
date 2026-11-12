@@ -1,71 +1,67 @@
 ---
 name: author-release-readme
 description: >-
-  Author or update versioned release notes (docs/releases/v<VERSION>.md and
-  GitHub Release bodies) with accurate marketplace and per-plugin version
-  matrices, cross-CLI install/update/migrate commands, and a release-specific
-  16:9 PSA panel image generated and embedded through update-readme-images.
+  Author or update versioned release notes (docs/releases/v{VERSION}.md and
+  GitHub Release bodies) that state what the release actually changed, with the
+  exact marketplace and per-plugin version matrix and valid install commands.
 ---
 
 # author-release-readme
 
-Create or update a versioned release message (`docs/releases/v<VERSION>.md`) paired with a release-specific `16:9` PSA panel illustration (`assets/images/releases/release-v<VERSION>-banner.jpg` + `1280×640` companion OG card) managed by `update-readme-images`.
+Create or update a versioned release note (`docs/releases/v<VERSION>.md`) and, after the tag is pushed, the matching GitHub Release body.
 
 ---
 
-## 1. Non-Negotiable Release & Visual Rules
+## 1. Rules
 
-1. **Always Resolve & Report Configured Reference Documents First**:
-   Run `update-readme-images.mjs --resolve docs/releases/v<VERSION>.md` before generating any release panel image, read every resolved project-specific or fallback style guide and rules document in full, and **explicitly state the Configured Reference Documents** (with `[project-specific]` vs `[gnomatix-oss-skills-fallback]` origin tags) in your output.
-2. **Real Version & Rename Telemetry**:
-   Never invent version numbers or plugin counts. `scripts/author-release-readme.mjs` inspects `VERSION`, `.VERSIONS.json`, prior `v*` Git tags, and `.claude-plugin/marketplace.json` (`renames`) to build the exact Newly Published / Updated Plugin Version Matrix and rename summary.
-3. **Candid PSA Release Register & 16:9 Illustration**:
-   - Pair substantive engineering highlights and copy-pasteable cross-CLI commands (`Claude Code`, `Codex`, `Antigravity agy`, `Copilot`, `VS Code`, `Cursor`, `OpenCode`, `Kiro`) with a memorable 1980s Saturday-morning PSA closer (`# Just say NO to <ANTI-PATTERN>!` / `## ... Knowing is half the battle.`).
-   - Illustrate the release's headline improvements and anti-pattern victory in a dedicated `16:9` (`1376×768`) panel at `assets/images/releases/release-v<VERSION>-banner.jpg`, passing gold-standard `reference_images` in `ImagePaths` and keeping natural human complexions, dynamic comic ink linework, and clear headroom around diegetic signage.
-4. **Protect Historic Releases & Existing Artwork**:
-   - Never modify or overwrite historic draft release `v0.1.0`.
-   - Never overwrite an existing `assets/images/releases/release-v<VERSION>-banner.jpg` directly; stage candidate revisions in `assets/drafts/` via `update-readme-images.mjs --stage-revision`.
-   - Zero AI co-authorship or tool-attribution lines (`spank-dario`), and review prose against `hidden-libel-check` (`R0`–`R14`).
+1. **Every statement comes from the release.** Each change listed is one the range `<previous tag>..v<VERSION>` actually contains, checked against `git log` and `git diff --stat` for that range. Nothing is carried over from an earlier release, and no capability is claimed that was not run.
+2. **Real versions.** Never invent version numbers or plugin counts. `scripts/author-release-readme.mjs` reads `VERSION`, `.VERSIONS.json`, prior `v*` tags and `.claude-plugin/marketplace.json` (`renames`) to build the version matrix and rename list.
+3. **Plain register and panels.** No slogans or themed closing lines. The only images are the title banners of plugins and skills new in the release, and the release banner rendered from the release's prompt file (below). Install commands are ones the documentation of each agent supports.
+6. **Typed commit subjects.** Commits use `EPIC(scope):`, `FEATURE(scope):` or `BUGFIX(scope):` for changes worth naming in the notes, and `DOCS`, `CHORE`, `REFACTOR`, `TEST` for the rest; the notes list the first three one by one and collapse everything else to a count per scope.
+4. **Protect historic releases.** Never modify the historic draft release `v0.1.0`.
+5. **Attribution and review.** No AI co-authorship or tool-attribution lines (`spank-dario`); review the prose with `hidden-libel-check` (R0–R14) before publishing.
 
 ---
 
 ## 2. Procedure
 
-### Step 1 — Resolve Reference Documents for the Target Version
+### Step 1: The release prompt file
+Each release has `release-v<VERSION>-banner-prompt.md` (or `release-<VERSION>-banner-prompt.md`) in the project-visuals directory, `${GNOX_PROJECT_VISUALS_DIR:-~/work/project-visuals}/<workspace_root>/`. Its YAML front matter holds the release note's content:
+
+```yaml
+---
+type: WORKING-DRAFT (LLM-GENERATED)   # GNOMATIX review front matter
+authority: PENDING MANUAL REVIEW
+review_status: PENDING
+auto-generated: true                  # false once the user has written or reviewed it
+review_note: "needs review for QA/QC and possible revisions / re-render"
+title: "..."                          # heading after "Release v<VERSION>:"
+short-description: "..."              # paragraph under the heading
+banner-alt: "..."                     # alt text of the release banner
+highlights:                           # the changes, each checked against the range's commits
+  - "..."
+---
+```
+
+The text after the front matter is the image prompt: the default instruction for rendering the release banner, which the note shows once `assets/images/releases/release-v<VERSION>-banner.jpg` exists. When the file does not exist, writing the release note creates it: the front matter above filled from the release, the instruction to use the style documents, the front matter and any changelog items that map to engaging, humorous or fun visual elements consistent with the style guide and themes, the render instructions (target path, panel type, size, social-preview companion, reference images, and update-readme-images' own text for the panel type and draft staging), then the changelog and every resolved style document inlined. An existing prompt file is never overwritten.
+
+Changes come from `--highlights-file` (one per line), else the front matter's `highlights`, else the commit subjects in the range that change published files (`dev/`, `assets/review` and `assets/drafts` are left out, as in `release.sh`), minus version-bump commits.
+
+### Step 2: Author `docs/releases/v<VERSION>.md`
 ```sh
 V=$(tr -d '\r\n' < VERSION)
-node plugins/update-readme-images/skills/update-readme-images/scripts/update-readme-images.mjs \
-  --resolve "docs/releases/v${V}.md"
-```
-Report the **Configured Reference Documents** returned by `--resolve` before generating artwork.
-
-### Step 2 — Generate the Release-Specific `16:9` PSA Panel Image & Register Formal Human Review
-1. Generate `1376×768` (`16:9`, JPEG `< 1 MB`) artwork illustrating the release's new capabilities and PSA theme, locked to the resolved `reference_images`, and save (or stage via `--stage-revision` if already present) with its release-version suffix at:
-   `assets/images/releases/release-v<VERSION>-banner.jpg`
-2. Retain any alternate candidate renders under `assets/review/candidates/v<VERSION>/` in Gitea, register the new release banner (`review_status: "PENDING_HUMAN_REVIEW"`) and alternates in `assets/review/manifest.json`, run `update-readme-images.mjs --build-review` to update `assets/review/preview.html` (`0–12` rating scale + comments), and create a `TODO` human-review task in Beads (`bd create`).
-
-### Step 3 — Author `docs/releases/v<VERSION>.md` & Sync Images
-```sh
 node plugins/update-readme-images/skills/author-release-readme/scripts/author-release-readme.mjs \
-  --version "$V" \
-  --subtitle "static cross-CLI installer, style-locked panels, & local config doctor" \
-  --psa-noun "SYMLINKS" \
-  --apply-images
+  --version "$V" --highlights-file changes.txt
 ```
-Verify placement and pixel dimensions via:
-```sh
-node plugins/update-readme-images/skills/update-readme-images/scripts/update-readme-images.mjs \
-  --audit "docs/releases/v${V}.md" --verify-images
-```
+Read the written file and check every line against the range before going on.
 
-### Step 4 — Render or Publish the GitHub Release Body (After Tag Push)
-When publishing to GitHub Releases, `author-release-readme.mjs` rewrites relative image links (`../../assets/images/releases/...`) to tag-pinned raw URLs (`https://raw.githubusercontent.com/gnomatix/gnomatix-oss-skills/v<VERSION>/assets/images/releases/...`) so the panel renders natively on the GitHub Releases page:
+### Step 3: Render or publish the GitHub Release body (after the tag is pushed)
 ```sh
-# Preview GitHub Release Markdown body:
+# Preview the GitHub Release body:
 node plugins/update-readme-images/skills/author-release-readme/scripts/author-release-readme.mjs \
   --version "$V" --render-github-body
 
-# Create or update GitHub Release for tag v<VERSION> (never touches v0.1.0):
+# Create or update the GitHub Release for tag v<VERSION> (never touches v0.1.0):
 node plugins/update-readme-images/skills/author-release-readme/scripts/author-release-readme.mjs \
   --version "$V" --publish-github-release
 ```

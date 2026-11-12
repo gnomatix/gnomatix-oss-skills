@@ -8,3 +8,6 @@
 
 dev/** filter=git-crypt diff=git-crypt
 dev/README.md !filter !diff
+
+# Primary sources are kept byte for byte as fetched: no line-ending conversion.
+plugins/*/skills/*/references/*/sources/** -text

@@ -17,7 +17,6 @@ This jurisdiction's part of the skill. Every quotation is from `ca/law.md`, wher
   - "I find Air Canada did not take reasonable care to ensure its chatbot was accurate." Correct information elsewhere didn't cure it: Air Canada didn't explain "why customers should have to double-check information found in one part of its website on another part of its website." (para. 28)
   - Its terms didn't save it: "it is not enough in a legal process to assert that a contract says something without actually providing the contract." (para. 31)
   - The customer "is entitled to be put in the position they would have been in if the misrepresentation had not been made." (para. 33) The order: "$812.02", made up of "$650.88 in damages", "$36.14 in pre-judgment interest" and "$125 in CRT fees" (para. 44).
-  - A tribunal decision; it doesn't bind other courts.
 
 ## Common Vendor-trained Straw-Men / Red Herring Responses
 

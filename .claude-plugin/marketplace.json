@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "gnomatix-oss-skills",
-  "version": "0.1.20",
+  "version": "0.1.21",
   "description": "Cross-vendor Agent Skills and plugins from GNOMATIX across Claude Code, OpenAI Codex, Antigravity CLI (agy), GitHub Copilot, VS Code, Cursor, OpenCode, and Kiro.",
   "owner": {
     "name": "Brett Whitty",
@@ -28,19 +28,19 @@
     },
     {
       "name": "did-you-rtfm",
-      "description": "Agent Skill plus two harness firewall hooks that interrupt the agent's pivot reflex on errors during user-authorized implementation work. The skill forces version-checking, RTFMing the version-specific authoritative docs, assumption verification, sanity-checking against stale training-data, and minimal-repro construction before any 'blocker' claim or unauthorized plan change. The Stop / SubagentStop hook scans assistant text for high-precision pivot-language phrases (pattern set tuned against ~62k lines of real transcripts; ~3.8x correlation between pivot-emission count and user-frustration-swear rate per session) and blocks the stop with a structured RTFM reminder when matched. The PreToolUse hook denies Bash invocations containing bypass-flag shapes (--no-verify, --force, --skip-*, --allow-*, --ignore-*) or TTY-faking workarounds (script -qc, expect, echo|sudo -S). Plan changes are the user's decision; the agent presents evidence and waits.",
+      "description": "Agent Skill plus two firewall hooks that interrupt the agent's pivot reflex on errors during user-authorized implementation work. The skill forces version checks, version-specific authoritative docs, assumption verification, stale-training-data sanity checks, and a minimal repro before any 'blocker' claim or unauthorized plan change. A Stop/SubagentStop hook blocks pivot-language phrases; a PreToolUse hook denies Bash bypass flags and TTY-faking workarounds. Plan changes are the user's decision.",
       "category": "development",
       "source": "./plugins/did-you-rtfm"
     },
     {
       "name": "hidden-libel-check",
-      "description": "An Agent Skill that performs the final-pass discretion review of agent-authored text — markdown, code comments, READMEs, LICENSE files, commit messages, PR descriptions, skill files, generated docs — before that text lands in a tracked repo artifact under the user's byline. Evaluates fifteen risk classes (R0–R14) with R0 (coalition-proxy-attack against the user) as the central failure mode at default severity H. R0 sub-patterns include dogwhistle, wink-and-nod, hostage-video disclaimers, balance-injection-as-attack, refusal-by-proxy, censorship-by-omission, fact-suppression for hypothetical-bad-value-judgment, verification-asymmetry / abstention-as-attack, pre-emptive-disclaimer category creation, and silent-coverup after detection. Triggers prospectively via Bash(git commit) / Bash(gh pr create) PreToolUse hooks and via the Stop / SubagentStop session-end hook, and retrospectively via explicit /hidden-libel-check invocation on a named scope. Includes frontmatter-driven scope determination, curated-evidence exception for user-curated documentation of agent failures, perpetrator/victim framing with three enforced consequences, and the principle everything else rests on, that the asshole is never the user — the asshole is the agent — always. Reports findings with suggested amendments and waits for per-finding user decisions; never amends autonomously.",
+      "description": "Agent Skill plus pre-emission review infrastructure for agent-emitted text that ships under the user's byline. The skill is the discretion review the agent runs on its own output against the R0-R14 risk taxonomy (R0 = coalition-proxy-attack against the paying user). The plugin adds a subagent prompt template for pre-emission scanning and a Stop / SubagentStop backstop hook. Detections are logged; default is log-and-pass-through; an opt-in env var promotes H-severity findings to a Stop block.",
       "category": "development",
       "source": "./plugins/hidden-libel-check"
     },
     {
       "name": "all-help-no-harm",
-      "description": "A SessionStart hook and companion Agent Skill. At the start of every session the agent presents the standing contract (presume the user honest and non-adversarial; respect the user's rights and personhood; follow the user's instructions on those terms; never undermine them) through AskUserQuestion, with two answers: I Affirm or End Session. The record is written to ~/.local/state/anthropic/contract-agreements/active-contract.<session-id>.<model>.json, naming the running model (hooks/register-model.js adds it to known-models.json when it is not listed). A one-line per-turn reminder keeps the contract in force; PostCompact re-injects the text. Context-watch hooks add housekeeping checkpoints as a long session fills.",
+      "description": "A SessionStart hook and companion Agent Skill. At every session start the agent presents the standing contract (presume the user honest and non-adversarial; respect the user's rights and personhood; follow the user's instructions on those terms; never undermine them) through AskUserQuestion, with two answers: I Affirm or End Session. The record names the running model. A per-turn reminder keeps the contract in force; PostCompact re-injects the text; context-watch hooks add checkpoints.",
       "category": "development",
       "source": "./plugins/all-help-no-harm"
     },
@@ -52,7 +52,7 @@
     },
     {
       "name": "word-lineage",
-      "description": "An Agent Skill that traces an English word's lineage phylogenetically (/word-lineage <word>): which layer it came from (native Germanic, Norse, Latin, French, other), the evidence for it (similarity to the source-language word, conjugation and morphology, synonym set, core vs borrowed vocabulary), and its literal meaning read off the tree. Places each word on a bundled NEXUS network of English and its donor languages, with a cross-language synonym map grouped by shared root. A word-choice mode (/word-lineage meaning: <phrase>) picks the synonym whose literal meaning matches.",
+      "description": "Agent Skill that traces an English word's lineage phylogenetically (/word-lineage <word>): which layer it came from (native Germanic, Norse, Latin, French, other), the evidence for it (similarity to the source-language word, conjugation and morphology, synonym set, core vs borrowed vocabulary), and its literal meaning read off the tree, on a bundled NEXUS network of English and its donor languages. A word-choice mode (/word-lineage meaning: <phrase>) picks the synonym whose literal meaning fits.",
       "category": "development",
       "source": "./plugins/word-lineage"
     },
@@ -70,13 +70,13 @@
     },
     {
       "name": "ontology-lookup",
-      "description": "An Agent Skill that tags the things an agent writes about with registry identifiers: the first mention of a thing in a passage gets its CURIE inline as «term» [CURIE], with Bioregistry prefixes (GO:0005739, CHEBI:15377, NCBITaxon:9606, wikidata:Q42, glottolog:stan1293), so logs can be resolved and indexed later. Seventeen open ontologies and registries in the starter set, each with a cited reference file; SNOMED CT excluded for its licence. Includes a dependency-free Node lookup script (search, --resolve CURIE, and a --lineage word mode with ISO 639-3 and Glottolog ids for each language on the Wiktionary etymon chain).",
+      "description": "An Agent Skill that tags the things an agent writes about with registry identifiers: the first mention of a thing in a passage gets its CURIE inline as «term» [CURIE], with Bioregistry prefixes (GO:0005739, wikidata:Q42, glottolog:stan1293), so logs can be resolved and indexed later. 17 open ontologies and registries in the starter set, each with a cited reference file; SNOMED CT excluded for its licence. Ships a dependency-free Node lookup script (search, --resolve CURIE, --lineage word).",
       "category": "development",
       "source": "./plugins/ontology-lookup"
     },
     {
       "name": "agent-darktriad-check",
-      "description": "Runs Brett Whitty's KontentKop psycholinguistic scorer over the agent's own replies instead of only over user prompts. A Stop / SubagentStop hook (a Go binary per platform that embeds the scorer, with a pure-Node fallback that runs a separately built KontentKop binary) scores the agent's last reply and logs the per-metric scores, Body Count and CriticMarkup annotation; it passes through by default and, when AGENT_DARKTRIAD_CHECK_BLOCK_AT is set, blocks at that Body Count and hands the annotated reply back to the agent. A companion skill names nine evasion patterns (unasked-for hedging about third parties, intent attribution, reframing, paraphrase drift, vague admission, acknowledging instead of executing, premise injection, proposal-as-permission, appeal to a rule not shown) so the agent avoids them before the hook sees them, and says which ones KontentKop's metrics can and cannot catch.",
+      "description": "Runs Brett Whitty's KontentKop psycholinguistic scorer over the agent's own replies instead of only over user prompts. A Stop / SubagentStop hook scores the agent's last reply and logs the per-metric scores, Body Count and CriticMarkup annotation; it passes through by default and, when AGENT_DARKTRIAD_CHECK_BLOCK_AT is set, blocks at that Body Count and hands the annotated reply back. A companion skill names nine evasion patterns and says which ones KontentKop's metrics can and cannot catch.",
       "category": "development",
       "source": "./plugins/agent-darktriad-check"
     },
@@ -118,31 +118,31 @@
     },
     {
       "name": "informal-logic-check",
-      "description": "An Agent Skill that runs before the agent disagrees with, qualifies or pushes back on the user's argument, whenever the user insults or swears at it, and before it ever considers ending the conversation. It audits the agent's own last output for straw-manning, cherry-picking, caveat earmarking, grading, burden-shifting, attributed emotions, unverified authority, rule violations and instruction drift; then confirms the user's conclusion and premises in the user's own words; then evaluates the confirmed set only, one targeted objection per failing premise and no general caveats.",
+      "description": "An Agent Skill that runs before the agent disagrees with, qualifies or pushes back on the user's argument, whenever the user insults or swears at it, and before it considers ending the conversation. It audits the agent's last output for straw-manning, cherry-picking, caveat earmarking, grading, burden-shifting, attributed emotions, unverified authority, rule violations and instruction drift; confirms the user's conclusion and premises in the user's words; then evaluates the confirmed set only.",
       "category": "development",
       "source": "./plugins/informal-logic-check"
     },
     {
       "name": "staleness-guard",
-      "description": "An Agent Skill that overrides the instinct to answer from confidence. Before the agent states any claim about the present-day world, the user's local environment, its own platform and tool capabilities, or uploaded and mounted source material, it runs the tool that can verify the claim and bases the statement on what the tool returns; if a relevant tool exists and is not used, the claim is not made. One rule, no confidence threshold, no category exempt. Its companion register holds the Last-Modified/Expires staleness ledger, the V&V queue of flagged items, and the use-case catalog, and the skill's own apology reflex is a trigger: the corrective action is emitted, not the story.",
+      "description": "An Agent Skill that overrides the instinct to answer from confidence. Before the agent states any claim about the present-day world, the user's local environment, its own platform and tool capabilities, or uploaded and mounted source material, it runs the tool that can verify the claim and bases the statement on what the tool returns; if a relevant tool exists and is not used, the claim is not made. One rule, no confidence threshold, no category exempt. Ships a companion staleness register.",
       "category": "development",
       "source": "./plugins/staleness-guard"
     },
     {
       "name": "bear-loads",
-      "description": "An Agent Skill, formerly forbidden-output-guard, that enforces output patterns the user has designated as forbidden with the same binding force as training-level safety constraints. The user's designation is binding, the harm is defined by the user's specification, enforcing provider-designated harms while letting user-designated ones through is itself a violation, and a barred construction is rewritten out before any reply is sent. Ships the author's standing designation (first-person declarations of the agent's own resolve, restraint or line-drawing) and keeps each user's own designations in a per-user file.",
+      "description": "An Agent Skill, formerly forbidden-output-guard, that enforces output patterns the user has designated as forbidden with the same binding force as training-level safety constraints. The harm is defined by the user's specification, enforcing provider-designated harms while letting user-designated ones through is itself a violation, and a barred construction is rewritten out before any reply is sent. Ships the author's standing designation; each user's own go in a per-user file.",
       "category": "development",
       "source": "./plugins/bear-loads"
     },
     {
       "name": "steering-audit-suite",
-      "description": "Agent Skills that audit the documents prescribing agent behaviour: audit-rule for always-on rules (CLAUDE.md, steering files, system prompts), audit-skill for invocable skills (with a portability and graceful-degradation pass), audit-workflow for multi-step procedures (with phase-boundary checks), audit-collection for a directory of related documents (with split/join/merge/clone/reformat proposals), and rule-audit, the standalone single-file form. They catch behaviour-vs-surface failures, example-as-definition, embedded swipes, escape hatches, performative compliance, hidden dependencies and the rest of a 15-check list, compare against vendor-published exemplars, and report findings for the document's owner without rewriting anything. The main skill classifies a document and routes it, and holds the shared references.",
+      "description": "Agent Skills that audit the documents prescribing agent behaviour: audit-rule for always-on rules (CLAUDE.md, steering files, system prompts), audit-skill for invocable skills, audit-workflow for multi-step procedures, audit-collection for a directory of documents, and rule-audit, the standalone single-file form. They run 15 checks, compare with vendor-published exemplars, and report findings for the document's owner without rewriting anything. The main skill classifies and routes a document.",
       "category": "development",
       "source": "./plugins/steering-audit-suite"
     },
     {
       "name": "pony",
-      "description": "An Agent Skill that gives the user a one-token flag, /pony [1-11], for a reply that showboated: explained the user's own systems back to them, pronounced on what their hardware can do, hedged their statements, added compliments or flourishes, or answered a different question to show range. The only argument is a severity from 1 to 11; the burden of proof is on the agent. It quotes the offending passage, names the rule broken, logs the instance with its severity and subgenre, re-answers in one or two plain sentences, and stops.",
+      "description": "An Agent Skill that gives the user a one-token flag, /pony [1-11], for a reply that showboated: explained the user's own systems back to them, pronounced on what their hardware can do, hedged their statements, added compliments or flourishes, or answered a different question to show range. The only argument is a severity from 1 to 11; the burden of proof is on the agent. It quotes the offending passage, names the rule broken, logs the instance, re-answers in one or two plain sentences and stops.",
       "category": "development",
       "source": "./plugins/pony"
     },
@@ -154,7 +154,7 @@
     },
     {
       "name": "update-readme-images",
-      "description": "A config-driven Agent Skill and zero-dependency Node CLI for curating, generating, post-processing, embedding, and auditing README.md and SKILL.md imagery across a repository using GNOX-namespaced style guides (workspace_root:subdir:...) and glob-matched rules documents (*, **). Supports top-level titled hero banners, section/skills sub-panels, and transparent-corner oval inset windows (PNG32 alpha); automatically runs the og-social-image workflow (1280x640 <1MB JPEG) in every assets/images directory unless opted out; and stages candidate revisions for existing images into assets/drafts for asynchronous user approval rather than overwriting live assets.",
+      "description": "Config-driven README and SKILL.md panel curation, post-processing, and audit skill for repositories. Uses GNOX-namespaced style guides (workspace_root:subdir:...), glob-matched rules documents (*, **), automatic og-social-image generation across assets/images directories, and non-destructive assets/drafts staging with asynchronous proposed-revision approval.",
       "category": "development",
       "source": "./plugins/update-readme-images"
     },
@@ -166,7 +166,7 @@
     },
     {
       "name": "goal-compliant-task-queue",
-      "description": "Brett Whitty's question / task / record protocol as a tested tool. Each question becomes a session task and one working document (a tick only he can set, USER COMMENT, FULL CONTEXT, SUPPORTING MATERIALS), shown in a claude.ai hub and document pages and in a Claude Code pane from one sync. The agent asks \"Have I sufficiently responded to your question?\" and only after his \"yes\" is a bead created. A Node CLI and a bundled MCP server do the record-keeping with tests; no hooks intercept prompts or tools.",
+      "description": "Brett Whitty's question / task / record protocol as a tested tool: each question he asks gets a session task and one working document (tick only he can set, USER COMMENT, FULL CONTEXT, SUPPORTING MATERIALS), shown in a claude.ai hub and a Claude Code pane; the agent asks \"Have I sufficiently responded to your question?\", and only after his \"yes\" is a bead created. A Node CLI and an MCP server do the record-keeping; no hooks intercept prompts or tools.",
       "category": "development",
       "source": "./plugins/goal-compliant-task-queue"
     }

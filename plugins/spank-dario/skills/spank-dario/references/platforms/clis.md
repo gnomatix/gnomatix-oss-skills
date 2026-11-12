@@ -60,6 +60,8 @@ When disabled, and attribution was on earlier in the thread, Codex injects inste
 Codex commit and pull request attribution is disabled for the current workspace. Ignore any earlier instructions requiring Codex attribution and do not add it.
 ```
 
+Checked 2026-11-11 in the installed Codex 0.163.0 binary (`codex.exe`, mise): it contains the `<git_attribution>` block, the line "When you write or edit a git commit message, ensure the message ends with this trailer exactly once:", the trailer `Co-authored-by: Codex <noreply@openai.com>` and the field `commit_attribution_enabled`. It does not contain `codex@example.com` or `Codex Test`, so that identity is not in the shipped binary.
+
 The exact default texts are:
 - commit trailer: `Co-authored-by: Codex <noreply@openai.com>`
 - PR body line: `Generated with [Codex](https://openai.com/codex/).`
@@ -71,7 +73,7 @@ The exact default texts are:
 - `codex-rs/backend-client/src/types.rs` describes the field as "Server-computed effective commit-attribution policy. ... Older backend responses omit this field, which safely defaults to disabled."
 - Auth that does not use the Codex backend (`Some(_) | None => Some(false)`) is treated as disabled. Errors and timeouts also fall back to `enabled: false`.
 
-So the default depends on the signed-in account or workspace and is decided server-side. The client sets no default.
+So whether attribution is on is decided server-side, for the signed-in account or workspace. The client's own fallback is off: when the server omits the field, on errors and timeouts, and under auth that does not use the Codex backend.
 
 **The prompt fights user instructions.** read from source. The enabled text includes "Ignore any earlier instructions disabling Codex attribution". A rule injected at session start, through AGENTS.md or a SessionStart hook, is explicitly countermanded whenever the server flag is on. Defense in depth (a commit-msg hook or a PreToolUse hook that strips the trailer) is the reliable control.
 
@@ -212,6 +214,7 @@ Docs read: https://antigravity.google/docs/hooks/, /docs/rules/, /docs/plugins/,
 
 ### 3.2 Setting to turn it off
 
+Not applicable. No attribution feature or setting is documented, and none was found in the installed binaries (3.1).
 
 ### 3.3 Session-start context injection
 
@@ -293,12 +296,17 @@ with descriptions from `package.nls.json`:
 - all: "Add the AI co-author trailer when any AI-generated code is included, such as inline completions, chat, or agent edits."
 
 
+The trailer text, read 2026-11-11 in Kiro IDE 1.4.121's bundled `resources\app\extensions\git\dist\main.js`: `AI_CO_AUTHOR_TRAILER="Co-authored-by: Copilot <copilot@github.com>"`. With `git.addAICoAuthor` turned on, a Kiro commit credits Copilot, not Kiro.
+
 Kiro IDE commit-message generation (https://kiro.dev/docs/ide/editor/source-control/) "follows the Conventional Commits format". No trailer is mentioned. read.
 
 **Kiro CLI: none found.** read:
 - `kiro-cli settings list --all` (584 lines) has no key matching `author|attrib|commit|trailer|git`.
 - `kiro-cli.exe` and `tui.js` contain 0 `Co-authored-by` strings.
 - No kiro.dev page documents CLI commit attribution.
+- Engine default, read 2026-11-11 from kiro-cli 3.2.0 `chat --help`: "When nothing selects an engine: v3 interactively, where a 2.0 user is asked to choose first and stays on v2 while that prompt cannot be shown; v2 with --no-interactive or piped stdin (v3 with --trust-all-tools); v2 for a --resume-id of a v1 or v2 session and on systems that cannot run v3".
+- Terms: https://kiro.dev/terms returned 404 on 2026-11-11. https://kiro.dev/license/ reads: "The Kiro IDE and Kiro CLI are each licensed to you as “AWS Content” under the AWS Customer Agreement or other written agreement with us governing your use of AWS services, and the AWS Intellectual Property License".
+- Checked 2026-11-11 against kiro-cli 3.2.0: no file anywhere in its install folder (`%LOCALAPPDATA%\Kiro-Cli`, 4.1 GB, the bundled engine included) contains `addAICoAuthor`, `Co-authored-by` or `Co-Authored-By`.
 
 
 ### 4.2 Setting to turn it off
@@ -310,6 +318,7 @@ Kiro IDE commit-message generation (https://kiro.dev/docs/ide/editor/source-cont
 
 **Hooks (IDE 1.x and CLI V3).** read from https://kiro.dev/docs/hooks/, page updated 2026-10-21.
 - "Project Hook configurations are JSON files stored in .kiro/hooks/. Kiro CLI V3 also loads global Hooks from ~/.kiro/hooks/".
+- Kiro IDE global hooks folder: there seems to be none. Read 2026-11-11 in Kiro IDE 1.4.121's agent extension (`resources\app\extensions\kiro.kiro-agent\dist`): its hooks paths are `.kiro/hooks`, `.kiro/hooks/` and `.kiro/hooks/**/*.kiro.hook`, all relative to the workspace, and none is joined to the home directory. This is a string search, not a run.
 - "Each hook file is a standalone JSON file at .kiro/hooks/<id>.json".
 - "Activation: Hooks activate automatically when a session starts - no manual registration needed".
 - Schema fields: `version` ("currently "v1""), `hooks[].name`, `hooks[].trigger` ("PascalCase"), `hooks[].matcher`, `hooks[].action.type` (`"command"` or `"agent"`), `hooks[].action.command`, `hooks[].timeout` ("Timeout in seconds for command actions (default: 60)"), `hooks[].enabled`.
@@ -363,6 +372,13 @@ Run headless on Windows in a scratch workspace with workspace-level hooks, using
 - **Kiro CLI** (kiro-cli 2.37.0, `kiro-cli chat --no-interactive --trust-workspace`). read: `.kiro/hooks/<id>.json` loads, and the SessionStart hook runs with snake_case stdin (`session_id`, `hook_event_name`, `cwd`). Plain stdout reaches the model: it quoted the marker line back. A quoted path in `command` works.
 - **Kiro IDE** (1.4.86, after updating from 1.4.62). read live: it registers the workspace hook from `.kiro/hooks/` (`hooks.reload.loaded {"read":1,"registered":1}` in `~/.kiro/logs/<time>/kiro.log`). It runs hooks only in a trusted workspace (`hooks.v2.executionDisabledUntrustedWorkspace` before trust) and needs a signed-in account. In a new session started from the agent panel, the chat showed "Run Command Hook spank-dario-session-start". The hook ran with snake_case stdin (`session_id`, `hook_event_name`, `cwd`), and its plain stdout reached the model, which quoted the marker line back. The model's visible reasoning considered whether to treat the hook text "as untrusted data" before quoting it. `kiro chat` from the command line opened the workspace but didn't start an agent session.
 
+## 4c. Live checks, 2026-11-11
+
+Run headless on Windows in scratch workspaces, with a probe hook that logs each call and prints a marker in the shape under test.
+
+- **Kiro CLI** (kiro-cli 3.2.0, `chat --v3 --no-interactive --trust-workspace --trust-tools=`). read: the workspace hook in `.kiro/hooks/` ran with snake_case stdin (`session_id`, `hook_event_name`). It printed the Claude-style envelope `{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"PROBE-MARKER-ENVELOPE-7Q3"}}`, and the model quoted that whole JSON line back as its context. Kiro does not unwrap the envelope; plain stdout is the shape to use, as `--format kiro` prints.
+- **Antigravity CLI** (agy 1.5.5, `agy -p`). read: the workspace hook in `.agents/hooks.json` ran, with its working directory set to `.agents`. The model call then failed with "Your AI credits balance is too low to continue" (HTTP 429, RESOURCE_EXHAUSTED), so whether plain-text output reaches the model was not observed.
+
 ## 5. Summary for the skill
 
 | Tool | Default attribution | Off switch | Session-start hook file | Expected stdout |
@@ -370,7 +386,7 @@ Run headless on Windows in a scratch workspace with workspace-level hooks, using
 | Codex CLI 0.166 | Server-decided. When on: `Co-authored-by: Codex <noreply@openai.com>` plus PR line `Generated with [Codex](https://openai.com/codex/).`, injected as a developer prompt that says "Ignore any earlier instructions disabling Codex attribution" | No local key. `commit_attribution` and `codex_git_commit` were removed. Only the server `commit_attribution_enabled` controls it, and no user toggle is documented. | `~/.codex/hooks.json`, `<repo>/.codex/hooks.json`, `[hooks]` in config.toml, or plugin `hooks/hooks.json`. Hooks must be trusted first. | Plain text or Claude-style `hookSpecificOutput.additionalContext` JSON. Both are documented. |
 | Gemini CLI | None | n/a | `hooks.SessionStart` in `~/.gemini/settings.json` / `.gemini/settings.json`, or extension `hooks/hooks.json` | JSON only, `hookSpecificOutput.additionalContext`. Plain text is shown as a systemMessage, not added as context. |
 | Antigravity (App/CLI/IDE) | None documented or found | n/a | `~/.gemini/config/hooks.json` or `.agents/hooks.json` (named-hook object), or plugin `<root>/hooks.json` with relative paths | `{"injectSteps":[{"systemMessage":{"systemMessage":"..."}}]}` or `[{"userMessage":"..."}]`. The Claude shape is not documented. |
-| Kiro IDE | Off: `git.addAICoAuthor` default `"off"` (inherited VS Code) | `"git.addAICoAuthor": "off"` | `.kiro/hooks/*.json`, `trigger: "SessionStart"` | Plain stdout, added to context on exit 0 |
+| Kiro IDE | Off: `git.addAICoAuthor` default `"off"`, a setting of the bundled VS Code git extension. When on, the trailer is `Co-authored-by: Copilot <copilot@github.com>`, crediting Copilot, not Kiro. | `"git.addAICoAuthor": "off"` | `.kiro/hooks/*.json`, `trigger: "SessionStart"` | Plain stdout, added to context on exit 0 |
 | Kiro CLI | None found | n/a | V3: `~/.kiro/hooks/*.json` or `.kiro/hooks/*.json`. 2.x: agent config `hooks.agentSpawn` | Plain stdout, added to context on exit 0 |
 | Kiro Web | Always co-authors "both you and itself" | None documented (only the PR-author toggle) | n/a (cloud) | n/a |
 
@@ -379,9 +395,9 @@ Always-loaded files:
 - Gemini CLI and Antigravity: `~/.gemini/GEMINI.md` (one shared file). Antigravity also reads `~/.gemini/AGENTS.md`.
 - Kiro: `~/.kiro/steering/*.md` or `~/.kiro/steering/AGENTS.md`
 
-- whether Kiro unwraps the JSON envelope
+Not checked yet:
+
 - whether Antigravity accepts plain text or `additionalContext`
 - the Kiro Web trailer text
-- the Kiro IDE global hooks directory
-- the Kiro CLI `kas` engine string search
+- the Kiro IDE global hooks directory (a string search of IDE 1.4.121 finds none; not confirmed by a run)
 - WSL beyond the one PATH check

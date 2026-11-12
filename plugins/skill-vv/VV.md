@@ -19,7 +19,7 @@ complements:
     when_installed: >-
       Exposes /gnox:skill-vv and /gnox:skill-vv:bug-report routing alongside session-wide GNOMATIX
       topology discovery.
-    when_absent: Runs standalone via /skill-vv, SessionStart/UserPromptSubmit hooks, and bin/skill-vv.js.
+    when_absent: Runs standalone via /skill-vv, SessionStart/UserPromptSubmit hooks, and scripts/skill-vv.js.
 procedures:
   - id: cli-suite
     summary: the CLI's automated tests pass

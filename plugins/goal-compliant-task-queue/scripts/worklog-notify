@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // worklog-notify "<text>": post <text> to this Claude Code session through its messaging socket
-// (CLAUDE_CODE_MESSAGING_SOCKET, CLAUDE_CODE_MESSAGING_TOKEN). Run it as: node "${CLAUDE_PLUGIN_ROOT}/bin/worklog-notify" "<text>"
+// (CLAUDE_CODE_MESSAGING_SOCKET, CLAUDE_CODE_MESSAGING_TOKEN). Run it as: node "${CLAUDE_PLUGIN_ROOT}/scripts/worklog-notify" "<text>"
 const { pathToFileURL } = require('url')
 const { join } = require('path')
 const lib = f => import(pathToFileURL(join(__dirname, '..', 'lib', f)).href)

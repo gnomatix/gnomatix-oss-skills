@@ -1,27 +1,27 @@
 {
   "agent-darktriad-check": {
-    "version": "0.3.12",
-    "git_hash": "47e6d7af8a33d898346a5247cea38650afcd0992",
+    "version": "0.3.13",
+    "git_hash": "bd871abf56b8734792e03cc4eda7e1a3058c1120",
     "path": "plugins/agent-darktriad-check"
   },
   "all-help-no-harm": {
-    "version": "0.2.13",
-    "git_hash": "1dc2cab879877c27758fbdc291703cec791b1984",
+    "version": "0.2.14",
+    "git_hash": "3ade4f03483a0193591c42b49cabd0c9438a32c7",
     "path": "plugins/all-help-no-harm"
   },
   "bear-loads": {
-    "version": "0.1.9",
-    "git_hash": "c2b86ae6c2ffa32b2f9f39b9c83dd9721f260a8c",
+    "version": "0.1.10",
+    "git_hash": "79452193567778fade1e598fcd063f285b9870a9",
     "path": "plugins/bear-loads"
   },
   "citation-farm-audit": {
-    "version": "0.1.8",
-    "git_hash": "89404754c23c5d155de6a80b2db1de2a7eb8275e",
+    "version": "0.1.10",
+    "git_hash": "6302f4699d0daaa53c0804ea242eb17d7a0ff269",
     "path": "plugins/citation-farm-audit"
   },
   "critical-control-points": {
-    "version": "0.2.11",
-    "git_hash": "0caa33155f02b763d9eb417a8cd6c211efcd0af5",
+    "version": "0.2.12",
+    "git_hash": "62b9e76cec99214db1702471e92ded2107946a16",
     "path": "plugins/critical-control-points"
   },
   "cui-bono": {
@@ -30,8 +30,8 @@
     "path": "plugins/cui-bono"
   },
   "did-you-rtfm": {
-    "version": "0.2.13",
-    "git_hash": "c38943510003906188cbd0f82b30684c9f2bfc22",
+    "version": "0.2.14",
+    "git_hash": "defb3a69817f47b2b38328c6f18848189a42fc6e",
     "path": "plugins/did-you-rtfm"
   },
   "dont-be-hitler": {
@@ -40,28 +40,28 @@
     "path": "plugins/dont-be-hitler"
   },
   "gnox": {
-    "version": "0.1.18",
-    "git_hash": "c2441cac636963c7ba113deb63677a3eeefe3211",
+    "version": "0.1.22",
+    "git_hash": "7382f4321ef5551367938eb4cfb1848ff03162e4",
     "path": "plugins/gnox"
   },
   "goal-compliant-task-queue": {
-    "version": "0.1.3",
-    "git_hash": "a52bd59cd8145755e45b78bf0387db474289075c",
+    "version": "0.1.4",
+    "git_hash": "712cc46f0fbd6139d404629ca42337382d3696d7",
     "path": "plugins/goal-compliant-task-queue"
   },
   "hidden-libel-check": {
-    "version": "0.2.9",
-    "git_hash": "16e295e4c85a8874de8697586ea268c1886bf311",
+    "version": "0.2.10",
+    "git_hash": "86c73c94582e0d7ec68cab84c052bec52cd14dc8",
     "path": "plugins/hidden-libel-check"
   },
   "inaudible-markup": {
-    "version": "0.2.9",
-    "git_hash": "0aec78553e2528bd3de0290b563c1ffa09395f50",
+    "version": "0.2.10",
+    "git_hash": "15285d1e9f852e7d0d59d0949d6a3138338c31ba",
     "path": "plugins/inaudible-markup"
   },
   "informal-logic-check": {
-    "version": "0.1.13",
-    "git_hash": "f3a218a71b36390e703b0a9e0fa284ac4fcff290",
+    "version": "0.1.14",
+    "git_hash": "d4494c9a27e1b0daaaa287049b440a23b4a0caa7",
     "path": "plugins/informal-logic-check"
   },
   "log-session": {
@@ -75,18 +75,18 @@
     "path": "plugins/og-social-image"
   },
   "ontology-lookup": {
-    "version": "0.2.9",
-    "git_hash": "57899fb3674b1887bf2b563075bd28f3a383c041",
+    "version": "0.2.10",
+    "git_hash": "f3765344519f4d0c69f2b593d12fbdc13845cab5",
     "path": "plugins/ontology-lookup"
   },
   "open-and-honest-agent": {
-    "version": "0.2.6",
-    "git_hash": "c4d80ff93e616059cd06ed9961328de715756b1a",
+    "version": "0.2.7",
+    "git_hash": "038a236a8f4ec4ce61017a7a19bcfa8c6b746020",
     "path": "plugins/open-and-honest-agent"
   },
   "pony": {
-    "version": "0.1.11",
-    "git_hash": "36713b664b6e480877ab5fdafd126893c5ffb2bb",
+    "version": "0.1.12",
+    "git_hash": "f0909a75c5c13e741494fd124f5bb2e82c34d832",
     "path": "plugins/pony"
   },
   "python-elimination-program": {
@@ -100,37 +100,37 @@
     "path": "plugins/satori"
   },
   "skill-vv": {
-    "version": "0.2.16",
-    "git_hash": "9eb143be4ff9f92ef935dfc5c3e3d2ae6f9da820",
+    "version": "0.2.18",
+    "git_hash": "867a17f33e1157883bfa04a9d3eb85a636985556",
     "path": "plugins/skill-vv"
   },
   "spank-dario": {
-    "version": "0.2.31",
-    "git_hash": "060a52a5f6b690f050e4a0f6a743edf6af38ae5f",
+    "version": "0.2.66",
+    "git_hash": "88050971a98045b92dd2c312720e8e1f5944b8b7",
     "path": "plugins/spank-dario"
   },
   "staleness-guard": {
-    "version": "0.1.13",
-    "git_hash": "a354e32956cf49441e9807350f4435884d859cda",
+    "version": "0.1.14",
+    "git_hash": "91d3a7475c2c2658bdd03d9e1a019a4bf098e597",
     "path": "plugins/staleness-guard"
   },
   "steering-audit-suite": {
-    "version": "0.1.13",
-    "git_hash": "e8904e088b94ec8c7ce00a1e923de4ee3d5de848",
+    "version": "0.1.14",
+    "git_hash": "e3fbd30ade1a224ec22397be21b7f8f8105fa30b",
     "path": "plugins/steering-audit-suite"
   },
   "update-readme-images": {
-    "version": "0.1.8",
-    "git_hash": "20a8b4fa9b9e33c8788a83da7cf4289979abc370",
+    "version": "0.1.12",
+    "git_hash": "bc369aaf6b741c5b90d6709ba116320c379e50e6",
     "path": "plugins/update-readme-images"
   },
   "word-lineage": {
-    "version": "0.2.6",
-    "git_hash": "c1d025a96e7e83a4ddf1d0cdaeddfb54b6b408bf",
+    "version": "0.2.7",
+    "git_hash": "50215303e739d7d351da5d4190410e59c9fe0851",
     "path": "plugins/word-lineage"
   },
   "_marketplace": {
-    "version": "0.1.20",
-    "plugins_fingerprint": "1dd888488f4c1646d7f29b1aeb723d631d978d86ddaebb210415642e2284161e"
+    "version": "0.1.21",
+    "plugins_fingerprint": "8fe49e7bc0162cbaae9dd81436ebc3cf602f885b304b411aa4285e606e237493"
   }
 }

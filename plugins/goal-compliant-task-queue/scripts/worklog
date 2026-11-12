@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// worklog: the goal-compliant-task-queue CLI. Run it as: node "${CLAUDE_PLUGIN_ROOT}/bin/worklog" <command> …
+// worklog: the goal-compliant-task-queue CLI. Run it as: node "${CLAUDE_PLUGIN_ROOT}/scripts/worklog" <command> …
 // This file stays CommonJS so it runs without a package.json; the work is in lib/cli.mjs.
 const { pathToFileURL } = require('url')
 const { join } = require('path')

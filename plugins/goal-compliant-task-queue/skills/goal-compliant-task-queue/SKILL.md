@@ -19,7 +19,7 @@ Programmatic work (logging, records, pages, sync, beads) is done by the `worklog
 
 Two equivalent interfaces over the same state and the same refusal rules:
 
-- CLI: `node "${CLAUDE_PLUGIN_ROOT}/bin/worklog" <command>`; text arguments go in files (`--quote-file`, `--body-file`, `--text-file`) so his words reach the record byte for byte. Write those files under `${XDG_CACHE_HOME:-~/.cache}/goal-compliant-task-queue/`, never `/tmp`.
+- CLI: `node "${CLAUDE_PLUGIN_ROOT}/scripts/worklog" <command>`; text arguments go in files (`--quote-file`, `--body-file`, `--text-file`) so his words reach the record byte for byte. Write those files under `${XDG_CACHE_HOME:-~/.cache}/goal-compliant-task-queue/`, never `/tmp`.
 - MCP server `worklog` (bundled, `.mcp.json`): tools `worklog_log`, `worklog_open`, `worklog_link`, `worklog_section`, `worklog_artifact_payload`, `worklog_pull`, `worklog_asked`, `worklog_answer`, `worklog_resolve`, `worklog_archive`, `worklog_unlock`, `worklog_sync`, `worklog_status`, `worklog_metrics`, `worklog_show`; text arguments are passed directly.
 
 Exit code 2 (MCP `isError` with "refused:") means a rule in the spec stopped the operation. Read the message, do what it says, and never work around it.
@@ -114,5 +114,5 @@ When `curator.enabled` is true, launch the `task-queue-curator` agent in the bac
 ## Files
 
 - `references/brett-spec.md`: Brett's spec, verbatim.
-- `${CLAUDE_PLUGIN_ROOT}/bin/worklog`, `${CLAUDE_PLUGIN_ROOT}/lib/mcp-server.mjs`: the tool.
+- `${CLAUDE_PLUGIN_ROOT}/scripts/worklog`, `${CLAUDE_PLUGIN_ROOT}/lib/mcp-server.mjs`: the tool.
 - `${CLAUDE_PLUGIN_ROOT}/docs/system-design.md`: components, data flow, failure modes, traceability.

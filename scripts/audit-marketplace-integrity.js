@@ -34,6 +34,7 @@
 const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
+const { checkHostedSyncLimits } = require('./hosted-sync-limits.js');
 
 const DEFAULT_ROOT = path.resolve(__dirname, '..');
 
@@ -693,6 +694,25 @@ function auditMarketplace(repoRoot, opts) {
     }
   }
   recordCheck('vv-complements-valid', findings.length === beforeVv, 'VV.md complements and lifecycle frontmatter checked');
+
+  // 7b. Hosted-sync limits (description lengths, angle brackets, top-level bin/, stray skill.md)
+  if (options.checkHostedSyncLimits !== false) {
+    const beforeHosted = findings.length;
+    const hostedPlugins = [];
+    for (const entry of mp.plugins || []) {
+      if (!entry || !entry.name || !entry.source || skipPinned.has(entry.name)) continue;
+      hostedPlugins.push({
+        name: entry.name,
+        dir: path.resolve(root, entry.source),
+        marketplaceFile: mpPath,
+        marketplaceDescription: entry.description,
+      });
+    }
+    for (const problem of checkHostedSyncLimits(hostedPlugins)) {
+      fail('hosted-sync-limits', problem.file, problem.message);
+    }
+    recordCheck('hosted-sync-limits', findings.length === beforeHosted, `${hostedPlugins.length} plugin(s) checked`);
+  }
 
   // 8. Anti-context-pollution scan across steering, READMEs, hooks/README.md, platforms/*/README.md, VV.md, and SKILL.md
   const docsToScan = [];

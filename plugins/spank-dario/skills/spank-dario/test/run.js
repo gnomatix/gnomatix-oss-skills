@@ -35,7 +35,7 @@ check('gb on kiro activates lu AWS terms and lu law',
   JSON.stringify(r));
 
 r = json(run('bin/jurisdictions.js', ['--country', 'ca', '--json']));
-check('ca activates ca/skill.md and int/skill.md with the law files, and no other country', r && ['ca/skill.md', 'int/skill.md', 'ca/law.md'].every(f => r.active.map(a => rel(a.file)).includes(f)) && !r.active.some(a => /^(us|gb|ie|au|jp|fr|de|lu)\//.test(rel(a.file)) && !/vendor-terms/.test(rel(a.file))), JSON.stringify(r && r.active.map(a => rel(a.file))));
+check('ca activates ca/jurisdiction.md and int/jurisdiction.md with the law files, and no other country', r && ['ca/jurisdiction.md', 'int/jurisdiction.md', 'ca/law.md'].every(f => r.active.map(a => rel(a.file)).includes(f)) && !r.active.some(a => /^(us|gb|ie|au|jp|fr|de|lu)\//.test(rel(a.file)) && !/vendor-terms/.test(rel(a.file))), JSON.stringify(r && r.active.map(a => rel(a.file))));
 
 // 2. EU members get the EU file.
 r = json(run('bin/jurisdictions.js', ['--country', 'de', '--json']));
@@ -82,15 +82,15 @@ check('the moral-rights line states only what the reference files show (eu and B
   text.slice(0, 1200));
 const strawmenFiles = fs.readdirSync(path.join(ROOT, 'references')).map(d => path.join(ROOT, 'references', d, 'strawmen.md')).filter(f => fs.existsSync(f));
 check('every strawmen.md intro cites the current SKILL.md heading', strawmenFiles.length >= 5 && strawmenFiles.every(f => fs.readFileSync(f, 'utf8').split(/\r?\n/).slice(0, 4).join('\n').includes(`"${STRAWMEN_HEADING}"`)), strawmenFiles.filter(f => !fs.readFileSync(f, 'utf8').includes(`"${STRAWMEN_HEADING}"`)).map(rel).join(', '));
-// SKILL.md and the README name the jurisdictions whose skill.md has each section, not all of them.
+// SKILL.md and the README name the jurisdictions whose jurisdiction.md has each section, not all of them.
 const andList = xs => (xs.length > 1 ? `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}` : xs.join(''));
-const withSection = h => fs.readdirSync(path.join(ROOT, 'references')).filter(d => { try { return fs.readFileSync(path.join(ROOT, 'references', d, 'skill.md'), 'utf8').replace(/\r\n/g, '\n').includes(`\n## ${h}\n`); } catch { return false; } }).sort();
+const withSection = h => fs.readdirSync(path.join(ROOT, 'references')).filter(d => { try { return fs.readFileSync(path.join(ROOT, 'references', d, 'jurisdiction.md'), 'utf8').replace(/\r\n/g, '\n').includes(`\n## ${h}\n`); } catch { return false; } }).sort();
 const smCodes = withSection(STRAWMEN_HEADING);
 const vlCodes = withSection('Vendor Liability');
 const tick = xs => andList(xs.map(c => `\`${c}\``));
-const skillLine = skillMd.split(/\r?\n/).find(l => l.startsWith('- `skill.md`:')) || '';
-check('SKILL.md names the jurisdictions whose skill.md has the Vendor Liability and Straw-Men sections',
-  smCodes.length >= 6 && skillLine.includes(`for ${tick(vlCodes)}, its \`## Vendor Liability\``) && skillLine.includes(`for ${tick(smCodes)}, its \`## ${STRAWMEN_HEADING}\``) && skillMd.includes(`is in the \`skill.md\` of ${tick(smCodes)}, under the same heading`),
+const skillLine = skillMd.split(/\r?\n/).find(l => l.startsWith('- `jurisdiction.md`:')) || '';
+check('SKILL.md names the jurisdictions whose jurisdiction.md has the Vendor Liability and Straw-Men sections',
+  smCodes.length >= 6 && skillLine.includes(`for ${tick(vlCodes)}, its \`## Vendor Liability\``) && skillLine.includes(`for ${tick(smCodes)}, its \`## ${STRAWMEN_HEADING}\``) && skillMd.includes(`is in the \`jurisdiction.md\` of ${tick(smCodes)}, under the same heading`),
   `${smCodes} / ${vlCodes}\n${skillLine}`);
 const NAMES = { au: 'Australia', ca: 'Canada', de: 'Germany', eu: 'the EU', fr: 'France', gb: 'the United Kingdom', ie: 'Ireland', int: 'the Berne Convention', jp: 'Japan', lu: 'Luxembourg', us: 'the United States' };
 const readme = fs.readFileSync(path.join(ROOT, '..', '..', 'README.md'), 'utf8');
@@ -248,7 +248,8 @@ check('scan reads Codex and Gemini logs: trailer and agent refusals, not user li
 const st2 = run('bin/scan.js', ['--transcripts', tr, '--record']);
 check('a rescan adds nothing new', /0 new in the log/.test(st2.stdout), st2.stdout);
 est = JSON.parse(run('bin/estimate.js', ['--country', 'us', '--json']).stdout);
-check('refusal candidates are counted but not priced', est.unconfirmed_refusal_candidates === 1 && !('refusal-candidate' in est.by_type), JSON.stringify(est));
+// dir-vzc finding 2: refusal candidates go through the same pricing as every incident; none is left out.
+check('refusal candidates are priced with the rest: in by_type, and in the total or NOT PRICED', est.refusal_candidates === 1 && est.by_type['refusal-candidate'] === 1 && (est.unpriced['refusal-candidate'] === 1 || est.actual.minutes > 0), JSON.stringify(est));
 
 // 15. Every incident is priced from the time recorded with it or set by the user in the config; none is a silent zero.
 const timeState = path.join(tmp, 'xdg-state-time');
@@ -400,6 +401,32 @@ check('the text names each not-priced reason', /NOT PRICED: claude-opus-5-5: 2 m
 const noUsage = run('bin/estimate.js', ['--usage', path.join(tmp, 'no-such-file.jsonl')], usageEnv, withMinutes);
 check('--usage on a missing path fails plainly', noUsage.status !== 0 && /no-such-file\.jsonl/.test(noUsage.stderr), noUsage.stdout + noUsage.stderr);
 
+// 18. Each reference file's verification claim holds: a file with an entry marked "read" without a date says
+// so; a file whose entries are all dated does not.
+const refRoot = path.join(ROOT, 'references');
+const refFiles = [];
+for (const d of fs.readdirSync(refRoot)) {
+  for (const n of ['law.md', 'strawmen.md', 'berne.md']) if (fs.existsSync(path.join(refRoot, d, n))) refFiles.push(path.join(refRoot, d, n));
+  const vt = path.join(refRoot, d, 'vendor-terms');
+  if (fs.existsSync(vt)) for (const n of fs.readdirSync(vt)) if (n.endsWith('.md')) refFiles.push(path.join(vt, n));
+}
+const claimBad = [];
+for (const f of refFiles) {
+  const lines = fs.readFileSync(f, 'utf8').split(/\r?\n/);
+  const undated = lines.filter(l => /^- .*— read( \([^)]*\))? —/.test(l)).length;
+  const pending = (lines.find(l => /^(Every entry|Each source is quoted)/.test(l)) || '').includes('still to be re-checked');
+  if (undated && !pending) claimBad.push(`${rel(f)}: ${undated} undated entries, not said`);
+  if (!undated && pending) claimBad.push(`${rel(f)}: says entries remain undated, none do`);
+}
+check('every reference file says whether all its entries are dated, and it holds', refFiles.length >= 50 && claimBad.length === 0, `${refFiles.length} files; ${claimBad.join('; ')}`);
+// 19. In the source repository, primary sources under references/*/sources/ are stored byte for byte:
+// .gitattributes turns off line-ending conversion for them. An installed copy has no repository, so the
+// check reports itself as not applicable there.
+const repoAttrs = path.join(ROOT, '..', '..', '..', '..', '.gitattributes');
+if (fs.existsSync(repoAttrs) && fs.existsSync(path.join(ROOT, '..', '..', '..', '..', '.claude-plugin', 'marketplace.json'))) {
+  const rule = fs.readFileSync(repoAttrs, 'utf8').split(/\r?\n/).some(l => /^plugins\/\*\/skills\/\*\/references\/\*\/sources\/\*\* .*-text\b/.test(l));
+  check('primary sources are stored byte for byte: .gitattributes sets -text on references/*/sources/', rule, 'no -text rule for plugins/*/skills/*/references/*/sources/** in ' + repoAttrs);
+} else console.log('N/A  primary sources stored byte for byte: not in the source repository');
 fs.rmSync(tmp, { recursive: true, force: true });
 console.log(failed ? `${failed} failed` : 'all passed');
 process.exitCode = failed ? 1 : 0;

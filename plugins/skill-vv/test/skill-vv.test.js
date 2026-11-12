@@ -9,7 +9,7 @@ const path = require('path');
 const { spawnSync } = require('child_process'); // test harness only
 
 const ROOT = path.join(__dirname, '..');
-const CLI = path.join(ROOT, 'bin', 'skill-vv.js');
+const CLI = path.join(ROOT, 'scripts', 'skill-vv.js');
 
 function tmpHome() {
   const home = fs.mkdtempSync(path.join(os.tmpdir(), 'skill-vv-'));

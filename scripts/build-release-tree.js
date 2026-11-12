@@ -372,8 +372,8 @@ function buildReleaseTree(opts) {
       stageText('lib/gnox-discovery.js', prunedGd);
     }
 
-    // Update plugins/update-readme-images/config/readme-images.json if excluded plugins are present
-    const riPath = 'plugins/update-readme-images/config/readme-images.json';
+    // Update plugins/update-readme-images/config/readme-images-default.json if excluded plugins are present
+    const riPath = 'plugins/update-readme-images/config/readme-images-default.json';
     const riRaw = tryGitIdx(['show', `:${riPath}`]);
     if (riRaw !== null && excludedPlugins.size > 0 && !pinnedPlugins.has('update-readme-images')) {
       try {

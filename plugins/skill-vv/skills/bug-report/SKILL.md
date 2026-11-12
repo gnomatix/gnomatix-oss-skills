@@ -1,6 +1,6 @@
 ---
 name: bug-report
-description: Document a bug in a skill or plugin with the user, then record it in the right place. Use it whenever a prompt has the form "/<skill-name> #bug <report>", which the skill-vv hook routes here. Also use it when the user says a skill misbehaved, gave wrong output, failed on their model or platform, or wants to report, log, file or fix a problem with a skill, even without the #bug tag. For the skill author working in the source repo, the bug is fixed now, or the author is told directly why it can't be. An end user gets a private log, and the option of a GitHub issue or a patch in their own fork.
+description: 'Document a bug in a skill or plugin with the user, then record it in the right place. Use it whenever a prompt has the form "/{skill-name} #bug {report}", which the skill-vv hook routes here. Also use it when the user says a skill misbehaved, gave wrong output, failed on their model or platform, or wants to report, log, file or fix a problem with a skill, even without the #bug tag. For the skill author working in the source repo, the bug is fixed now, or the author is told directly why it can''t be. An end user gets a private log, and the option of a GitHub issue or a patch in their own fork.'
 ---
 
 # bug-report
@@ -10,7 +10,7 @@ A bug report is only useful if someone acts on it. This skill turns a one-line c
 ## 1. Locate the skill and the mode
 
 ```
-node <skill-vv>/bin/skill-vv.js bug locate <skill>
+node <skill-vv>/scripts/skill-vv.js bug locate <skill>
 ```
 
 It prints JSON:
@@ -40,7 +40,7 @@ Then reproduce it yourself if you can do that safely. A reproduced bug is worth 
 Write the documented bug to a scratch file, then log it:
 
 ```
-node <skill-vv>/bin/skill-vv.js bug log <skill> --title "<one-line summary>" --report "<the user's report as given>" --model <id> --agent <agent> --body-file <scratch.md>
+node <skill-vv>/scripts/skill-vv.js bug log <skill> --title "<one-line summary>" --report "<the user's report as given>" --model <id> --agent <agent> --body-file <scratch.md>
 ```
 
 The record keeps the user's report as given, plus the documented details. It may hold logs, transcripts or file contents, so it goes in the protected log directory and nowhere public. Before it holds anything sensitive in user mode, ask the user whether to keep the record at all. It's their machine.
@@ -53,7 +53,7 @@ The record keeps the user's report as given, plus the documented details. It may
 2. **If it can't be fixed now, tell the author directly, in the same turn.** Say what blocks the fix, with the evidence: the exact error, the versions, the docs read, what was tried. Then ask what to do. A BUGS or TODO entry in a file is not an outcome and doesn't replace this.
 3. **Keep the record in beads and the bug log only.** The bug record stays in `logDir`, and an open bug gets a beads issue. Neither goes into the skill's public files.
 4. If the bug shows a V&V procedure failing on this model and platform, record it:
-   `node <skill-vv>/bin/skill-vv.js record result <skill> <procedure> fail --model <id> --agent <agent> --notes "<summary>" --into <VV.md>`
+   `node <skill-vv>/scripts/skill-vv.js record result <skill> <procedure> fail --model <id> --agent <agent> --notes "<summary>" --into <VV.md>`
 5. If `logEncrypted` is false, say so before committing. The record could then be pushed in plaintext.
 
 ### User mode (an installed copy)

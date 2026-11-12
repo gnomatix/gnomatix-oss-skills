@@ -19,12 +19,18 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { generateReviewSuite, versionedAssetPath } from './build-asset-review.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const PLUGIN_ROOT = path.resolve(SCRIPT_DIR, '..', '..', '..');
-const DEFAULT_PLUGIN_CONFIG = path.join(PLUGIN_ROOT, 'config', 'readme-images.json');
+const { loadLayeredJson, ensureFile } = createRequire(import.meta.url)(path.join(PLUGIN_ROOT, 'lib', 'fs-safe.js'));
+// Every config location holds readme-images-default.json (the shipped defaults; a single
+// readme-images.json is read the same way) and readme-images-user.json, merged over it.
+const CONFIG_DEFAULT_NAMES = ['readme-images-default.json', 'readme-images.json'];
+const CONFIG_USER_NAME = 'readme-images-user.json';
+const DEFAULT_PLUGIN_CONFIG = path.join(PLUGIN_ROOT, 'config', 'readme-images-default.json');
 const OG_MAX_BYTES_DEFAULT = 1048576;
 
 // ─── Safe Filesystem Helpers (per repository CLAUDE.md) ────────────────────
@@ -413,12 +419,12 @@ export function findConfigPathWithOrigin(repoRoot, explicitConfig) {
     }
   }
   const projectCandidates = [
-    path.join(repoRoot, '.gnox', 'readme-images.json'),
-    path.join(repoRoot, '.claude', 'readme-images.json'),
-    path.join(repoRoot, 'config', 'readme-images.json'),
-    path.join(repoRoot, 'readme-images.json'),
-    path.join(repoRoot, 'plugins', 'update-readme-images', 'config', 'readme-images.json')
-  ];
+    path.join(repoRoot, '.gnox'),
+    path.join(repoRoot, '.claude'),
+    path.join(repoRoot, 'config'),
+    repoRoot,
+    path.join(repoRoot, 'plugins', 'update-readme-images', 'config')
+  ].flatMap((dir) => CONFIG_DEFAULT_NAMES.map((n) => path.join(dir, n)));
   for (const c of projectCandidates) {
     if (safeExists(c)) {
       return { configPath: c, configOrigin: 'project-specific' };
@@ -434,6 +440,15 @@ export function findConfigPathWithOrigin(repoRoot, explicitConfig) {
   return null;
 }
 
+// Where the user's overrides of the bundled defaults live: the plugin's persistent data directory
+// on Claude Code (CLAUDE_PLUGIN_DATA, kept across updates), else $XDG_CONFIG_HOME (or ~/.config)
+// /update-readme-images/.
+export function persistentUserConfigPath() {
+  const dir = process.env.CLAUDE_PLUGIN_DATA ||
+    path.join(process.env.XDG_CONFIG_HOME || path.join(os.homedir(), '.config'), 'update-readme-images');
+  return path.join(dir, CONFIG_USER_NAME);
+}
+
 export function findConfigPath(repoRoot, explicitConfig) {
   const found = findConfigPathWithOrigin(repoRoot, explicitConfig);
   return found ? found.configPath : null;
@@ -444,14 +459,37 @@ export function loadConfig(repoRoot, explicitConfig) {
   if (!found) {
     throw new Error(`No readme-images.json config found in ${repoRoot}`);
   }
-  const raw = safeReadText(found.configPath);
-  if (!raw) {
+  if (!safeReadText(found.configPath)) {
     throw new Error(`Could not read config at ${found.configPath}`);
   }
+  // readme-images-user.json overrides / extends the defaults, and is created from the shipped
+  // skeleton when missing. A project config keeps its user file beside it; the bundled defaults,
+  // which plugin updates replace, use a user file in a persistent location.
+  const isBundled = path.resolve(found.configPath) === path.resolve(DEFAULT_PLUGIN_CONFIG);
+  const userConfigPath = isBundled ? persistentUserConfigPath() : path.join(path.dirname(found.configPath), CONFIG_USER_NAME);
+  const skeleton = safeReadText(path.join(PLUGIN_ROOT, 'config', CONFIG_USER_NAME)) || '{}\n';
   return {
     configPath: found.configPath,
+    userConfigPath,
     configOrigin: found.configOrigin,
-    config: JSON.parse(raw)
+    config: loadLayeredJson(found.configPath, userConfigPath, skeleton)
+  };
+}
+
+// Everything that applies to one target file: the layered config, its style guides, matched
+// rules and configured reference documents. The --resolve command prints this; other scripts
+// (author-release-readme) import it.
+export function resolveTarget(repoRoot, targetRel, loaded = null) {
+  const { config, configPath, configOrigin } = loaded || loadConfig(repoRoot);
+  const styleInfo = resolveStyleGuides(config, targetRel);
+  const rulesInfo = resolveRulesForFile(repoRoot, config, targetRel);
+  return {
+    config_path: configPath ? toPosixRel(repoRoot, configPath) : null,
+    config_origin: configOrigin,
+    configured_reference_documents: buildConfiguredReferenceDocuments(repoRoot, config, configPath, configOrigin, styleInfo, rulesInfo),
+    ...styleInfo,
+    matched_rules: rulesInfo,
+    config
   };
 }
 
@@ -1983,7 +2021,8 @@ export function initUserRepo(targetRepoDir, workspaceRootName) {
   const absRepo = path.resolve(targetRepoDir);
   const wsName = workspaceRootName || path.basename(absRepo);
 
-  const cfgPath = path.join(absRepo, '.claude', 'readme-images.json');
+  const cfgPath = path.join(absRepo, '.claude', 'readme-images-default.json');
+  const userCfgPath = path.join(absRepo, '.claude', CONFIG_USER_NAME);
   const styleDocRel = 'docs/readme-images/style-guides/default.md';
   const rulesDocRel = 'docs/readme-images/rules/readme-panels.md';
 
@@ -2078,9 +2117,10 @@ export function initUserRepo(targetRepoDir, workspaceRootName) {
 - **Non-Destructive Draft Staging**: Existing files in \`assets/images/\` are never replaced directly; candidate revisions are staged in \`assets/drafts/\` and promoted via \`--promote-draft --approved-by\` after user approval.
 `;
 
-  if (!safeExists(cfgPath)) {
+  if (!safeExists(cfgPath) && !safeExists(path.join(absRepo, '.claude', 'readme-images.json'))) {
     atomicWrite(cfgPath, JSON.stringify(starterConfig, null, 2) + '\n');
   }
+  ensureFile(userCfgPath, '{}\n');
   const absStyleDoc = path.join(absRepo, styleDocRel);
   if (!safeExists(absStyleDoc)) {
     atomicWrite(absStyleDoc, starterStyleDoc);
@@ -2092,6 +2132,7 @@ export function initUserRepo(targetRepoDir, workspaceRootName) {
 
   return {
     configPath: cfgPath,
+    userConfigPath: userCfgPath,
     styleDoc: absStyleDoc,
     rulesDoc: absRulesDoc
   };
@@ -2261,24 +2302,8 @@ function main() {
   }
 
   if (args.resolve) {
-    const targetRel = toPosixRel(repoRoot, args.resolve);
-    const styleInfo = resolveStyleGuides(config, targetRel);
-    const rulesInfo = resolveRulesForFile(repoRoot, config, targetRel);
-    const configuredRefs = buildConfiguredReferenceDocuments(
-      repoRoot,
-      config,
-      configPath,
-      configOrigin,
-      styleInfo,
-      rulesInfo
-    );
-    const payload = {
-      config_path: configPath ? toPosixRel(repoRoot, configPath) : null,
-      config_origin: configOrigin,
-      configured_reference_documents: configuredRefs,
-      ...styleInfo,
-      matched_rules: rulesInfo
-    };
+    const { config: _merged, ...payload } = resolveTarget(repoRoot, toPosixRel(repoRoot, args.resolve), { config, configPath, configOrigin });
+    const configuredRefs = payload.configured_reference_documents;
     if (asJson) {
       process.stdout.write(JSON.stringify(payload, null, 2) + '\n');
     } else {

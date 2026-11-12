@@ -1,6 +1,6 @@
 // skill-vv — Claude Code SessionStart hook
 //
-// Runs the same check as `bin/skill-vv.js check` for this session's model
+// Runs the same check as `scripts/skill-vv.js check` for this session's model
 // (payload.model) and puts the report in front of the agent. Emits nothing
 // when nothing needs attention. Fail-open, except that a missing js-yaml is
 // reported, since without it no VV.md can be read.
@@ -31,7 +31,7 @@ function emit(text) {
   try {
     const vv = require('../lib/vv');
     const report = vv.check({ model: payload.model, agent: 'claude-code', projectDir: payload.cwd });
-    const text = vv.formatReport(report, path.join(__dirname, '..', 'bin', 'skill-vv.js'));
+    const text = vv.formatReport(report, path.join(__dirname, '..', 'scripts', 'skill-vv.js'));
     if (text) emit(text);
   } catch (err) {
     if (err && err.code === 'SKILL_VV_NO_YAML') {

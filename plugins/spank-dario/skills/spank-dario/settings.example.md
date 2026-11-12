@@ -26,6 +26,7 @@ currency: USD
 #   attribution: <minutes>
 #   refusal: <minutes>
 #   misrepresentation: <minutes>
+#   refusal-candidate: <minutes>
 
 # Per-million-token prices for bin/estimate.js --usage, by model ID, for models not in
 # references/us/anthropic-api-prices.json or to replace its list prices (e.g. contracted rates).

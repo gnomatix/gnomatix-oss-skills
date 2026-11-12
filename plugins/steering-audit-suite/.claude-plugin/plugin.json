@@ -1,7 +1,7 @@
 {
   "name": "steering-audit-suite",
-  "version": "0.1.13",
-  "description": "Agent Skills that audit the documents prescribing agent behaviour: audit-rule for always-on rules (CLAUDE.md, steering files, system prompts), audit-skill for invocable skills (with a portability and graceful-degradation pass), audit-workflow for multi-step procedures (with phase-boundary checks), audit-collection for a directory of related documents (with split/join/merge/clone/reformat proposals), and rule-audit, the standalone single-file form. They catch behaviour-vs-surface failures, example-as-definition, embedded swipes, escape hatches, performative compliance, hidden dependencies and the rest of a 15-check list, compare against vendor-published exemplars, and report findings for the document's owner without rewriting anything. The main skill classifies a document and routes it, and holds the shared references.",
+  "version": "0.1.14",
+  "description": "Agent Skills that audit the documents prescribing agent behaviour: audit-rule for always-on rules (CLAUDE.md, steering files, system prompts), audit-skill for invocable skills, audit-workflow for multi-step procedures, audit-collection for a directory of documents, and rule-audit, the standalone single-file form. They run 15 checks, compare with vendor-published exemplars, and report findings for the document's owner without rewriting anything. The main skill classifies and routes a document.",
   "author": {
     "name": "Brett Whitty",
     "email": "brett@gnomatix.com"

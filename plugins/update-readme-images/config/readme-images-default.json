@@ -462,14 +462,14 @@
     },
     {
       "id": "release-notes-top-panel",
-      "description": "Versioned release notes under docs/releases/v*.md include a release-specific 16:9 PSA hero banner immediately after their H1 heading, paired with a 1280x640 companion OG image.",
+      "description": "Versioned release notes under docs/releases/v*.md show the release banner rendered from the release's banner prompt (author-release-readme) immediately after their H1 heading, with a 1280x640 companion OG image; a release with no rendered banner has none.",
       "glob": "docs/releases/v*.md",
       "doc": "plugins/update-readme-images/config/rules/release-notes-panels.md",
       "panels": [
         {
-          "id": "release-hero-psa-banner",
+          "id": "release-banner",
           "type": "top-level-panel",
-          "required": true,
+          "required": false,
           "placement": "after-h1",
           "src_pattern": "../../assets/images/releases/release-{file_stem}-banner.jpg",
           "alt_pattern": "Release {file_stem}",
